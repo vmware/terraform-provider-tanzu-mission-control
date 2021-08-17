@@ -1,0 +1,85 @@
+# https://github.com/golangci/golangci-lint#config-file
+
+linters:
+  # please, do not use `enable-all`: it's deprecated and will be removed soon.
+  # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
+  disable-all: true
+  enable:
+    - asciicheck
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - exportloopref
+    - funlen
+    - gochecknoinits
+    - goconst
+    - gocognit
+    - gocritic
+    - gocyclo
+    - godot
+    - gofmt
+    - goimports
+    - golint
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - nestif
+    - prealloc
+    - rowserrcheck
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+    - whitespace
+    - wsl
+
+#   don't enable:
+#   - exhaustive
+#   - gochecknoglobals
+#   - godox
+#   - gomnd
+#   - goerr113
+#   - gofumpt
+#   - interfacer
+#   - lll
+#   - maligned
+#   - nlreturn
+#   - noctx
+#   - nolintlint
+#   - scopelint
+#   - testpackage
+
+run:
+  # include test files or not, default is true
+  tests: true
+  deadline: 5m
+
+linters-settings:
+  funlen:
+    lines: 150
+    statements: 100
+  gci:
+    local-prefixes: gitlab.eng.vmware.com/olympus
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - dogsled
+        - funlen
+        - gocognit
+    - path: internal/authctx
+      linters:
+        - gosec
+        - nestif
