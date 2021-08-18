@@ -14,8 +14,7 @@ import (
 )
 
 const (
-	MetaKey = "meta"
-
+	MetaKey        = "meta"
 	annotationsKey = "annotations"
 	labelsKey      = "labels"
 	descriptionKey = "description"
@@ -74,7 +73,7 @@ func ConstructMeta(d *schema.ResourceData) (objectMeta *objectmetamodel.VmwareTa
 	}
 
 	if v, ok := objectMetaData[labelsKey]; ok {
-		objectMeta.Annotations = getTypeMapData(v.(map[string]interface{}))
+		objectMeta.Labels = getTypeMapData(v.(map[string]interface{}))
 	}
 
 	if v, ok := objectMetaData[descriptionKey]; ok {

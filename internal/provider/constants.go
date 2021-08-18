@@ -10,5 +10,6 @@ const (
 	token    = "token"
 
 	// Resources.
-	tmcCluster = "tmc_cluster"
+	tmcCluster   = "tmc_cluster"
+	tmcWorkspace = "tmc_workspace"
 )

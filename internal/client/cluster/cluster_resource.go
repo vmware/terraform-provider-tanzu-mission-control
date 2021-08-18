@@ -14,6 +14,8 @@ import (
 
 	"github.com/go-openapi/runtime"
 	"github.com/pkg/errors"
+
+	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/helper"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/transport"
 	clustermodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/cluster"
 )
@@ -51,11 +53,11 @@ func (a *Client) ManageV1alpha1ClusterResourceServiceCreate(request *clustermode
 
 	body, err := request.MarshalBinary()
 	if err != nil {
-		return nil, errors.Wrap(err, "create tanzu TMC cluster marshall request")
+		return nil, errors.Wrap(err, "marshall request body")
 	}
 
 	headers := a.config.Headers
-	headers.Set("Content-Length", fmt.Sprintf("%d", len(body)))
+	headers.Set(helper.ContentLength, fmt.Sprintf("%d", len(body)))
 
 	resp, err := a.transport.Post(requestURL, bytes.NewReader(body), headers)
 	if err != nil {

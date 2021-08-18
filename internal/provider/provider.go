@@ -11,9 +11,10 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	tmccluster "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/cluster"
 
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
+	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/cluster"
+	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/workspace"
 )
 
 // Provider for Tanzu Mission Control resources.
@@ -33,16 +34,17 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			tmcCluster: tmccluster.ResourceTMCCluster(),
+			tmcCluster:   cluster.ResourceTMCCluster(),
+			tmcWorkspace: workspace.ResourceWorkspace(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			tmcCluster: tmccluster.DataSourceTMCCluster(),
+			tmcCluster: cluster.DataSourceTMCCluster(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
 }
 
-func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := authctx.TanzuContext{CSPEndPoint: "console-stg.cloud.vmware.com"}
 
 	config.ServerEndpoint = d.Get(endpoint).(string)

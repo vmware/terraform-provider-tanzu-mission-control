@@ -3,7 +3,7 @@ Copyright © 2021 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package tmccluster
+package cluster
 
 const (
 	managementClusterNameKey = "management_cluster_name"

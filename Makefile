@@ -3,12 +3,18 @@
 
 default: build
 
-# build binary
-build: fmt
+build:
 	go build -o bin/terraform-provider-tmc ./cmd/main.go
+	mkdir -p ~/.terraform.d/plugins/vmware/tanzu/tmc/0.1.1/darwin_amd64/
+	cp bin/terraform-provider-tmc ~/.terraform.d/plugins/vmware/tanzu/tmc/0.1.1/darwin_amd64/
+
+test: | gofmt vet lint
+	go mod tidy
+	go test ./internal/... ./cmd/...
 
 # Run go fmt against code
-fmt:
+gofmt:
+	@echo Checking code is gofmted
 	go fmt ./...
 
 # Run go vet against code
