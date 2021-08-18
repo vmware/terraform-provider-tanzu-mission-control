@@ -24,7 +24,7 @@ func ResourceWorkspace() *schema.Resource {
 		CreateContext: resourceWorkspaceCreate,
 		ReadContext:   schema.NoopContext,
 		UpdateContext: schema.NoopContext,
-		DeleteContext: schema.NoopContext,
+		DeleteContext: resourceWorkspaceDelete,
 		Schema:        workspaceSchema,
 	}
 }
@@ -35,6 +35,30 @@ var workspaceSchema = map[string]*schema.Schema{
 		Required: true,
 	},
 	common.MetaKey: common.Meta,
+}
+
+func resourceWorkspaceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	config := m.(authctx.TanzuContext)
+
+	workspaceName := d.Get(workspacesName).(string)
+
+	// Warning or errors can be collected in a slice type
+	var diags diag.Diagnostics
+
+	fn := &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName{
+		Name: workspaceName,
+	}
+
+	err := config.TMCConnection.WorkspaceResourceService.ManageV1alpha1WorkspaceResourceServiceDelete(fn)
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to delete tanzu TMC workspace entry, name : %s", workspaceName))
+	}
+
+	// d.SetId("") is automatically called assuming delete returns no errors, but
+	// it is added here for explicitness.
+	d.SetId("")
+
+	return diags
 }
 
 func resourceWorkspaceCreate(_ context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {

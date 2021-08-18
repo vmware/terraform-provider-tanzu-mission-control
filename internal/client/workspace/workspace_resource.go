@@ -34,6 +34,8 @@ type Client struct {
 // ClientService is the interface for Client methods.
 type ClientService interface {
 	ManageV1alpha1WorkspaceResourceServiceCreate(request *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceRequest) (*workspacemodel.VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceResponse, error)
+
+	ManageV1alpha1WorkspaceResourceServiceDelete(fn *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName) error
 }
 
 /*
@@ -74,4 +76,29 @@ func (a *Client) ManageV1alpha1WorkspaceResourceServiceCreate(request *workspace
 	}
 
 	return workspaceResponse, nil
+}
+
+/*
+  ManageV1alpha1WorkspaceResourceServiceDelete deletes a workspace.
+*/
+func (a *Client) ManageV1alpha1WorkspaceResourceServiceDelete(fn *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName) error {
+	requestURL := fmt.Sprintf("%s%s%s", a.config.Host, "/v1alpha1/workspaces/", fn.Name)
+
+	resp, err := a.transport.Delete(requestURL, a.config.Headers)
+	if err != nil {
+		return errors.Wrap(err, "delete")
+	}
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return errors.Wrap(err, "read delete response")
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return errors.Errorf("delete tanzu TMC workspace request failed with status : %v, response: %v", resp.Status, string(respBody))
+	}
+
+	return nil
 }
