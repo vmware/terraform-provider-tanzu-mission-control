@@ -7,9 +7,9 @@ package tmccluster
 
 const (
 	managementClusterNameKey = "management_cluster_name"
-	provisionerNameKey = "provisioner_name"
-	clusterGroupKey = "cluster_group"
-	clusterNameKey = "name"
-	attachClusterKey = "attach"
-	statusKey = "status"
+	provisionerNameKey       = "provisioner_name"
+	clusterGroupKey          = "cluster_group"
+	clusterNameKey           = "name"
+	attachClusterKey         = "attach"
+	statusKey                = "status"
 )

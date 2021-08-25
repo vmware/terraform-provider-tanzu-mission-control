@@ -8,4 +8,7 @@ package provider
 const (
 	endpoint = "endpoint"
 	token    = "token"
+
+	// Resources.
+	tmcCluster = "tmc_cluster"
 )

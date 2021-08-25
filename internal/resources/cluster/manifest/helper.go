@@ -17,7 +17,7 @@ import (
 	"strings"
 	"time"
 
-	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -42,8 +42,8 @@ const ( // yamlSeparator is separator for multi-YAML resource files
 )
 
 func getManifests(manifestsBlob string) (manifests []manifest, err error) {
-	// Add v1beta1 api-extensions to the set of default schemes to support CRDs.
-	err = v1beta1.AddToScheme(scheme.Scheme)
+	// Add v1 api-extensions to the set of default schemes to support CRDs.
+	err = apiextensionsv1.AddToScheme(scheme.Scheme)
 	if err != nil {
 		return nil, err
 	}

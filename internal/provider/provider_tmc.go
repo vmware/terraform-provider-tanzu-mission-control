@@ -11,6 +11,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	tmccluster "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/cluster"
 
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
 )
@@ -31,8 +32,12 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc(authctx.CSPTokenEnvVar, nil),
 			},
 		},
-		ResourcesMap:         map[string]*schema.Resource{},
-		DataSourcesMap:       map[string]*schema.Resource{},
+		ResourcesMap: map[string]*schema.Resource{
+			tmcCluster: tmccluster.ResourceTMCCluster(),
+		},
+		DataSourcesMap: map[string]*schema.Resource{
+			tmcCluster: tmccluster.DataSourceTMCCluster(),
+		},
 		ConfigureContextFunc: providerConfigure,
 	}
 }

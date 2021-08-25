@@ -51,7 +51,7 @@ func (a *Client) ManageV1alpha1ClusterResourceServiceCreate(request *clustermode
 
 	body, err := request.MarshalBinary()
 	if err != nil {
-		return nil, errors.Wrap(err, "create taznu TMC cluster marshall request")
+		return nil, errors.Wrap(err, "create tanzu TMC cluster marshall request")
 	}
 
 	headers := a.config.Headers
