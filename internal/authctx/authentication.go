@@ -6,7 +6,6 @@ SPDX-License-Identifier: MPL-2.0
 package authctx
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -14,11 +13,9 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/pkg/errors"
-	"google.golang.org/grpc/metadata"
 )
 
 type tokenResponse struct {
@@ -101,7 +98,7 @@ func getBearerToken(cspEndpoint, cspToken string) (string, error) {
 	return token.AccessToken, nil
 }
 
-func getUserAuthCtx(config *TanzuContext) (context.Context, error) {
+func getUserAuthCtx(config *TanzuContext) (map[string]string, error) {
 	var (
 		token string
 		err   error
@@ -120,23 +117,9 @@ func getUserAuthCtx(config *TanzuContext) (context.Context, error) {
 		return nil, errors.Wrap(err, "while getting bearer token")
 	}
 
-	endpoint := strings.TrimSuffix(config.ServerEndpoint, ":443")
-
-	md := metadata.MD{
-		"x-customer-domain": []string{endpoint},
-		"authorization":     []string{"Bearer " + token},
+	md := map[string]string{
+		"authorization": "Bearer " + token,
 	}
 
-	return metadata.NewOutgoingContext(context.Background(), md), nil
-}
-
-func (cfg *TanzuContext) RefreshUserBearerToken() error {
-	authCtx, err := getUserAuthCtx(cfg)
-	if err != nil {
-		return err
-	}
-
-	cfg.UserAuthCtx = authCtx
-
-	return nil
+	return md, nil
 }
