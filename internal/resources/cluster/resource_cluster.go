@@ -42,22 +42,32 @@ var clusterSchema = map[string]*schema.Schema{
 		Default:  "attached",
 		Optional: true,
 	},
-	clusterGroupKey: {
-		Type:     schema.TypeString,
-		Default:  "default",
-		Optional: true,
-	},
 	clusterNameKey: {
 		Type:     schema.TypeString,
 		Required: true,
 	},
-	common.MetaKey:   common.Meta,
 	attachClusterKey: attachCluster,
+	common.MetaKey:   common.Meta,
+	specKey:          clusterSpec,
 	statusKey: {
 		Type:     schema.TypeMap,
 		Computed: true,
 		Elem:     &schema.Schema{Type: schema.TypeString},
 	},
+}
+
+func constructFullname(d *schema.ResourceData) (fullname *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName) {
+	fullname = &clustermodel.VmwareTanzuManageV1alpha1ClusterFullName{}
+
+	if value, ok := d.GetOk(managementClusterNameKey); ok {
+		fullname.ManagementClusterName = value.(string)
+	}
+
+	fullname.ManagementClusterName = d.Get(managementClusterNameKey).(string)
+	fullname.ProvisionerName = d.Get(provisionerNameKey).(string)
+	fullname.Name = d.Get(clusterNameKey).(string)
+
+	return fullname
 }
 
 var attachCluster = &schema.Schema{
@@ -66,16 +76,68 @@ var attachCluster = &schema.Schema{
 	MaxItems: 1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"kube_config_path": {
+			attachClusterKubeConfigKey: {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"execution_cmd": {
+			attachClusterDescriptionKey: {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 		},
 	},
+}
+
+var clusterSpec = &schema.Schema{
+	Type:     schema.TypeList,
+	Optional: true,
+	MaxItems: 1,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			clusterGroupKey: {
+				Type:     schema.TypeString,
+				Default:  clusterGroupDefaultValue,
+				Optional: true,
+			},
+		},
+	},
+}
+
+func constructSpec(d *schema.ResourceData) (spec *clustermodel.VmwareTanzuManageV1alpha1ClusterSpec) {
+	spec = &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
+		ClusterGroupName: clusterGroupDefaultValue,
+	}
+
+	value, ok := d.GetOk(specKey)
+	if !ok {
+		return spec
+	}
+
+	data := value.([]interface{})
+
+	if len(data) == 0 || data[0] == nil {
+		return spec
+	}
+
+	specData := data[0].(map[string]interface{})
+
+	if v, ok := specData[clusterGroupKey]; ok {
+		spec.ClusterGroupName = v.(string)
+	}
+
+	return spec
+}
+
+func flattenSpec(spec *clustermodel.VmwareTanzuManageV1alpha1ClusterSpec) (data []interface{}) {
+	if spec == nil {
+		return data
+	}
+
+	flattenSpecData := make(map[string]interface{})
+
+	flattenSpecData[clusterGroupKey] = spec.ClusterGroupName
+
+	return []interface{}{flattenSpecData}
 }
 
 func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
@@ -87,12 +149,8 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		err            error
 	)
 
-	var spec = &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-		ClusterGroupName: d.Get(clusterGroupKey).(string),
-	}
-
 	if _, ok := d.GetOk(attachClusterKey); ok {
-		kubeconfigfile = d.Get("attach.0.kube_config_path").(string)
+		kubeconfigfile = d.Get(getKubeConfigFileKeyFromRoot).(string)
 
 		if kubeconfigfile != "" {
 			k8sclient, err = getK8sClient(kubeconfigfile)
@@ -102,25 +160,17 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		}
 	}
 
-	managementClusterName := d.Get(managementClusterNameKey).(string)
-	provisionerName := d.Get(provisionerNameKey).(string)
-	clusterName := d.Get(clusterNameKey).(string)
-
 	clusterReq := &clustermodel.VmwareTanzuManageV1alpha1ClusterCreateClusterRequest{
 		Cluster: &clustermodel.VmwareTanzuManageV1alpha1ClusterCluster{
-			FullName: &clustermodel.VmwareTanzuManageV1alpha1ClusterFullName{
-				ManagementClusterName: managementClusterName,
-				ProvisionerName:       provisionerName,
-				Name:                  clusterName,
-			},
-			Meta: common.ConstructMeta(d),
-			Spec: spec,
+			FullName: constructFullname(d),
+			Meta:     common.ConstructMeta(d),
+			Spec:     constructSpec(d),
 		},
 	}
 
 	clusterResponse, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceCreate(clusterReq)
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to create tanzu TMC cluster entry, name : %s", clusterName))
+		return diag.FromErr(errors.Wrapf(err, "Unable to create tanzu TMC cluster entry, name : %s", d.Get(clusterNameKey)))
 	}
 
 	// always run
@@ -159,22 +209,12 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	config := m.(authctx.TanzuContext)
 
-	managementClusterName := d.Get(managementClusterNameKey).(string)
-	provisionerName := d.Get(provisionerNameKey).(string)
-	clusterName := d.Get(clusterNameKey).(string)
-
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
-	fn := &clustermodel.VmwareTanzuManageV1alpha1ClusterFullName{
-		ManagementClusterName: managementClusterName,
-		ProvisionerName:       provisionerName,
-		Name:                  clusterName,
-	}
-
-	err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceDelete(fn, "false")
+	err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceDelete(constructFullname(d), "false")
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to delete tanzu TMC cluster entry, name : %s", clusterName))
+		return diag.FromErr(errors.Wrapf(err, "Unable to delete tanzu TMC cluster entry, name : %s", d.Get(clusterNameKey)))
 	}
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but

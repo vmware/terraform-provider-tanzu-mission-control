@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/go-openapi/runtime"
 	"github.com/pkg/errors"
 
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/helper"
@@ -32,9 +31,6 @@ type Client struct {
 	transport *transport.Client
 	config    *transport.Config
 }
-
-// ClientOption is the option for Client methods.
-type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods.
 type ClientService interface {
