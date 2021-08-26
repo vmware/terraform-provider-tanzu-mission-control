@@ -7,7 +7,8 @@ package clustermodel
 
 import (
 	"github.com/go-openapi/swag"
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/objectmeta"
+
+	objectmetamodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/objectmeta"
 )
 
 // VmwareTanzuManageV1alpha1ClusterCluster A Kubernetes Cluster.
@@ -19,7 +20,7 @@ type VmwareTanzuManageV1alpha1ClusterCluster struct {
 	FullName *VmwareTanzuManageV1alpha1ClusterFullName `json:"fullName,omitempty"`
 
 	// Metadata for the cluster object.
-	Meta *objectmeta.VmwareTanzuCoreV1alpha1ObjectMeta `json:"meta,omitempty"`
+	Meta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta `json:"meta,omitempty"`
 
 	// Spec for the cluster.
 	Spec *VmwareTanzuManageV1alpha1ClusterSpec `json:"spec,omitempty"`

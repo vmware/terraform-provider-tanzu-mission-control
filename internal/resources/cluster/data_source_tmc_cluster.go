@@ -12,40 +12,16 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
+
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
 	clustermodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/cluster"
+	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
 )
 
 func DataSourceTMCCluster() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceTMCClusterRead,
-		Schema: map[string]*schema.Schema{
-			managementClusterNameKey: {
-				Type:     schema.TypeString,
-				Default:  "attached",
-				Optional: true,
-			},
-			provisionerNameKey: {
-				Type:     schema.TypeString,
-				Default:  "attached",
-				Optional: true,
-			},
-			clusterGroupKey: {
-				Type:     schema.TypeString,
-				Default:  "default",
-				Optional: true,
-			},
-			clusterNameKey: {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			attachClusterKey: AttachCluster,
-			statusKey: {
-				Type:     schema.TypeMap,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
-		},
+		Schema:      clusterSchema,
 	}
 }
 
@@ -99,6 +75,10 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 	}
 
 	if err := d.Set("status", status); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := d.Set(common.MetaKey, common.FlattenMeta(resp.Cluster.Meta)); err != nil {
 		return diag.FromErr(err)
 	}
 

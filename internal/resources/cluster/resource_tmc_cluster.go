@@ -7,7 +7,6 @@ package tmccluster
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -18,8 +17,8 @@ import (
 
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
 	clustermodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/cluster"
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/objectmeta"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/cluster/manifest"
+	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
 )
 
 func ResourceTMCCluster() *schema.Resource {
@@ -28,37 +27,40 @@ func ResourceTMCCluster() *schema.Resource {
 		ReadContext:   dataSourceTMCClusterRead,
 		UpdateContext: schema.NoopContext,
 		DeleteContext: resourceClusterDelete,
-		Schema: map[string]*schema.Schema{
-			managementClusterNameKey: {
-				Type:     schema.TypeString,
-				Default:  "attached",
-				Optional: true,
-			},
-			provisionerNameKey: {
-				Type:     schema.TypeString,
-				Default:  "attached",
-				Optional: true,
-			},
-			clusterGroupKey: {
-				Type:     schema.TypeString,
-				Default:  "default",
-				Optional: true,
-			},
-			clusterNameKey: {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			attachClusterKey: AttachCluster,
-			statusKey: {
-				Type:     schema.TypeMap,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
-		},
+		Schema:        clusterSchema,
 	}
 }
 
-var AttachCluster = &schema.Schema{
+var clusterSchema = map[string]*schema.Schema{
+	managementClusterNameKey: {
+		Type:     schema.TypeString,
+		Default:  "attached",
+		Optional: true,
+	},
+	provisionerNameKey: {
+		Type:     schema.TypeString,
+		Default:  "attached",
+		Optional: true,
+	},
+	clusterGroupKey: {
+		Type:     schema.TypeString,
+		Default:  "default",
+		Optional: true,
+	},
+	clusterNameKey: {
+		Type:     schema.TypeString,
+		Required: true,
+	},
+	common.MetaKey:   common.Meta,
+	attachClusterKey: attachCluster,
+	statusKey: {
+		Type:     schema.TypeMap,
+		Computed: true,
+		Elem:     &schema.Schema{Type: schema.TypeString},
+	},
+}
+
+var attachCluster = &schema.Schema{
 	Type:     schema.TypeList,
 	Optional: true,
 	MaxItems: 1,
@@ -76,7 +78,7 @@ var AttachCluster = &schema.Schema{
 	},
 }
 
-func resourceClusterCreate(_ context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
 	var (
@@ -86,7 +88,7 @@ func resourceClusterCreate(_ context.Context, d *schema.ResourceData, m interfac
 	)
 
 	var spec = &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-		ClusterGroupName: d.Get(clusterNameKey).(string),
+		ClusterGroupName: d.Get(clusterGroupKey).(string),
 	}
 
 	if _, ok := d.GetOk(attachClusterKey); ok {
@@ -111,7 +113,7 @@ func resourceClusterCreate(_ context.Context, d *schema.ResourceData, m interfac
 				ProvisionerName:       provisionerName,
 				Name:                  clusterName,
 			},
-			Meta: &objectmeta.VmwareTanzuCoreV1alpha1ObjectMeta{Description: "cluster created through terraform provider"},
+			Meta: common.ConstructMeta(d),
 			Spec: spec,
 		},
 	}
@@ -123,35 +125,6 @@ func resourceClusterCreate(_ context.Context, d *schema.ResourceData, m interfac
 
 	// always run
 	d.SetId(clusterResponse.Cluster.Meta.UID)
-
-	switch managementClusterName {
-	case "aws-hosted":
-		// todo
-	case "attached":
-		attachData := []interface{}{
-			map[string]interface{}{
-				"kube_config_path": kubeconfigfile,
-				"execution_cmd":    fmt.Sprintf("kubectl create -f '%s'", clusterResponse.Cluster.Status.InstallerLink),
-			},
-		}
-		if err := d.Set(attachClusterKey, attachData); err != nil {
-			return diag.FromErr(err)
-		}
-	}
-
-	status := map[string]interface{}{
-		"type":                  clusterResponse.Cluster.Status.Type,
-		"phase":                 clusterResponse.Cluster.Status.Phase,
-		"health":                clusterResponse.Cluster.Status.Health,
-		"infra_provider":        clusterResponse.Cluster.Status.InfrastructureProvider,
-		"infra_provider_region": clusterResponse.Cluster.Status.InfrastructureProviderRegion,
-		"k8s_version":           clusterResponse.Cluster.Status.KubeServerVersion,
-		"installer_link":        clusterResponse.Cluster.Status.InstallerLink,
-	}
-
-	if err := d.Set(statusKey, status); err != nil {
-		return append(diags, diag.FromErr(err)...)
-	}
 
 	if kubeconfigfile != "" {
 		diags = append(diags, diag.Diagnostic{
@@ -180,7 +153,7 @@ func resourceClusterCreate(_ context.Context, d *schema.ResourceData, m interfac
 		})
 	}
 
-	return diags
+	return append(diags, dataSourceTMCClusterRead(ctx, d, m)...)
 }
 
 func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
