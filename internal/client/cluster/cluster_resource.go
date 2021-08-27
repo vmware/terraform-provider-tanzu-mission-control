@@ -44,7 +44,7 @@ type ClientService interface {
 }
 
 /*
-  ManageV1alpha1ClusterResourceServiceCreate creates a cluster.
+ManageV1alpha1ClusterResourceServiceCreate creates a cluster.
 */
 func (a *Client) ManageV1alpha1ClusterResourceServiceCreate(request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error) {
 	requestURL := fmt.Sprintf("%s%s", a.config.Host, "/v1alpha1/clusters")
@@ -110,7 +110,7 @@ func (a *Client) invokeAction(httpMethodType string, requestURL string, request 
 }
 
 /*
-  ManageV1alpha1ClusterResourceServiceDelete deletes a cluster.
+ManageV1alpha1ClusterResourceServiceDelete deletes a cluster.
 */
 func (a *Client) ManageV1alpha1ClusterResourceServiceDelete(fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName, force string) error {
 	queryParams := url.Values{
@@ -144,7 +144,7 @@ func (a *Client) ManageV1alpha1ClusterResourceServiceDelete(fn *clustermodel.Vmw
 }
 
 /*
-  ManageV1alpha1ClusterResourceServiceGet gets a cluster.
+ManageV1alpha1ClusterResourceServiceGet gets a cluster.
 */
 func (a *Client) ManageV1alpha1ClusterResourceServiceGet(fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName) (*clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse, error) {
 	queryParams := url.Values{}

@@ -12,5 +12,6 @@ const (
 	// Resources.
 	tmcCluster      = "tmc_cluster"
 	tmcWorkspace    = "tmc_workspace"
+	tmcNamespace    = "tmc_namespace"
 	tmcClusterGroup = "tmc_cluster_group"
 )

@@ -12,6 +12,7 @@ import (
 
 	clusterclient "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/cluster"
 	clustergroupclient "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/clustergroup"
+	namespaceclient "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/namespace"
 	workspaceclient "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/workspace"
 )
 
@@ -30,6 +31,7 @@ func NewHTTPClient() *TanzuMissionControl {
 		Transport:                   httpClient,
 		ClusterResourceService:      clusterclient.New(httpClient, cfg),
 		WorkspaceResourceService:    workspaceclient.New(httpClient, cfg),
+		NamespaceResourceService:    namespaceclient.New(httpClient, cfg),
 		ClusterGroupResourceService: clustergroupclient.New(httpClient, cfg),
 	}
 }
@@ -40,5 +42,6 @@ type TanzuMissionControl struct {
 	Transport                   *transport.Client
 	ClusterResourceService      clusterclient.ClientService
 	WorkspaceResourceService    workspaceclient.ClientService
+	NamespaceResourceService    namespaceclient.ClientService
 	ClusterGroupResourceService clustergroupclient.ClientService
 }
