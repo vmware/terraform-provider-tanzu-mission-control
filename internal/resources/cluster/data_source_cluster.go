@@ -8,12 +8,14 @@ package cluster
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
+	clustermodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/cluster"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
 )
 
@@ -28,10 +30,36 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 	config := m.(authctx.TanzuContext)
 
 	// Warning or errors can be collected in a slice type
-	var diags diag.Diagnostics
+	var (
+		diags diag.Diagnostics
+		resp  *clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse
+		err   error
+	)
 
-	resp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
-	if err != nil {
+	getClusterResourceRetryableFn := func() (retry bool, err error) {
+		resp, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
+		if err != nil {
+			return true, errors.Wrapf(err, "Unable to get tanzu TMC cluster entry, name : %s", d.Get(clusterNameKey))
+		}
+
+		// always run
+		d.SetId(resp.Cluster.Meta.UID)
+
+		if *(resp.Cluster.Status.Phase) != clustermodel.VmwareTanzuManageV1alpha1ClusterPhaseREADY {
+			return true, nil
+		}
+
+		return false, nil
+	}
+
+	switch value, _ := d.Get(waitKey).(bool); value {
+	case true:
+		_, err = common.Retry(getClusterResourceRetryableFn, 10*time.Second, 6)
+	case false:
+		_, err = getClusterResourceRetryableFn()
+	}
+
+	if err != nil || resp == nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to get tanzu TMC cluster entry, name : %s", d.Get(clusterNameKey)))
 	}
 

@@ -14,11 +14,12 @@ import (
 )
 
 const (
-	MetaKey        = "meta"
-	annotationsKey = "annotations"
-	labelsKey      = "labels"
-	descriptionKey = "description"
-	uidKey         = "uid"
+	MetaKey         = "meta"
+	LabelsKey       = "labels"
+	DescriptionKey  = "description"
+	annotationsKey  = "annotations"
+	uidKey          = "uid"
+	CreatorLabelKey = "tmc.cloud.vmware.com/creator"
 )
 
 var Meta = &schema.Schema{
@@ -32,12 +33,13 @@ var Meta = &schema.Schema{
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			labelsKey: {
+			LabelsKey: {
 				Type:     schema.TypeMap,
 				Optional: true,
+				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			descriptionKey: {
+			DescriptionKey: {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
@@ -47,6 +49,19 @@ var Meta = &schema.Schema{
 			},
 		},
 	},
+}
+
+func HasMetaChanged(d *schema.ResourceData) bool {
+	updateRequired := false
+
+	switch {
+	case d.HasChange(GetFirstElementOf(MetaKey, LabelsKey)):
+		fallthrough
+	case d.HasChange(GetFirstElementOf(MetaKey, DescriptionKey)):
+		updateRequired = true
+	}
+
+	return updateRequired
 }
 
 func ConstructMeta(d *schema.ResourceData) (objectMeta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta) {
@@ -72,11 +87,11 @@ func ConstructMeta(d *schema.ResourceData) (objectMeta *objectmetamodel.VmwareTa
 		objectMeta.Annotations = getTypeMapData(v.(map[string]interface{}))
 	}
 
-	if v, ok := objectMetaData[labelsKey]; ok {
+	if v, ok := objectMetaData[LabelsKey]; ok {
 		objectMeta.Labels = getTypeMapData(v.(map[string]interface{}))
 	}
 
-	if v, ok := objectMetaData[descriptionKey]; ok {
+	if v, ok := objectMetaData[DescriptionKey]; ok {
 		objectMeta.Description = v.(string)
 	}
 
@@ -95,8 +110,8 @@ func FlattenMeta(objectMeta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta) 
 	flattenMetaData := make(map[string]interface{})
 
 	flattenMetaData[annotationsKey] = objectMeta.Annotations
-	flattenMetaData[labelsKey] = objectMeta.Labels
-	flattenMetaData[descriptionKey] = objectMeta.Description
+	flattenMetaData[LabelsKey] = objectMeta.Labels
+	flattenMetaData[DescriptionKey] = objectMeta.Description
 	flattenMetaData[uidKey] = objectMeta.UID
 
 	return []interface{}{flattenMetaData}

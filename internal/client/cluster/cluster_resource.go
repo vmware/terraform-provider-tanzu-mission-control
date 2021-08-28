@@ -34,19 +34,34 @@ type Client struct {
 
 // ClientService is the interface for Client methods.
 type ClientService interface {
-	ManageV1alpha1ClusterResourceServiceCreate(request *clustermodel.VmwareTanzuManageV1alpha1ClusterCreateClusterRequest) (*clustermodel.VmwareTanzuManageV1alpha1ClusterCreateClusterResponse, error)
+	ManageV1alpha1ClusterResourceServiceCreate(request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error)
 
 	ManageV1alpha1ClusterResourceServiceDelete(fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName, force string) error
 
 	ManageV1alpha1ClusterResourceServiceGet(fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName) (*clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse, error)
+
+	ManageV1alpha1ClusterResourceServiceUpdate(request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error)
 }
 
 /*
   ManageV1alpha1ClusterResourceServiceCreate creates a cluster.
 */
-func (a *Client) ManageV1alpha1ClusterResourceServiceCreate(request *clustermodel.VmwareTanzuManageV1alpha1ClusterCreateClusterRequest) (*clustermodel.VmwareTanzuManageV1alpha1ClusterCreateClusterResponse, error) {
+func (a *Client) ManageV1alpha1ClusterResourceServiceCreate(request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error) {
 	requestURL := fmt.Sprintf("%s%s", a.config.Host, "/v1alpha1/clusters")
 
+	return a.invokeAction(http.MethodPost, requestURL, request)
+}
+
+/*
+  ManageV1alpha1ClusterResourceServiceUpdate updates a cluster.
+*/
+func (a *Client) ManageV1alpha1ClusterResourceServiceUpdate(request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error) {
+	requestURL := fmt.Sprintf("%s%s%s", a.config.Host, "/v1alpha1/clusters/", request.Cluster.FullName.Name)
+
+	return a.invokeAction(http.MethodPut, requestURL, request)
+}
+
+func (a *Client) invokeAction(httpMethodType string, requestURL string, request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error) {
 	body, err := request.MarshalBinary()
 	if err != nil {
 		return nil, errors.Wrap(err, "marshall request body")
@@ -55,23 +70,36 @@ func (a *Client) ManageV1alpha1ClusterResourceServiceCreate(request *clustermode
 	headers := a.config.Headers
 	headers.Set(helper.ContentLength, fmt.Sprintf("%d", len(body)))
 
-	resp, err := a.transport.Post(requestURL, bytes.NewReader(body), headers)
-	if err != nil {
-		return nil, errors.Wrap(err, "create")
+	var resp *http.Response
+
+	// nolint:bodyclose // response is being closed outside the switch block
+	switch httpMethodType {
+	case http.MethodPost:
+		resp, err = a.transport.Post(requestURL, bytes.NewReader(body), headers)
+		if err != nil {
+			return nil, errors.Wrap(err, "create")
+		}
+	case http.MethodPut:
+		resp, err = a.transport.Put(requestURL, bytes.NewReader(body), headers)
+		if err != nil {
+			return nil, errors.Wrap(err, "update")
+		}
+	default:
+		return nil, errors.New("unsupported http method type invoked")
 	}
 
 	defer resp.Body.Close()
 
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.Wrap(err, "read create response")
+		return nil, errors.Wrapf(err, "read %v response", httpMethodType)
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("create tanzu TMC cluster request failed with status : %v, response: %v", resp.Status, string(respBody))
+		return nil, errors.Errorf("%s tanzu TMC cluster request failed with status : %v, response: %v", httpMethodType, resp.Status, string(respBody))
 	}
 
-	clusterResponse := &clustermodel.VmwareTanzuManageV1alpha1ClusterCreateClusterResponse{}
+	clusterResponse := &clustermodel.VmwareTanzuManageV1alpha1ClusterResponse{}
 
 	err = clusterResponse.UnmarshalBinary(respBody)
 	if err != nil {

@@ -23,9 +23,9 @@ import (
 
 func ResourceTMCCluster() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceClusterCreate,
 		ReadContext:   dataSourceTMCClusterRead,
-		UpdateContext: schema.NoopContext,
+		CreateContext: resourceClusterCreate,
+		UpdateContext: resourceClusterInPlaceUpdate,
 		DeleteContext: resourceClusterDelete,
 		Schema:        clusterSchema,
 	}
@@ -36,15 +36,18 @@ var clusterSchema = map[string]*schema.Schema{
 		Type:     schema.TypeString,
 		Default:  "attached",
 		Optional: true,
+		ForceNew: true,
 	},
 	provisionerNameKey: {
 		Type:     schema.TypeString,
 		Default:  "attached",
 		Optional: true,
+		ForceNew: true,
 	},
 	clusterNameKey: {
 		Type:     schema.TypeString,
 		Required: true,
+		ForceNew: true,
 	},
 	attachClusterKey: attachCluster,
 	common.MetaKey:   common.Meta,
@@ -53,6 +56,11 @@ var clusterSchema = map[string]*schema.Schema{
 		Type:     schema.TypeMap,
 		Computed: true,
 		Elem:     &schema.Schema{Type: schema.TypeString},
+	},
+	waitKey: {
+		Type:     schema.TypeBool,
+		Default:  false,
+		Optional: true,
 	},
 }
 
@@ -78,6 +86,7 @@ var attachCluster = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			attachClusterKubeConfigKey: {
 				Type:     schema.TypeString,
+				ForceNew: true,
 				Optional: true,
 			},
 			attachClusterDescriptionKey: {
@@ -150,7 +159,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	)
 
 	if _, ok := d.GetOk(attachClusterKey); ok {
-		kubeconfigfile = d.Get(getKubeConfigFileKeyFromRoot).(string)
+		kubeconfigfile = d.Get(common.GetFirstElementOf(attachClusterKey, attachClusterKubeConfigKey)).(string)
 
 		if kubeconfigfile != "" {
 			k8sclient, err = getK8sClient(kubeconfigfile)
@@ -160,7 +169,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		}
 	}
 
-	clusterReq := &clustermodel.VmwareTanzuManageV1alpha1ClusterCreateClusterRequest{
+	clusterReq := &clustermodel.VmwareTanzuManageV1alpha1ClusterRequest{
 		Cluster: &clustermodel.VmwareTanzuManageV1alpha1ClusterCluster{
 			FullName: constructFullname(d),
 			Meta:     common.ConstructMeta(d),
@@ -222,6 +231,56 @@ func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interfac
 	d.SetId("")
 
 	return diags
+}
+
+func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+	config := m.(authctx.TanzuContext)
+
+	updateRequired := false
+
+	switch {
+	case common.HasMetaChanged(d):
+		fallthrough
+	case d.HasChange(common.GetFirstElementOf(specKey, clusterGroupKey)):
+		updateRequired = true
+	}
+
+	if !updateRequired {
+		return diags
+	}
+
+	getResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to get tanzu TMC cluster entry, name : %s", d.Get(clusterNameKey)))
+	}
+
+	if common.HasMetaChanged(d) {
+		meta := common.ConstructMeta(d)
+
+		if value, ok := getResp.Cluster.Meta.Labels[common.CreatorLabelKey]; ok {
+			meta.Labels[common.CreatorLabelKey] = value
+		}
+
+		getResp.Cluster.Meta.Labels = meta.Labels
+		getResp.Cluster.Meta.Description = meta.Description
+	}
+
+	incomingCGName := d.Get(common.GetFirstElementOf(specKey, clusterGroupKey))
+
+	if incomingCGName.(string) != "" {
+		getResp.Cluster.Spec.ClusterGroupName = incomingCGName.(string)
+	}
+
+	_, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceUpdate(
+		&clustermodel.VmwareTanzuManageV1alpha1ClusterRequest{
+			Cluster: getResp.Cluster,
+		},
+	)
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to update tanzu TMC cluster entry, name : %s", d.Get(clusterNameKey)))
+	}
+
+	return dataSourceTMCClusterRead(ctx, d, m)
 }
 
 func getK8sClient(kubeconfigfile string) (k8sClient.Client, error) {

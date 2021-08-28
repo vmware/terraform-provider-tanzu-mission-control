@@ -17,7 +17,9 @@ import (
 	"strings"
 	"time"
 
+	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	apiextensionsv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -44,6 +46,11 @@ const ( // yamlSeparator is separator for multi-YAML resource files
 func getManifests(manifestsBlob string) (manifests []manifest, err error) {
 	// Add v1 api-extensions to the set of default schemes to support CRDs.
 	err = apiextensionsv1.AddToScheme(scheme.Scheme)
+	if err != nil {
+		return nil, err
+	}
+
+	err = apiextensionsv1beta1.AddToScheme(scheme.Scheme)
 	if err != nil {
 		return nil, err
 	}
@@ -149,35 +156,11 @@ func ensureObjectDeleted(k8sclient k8sClient.Client, object *unstructured.Unstru
 		return true, err
 	}
 
-	if _, err := retry(deleteFn, interval, retries); err != nil {
+	if _, err := common.Retry(deleteFn, interval, retries); err != nil {
 		return err
 	}
 
 	return nil
-}
-
-// Retryable is a simple function which can be retried, returns (retry[yes/no], error).
-type Retryable func() (bool, error)
-
-// Retry is a wrapper to retry functions.
-func retry(f Retryable, interval time.Duration, attempts int) (int, error) {
-	var (
-		err   error
-		retry bool
-	)
-
-	retries := 0
-	for retries < attempts {
-		retry, err = f()
-		if !retry {
-			break
-		}
-
-		time.Sleep(interval)
-		retries++
-	}
-
-	return retries, err
 }
 
 func GetK8sManifest(depLink string) ([]byte, error) {
