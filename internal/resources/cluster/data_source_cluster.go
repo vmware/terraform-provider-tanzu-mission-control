@@ -42,7 +42,6 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 			return true, errors.Wrapf(err, "Unable to get tanzu TMC cluster entry, name : %s", d.Get(clusterNameKey))
 		}
 
-		// always run
 		d.SetId(resp.Cluster.Meta.UID)
 
 		if *(resp.Cluster.Status.Phase) != clustermodel.VmwareTanzuManageV1alpha1ClusterPhaseREADY {
@@ -54,7 +53,7 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 
 	switch value, _ := d.Get(waitKey).(bool); value {
 	case true:
-		_, err = common.Retry(getClusterResourceRetryableFn, 10*time.Second, 6)
+		_, err = common.Retry(getClusterResourceRetryableFn, 10*time.Second, 18)
 	case false:
 		_, err = getClusterResourceRetryableFn()
 	}
