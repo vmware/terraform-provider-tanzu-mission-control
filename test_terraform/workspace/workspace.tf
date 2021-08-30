@@ -7,8 +7,8 @@ terraform {
 }
 
 // Create workspace
-resource "tmc_workspace" "workspace" {
-    workspace_name = "tf-workspace"
+resource "tmc_workspace" "create_workspace" {
+    name = "tf-workspace-test"
     meta  {
         description    = "Create workspace through terraform"
         labels         = {
@@ -18,7 +18,16 @@ resource "tmc_workspace" "workspace" {
     }
 }
 
+// Read workspace
+data "tmc_workspace" "read_workspace" {
+    name = "tf-workspace-test"
+}
+
 // Output workspace resource
 output "workspace" {
-    value = tmc_workspace.workspace
+    value = tmc_workspace.create_workspace
+}
+
+output "display_workspace" {
+    value = data.tmc_workspace.read_workspace
 }

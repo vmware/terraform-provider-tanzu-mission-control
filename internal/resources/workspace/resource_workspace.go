@@ -17,12 +17,12 @@ import (
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
 )
 
-const workspacesName = "workspace_name"
+const workspacesName = "name"
 
 func ResourceWorkspace() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceWorkspaceCreate,
-		ReadContext:   schema.NoopContext,
+		ReadContext:   dataSourceWorkspaceRead,
 		UpdateContext: schema.NoopContext,
 		DeleteContext: resourceWorkspaceDelete,
 		Schema:        workspaceSchema,
@@ -33,17 +33,15 @@ var workspaceSchema = map[string]*schema.Schema{
 	workspacesName: {
 		Type:     schema.TypeString,
 		Required: true,
+		ForceNew: true,
 	},
 	common.MetaKey: common.Meta,
 }
 
-func resourceWorkspaceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceWorkspaceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
 	workspaceName := d.Get(workspacesName).(string)
-
-	// Warning or errors can be collected in a slice type
-	var diags diag.Diagnostics
 
 	fn := &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName{
 		Name: workspaceName,
@@ -61,7 +59,7 @@ func resourceWorkspaceDelete(_ context.Context, d *schema.ResourceData, m interf
 	return diags
 }
 
-func resourceWorkspaceCreate(_ context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+func resourceWorkspaceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
 	var workspaceName = d.Get(workspacesName).(string)
@@ -83,5 +81,5 @@ func resourceWorkspaceCreate(_ context.Context, d *schema.ResourceData, m interf
 
 	d.SetId(workspaceResponse.Workspace.Meta.UID)
 
-	return diags
+	return dataSourceWorkspaceRead(ctx, d, m)
 }

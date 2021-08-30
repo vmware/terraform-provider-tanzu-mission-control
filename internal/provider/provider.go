@@ -40,7 +40,8 @@ func Provider() *schema.Provider {
 			tmcClusterGroup: clustergroup.ResourceClusterGroup(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			tmcCluster: cluster.DataSourceTMCCluster(),
+			tmcCluster:   cluster.DataSourceTMCCluster(),
+			tmcWorkspace: workspace.DataSourceTMCWorkspace(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

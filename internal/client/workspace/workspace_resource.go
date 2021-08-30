@@ -36,6 +36,8 @@ type ClientService interface {
 	ManageV1alpha1WorkspaceResourceServiceCreate(request *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceRequest) (*workspacemodel.VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceResponse, error)
 
 	ManageV1alpha1WorkspaceResourceServiceDelete(fn *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName) error
+
+	ManageV1alpha1WorkspaceResourceServiceGet(fn *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName) (*workspacemodel.VmwareTanzuManageV1alpha1WorkspaceGetWorkspaceResponse, error)
 }
 
 /*
@@ -69,6 +71,38 @@ func (a *Client) ManageV1alpha1WorkspaceResourceServiceCreate(request *workspace
 	}
 
 	workspaceResponse := &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceResponse{}
+
+	err = workspaceResponse.UnmarshalBinary(respBody)
+	if err != nil {
+		return nil, errors.Wrap(err, "unmarshall")
+	}
+
+	return workspaceResponse, nil
+}
+
+/*
+  ManageV1alpha1WorkspaceResourceServiceGet gets a workspace.
+*/
+func (a *Client) ManageV1alpha1WorkspaceResourceServiceGet(fn *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName) (*workspacemodel.VmwareTanzuManageV1alpha1WorkspaceGetWorkspaceResponse, error) {
+	requestURL := fmt.Sprintf("%s%s%s", a.config.Host, "/v1alpha1/workspaces/", fn.Name)
+
+	resp, err := a.transport.Get(requestURL, a.config.Headers)
+	if err != nil {
+		return nil, errors.Wrap(err, "read")
+	}
+
+	defer resp.Body.Close()
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, "read response body")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.Errorf("get tanzu TMC workspace request failed with status : %v, response : %v", resp.Status, string(respBody))
+	}
+
+	workspaceResponse := &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceGetWorkspaceResponse{}
 
 	err = workspaceResponse.UnmarshalBinary(respBody)
 	if err != nil {
