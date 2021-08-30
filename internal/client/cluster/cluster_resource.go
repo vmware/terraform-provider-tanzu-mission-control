@@ -68,7 +68,7 @@ func (a *Client) invokeAction(httpMethodType string, requestURL string, request 
 	}
 
 	headers := a.config.Headers
-	headers.Set(helper.ContentLength, fmt.Sprintf("%d", len(body)))
+	headers.Set(helper.ContentLengthKey, fmt.Sprintf("%d", len(body)))
 
 	var resp *http.Response
 

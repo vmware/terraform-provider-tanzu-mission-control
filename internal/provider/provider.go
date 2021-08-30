@@ -14,6 +14,7 @@ import (
 
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/cluster"
+	clustergroup "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/clustergroup"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/workspace"
 )
 
@@ -34,8 +35,9 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			tmcCluster:   cluster.ResourceTMCCluster(),
-			tmcWorkspace: workspace.ResourceWorkspace(),
+			tmcCluster:      cluster.ResourceTMCCluster(),
+			tmcWorkspace:    workspace.ResourceWorkspace(),
+			tmcClusterGroup: clustergroup.ResourceClusterGroup(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			tmcCluster: cluster.DataSourceTMCCluster(),

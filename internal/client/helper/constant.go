@@ -6,5 +6,5 @@ SPDX-License-Identifier: MPL-2.0
 package helper
 
 const (
-	ContentLength = "Content-Length"
+	ContentLengthKey = "Content-Length"
 )

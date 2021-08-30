@@ -29,3 +29,7 @@ After the build is complete, copy the provider executable `terraform-provider-ta
 For developing, consider using [dev overrides configuration][dev-overrides]. Please note that `terraform init` should not be used with dev overrides.
 
 [dev-overrides]: https://www.terraform.io/docs/cli/config/config-file.html#development-overrides-for-provider-developers
+
+## Utilising TMC provider
+
+Please refer to `examples` folder to perform CRUD operations with TMC provider for various resources

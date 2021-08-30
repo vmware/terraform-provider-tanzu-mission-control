@@ -11,6 +11,7 @@ import (
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/transport"
 
 	clusterclient "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/cluster"
+	clustergroupclient "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/clustergroup"
 	workspaceclient "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/workspace"
 )
 
@@ -25,17 +26,19 @@ func NewHTTPClient() *TanzuMissionControl {
 	cfg := transport.DefaultTransportConfig().AddHeaders(headers)
 
 	return &TanzuMissionControl{
-		Config:                   cfg,
-		Transport:                httpClient,
-		ClusterResourceService:   clusterclient.New(httpClient, cfg),
-		WorkspaceResourceService: workspaceclient.New(httpClient, cfg),
+		Config:                      cfg,
+		Transport:                   httpClient,
+		ClusterResourceService:      clusterclient.New(httpClient, cfg),
+		WorkspaceResourceService:    workspaceclient.New(httpClient, cfg),
+		ClusterGroupResourceService: clustergroupclient.New(httpClient, cfg),
 	}
 }
 
 // TanzuMissionControl is a client for  tanzu mission control.
 type TanzuMissionControl struct {
 	*transport.Config
-	Transport                *transport.Client
-	ClusterResourceService   clusterclient.ClientService
-	WorkspaceResourceService workspaceclient.ClientService
+	Transport                   *transport.Client
+	ClusterResourceService      clusterclient.ClientService
+	WorkspaceResourceService    workspaceclient.ClientService
+	ClusterGroupResourceService clustergroupclient.ClientService
 }

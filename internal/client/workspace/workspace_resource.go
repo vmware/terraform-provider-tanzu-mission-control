@@ -50,7 +50,7 @@ func (a *Client) ManageV1alpha1WorkspaceResourceServiceCreate(request *workspace
 	}
 
 	headers := a.config.Headers
-	headers.Set(helper.ContentLength, fmt.Sprintf("%d", len(body)))
+	headers.Set(helper.ContentLengthKey, fmt.Sprintf("%d", len(body)))
 
 	resp, err := a.transport.Post(requestURL, bytes.NewReader(body), headers)
 	if err != nil {
