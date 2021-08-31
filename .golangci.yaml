@@ -21,7 +21,6 @@ linters:
     - godot
     - gofmt
     - goimports
-    - golint
     - goprintffuncname
     - gosec
     - gosimple
@@ -58,6 +57,7 @@ linters:
 #   - nolintlint
 #   - scopelint
 #   - testpackage
+#   - revive
 
 run:
   # include test files or not, default is true
