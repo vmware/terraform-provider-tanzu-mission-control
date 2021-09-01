@@ -41,7 +41,7 @@ var workspaceSchema = map[string]*schema.Schema{
 func resourceWorkspaceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	workspaceName := d.Get(workspacesName).(string)
+	workspaceName, _ := d.Get(workspacesName).(string)
 
 	fn := &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName{
 		Name: workspaceName,
@@ -62,7 +62,7 @@ func resourceWorkspaceDelete(ctx context.Context, d *schema.ResourceData, m inte
 func resourceWorkspaceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	var workspaceName = d.Get(workspacesName).(string)
+	var workspaceName, _ = d.Get(workspacesName).(string)
 
 	workspaceRequest := &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceRequest{
 		Workspace: &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceWorkspace{

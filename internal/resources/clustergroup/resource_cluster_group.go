@@ -24,7 +24,7 @@ func ResourceClusterGroup() *schema.Resource {
 		CreateContext: resourceClusterGroupCreate,
 		ReadContext:   schema.NoopContext,
 		UpdateContext: schema.NoopContext,
-		DeleteContext: schema.NoopContext,
+		DeleteContext: resourceClusterGroupDelete,
 		Schema:        clusterGroupSchema,
 	}
 }
@@ -36,6 +36,25 @@ var clusterGroupSchema = map[string]*schema.Schema{
 		Required: true,
 	},
 	common.MetaKey: common.Meta,
+}
+
+func resourceClusterGroupDelete(_ context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+	config := m.(authctx.TanzuContext)
+
+	clusterGroupName, _ := d.Get(clusterGroupName).(string)
+
+	fn := &clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName{
+		Name: clusterGroupName,
+	}
+
+	err := config.TMCConnection.ClusterGroupResourceService.ManageV1alpha1ClusterGroupResourceServiceDelete(fn)
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to delete tanzu TMC cluster group entry, name : %s", clusterGroupName))
+	}
+
+	d.SetId("")
+
+	return diags
 }
 
 func resourceClusterGroupCreate(_ context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {

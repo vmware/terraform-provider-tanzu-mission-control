@@ -71,9 +71,9 @@ func constructFullname(d *schema.ResourceData) (fullname *clustermodel.VmwareTan
 		fullname.ManagementClusterName = value.(string)
 	}
 
-	fullname.ManagementClusterName = d.Get(managementClusterNameKey).(string)
-	fullname.ProvisionerName = d.Get(provisionerNameKey).(string)
-	fullname.Name = d.Get(clusterNameKey).(string)
+	fullname.ManagementClusterName, _ = d.Get(managementClusterNameKey).(string)
+	fullname.ProvisionerName, _ = d.Get(provisionerNameKey).(string)
+	fullname.Name, _ = d.Get(clusterNameKey).(string)
 
 	return fullname
 }
@@ -159,7 +159,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	)
 
 	if _, ok := d.GetOk(attachClusterKey); ok {
-		kubeconfigfile = d.Get(common.GetFirstElementOf(attachClusterKey, attachClusterKubeConfigKey)).(string)
+		kubeconfigfile, _ = d.Get(common.GetFirstElementOf(attachClusterKey, attachClusterKubeConfigKey)).(string)
 
 		if kubeconfigfile != "" {
 			k8sclient, err = getK8sClient(kubeconfigfile)

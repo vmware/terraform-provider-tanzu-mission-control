@@ -34,6 +34,33 @@ type Client struct {
 // ClientService is the interface for Client methods.
 type ClientService interface {
 	ManageV1alpha1ClusterGroupResourceServiceCreate(request *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupRequest) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupResponse, error)
+
+	ManageV1alpha1ClusterGroupResourceServiceDelete(fn *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName) error
+}
+
+/*
+  ManageV1alpha1ClusterGroupResourceServiceDelete deletes a cluster group
+*/
+func (a *Client) ManageV1alpha1ClusterGroupResourceServiceDelete(fn *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName) error {
+	requestURL := fmt.Sprintf("%s%s%s", a.config.Host, "/v1alpha1/clustergroups/", fn.Name)
+
+	resp, err := a.transport.Delete(requestURL, a.config.Headers)
+	if err != nil {
+		return errors.Wrap(err, "delete")
+	}
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return errors.Wrap(err, "read delete response")
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return errors.Errorf("delete tanzu TMC cluster group request failed with status : %v, response : %v", resp.Status, string(respBody))
+	}
+
+	return nil
 }
 
 /*

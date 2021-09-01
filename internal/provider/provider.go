@@ -52,8 +52,8 @@ func Provider() *schema.Provider {
 func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := authctx.TanzuContext{CSPEndPoint: "console-stg.cloud.vmware.com"}
 
-	config.ServerEndpoint = d.Get(endpoint).(string)
-	config.Token = d.Get(token).(string)
+	config.ServerEndpoint, _ = d.Get(endpoint).(string)
+	config.Token, _ = d.Get(token).(string)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
