@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 
 	"github.com/pkg/errors"
 
@@ -34,6 +35,8 @@ type Client struct {
 // ClientService is the interface for Client methods.
 type ClientService interface {
 	ManageV1alpha1NamespaceResourceServiceCreate(request *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceRequest) (*namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceResponse, error)
+
+	ManageV1alpha1NamespaceResourceServiceDelete(fn *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName) error
 }
 
 /*
@@ -74,4 +77,39 @@ func (a *Client) ManageV1alpha1NamespaceResourceServiceCreate(request *namespace
 	}
 
 	return namespaceResponse, nil
+}
+
+/*
+ManageV1alpha1NamespaceResourceServiceDelete deletes a Namespace.
+*/
+func (a *Client) ManageV1alpha1NamespaceResourceServiceDelete(fn *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName) error {
+	queryParams := url.Values{}
+
+	if fn.ManagementClusterName != "" {
+		queryParams["fullName.managementClusterName"] = []string{fn.ManagementClusterName}
+	}
+
+	if fn.ProvisionerName != "" {
+		queryParams["fullName.provisionerName"] = []string{fn.ProvisionerName}
+	}
+
+	requestURL := fmt.Sprintf("%s%s%s%s%s?%s", a.config.Host, "/v1alpha1/clusters/", fn.ClusterName, "/namespaces/", fn.Name, queryParams.Encode())
+
+	resp, err := a.transport.Delete(requestURL, a.config.Headers)
+	if err != nil {
+		return errors.Wrap(err, "delete")
+	}
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return errors.Wrap(err, "read delete response")
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return errors.Errorf("delete tanzu TMC namespace request failed with status : %v, response: %v", resp.Status, string(respBody))
+	}
+
+	return nil
 }

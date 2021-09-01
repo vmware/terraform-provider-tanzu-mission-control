@@ -22,7 +22,7 @@ func ResourceNamespace() *schema.Resource {
 		CreateContext: resourceNamespaceCreate,
 		ReadContext:   schema.NoopContext,
 		UpdateContext: schema.NoopContext,
-		DeleteContext: schema.NoopContext,
+		DeleteContext: resourceNamespaceDelete,
 		Schema:        namespaceSchema,
 	}
 }
@@ -171,6 +171,26 @@ func resourceNamespaceCreate(_ context.Context, d *schema.ResourceData, m interf
 	if err := d.Set(specKey, flattenSpec(namespaceResponse.Namespace.Spec)); err != nil {
 		return diag.FromErr(err)
 	}
+
+	return diags
+}
+
+func resourceNamespaceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	config := m.(authctx.TanzuContext)
+
+	namespaceName, _ := d.Get(nameKey).(string)
+
+	// Warning or errors can be collected in a slice type
+	var diags diag.Diagnostics
+
+	err := config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceDelete(constructFullname(d))
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "unable to delete tanzu TMC namespace entry, name : %s", namespaceName))
+	}
+
+	// d.SetId("") is automatically called assuming delete returns no errors, but
+	// it is added here for explicitness.
+	d.SetId("")
 
 	return diags
 }

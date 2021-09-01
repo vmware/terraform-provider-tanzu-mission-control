@@ -14,5 +14,5 @@ terraform {
 // Basic details needed to configure tmc provider
 provider "tmc" {
   endpoint = "<stack-name>.tmc-dev.cloud.vmware.com" // Required, environment variable: TMC_ENDPOINT
-  token    = "<csp-token>"                          // Required, environment variable: TMC_CSP_TOKEN
+  token    = "<csp-token>"                           // Required, environment variable: TMC_CSP_TOKEN
 }
