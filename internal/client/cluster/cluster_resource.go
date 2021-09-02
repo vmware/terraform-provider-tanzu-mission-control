@@ -54,7 +54,7 @@ func (a *Client) ManageV1alpha1ClusterResourceServiceCreate(request *clustermode
 }
 
 /*
-  ManageV1alpha1ClusterResourceServiceUpdate updates a cluster.
+ManageV1alpha1ClusterResourceServiceUpdate updates a cluster.
 */
 func (a *Client) ManageV1alpha1ClusterResourceServiceUpdate(request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error) {
 	requestURL := fmt.Sprintf("%s%s%s", a.config.Host, "/v1alpha1/clusters/", request.Cluster.FullName.Name)

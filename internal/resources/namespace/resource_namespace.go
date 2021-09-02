@@ -21,7 +21,7 @@ import (
 func ResourceNamespace() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceNamespaceCreate,
-		ReadContext:   schema.NoopContext,
+		ReadContext:   dataSourceNamespaceRead,
 		UpdateContext: schema.NoopContext,
 		DeleteContext: resourceNamespaceDelete,
 		Schema:        namespaceSchema,
@@ -137,7 +137,7 @@ func flattenSpec(spec *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceS
 	return []interface{}{flattenSpecData}
 }
 
-func resourceNamespaceCreate(_ context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+func resourceNamespaceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
 	namespaceRequest := &namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceRequest{
@@ -156,24 +156,7 @@ func resourceNamespaceCreate(_ context.Context, d *schema.ResourceData, m interf
 
 	d.SetId(namespaceResponse.Namespace.Meta.UID)
 
-	status := map[string]interface{}{
-		"phase":      namespaceResponse.Namespace.Status.Phase,
-		"phase_info": namespaceResponse.Namespace.Status.PhaseInfo,
-	}
-
-	if err := d.Set(statusKey, status); err != nil {
-		return diag.FromErr(err)
-	}
-
-	if err := d.Set(common.MetaKey, common.FlattenMeta(namespaceResponse.Namespace.Meta)); err != nil {
-		return diag.FromErr(err)
-	}
-
-	if err := d.Set(specKey, flattenSpec(namespaceResponse.Namespace.Spec)); err != nil {
-		return diag.FromErr(err)
-	}
-
-	return diags
+	return dataSourceNamespaceRead(ctx, d, m)
 }
 
 func resourceNamespaceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

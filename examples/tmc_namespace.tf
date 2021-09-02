@@ -1,8 +1,16 @@
 // TMC Namespace:
 // Operations supported : Read, Create, Update & Delete
 
+// Read TMC namespace : fetch namespace details
+data "tmc_namespace" "read_namespace" {
+  name                    = "<namespace-name>"     // Required
+  cluster_name            = "<cluster-name>"       // Required
+  management_cluster_name = "<management-cluster>" // Default: attached
+  provisioner_name        = "<prov-name>"          // Default: attached
+}
+
 // Create TMC namespace entry
-resource "tmc_namespace" "namespace_create" {
+resource "tmc_namespace" "create_namespace" {
   name                    = "<namespace-name>"     // Required
   cluster_name            = "<cluster_name>"       // Required
   provisioner_name        = "<prov-name>"          // Default: attached
@@ -20,7 +28,7 @@ resource "tmc_namespace" "namespace_create" {
 }
 
 // Create TMC namespace entry with minimal information
-resource "tmc_namespace" "namespace_create_min_info" {
+resource "tmc_namespace" "create_namespace_min_info" {
   name         = "<namespace-name>" // Required
   cluster_name = "<cluster_name>"   // Required
 }

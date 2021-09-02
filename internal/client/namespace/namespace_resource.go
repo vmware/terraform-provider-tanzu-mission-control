@@ -37,6 +37,8 @@ type ClientService interface {
 	ManageV1alpha1NamespaceResourceServiceCreate(request *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceRequest) (*namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceResponse, error)
 
 	ManageV1alpha1NamespaceResourceServiceDelete(fn *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName) error
+
+	ManageV1alpha1NamespaceResourceServiceGet(fn *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName) (*namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceGetNamespaceResponse, error)
 }
 
 /*
@@ -112,4 +114,46 @@ func (a *Client) ManageV1alpha1NamespaceResourceServiceDelete(fn *namespacemodel
 	}
 
 	return nil
+}
+
+/*
+ManageV1alpha1NamespaceResourceServiceGet gets a namespace.
+*/
+func (a *Client) ManageV1alpha1NamespaceResourceServiceGet(fn *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName) (*namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceGetNamespaceResponse, error) {
+	queryParams := url.Values{}
+
+	if fn.ManagementClusterName != "" {
+		queryParams["fullName.managementClusterName"] = []string{fn.ManagementClusterName}
+	}
+
+	if fn.ProvisionerName != "" {
+		queryParams["fullName.provisionerName"] = []string{fn.ProvisionerName}
+	}
+
+	requestURL := fmt.Sprintf("%s%s%s%s%s?%s", a.config.Host, "/v1alpha1/clusters/", fn.ClusterName, "/namespaces/", fn.Name, queryParams.Encode())
+
+	resp, err := a.transport.Get(requestURL, a.config.Headers)
+	if err != nil {
+		return nil, errors.Wrap(err, "get request")
+	}
+
+	defer resp.Body.Close()
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, "read response")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.Errorf("get tanzu TMC namespace request failed with status : %v, response: %v", resp.Status, string(respBody))
+	}
+
+	namespaceResponse := &namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceGetNamespaceResponse{}
+
+	err = namespaceResponse.UnmarshalBinary(respBody)
+	if err != nil {
+		return nil, errors.Wrap(err, "unmarshall")
+	}
+
+	return namespaceResponse, nil
 }
