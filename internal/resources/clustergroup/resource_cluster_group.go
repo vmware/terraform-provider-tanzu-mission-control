@@ -22,7 +22,7 @@ const clusterGroupName = "name"
 func ResourceClusterGroup() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceClusterGroupCreate,
-		ReadContext:   schema.NoopContext,
+		ReadContext:   dataSourceClusterGroupRead,
 		UpdateContext: schema.NoopContext,
 		DeleteContext: resourceClusterGroupDelete,
 		Schema:        clusterGroupSchema,

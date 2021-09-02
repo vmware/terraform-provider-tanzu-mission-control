@@ -36,6 +36,40 @@ type ClientService interface {
 	ManageV1alpha1ClusterGroupResourceServiceCreate(request *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupRequest) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupResponse, error)
 
 	ManageV1alpha1ClusterGroupResourceServiceDelete(fn *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName) error
+
+	ManageV1alpha1ClusterGroupResourceServiceGet(fn *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupGetClusterGroupResponse, error)
+}
+
+/*
+  ManageV1alpha1ClusterGroupResourceServiceGet gets a cluster group
+*/
+func (a *Client) ManageV1alpha1ClusterGroupResourceServiceGet(fn *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupGetClusterGroupResponse, error) {
+	requestURL := fmt.Sprintf("%s%s%s", a.config.Host, "/v1alpha1/clustergroups/", fn.Name)
+
+	resp, err := a.transport.Get(requestURL, a.config.Headers)
+	if err != nil {
+		return nil, errors.Wrap(err, "read")
+	}
+
+	defer resp.Body.Close()
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, "read response body")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.Errorf("get tanzu TMC cluster group request failed with status : %v, response : %v", resp.Status, string(respBody))
+	}
+
+	clusterGroupResponse := &clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupGetClusterGroupResponse{}
+
+	err = clusterGroupResponse.UnmarshalBinary(respBody)
+	if err != nil {
+		return nil, errors.Wrap(err, "unmarshall")
+	}
+
+	return clusterGroupResponse, nil
 }
 
 /*
