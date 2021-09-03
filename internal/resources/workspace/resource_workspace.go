@@ -23,7 +23,7 @@ func ResourceWorkspace() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceWorkspaceCreate,
 		ReadContext:   dataSourceWorkspaceRead,
-		UpdateContext: schema.NoopContext,
+		UpdateContext: resourceWorkspaceInPlaceUpdate,
 		DeleteContext: resourceWorkspaceDelete,
 		Schema:        workspaceSchema,
 	}
@@ -64,7 +64,7 @@ func resourceWorkspaceCreate(ctx context.Context, d *schema.ResourceData, m inte
 
 	var workspaceName, _ = d.Get(workspacesName).(string)
 
-	workspaceRequest := &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceRequest{
+	workspaceRequest := &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceRequest{
 		Workspace: &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceWorkspace{
 			FullName: &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName{
 				Name: workspaceName,
@@ -80,6 +80,52 @@ func resourceWorkspaceCreate(ctx context.Context, d *schema.ResourceData, m inte
 	}
 
 	d.SetId(workspaceResponse.Workspace.Meta.UID)
+
+	return dataSourceWorkspaceRead(ctx, d, m)
+}
+
+func resourceWorkspaceInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+	config := m.(authctx.TanzuContext)
+
+	updateRequired := common.HasMetaChanged(d)
+
+	if !updateRequired {
+		return diags
+	}
+
+	workspaceName, ok := d.Get(workspacesName).(string)
+	if !ok {
+		return diag.Errorf("unable to read workspace name")
+	}
+
+	fn := &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName{
+		Name: workspaceName,
+	}
+
+	getResp, err := config.TMCConnection.WorkspaceResourceService.ManageV1alpha1WorkspaceResourceServiceGet(fn)
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to get tanzu TMC wrokspace entry, name : %s", workspaceName))
+	}
+
+	if common.HasMetaChanged(d) {
+		meta := common.ConstructMeta(d)
+
+		if value, ok := getResp.Workspace.Meta.Labels[common.CreatorLabelKey]; ok {
+			meta.Labels[common.CreatorLabelKey] = value
+		}
+
+		getResp.Workspace.Meta.Labels = meta.Labels
+		getResp.Workspace.Meta.Description = meta.Description
+	}
+
+	_, err = config.TMCConnection.WorkspaceResourceService.ManageV1alpha1WorkspaceResourceServiceUpdate(
+		&workspacemodel.VmwareTanzuManageV1alpha1WorkspaceRequest{
+			Workspace: getResp.Workspace,
+		},
+	)
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to update tanzu TMC workspace entry, name : %s", workspaceName))
+	}
 
 	return dataSourceWorkspaceRead(ctx, d, m)
 }

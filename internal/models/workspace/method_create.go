@@ -7,17 +7,17 @@ package workspacemodel
 
 import "github.com/go-openapi/swag"
 
-// VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceRequest Request to create a Workspace.
+// VmwareTanzuManageV1alpha1WorkspaceRequest Request to create a Workspace.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.workspace.CreateWorkspaceRequest
-type VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceRequest struct {
+type VmwareTanzuManageV1alpha1WorkspaceRequest struct {
 
 	// Workspace to create.
 	Workspace *VmwareTanzuManageV1alpha1WorkspaceWorkspace `json:"workspace,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceRequest) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1WorkspaceRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -26,8 +26,8 @@ func (m *VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceRequest) MarshalBinary
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceRequest) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceRequest
+func (m *VmwareTanzuManageV1alpha1WorkspaceRequest) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1WorkspaceRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -37,17 +37,17 @@ func (m *VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceRequest) UnmarshalBina
 	return nil
 }
 
-// VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceResponse Response from creating a Workspace.
+// VmwareTanzuManageV1alphaWorkspaceResponse Response from creating a Workspace.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.workspace.CreateWorkspaceResponse
-type VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceResponse struct {
+type VmwareTanzuManageV1alphaWorkspaceResponse struct {
 
 	// Workspace created.
 	Workspace *VmwareTanzuManageV1alpha1WorkspaceWorkspace `json:"workspace,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceResponse) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alphaWorkspaceResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -56,8 +56,8 @@ func (m *VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceResponse) MarshalBinar
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceResponse) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1WorkspaceCreateWorkspaceResponse
+func (m *VmwareTanzuManageV1alphaWorkspaceResponse) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alphaWorkspaceResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

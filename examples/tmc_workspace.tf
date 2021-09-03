@@ -1,8 +1,8 @@
 // TMC Workspace:
-// Operations supported : Read, Create & Delete
+// Operations supported : Read, Create, Update & Delete
 
 // Create TMC workspace entry
-resource "tmc_workspace" "workspace_create" {
+resource "tmc_workspace" "create_workspace" {
   name = "<workspace-name>" // Required
   meta {                    // Optional
     description = "description of the workspace"
@@ -11,7 +11,7 @@ resource "tmc_workspace" "workspace_create" {
 }
 
 // Create TMC workspace entry with minimal information
-resource "tmc_workspace" "workspace_create_min_info" {
+resource "tmc_workspace" "create_workspace_min_info" {
   name = "<workspace-name>" // Required
 }
 
