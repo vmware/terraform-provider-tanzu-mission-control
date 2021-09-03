@@ -13,8 +13,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/helper"
+	clienterrors "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/errors"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/transport"
+	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/helper"
 	clustergroupmodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/clustergroup"
 )
 
@@ -91,7 +92,7 @@ func (a *Client) ManageV1alpha1ClusterGroupResourceServiceDelete(fn *clustergrou
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return errors.Errorf("delete tanzu TMC cluster group request failed with status : %v, response : %v", resp.Status, string(respBody))
+		return clienterrors.ErrorWithHTTPCode(resp.StatusCode, errors.Errorf("delete tanzu TMC cluster group request failed with status : %v, response : %v", resp.Status, string(respBody)))
 	}
 
 	return nil

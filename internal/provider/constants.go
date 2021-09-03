@@ -6,8 +6,10 @@ SPDX-License-Identifier: MPL-2.0
 package provider
 
 const (
-	endpoint = "endpoint"
-	token    = "token"
+	endpoint           = "endpoint"
+	cspEndpoint        = "csp_endpoint"
+	token              = "token"
+	defaultCSPEndpoint = "console.cloud.vmware.com"
 
 	// Resources.
 	tmcCluster      = "tmc_cluster"

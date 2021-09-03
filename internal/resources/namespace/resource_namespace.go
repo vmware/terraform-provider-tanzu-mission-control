@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
+	clienterrors "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/errors"
 	namespacemodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/namespace"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
 )
@@ -184,7 +185,7 @@ func resourceNamespaceDelete(_ context.Context, d *schema.ResourceData, m interf
 	var diags diag.Diagnostics
 
 	err := config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceDelete(constructFullname(d))
-	if err != nil {
+	if err != nil && !clienterrors.IsNotFoundError(err) {
 		return diag.FromErr(errors.Wrapf(err, "unable to delete tanzu TMC namespace entry, name : %s", namespaceName))
 	}
 

@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
+	clienterrors "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/errors"
 	workspacemodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/workspace"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
 )
@@ -48,7 +49,7 @@ func resourceWorkspaceDelete(ctx context.Context, d *schema.ResourceData, m inte
 	}
 
 	err := config.TMCConnection.WorkspaceResourceService.ManageV1alpha1WorkspaceResourceServiceDelete(fn)
-	if err != nil {
+	if err != nil && !clienterrors.IsNotFoundError(err) {
 		return diag.FromErr(errors.Wrapf(err, "Unable to delete tanzu TMC workspace entry, name : %s", workspaceName))
 	}
 

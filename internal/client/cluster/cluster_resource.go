@@ -14,8 +14,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/helper"
+	clienterrors "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/errors"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/transport"
+	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/helper"
 	clustermodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/cluster"
 )
 
@@ -137,7 +138,7 @@ func (a *Client) ManageV1alpha1ClusterResourceServiceDelete(fn *clustermodel.Vmw
 	respBody, _ := ioutil.ReadAll(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
-		return errors.Errorf("delete tanzu TMC cluster request failed with status : %v, response: %v", resp.Status, string(respBody))
+		return clienterrors.ErrorWithHTTPCode(resp.StatusCode, errors.Errorf("delete tanzu TMC cluster request failed with status : %v, response: %v", resp.Status, string(respBody)))
 	}
 
 	return nil
@@ -172,7 +173,7 @@ func (a *Client) ManageV1alpha1ClusterResourceServiceGet(fn *clustermodel.Vmware
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("get tanzu TMC cluster request failed with status : %v, response: %v", resp.Status, string(respBody))
+		return nil, clienterrors.ErrorWithHTTPCode(resp.StatusCode, errors.Errorf("get tanzu TMC cluster request failed with status : %v, response: %v", resp.Status, string(respBody)))
 	}
 
 	clusterResponse := &clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse{}

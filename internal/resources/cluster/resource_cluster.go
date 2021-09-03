@@ -16,6 +16,8 @@ import (
 	k8sClient "sigs.k8s.io/controller-runtime/pkg/client"
 
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
+	clienterrors "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/errors"
+	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/helper"
 	clustermodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/cluster"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/cluster/manifest"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
@@ -159,7 +161,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	)
 
 	if _, ok := d.GetOk(attachClusterKey); ok {
-		kubeconfigfile, _ = d.Get(common.GetFirstElementOf(attachClusterKey, attachClusterKubeConfigKey)).(string)
+		kubeconfigfile, _ = d.Get(helper.GetFirstElementOf(attachClusterKey, attachClusterKubeConfigKey)).(string)
 
 		if kubeconfigfile != "" {
 			k8sclient, err = getK8sClient(kubeconfigfile)
@@ -222,13 +224,31 @@ func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interfac
 	var diags diag.Diagnostics
 
 	err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceDelete(constructFullname(d), "false")
-	if err != nil {
+	if err != nil && !clienterrors.IsNotFoundError(err) {
 		return diag.FromErr(errors.Wrapf(err, "Unable to delete tanzu TMC cluster entry, name : %s", d.Get(clusterNameKey)))
 	}
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but
 	// it is added here for explicitness.
 	d.SetId("")
+
+	getClusterResourceRetryableFn := func() (retry bool, err error) {
+		_, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
+		if err == nil {
+			return true, errors.New("cluster deletion in progress")
+		}
+
+		if !clienterrors.IsNotFoundError(err) {
+			return true, err
+		}
+
+		return false, nil
+	}
+
+	_, err = helper.Retry(getClusterResourceRetryableFn, 10*time.Second, 18)
+	if err != nil {
+		diag.FromErr(errors.Wrapf(err, "verify %s cluster resource clean up", d.Get(clusterNameKey)))
+	}
 
 	return diags
 }
@@ -241,7 +261,7 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 	switch {
 	case common.HasMetaChanged(d):
 		fallthrough
-	case d.HasChange(common.GetFirstElementOf(specKey, clusterGroupKey)):
+	case d.HasChange(helper.GetFirstElementOf(specKey, clusterGroupKey)):
 		updateRequired = true
 	}
 
@@ -265,7 +285,7 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 		getResp.Cluster.Meta.Description = meta.Description
 	}
 
-	incomingCGName := d.Get(common.GetFirstElementOf(specKey, clusterGroupKey))
+	incomingCGName := d.Get(helper.GetFirstElementOf(specKey, clusterGroupKey))
 
 	if incomingCGName.(string) != "" {
 		getResp.Cluster.Spec.ClusterGroupName = incomingCGName.(string)

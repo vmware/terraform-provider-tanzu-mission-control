@@ -13,8 +13,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/helper"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/transport"
+	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/helper"
 	workspacemodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/workspace"
 )
 

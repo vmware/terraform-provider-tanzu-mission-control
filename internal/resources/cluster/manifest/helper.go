@@ -17,7 +17,7 @@ import (
 	"strings"
 	"time"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
+	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/helper"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apiextensionsv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -156,7 +156,7 @@ func ensureObjectDeleted(k8sclient k8sClient.Client, object *unstructured.Unstru
 		return true, err
 	}
 
-	if _, err := common.Retry(deleteFn, interval, retries); err != nil {
+	if _, err := helper.Retry(deleteFn, interval, retries); err != nil {
 		return err
 	}
 

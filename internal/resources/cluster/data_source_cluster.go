@@ -15,6 +15,7 @@ import (
 	"github.com/pkg/errors"
 
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
+	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/helper"
 	clustermodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/cluster"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
 )
@@ -26,7 +27,7 @@ func DataSourceTMCCluster() *schema.Resource {
 	}
 }
 
-func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	config := m.(authctx.TanzuContext)
 
 	// Warning or errors can be collected in a slice type
@@ -53,7 +54,7 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 
 	switch value, _ := d.Get(waitKey).(bool); value {
 	case true:
-		_, err = common.Retry(getClusterResourceRetryableFn, 10*time.Second, 18)
+		_, err = helper.Retry(getClusterResourceRetryableFn, 10*time.Second, 18)
 	case false:
 		_, err = getClusterResourceRetryableFn()
 	}

@@ -3,25 +3,11 @@ Copyright © 2021 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package common
+package helper
 
 import (
-	"fmt"
 	"time"
 )
-
-func GetFirstElementOf(parent string, children ...string) (key string) {
-	if len(children) == 0 {
-		return parent
-	}
-
-	key = parent
-	for _, value := range children {
-		key = fmt.Sprintf("%s.0.%s", key, value)
-	}
-
-	return key
-}
 
 // Retryable is a simple function which can be retried, returns (retry[yes/no], error).
 type Retryable func() (bool, error)

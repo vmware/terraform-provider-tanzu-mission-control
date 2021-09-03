@@ -14,6 +14,11 @@ import (
 
 	"github.com/pkg/errors"
 	k8sClient "sigs.k8s.io/controller-runtime/pkg/client"
+
+	// importing this to avoid `panic: No Auth Provider found for name "gcp"`
+	// ref: https://github.com/kubernetes/client-go/issues/345
+	_ "k8s.io/client-go/plugin/pkg/client/auth"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
 func Create(

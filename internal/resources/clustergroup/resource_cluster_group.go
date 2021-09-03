@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
+	clienterrors "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/errors"
 	clustergroupmodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/clustergroup"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
 )
@@ -48,7 +49,7 @@ func resourceClusterGroupDelete(_ context.Context, d *schema.ResourceData, m int
 	}
 
 	err := config.TMCConnection.ClusterGroupResourceService.ManageV1alpha1ClusterGroupResourceServiceDelete(fn)
-	if err != nil {
+	if err != nil && !clienterrors.IsNotFoundError(err) {
 		return diag.FromErr(errors.Wrapf(err, "Unable to delete tanzu TMC cluster group entry, name : %s", clusterGroupName))
 	}
 

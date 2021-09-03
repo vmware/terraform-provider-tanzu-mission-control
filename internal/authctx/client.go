@@ -12,6 +12,7 @@ import (
 
 const (
 	ServerEndpointEnvVar = "TMC_ENDPOINT"
+	CSPEndpointEnvVar    = "TMC_CSP_ENDPOINT"
 	CSPTokenEnvVar       = "TMC_CSP_TOKEN"
 )
 

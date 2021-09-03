@@ -10,6 +10,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/helper"
 	objectmetamodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/objectmeta"
 )
 
@@ -55,9 +56,9 @@ func HasMetaChanged(d *schema.ResourceData) bool {
 	updateRequired := false
 
 	switch {
-	case d.HasChange(GetFirstElementOf(MetaKey, LabelsKey)):
+	case d.HasChange(helper.GetFirstElementOf(MetaKey, LabelsKey)):
 		fallthrough
-	case d.HasChange(GetFirstElementOf(MetaKey, DescriptionKey)):
+	case d.HasChange(helper.GetFirstElementOf(MetaKey, DescriptionKey)):
 		updateRequired = true
 	}
 

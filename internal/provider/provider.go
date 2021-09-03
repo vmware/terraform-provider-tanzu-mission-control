@@ -28,6 +28,11 @@ func Provider() *schema.Provider {
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc(authctx.ServerEndpointEnvVar, nil),
 			},
+			cspEndpoint: {
+				Type:        schema.TypeString,
+				Required:    true,
+				DefaultFunc: schema.EnvDefaultFunc(authctx.CSPEndpointEnvVar, defaultCSPEndpoint),
+			},
 			token: {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -51,9 +56,10 @@ func Provider() *schema.Provider {
 }
 
 func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	config := authctx.TanzuContext{CSPEndPoint: "console-stg.cloud.vmware.com"}
+	config := authctx.TanzuContext{}
 
 	config.ServerEndpoint, _ = d.Get(endpoint).(string)
+	config.CSPEndPoint, _ = d.Get(cspEndpoint).(string)
 	config.Token, _ = d.Get(token).(string)
 
 	// Warning or errors can be collected in a slice type
@@ -63,7 +69,7 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "TANZU TMC credentials environment is not set",
-			Detail:   fmt.Sprintf("Please set %s & %s to authenticate to TANZU TMC provider", authctx.ServerEndpointEnvVar, authctx.CSPTokenEnvVar),
+			Detail:   fmt.Sprintf("Please set %s, %s & %s to authenticate to TANZU TMC provider", authctx.ServerEndpointEnvVar, authctx.CSPEndpointEnvVar, authctx.CSPTokenEnvVar),
 		})
 
 		return nil, diags
