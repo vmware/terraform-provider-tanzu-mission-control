@@ -108,7 +108,7 @@ func resourceWorkspaceInPlaceUpdate(ctx context.Context, d *schema.ResourceData,
 		return diag.FromErr(errors.Wrapf(err, "Unable to get tanzu TMC wrokspace entry, name : %s", workspaceName))
 	}
 
-	if common.HasMetaChanged(d) {
+	if updateRequired {
 		meta := common.ConstructMeta(d)
 
 		if value, ok := getResp.Workspace.Meta.Labels[common.CreatorLabelKey]; ok {

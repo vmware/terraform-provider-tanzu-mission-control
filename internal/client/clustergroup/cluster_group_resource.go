@@ -34,11 +34,13 @@ type Client struct {
 
 // ClientService is the interface for Client methods.
 type ClientService interface {
-	ManageV1alpha1ClusterGroupResourceServiceCreate(request *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupRequest) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupResponse, error)
+	ManageV1alpha1ClusterGroupResourceServiceCreate(request *clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupRequest) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupResponse, error)
 
 	ManageV1alpha1ClusterGroupResourceServiceDelete(fn *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName) error
 
 	ManageV1alpha1ClusterGroupResourceServiceGet(fn *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupGetClusterGroupResponse, error)
+
+	ManageV1alpha1ClusterGroupResourceServiceUpdate(request *clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupRequest) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupResponse, error)
 }
 
 /*
@@ -101,9 +103,22 @@ func (a *Client) ManageV1alpha1ClusterGroupResourceServiceDelete(fn *clustergrou
 /*
   ManageV1alpha1ClusterGroupResourceServiceCreate creates a cluster group
 */
-func (a *Client) ManageV1alpha1ClusterGroupResourceServiceCreate(request *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupRequest) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupResponse, error) {
+func (a *Client) ManageV1alpha1ClusterGroupResourceServiceCreate(request *clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupRequest) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupResponse, error) {
 	requestURL := fmt.Sprintf("%s%s", a.config.Host, "/v1alpha1/clustergroups")
 
+	return a.invokeAction(http.MethodPost, requestURL, request)
+}
+
+/*
+  ManageV1alpha1ClusterGroupResourceServiceUpdate updates a cluster group
+*/
+func (a *Client) ManageV1alpha1ClusterGroupResourceServiceUpdate(request *clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupRequest) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupResponse, error) {
+	requestURL := fmt.Sprintf("%s%s%s", a.config.Host, "/v1alpha1/clustergroups/", request.ClusterGroup.FullName.Name)
+
+	return a.invokeAction(http.MethodPut, requestURL, request)
+}
+
+func (a *Client) invokeAction(httpMethodType string, requestURL string, request *clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupRequest) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupResponse, error) {
 	body, err := request.MarshalBinary()
 	if err != nil {
 		return nil, errors.Wrap(err, "marshall request body")
@@ -112,23 +127,36 @@ func (a *Client) ManageV1alpha1ClusterGroupResourceServiceCreate(request *cluste
 	headers := a.config.Headers
 	headers.Set(helper.ContentLengthKey, fmt.Sprintf("%d", len(body)))
 
-	resp, err := a.transport.Post(requestURL, bytes.NewReader(body), headers)
-	if err != nil {
-		return nil, errors.Wrap(err, "create")
+	var resp *http.Response
+
+	// nolint:bodyclose // response is being closed outside the switch block
+	switch httpMethodType {
+	case http.MethodPost:
+		resp, err = a.transport.Post(requestURL, bytes.NewReader(body), headers)
+		if err != nil {
+			return nil, errors.Wrap(err, "create")
+		}
+	case http.MethodPut:
+		resp, err = a.transport.Put(requestURL, bytes.NewReader(body), headers)
+		if err != nil {
+			return nil, errors.Wrap(err, "update")
+		}
+	default:
+		return nil, errors.New("unsupported http method type invoked")
 	}
 
 	defer resp.Body.Close()
 
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.Wrap(err, "read create response")
+		return nil, errors.Wrapf(err, "read %v response", httpMethodType)
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("create tanzu TMC cluster group request failed with status : %v, response : %v", resp.Status, string(respBody))
+		return nil, errors.Errorf("%s tanzu TMC cluster group request failed with status : %v, response: %v", httpMethodType, resp.Status, string(respBody))
 	}
 
-	clusterGroupResponse := &clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupResponse{}
+	clusterGroupResponse := &clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupResponse{}
 
 	err = clusterGroupResponse.UnmarshalBinary(respBody)
 	if err != nil {

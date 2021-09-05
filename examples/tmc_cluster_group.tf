@@ -1,5 +1,5 @@
 // TMC Cluster Group
-// Operations supported : Create, read and delete
+// Operations supported : Create, Read, Update and Delete
 
 // Create TMC cluster group entry
 resource "tmc_cluster_group" "create_cluster_group" {

@@ -7,17 +7,17 @@ package clustergroupmodel
 
 import "github.com/go-openapi/swag"
 
-// VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupRequest Request to create a ClusterGroup.
+// VmwareTanzuManageV1alpha1ClusterGroupRequest Request to create a ClusterGroup.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.clustergroup.CreateClusterGroupRequest
-type VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupRequest struct {
+type VmwareTanzuManageV1alpha1ClusterGroupRequest struct {
 
 	// ClusterGroup to create.
 	ClusterGroup *VmwareTanzuManageV1alpha1ClustergroupClusterGroup `json:"clusterGroup,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupRequest) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ClusterGroupRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -26,8 +26,8 @@ func (m *VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupRequest) Marshal
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupRequest) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupRequest
+func (m *VmwareTanzuManageV1alpha1ClusterGroupRequest) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ClusterGroupRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -37,17 +37,17 @@ func (m *VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupRequest) Unmarsh
 	return nil
 }
 
-// VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupResponse Response from creating a ClusterGroup.
+// VmwareTanzuManageV1alpha1ClusterGroupResponse Response from creating a ClusterGroup.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.clustergroup.CreateClusterGroupResponse
-type VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupResponse struct {
+type VmwareTanzuManageV1alpha1ClusterGroupResponse struct {
 
 	// ClusterGroup created.
 	ClusterGroup *VmwareTanzuManageV1alpha1ClustergroupClusterGroup `json:"clusterGroup,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupResponse) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ClusterGroupResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -56,8 +56,8 @@ func (m *VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupResponse) Marsha
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupResponse) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupResponse
+func (m *VmwareTanzuManageV1alpha1ClusterGroupResponse) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ClusterGroupResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

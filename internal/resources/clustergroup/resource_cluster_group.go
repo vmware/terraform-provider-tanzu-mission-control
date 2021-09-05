@@ -24,7 +24,7 @@ func ResourceClusterGroup() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceClusterGroupCreate,
 		ReadContext:   dataSourceClusterGroupRead,
-		UpdateContext: schema.NoopContext,
+		UpdateContext: resourceClusterGroupInPlaceUpdate,
 		DeleteContext: resourceClusterGroupDelete,
 		Schema:        clusterGroupSchema,
 	}
@@ -37,6 +37,52 @@ var clusterGroupSchema = map[string]*schema.Schema{
 		Required: true,
 	},
 	common.MetaKey: common.Meta,
+}
+
+func resourceClusterGroupInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+	config := m.(authctx.TanzuContext)
+
+	updateRequired := common.HasMetaChanged(d)
+
+	if !updateRequired {
+		return diags
+	}
+
+	clusterGroupName, ok := d.Get(clusterGroupName).(string)
+	if !ok {
+		return diag.Errorf("unable to read cluster group name")
+	}
+
+	fn := &clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName{
+		Name: clusterGroupName,
+	}
+
+	getResp, err := config.TMCConnection.ClusterGroupResourceService.ManageV1alpha1ClusterGroupResourceServiceGet(fn)
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to get tanzu cluster group entry, name : %s", clusterGroupName))
+	}
+
+	if updateRequired {
+		meta := common.ConstructMeta(d)
+
+		if value, ok := getResp.ClusterGroup.Meta.Labels[common.CreatorLabelKey]; ok {
+			meta.Labels[common.CreatorLabelKey] = value
+		}
+
+		getResp.ClusterGroup.Meta.Labels = meta.Labels
+		getResp.ClusterGroup.Meta.Description = meta.Description
+	}
+
+	_, err = config.TMCConnection.ClusterGroupResourceService.ManageV1alpha1ClusterGroupResourceServiceUpdate(
+		&clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupRequest{
+			ClusterGroup: getResp.ClusterGroup,
+		},
+	)
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to update tanzu TMC cluster group entry, name : %s", clusterGroupName))
+	}
+
+	return dataSourceClusterGroupRead(ctx, d, m)
 }
 
 func resourceClusterGroupDelete(_ context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
@@ -66,7 +112,7 @@ func resourceClusterGroupCreate(_ context.Context, d *schema.ResourceData, m int
 		return diag.Errorf("unable to read cluster group name")
 	}
 
-	clusterGroupRequest := &clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupCreateClusterGroupRequest{
+	clusterGroupRequest := &clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupRequest{
 		ClusterGroup: &clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupClusterGroup{
 			FullName: &clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName{
 				Name: clusterGroupName,
