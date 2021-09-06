@@ -7,17 +7,17 @@ package namespacemodel
 
 import "github.com/go-openapi/swag"
 
-// VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceRequest Request to create a Namespace.
+// VmwareTanzuManageV1alpha1ClusterNamespaceRequest Request to create a Namespace.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.cluster.namespace.CreateNamespaceRequest
-type VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceRequest struct {
+type VmwareTanzuManageV1alpha1ClusterNamespaceRequest struct {
 
 	// Namespace to create.
 	Namespace *VmwareTanzuManageV1alpha1ClusterNamespaceNamespace `json:"namespace,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceRequest) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ClusterNamespaceRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -26,8 +26,8 @@ func (m *VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceRequest) Marsha
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceRequest) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceRequest
+func (m *VmwareTanzuManageV1alpha1ClusterNamespaceRequest) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ClusterNamespaceRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -37,17 +37,17 @@ func (m *VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceRequest) Unmars
 	return nil
 }
 
-// VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceResponse Response from creating a Namespace.
+// VmwareTanzuManageV1alpha1ClusterNamespaceResponse Response from creating a Namespace.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.cluster.namespace.CreateNamespaceResponse
-type VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceResponse struct {
+type VmwareTanzuManageV1alpha1ClusterNamespaceResponse struct {
 
 	// Namespace created.
 	Namespace *VmwareTanzuManageV1alpha1ClusterNamespaceNamespace `json:"namespace,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceResponse) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ClusterNamespaceResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -56,8 +56,8 @@ func (m *VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceResponse) Marsh
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceResponse) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceResponse
+func (m *VmwareTanzuManageV1alpha1ClusterNamespaceResponse) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ClusterNamespaceResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

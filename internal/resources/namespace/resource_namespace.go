@@ -14,6 +14,7 @@ import (
 
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
 	clienterrors "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/errors"
+	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/helper"
 	namespacemodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/namespace"
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
 )
@@ -22,7 +23,7 @@ func ResourceNamespace() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceNamespaceCreate,
 		ReadContext:   dataSourceNamespaceRead,
-		UpdateContext: schema.NoopContext,
+		UpdateContext: resourceNamespaceInPlaceUpdate,
 		DeleteContext: resourceNamespaceDelete,
 		Schema:        namespaceSchema,
 	}
@@ -140,7 +141,7 @@ func flattenSpec(spec *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceS
 func resourceNamespaceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	namespaceRequest := &namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceCreateNamespaceRequest{
+	namespaceRequest := &namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceRequest{
 		Namespace: &namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceNamespace{
 			FullName: constructFullname(d),
 			Meta:     common.ConstructMeta(d),
@@ -177,4 +178,55 @@ func resourceNamespaceDelete(_ context.Context, d *schema.ResourceData, m interf
 	d.SetId("")
 
 	return diags
+}
+
+func resourceNamespaceInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+	config := m.(authctx.TanzuContext)
+
+	updateRequired := false
+
+	switch {
+	case common.HasMetaChanged(d):
+		fallthrough
+	case d.HasChange(helper.GetFirstElementOf(specKey, workspaceNameKey)):
+		updateRequired = true
+	}
+	// todo: Updating the description field for namespace resource after `OLYMP-23394` is resolved.
+
+	if !updateRequired {
+		return diags
+	}
+
+	getResp, err := config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceGet(constructFullname(d))
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "unable to get tanzu TMC namespace entry, name : %s", d.Get(clusterNameKey)))
+	}
+
+	if common.HasMetaChanged(d) {
+		meta := common.ConstructMeta(d)
+
+		if value, ok := getResp.Namespace.Meta.Labels[common.CreatorLabelKey]; ok {
+			meta.Labels[common.CreatorLabelKey] = value
+		}
+
+		getResp.Namespace.Meta.Labels = meta.Labels
+		getResp.Namespace.Meta.Description = meta.Description
+	}
+
+	incomingNamespaceName := d.Get(helper.GetFirstElementOf(specKey, workspaceNameKey))
+
+	if incomingNamespaceName.(string) != "" {
+		getResp.Namespace.Spec.WorkspaceName = incomingNamespaceName.(string)
+	}
+
+	_, err = config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceUpdate(
+		&namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceRequest{
+			Namespace: getResp.Namespace,
+		},
+	)
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "unable to update tanzu TMC namespace entry, name : %s", d.Get(clusterNameKey)))
+	}
+
+	return dataSourceNamespaceRead(ctx, d, m)
 }
