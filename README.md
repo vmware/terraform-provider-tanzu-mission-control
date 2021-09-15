@@ -1,6 +1,10 @@
 # terraform-provider-tanzu
 
-A custom provider for terraform cli tool to manage TANZU resources
+A custom provider for terraform CLI tool to manage TANZU resources.
+
+// usage/playgo (link to examples)
+# Use Cases of TMC Terraform Provider
+[use-cases]: https://gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/examples
 
 # Manual Installation
 

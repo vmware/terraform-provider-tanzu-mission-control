@@ -34,4 +34,3 @@ resource "tmc_cluster" "attach_cluster_without_apply" {
 output "attach_output" {
   value = tmc_cluster.attach_cluster_without_apply
 }
-
