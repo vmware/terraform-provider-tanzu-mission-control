@@ -17,4 +17,5 @@ const (
 	attachClusterKey            = "attach_k8s_cluster"
 	attachClusterDescriptionKey = "description"
 	waitKey                     = "wait_until_ready"
+	ResourceName                = "tmc_cluster"
 )

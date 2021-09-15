@@ -28,7 +28,7 @@ func (cfg *TanzuContext) Setup() error {
 
 	md, err := getUserAuthCtx(cfg)
 	if err != nil {
-		return errors.Wrap(err, "while getting user ctx")
+		return errors.Wrap(err, "unable to get user context")
 	}
 
 	cfg.TMCConnection.WithHost(cfg.ServerEndpoint)

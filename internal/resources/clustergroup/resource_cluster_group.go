@@ -18,7 +18,10 @@ import (
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
 )
 
-const clusterGroupName = "name"
+const (
+	clusterGroupName = "name"
+	ResourceName     = "tmc_cluster_group"
+)
 
 func ResourceClusterGroup() *schema.Resource {
 	return &schema.Resource{

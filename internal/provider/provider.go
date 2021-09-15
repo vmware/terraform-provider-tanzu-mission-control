@@ -6,10 +6,6 @@ SPDX-License-Identifier: MPL-2.0
 package provider
 
 import (
-	"context"
-	"fmt"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
@@ -22,71 +18,19 @@ import (
 // Provider for Tanzu Mission Control resources.
 func Provider() *schema.Provider {
 	return &schema.Provider{
-		Schema: map[string]*schema.Schema{
-			endpoint: {
-				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc(authctx.ServerEndpointEnvVar, nil),
-			},
-			cspEndpoint: {
-				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc(authctx.CSPEndpointEnvVar, defaultCSPEndpoint),
-			},
-			token: {
-				Type:        schema.TypeString,
-				Required:    true,
-				Sensitive:   true,
-				DefaultFunc: schema.EnvDefaultFunc(authctx.CSPTokenEnvVar, nil),
-			},
-		},
+		Schema: authctx.ProviderAuthSchema(),
 		ResourcesMap: map[string]*schema.Resource{
-			tmcCluster:      cluster.ResourceTMCCluster(),
-			tmcWorkspace:    workspace.ResourceWorkspace(),
-			tmcNamespace:    namespace.ResourceNamespace(),
-			tmcClusterGroup: clustergroup.ResourceClusterGroup(),
+			cluster.ResourceName:      cluster.ResourceTMCCluster(),
+			workspace.ResourceName:    workspace.ResourceWorkspace(),
+			namespace.ResourceName:    namespace.ResourceNamespace(),
+			clustergroup.ResourceName: clustergroup.ResourceClusterGroup(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			tmcCluster:      cluster.DataSourceTMCCluster(),
-			tmcWorkspace:    workspace.DataSourceTMCWorkspace(),
-			tmcNamespace:    namespace.DataSourceTMCNamespace(),
-			tmcClusterGroup: clustergroup.DataSourceTMCClusterGroup(),
+			cluster.ResourceName:      cluster.DataSourceTMCCluster(),
+			workspace.ResourceName:    workspace.DataSourceTMCWorkspace(),
+			namespace.ResourceName:    namespace.DataSourceTMCNamespace(),
+			clustergroup.ResourceName: clustergroup.DataSourceTMCClusterGroup(),
 		},
-		ConfigureContextFunc: providerConfigure,
+		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
-}
-
-func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	config := authctx.TanzuContext{}
-
-	config.ServerEndpoint, _ = d.Get(endpoint).(string)
-	config.CSPEndPoint, _ = d.Get(cspEndpoint).(string)
-	config.Token, _ = d.Get(token).(string)
-
-	// Warning or errors can be collected in a slice type
-	var diags diag.Diagnostics
-
-	if (config.ServerEndpoint == "") || (config.Token == "") {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "TANZU TMC credentials environment is not set",
-			Detail:   fmt.Sprintf("Please set %s, %s & %s to authenticate to TANZU TMC provider", authctx.ServerEndpointEnvVar, authctx.CSPEndpointEnvVar, authctx.CSPTokenEnvVar),
-		})
-
-		return nil, diags
-	}
-
-	err := config.Setup()
-
-	if err != nil {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "Unable to create connection to TMC",
-			Detail:   fmt.Sprintf("Detailed error message: %s", err.Error()),
-		})
-
-		return nil, diags
-	}
-
-	return config, diags
 }

@@ -15,4 +15,5 @@ const (
 	workspaceNameKey          = "workspace_name"
 	workspaceNameDefaultValue = "default"
 	attachKey                 = "attach"
+	ResourceName              = "tmc_namespace"
 )

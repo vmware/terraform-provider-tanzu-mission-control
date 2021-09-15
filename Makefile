@@ -10,7 +10,7 @@ build:
 
 test: | gofmt vet lint
 	go mod tidy
-	go test ./internal/... ./cmd/...
+	go test ./internal/... ./cmd/... -cover
 
 # Run go fmt against code
 gofmt:
@@ -22,5 +22,5 @@ vet:
 	go vet ./...
 
 # Linter
-lint:
+lint: gofmt
 	golangci-lint run -c ./.golangci.yaml ./cmd/... ./internal/...

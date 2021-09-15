@@ -18,7 +18,10 @@ import (
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
 )
 
-const workspacesName = "name"
+const (
+	workspacesName = "name"
+	ResourceName   = "tmc_workspace"
+)
 
 func ResourceWorkspace() *schema.Resource {
 	return &schema.Resource{
