@@ -147,6 +147,7 @@ func flattenSpec(spec *clustermodel.VmwareTanzuManageV1alpha1ClusterSpec) (data 
 	flattenSpecData := make(map[string]interface{})
 
 	flattenSpecData[clusterGroupKey] = spec.ClusterGroupName
+	flattenSpecData[proxyKey] = spec.ProxyName
 
 	return []interface{}{flattenSpecData}
 }
