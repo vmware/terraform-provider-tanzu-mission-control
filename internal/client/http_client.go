@@ -24,22 +24,20 @@ func NewHTTPClient() *TanzuMissionControl {
 	headers.Set("Content-Type", "application/json")
 	headers.Set("Connection", "keep-alive")
 
-	cfg := transport.DefaultTransportConfig().AddHeaders(headers)
+	httpClient.AddHeaders(headers)
 
 	return &TanzuMissionControl{
-		Config:                      cfg,
-		Transport:                   httpClient,
-		ClusterResourceService:      clusterclient.New(httpClient, cfg),
-		WorkspaceResourceService:    workspaceclient.New(httpClient, cfg),
-		NamespaceResourceService:    namespaceclient.New(httpClient, cfg),
-		ClusterGroupResourceService: clustergroupclient.New(httpClient, cfg),
+		Client:                      httpClient,
+		ClusterResourceService:      clusterclient.New(httpClient),
+		WorkspaceResourceService:    workspaceclient.New(httpClient),
+		NamespaceResourceService:    namespaceclient.New(httpClient),
+		ClusterGroupResourceService: clustergroupclient.New(httpClient),
 	}
 }
 
 // TanzuMissionControl is a client for  tanzu mission control.
 type TanzuMissionControl struct {
-	*transport.Config
-	Transport                   *transport.Client
+	*transport.Client
 	ClusterResourceService      clusterclient.ClientService
 	WorkspaceResourceService    workspaceclient.ClientService
 	NamespaceResourceService    namespaceclient.ClientService

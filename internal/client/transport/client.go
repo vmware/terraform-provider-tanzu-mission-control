@@ -20,6 +20,7 @@ import (
 
 // Client is the http client implementation.
 type Client struct {
+	*Config
 	client     *http.Client
 	timeout    time.Duration
 	interval   time.Duration
@@ -35,6 +36,7 @@ const (
 // NewClient returns a new instance of http Client.
 func NewClient() *Client {
 	client := Client{
+		Config:     DefaultTransportConfig(),
 		timeout:    defaultHTTPTimeout,
 		retryCount: defaultRetryCount,
 		interval:   defaultIntervalDuration,
@@ -71,7 +73,7 @@ func NewClient() *Client {
 }
 
 // Get makes a HTTP GET request to provided URL.
-func (c *Client) Get(url string, headers http.Header) (*http.Response, error) {
+func (c *Client) get(url string, headers http.Header) (*http.Response, error) {
 	var response *http.Response
 
 	request, err := http.NewRequest(http.MethodGet, url, nil)
@@ -85,7 +87,7 @@ func (c *Client) Get(url string, headers http.Header) (*http.Response, error) {
 }
 
 // Post makes a HTTP POST request to provided URL and requestBody.
-func (c *Client) Post(url string, body io.Reader, headers http.Header) (*http.Response, error) {
+func (c *Client) post(url string, body io.Reader, headers http.Header) (*http.Response, error) {
 	var response *http.Response
 
 	request, err := http.NewRequest(http.MethodPost, url, body)
@@ -99,7 +101,7 @@ func (c *Client) Post(url string, body io.Reader, headers http.Header) (*http.Re
 }
 
 // Put makes a HTTP PUT request to provided URL and requestBody.
-func (c *Client) Put(url string, body io.Reader, headers http.Header) (*http.Response, error) {
+func (c *Client) put(url string, body io.Reader, headers http.Header) (*http.Response, error) {
 	var response *http.Response
 
 	request, err := http.NewRequest(http.MethodPut, url, body)
@@ -113,7 +115,8 @@ func (c *Client) Put(url string, body io.Reader, headers http.Header) (*http.Res
 }
 
 // Patch makes a HTTP PATCH request to provided URL and requestBody.
-func (c *Client) Patch(url string, body io.Reader, headers http.Header) (*http.Response, error) {
+// nolint: unused
+func (c *Client) patch(url string, body io.Reader, headers http.Header) (*http.Response, error) {
 	var response *http.Response
 
 	request, err := http.NewRequest(http.MethodPatch, url, body)
@@ -127,7 +130,7 @@ func (c *Client) Patch(url string, body io.Reader, headers http.Header) (*http.R
 }
 
 // Delete makes a HTTP DELETE request with provided URL.
-func (c *Client) Delete(url string, headers http.Header) (*http.Response, error) {
+func (c *Client) delete(url string, headers http.Header) (*http.Response, error) {
 	var response *http.Response
 
 	request, err := http.NewRequest(http.MethodDelete, url, nil)

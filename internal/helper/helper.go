@@ -9,10 +9,6 @@ import (
 	"fmt"
 )
 
-const (
-	ContentLengthKey = "Content-Length"
-)
-
 func GetFirstElementOf(parent string, children ...string) (key string) {
 	if len(children) == 0 {
 		return parent

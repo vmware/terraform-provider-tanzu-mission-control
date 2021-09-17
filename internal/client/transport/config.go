@@ -16,6 +16,8 @@ const (
 	DefaultHost string = "https://<your_org>.tmc.cloud.vmware.com"
 	// DefaultBasePath is the default BasePath.
 	DefaultBasePath string = "/"
+
+	contentLengthKey = "Content-Length"
 )
 
 // DefaultTransportConfig creates a Config with default values.
