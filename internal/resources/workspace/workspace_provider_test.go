@@ -3,7 +3,7 @@ Copyright © 2021 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package clustergroup
+package workspace
 
 import (
 	"testing"
@@ -18,10 +18,10 @@ func initTestProvider(t *testing.T) *schema.Provider {
 	testAccProvider := &schema.Provider{
 		Schema: authctx.ProviderAuthSchema(),
 		ResourcesMap: map[string]*schema.Resource{
-			ResourceName: ResourceClusterGroup(),
+			ResourceName: ResourceWorkspace(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			ResourceName: DataSourceClusterGroup(),
+			ResourceName: DataSourceWorkspace(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}

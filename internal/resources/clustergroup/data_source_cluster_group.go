@@ -17,7 +17,7 @@ import (
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
 )
 
-func DataSourceTMCClusterGroup() *schema.Resource {
+func DataSourceClusterGroup() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceClusterGroupRead,
 		Schema:      clusterGroupSchema,

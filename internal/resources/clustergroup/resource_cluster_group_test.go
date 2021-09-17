@@ -18,6 +18,7 @@ import (
 
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
 	clustergroupmodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/clustergroup"
+	testhelper "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/testing"
 )
 
 func TestAcceptanceForClusterGroupResource(t *testing.T) {
@@ -27,8 +28,8 @@ func TestAcceptanceForClusterGroupResource(t *testing.T) {
 	clusterGroupName := acctest.RandomWithPrefix("tf-cg-test")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          testPreCheck(t),
-		ProviderFactories: getTestProviderFactories(provider),
+		PreCheck:          testhelper.TestPreCheck(t),
+		ProviderFactories: testhelper.GetTestProviderFactories(provider),
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
@@ -41,13 +42,7 @@ func TestAcceptanceForClusterGroupResource(t *testing.T) {
 			{
 				Config: getTestResourceClusterGroupConfigValue(clusterGroupName),
 				Check: resource.ComposeTestCheckFunc(
-					verifyClusterGroupResourceCreation(provider, resourceName, clusterGroupName),
-					resource.TestCheckResourceAttr(resourceName, "name", clusterGroupName),
-					resource.TestCheckResourceAttr(resourceName, "meta.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "meta.0.labels.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "meta.0.description", "cluster group with description"),
-					resource.TestCheckResourceAttr(resourceName, "meta.0.labels.key1", "value1"),
-					resource.TestCheckResourceAttr(resourceName, "meta.0.labels.key2", "value2"),
+					checkResourceAttributes(provider, resourceName, clusterGroupName),
 				),
 			},
 		},
@@ -68,15 +63,20 @@ func getTestResourceClusterGroupConfigValue(clusterGroupName string) string {
 	return fmt.Sprintf(`
 resource "tmc_cluster_group" "test_cluster_group" {
   name = "%s"
-  meta {
-    description = "cluster group with description"
-    labels = {
-      "key1" : "value1"
-	  "key2" : "value2"
-     }
-   }
+  %s
 }
-`, clusterGroupName)
+`, clusterGroupName, testhelper.MetaTemplate)
+}
+
+func checkResourceAttributes(provider *schema.Provider, resourceName, clusterGroupName string) resource.TestCheckFunc {
+	var check = []resource.TestCheckFunc{
+		verifyClusterGroupResourceCreation(provider, resourceName, clusterGroupName),
+		resource.TestCheckResourceAttr(resourceName, "name", clusterGroupName),
+	}
+
+	check = append(check, testhelper.MetaResourceAttributeCheck(resourceName)...)
+
+	return resource.ComposeTestCheckFunc(check...)
 }
 
 func verifyClusterGroupResourceCreation(
