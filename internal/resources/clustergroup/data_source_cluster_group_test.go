@@ -16,12 +16,18 @@ import (
 	testhelper "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/testing"
 )
 
+const (
+	clusterGroupResource      = "tmc_cluster_group"
+	clusterGroupResourceVar   = "test_cluster_group"
+	clusterGroupDataSourceVar = "test_data_cluster_group"
+)
+
 func TestAcceptanceForClusterGroupDataSource(t *testing.T) {
 	var provider = initTestProvider(t)
 
 	clusterGroup := acctest.RandomWithPrefix("tf-cg-test")
-	dataSourceName := "data.tmc_cluster_group.test_data_cluster_group"
-	resourceName := "tmc_cluster_group.test_cluster_group"
+	dataSourceName := fmt.Sprintf("data.%s.%s", clusterGroupResource, clusterGroupDataSourceVar)
+	resourceName := fmt.Sprintf("%s.%s", clusterGroupResource, clusterGroupResourceVar)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
@@ -42,15 +48,15 @@ func TestAcceptanceForClusterGroupDataSource(t *testing.T) {
 
 func getTestDataSourceClusterGroupConfigValue(clusterGroupName, meta string) string {
 	return fmt.Sprintf(`
-resource "tmc_cluster_group" "test_cluster_group" {
+resource "%s" "%s" {
   name = "%s"
   %s
 }
 
-data "tmc_cluster_group" "test_data_cluster_group" {
+data "%s" "%s" {
   name = tmc_cluster_group.test_cluster_group.name
 }
-`, clusterGroupName, meta)
+`, clusterGroupResource, clusterGroupResourceVar, clusterGroupName, meta, clusterGroupResource, clusterGroupDataSourceVar)
 }
 
 func checkDataSourceAttributes(dataSourceName, resourceName string) resource.TestCheckFunc {

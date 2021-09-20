@@ -24,7 +24,7 @@ import (
 func TestAcceptanceForWorkspaceResource(t *testing.T) {
 	var provider = initTestProvider(t)
 
-	resourceName := "tmc_workspace.test_workspace"
+	resourceName := fmt.Sprintf("%s.%s", workspaceResource, workspaceResourceVar)
 	workspaceName := acctest.RandomWithPrefix("tf-ws-test")
 
 	resource.Test(t, resource.TestCase{
@@ -64,19 +64,19 @@ func checkResourceAttributes(provider *schema.Provider, resourceName, workspaceN
 
 func getTestWorkspaceResourceBasicConfigValue(workspaceName string) string {
 	return fmt.Sprintf(`
-resource "tmc_workspace" "test_workspace" {
+resource "%s" "%s" {
   name = "%s"
 }
-`, workspaceName)
+`, workspaceResource, workspaceResourceVar, workspaceName)
 }
 
 func getTestWorkspaceResourceConfigValue(workspaceName string) string {
 	return fmt.Sprintf(`
-resource "tmc_workspace" "test_workspace" {
+resource "%s" "%s" {
   name = "%s"
   %s
 }
-`, workspaceName, testhelper.MetaTemplate)
+`, workspaceResource, workspaceResourceVar, workspaceName, testhelper.MetaTemplate)
 }
 
 func verifyWorkspaceResourceCreation(

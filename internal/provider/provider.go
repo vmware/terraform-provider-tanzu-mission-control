@@ -28,7 +28,7 @@ func Provider() *schema.Provider {
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:      cluster.DataSourceTMCCluster(),
 			workspace.ResourceName:    workspace.DataSourceWorkspace(),
-			namespace.ResourceName:    namespace.DataSourceTMCNamespace(),
+			namespace.ResourceName:    namespace.DataSourceNamespace(),
 			clustergroup.ResourceName: clustergroup.DataSourceClusterGroup(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,

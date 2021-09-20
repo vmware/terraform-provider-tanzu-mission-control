@@ -16,12 +16,18 @@ import (
 	testhelper "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/testing"
 )
 
+const (
+	workspaceResource      = "tmc_workspace"
+	workspaceResourceVar   = "test_workspace"
+	workspaceDataSourceVar = "test_data_workspace"
+)
+
 func TestAcceptanceForWorkspaceDataSource(t *testing.T) {
 	var provider = initTestProvider(t)
 
 	workspace := acctest.RandomWithPrefix("tf-ws-test")
-	dataSourceName := "data.tmc_workspace.test_data_workspace"
-	resourceName := "tmc_workspace.test_workspace"
+	dataSourceName := fmt.Sprintf("data.%s.%s", workspaceResource, workspaceDataSourceVar)
+	resourceName := fmt.Sprintf("%s.%s", workspaceResource, workspaceResourceVar)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
@@ -41,15 +47,15 @@ func TestAcceptanceForWorkspaceDataSource(t *testing.T) {
 
 func getTestWorkspaceDataSourceConfigValue(workspaceName string) string {
 	return fmt.Sprintf(`
-resource "tmc_workspace" "test_workspace" {
+resource "%s" "%s" {
   name = "%s"
   %s
 }
 
-data "tmc_workspace" "test_data_workspace" {
+data "%s" "%s" {
   name = tmc_workspace.test_workspace.name
 }
-`, workspaceName, testhelper.MetaTemplate)
+`, workspaceResource, workspaceResourceVar, workspaceName, testhelper.MetaTemplate, workspaceResource, workspaceDataSourceVar)
 }
 
 func checkDataSourceAttributes(dataSourceName, resourceName string) resource.TestCheckFunc {

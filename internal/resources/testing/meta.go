@@ -30,7 +30,6 @@ func MetaDataSourceAttributeCheck(dataSourceName, resourceName string) []resourc
 func MetaResourceAttributeCheck(resourceName string) []resource.TestCheckFunc {
 	return []resource.TestCheckFunc{
 		resource.TestCheckResourceAttr(resourceName, "meta.#", "1"),
-		resource.TestCheckResourceAttr(resourceName, "meta.0.labels.%", "2"),
 		resource.TestCheckResourceAttr(resourceName, "meta.0.description", description),
 		resource.TestCheckResourceAttr(resourceName, "meta.0.labels.key1", value1),
 		resource.TestCheckResourceAttr(resourceName, "meta.0.labels.key2", value2),

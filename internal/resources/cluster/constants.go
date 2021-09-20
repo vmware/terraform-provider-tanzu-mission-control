@@ -9,7 +9,6 @@ const (
 	managementClusterNameKey    = "management_cluster_name"
 	provisionerNameKey          = "provisioner_name"
 	clusterGroupKey             = "cluster_group"
-	proxyKey                    = "proxy"
 	clusterNameKey              = "name"
 	specKey                     = "spec"
 	statusKey                   = "status"

@@ -24,7 +24,7 @@ import (
 func TestAcceptanceForClusterGroupResource(t *testing.T) {
 	var provider = initTestProvider(t)
 
-	resourceName := "tmc_cluster_group.test_cluster_group"
+	resourceName := fmt.Sprintf("%s.%s", clusterGroupResource, clusterGroupResourceVar)
 	clusterGroupName := acctest.RandomWithPrefix("tf-cg-test")
 
 	resource.Test(t, resource.TestCase{
@@ -53,19 +53,19 @@ func TestAcceptanceForClusterGroupResource(t *testing.T) {
 
 func getTestResourceClusterGroupBasicConfigValue(clusterGroupName string) string {
 	return fmt.Sprintf(`
-resource "tmc_cluster_group" "test_cluster_group" {
+resource "%s" "%s" {
   name = "%s"
 }
-`, clusterGroupName)
+`, clusterGroupResource, clusterGroupResourceVar, clusterGroupName)
 }
 
 func getTestResourceClusterGroupConfigValue(clusterGroupName string) string {
 	return fmt.Sprintf(`
-resource "tmc_cluster_group" "test_cluster_group" {
+resource "%s" "%s" {
   name = "%s"
   %s
 }
-`, clusterGroupName, testhelper.MetaTemplate)
+`, clusterGroupResource, clusterGroupResourceVar, clusterGroupName, testhelper.MetaTemplate)
 }
 
 func checkResourceAttributes(provider *schema.Provider, resourceName, clusterGroupName string) resource.TestCheckFunc {

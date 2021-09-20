@@ -17,7 +17,7 @@ import (
 	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
 )
 
-func DataSourceTMCNamespace() *schema.Resource {
+func DataSourceNamespace() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceNamespaceRead,
 		Schema:      namespaceSchema,
