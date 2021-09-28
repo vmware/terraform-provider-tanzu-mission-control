@@ -1,29 +1,39 @@
+# terraform-provider-tanzu
 
-# terraform-provider-tanzu-mission-control
+A custom provider for terraform CLI tool to manage TANZU resources.
 
-## Overview
+// usage/playgo (link to examples)
+# Use Cases of TMC Terraform Provider
+[use-cases]: https://gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/examples
 
-## Try it out
+# Manual Installation
 
-### Prerequisites
+## Cloning the Project
 
-* Prereq 1
-* Prereq 2
-* Prereq 3
+First, you will want to clone the repository to
+`gitlab.eng.vmware.com/olympus/terraform-provider-tanzu`:
 
-### Build & Run
+```sh
+mkdir -p $GOPATH/src/gitlab.eng.vmware.com/olympus/terraform-provider-tanzu
+cd $GOPATH/src/gitlab.eng.vmware.com/olympus/terraform-provider-tanzu
+git clone git@gitlab.eng.vmware.com:olympus/terraform-provider-tanzu.git
+```
 
-1. Step 1
-2. Step 2
-3. Step 3
+## Building and Installing the Provider
 
-## Documentation
+Recommended golang version is go1.14 onwards.
+After the clone has been completed, you can enter the provider directory and build the provider.
 
-## Contributing
+```sh
+cd gitlab.eng.vmware.com/olympus/terraform-provider-tanzu
+make
+```
 
-The terraform-provider-tanzu-mission-control project team welcomes contributions from the community. Before you start working with terraform-provider-tanzu-mission-control, please
-read our [Developer Certificate of Origin](https://cla.vmware.com/dco). All contributions to this repository must be
-signed as described on that page. Your signature certifies that you wrote the patch or have the right to pass it on
-as an open-source patch. For more detailed information, refer to [CONTRIBUTING.md](CONTRIBUTING.md).
+After the build is complete, copy the provider executable `terraform-provider-tanzu` into location specified in your provider installation configuration. Make sure to delete provider lock files that might exist in your working directory due to prior provider usage. Run `terraform init`.
+For developing, consider using [dev overrides configuration][dev-overrides]. Please note that `terraform init` should not be used with dev overrides.
 
-## License
+[dev-overrides]: https://www.terraform.io/docs/cli/config/config-file.html#development-overrides-for-provider-developers
+
+## Utilising TMC provider
+
+Please refer to `examples` folder to perform CRUD operations with TMC provider for various resources
