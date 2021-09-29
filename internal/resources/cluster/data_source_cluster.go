@@ -14,10 +14,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/helper"
-	clustermodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/cluster"
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
+	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 func DataSourceTMCCluster() *schema.Resource {

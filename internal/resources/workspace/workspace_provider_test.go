@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/stretchr/testify/require"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
 )
 
 func initTestProvider(t *testing.T) *schema.Provider {

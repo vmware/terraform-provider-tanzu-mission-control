@@ -17,7 +17,7 @@ import (
 	"strings"
 	"time"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/helper"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apiextensionsv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"

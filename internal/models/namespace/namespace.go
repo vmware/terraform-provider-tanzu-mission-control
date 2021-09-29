@@ -8,7 +8,7 @@ package namespacemodel
 import (
 	"github.com/go-openapi/swag"
 
-	objectmetamodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/objectmeta"
+	objectmetamodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 )
 
 // VmwareTanzuManageV1alpha1ClusterNamespaceNamespace A managed Kubernetes namespace.

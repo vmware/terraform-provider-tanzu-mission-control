@@ -12,8 +12,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/stretchr/testify/require"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/cluster"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 )
 
 const providerName = "tmc"

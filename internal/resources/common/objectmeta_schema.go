@@ -11,8 +11,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/helper"
-	objectmetamodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/objectmeta"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
+	objectmetamodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 )
 
 const (

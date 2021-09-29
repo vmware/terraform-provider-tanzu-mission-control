@@ -65,7 +65,6 @@ func getBearerToken(cspEndpoint, cspToken string) (string, error) {
 		}
 
 		// retry for issue of go resolver returning AAAA records
-		// https://gitlab.eng.vmware.com/cnabu-sre/triage/issues/286
 		if urlErr, ok := err.(*url.Error); ok {
 			if netErr, ok := urlErr.Err.(*net.OpError); ok {
 				if osErr, ok := netErr.Err.(*os.SyscallError); ok {

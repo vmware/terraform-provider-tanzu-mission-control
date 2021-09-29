@@ -14,7 +14,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	clienterrors "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/errors"
+	clienterrors "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/errors"
 )
 
 type Request interface {

@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"net/url"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/transport"
-	namespacemodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/namespace"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
+	namespacemodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/namespace"
 )
 
 // New creates a new namespace resource service API client.

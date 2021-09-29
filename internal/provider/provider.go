@@ -8,11 +8,11 @@ package provider
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/cluster"
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/clustergroup"
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/namespace"
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/workspace"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/namespace"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/workspace"
 )
 
 // Provider for Tanzu Mission Control resources.
