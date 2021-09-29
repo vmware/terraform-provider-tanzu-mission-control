@@ -7,7 +7,7 @@ package authctx
 
 import (
 	"github.com/pkg/errors"
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client"
 )
 
 const (

@@ -8,7 +8,7 @@ package main
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/provider"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/provider"
 )
 
 func main() {

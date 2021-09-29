@@ -5,3 +5,14 @@ _output/*
 .idea/*
 vendor/*
 cover.out
+.idea/
+terraform.*
+crash.log
+.terraform/
+terraform-provider-tmc
+terraform.tfplan
+terraform.tfstate
+*.backup
+*.bak
+*~
+.terraform.tfstate.lock.info

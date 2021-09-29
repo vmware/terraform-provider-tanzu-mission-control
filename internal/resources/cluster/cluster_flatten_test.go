@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	clustermodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/cluster"
+	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
 )
 
 func TestFlattenSpec(t *testing.T) {

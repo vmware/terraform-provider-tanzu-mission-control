@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	namespacemodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/namespace"
+	namespacemodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/namespace"
 )
 
 func TestFlattenSpec(t *testing.T) {

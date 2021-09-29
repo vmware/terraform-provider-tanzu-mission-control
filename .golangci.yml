@@ -69,7 +69,7 @@ linters-settings:
     lines: 150
     statements: 100
   gci:
-    local-prefixes: gitlab.eng.vmware.com/olympus
+    local-prefixes: github.com/vmware-tanzu/terraform-provider-tanzu-mission-control
 
 issues:
   exclude-rules:

@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"net/url"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/transport"
-	clustermodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/cluster"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
+	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
 )
 
 // New creates a new cluster resource service API client.

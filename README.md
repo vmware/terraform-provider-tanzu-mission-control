@@ -4,19 +4,19 @@ A custom provider for terraform CLI tool to manage TANZU resources.
 
 // usage/playgo (link to examples)
 # Use Cases of TMC Terraform Provider
-[use-cases]: https://gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/examples
+[use-cases]: https://github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/examples
 
 # Manual Installation
 
 ## Cloning the Project
 
 First, you will want to clone the repository to
-`gitlab.eng.vmware.com/olympus/terraform-provider-tanzu`:
+`github.com/vmware-tanzu/terraform-provider-tanzu-mission-control`:
 
 ```sh
-mkdir -p $GOPATH/src/gitlab.eng.vmware.com/olympus/terraform-provider-tanzu
-cd $GOPATH/src/gitlab.eng.vmware.com/olympus/terraform-provider-tanzu
-git clone git@gitlab.eng.vmware.com:olympus/terraform-provider-tanzu.git
+mkdir -p $GOPATH/src/github.com/vmware-tanzu/terraform-provider-tanzu-mission-control
+cd $GOPATH/src/github.com/vmware-tanzu/terraform-provider-tanzu-mission-control
+git clone git@github.com:vmware-tanzu/terraform-provider-tanzu-mission-control.git
 ```
 
 ## Building and Installing the Provider
@@ -25,7 +25,7 @@ Recommended golang version is go1.14 onwards.
 After the clone has been completed, you can enter the provider directory and build the provider.
 
 ```sh
-cd gitlab.eng.vmware.com/olympus/terraform-provider-tanzu
+cd github.com/vmware-tanzu/terraform-provider-tanzu-mission-control
 make
 ```
 

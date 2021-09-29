@@ -8,8 +8,8 @@ package workspaceclient
 import (
 	"fmt"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/transport"
-	workspacemodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/workspace"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
+	workspacemodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/workspace"
 )
 
 // New creates a new workspace resource service API client.

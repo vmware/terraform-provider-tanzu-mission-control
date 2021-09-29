@@ -1,4 +1,4 @@
-module gitlab.eng.vmware.com/olympus/terraform-provider-tanzu
+module github.com/vmware-tanzu/terraform-provider-tanzu-mission-control
 
 go 1.16
 

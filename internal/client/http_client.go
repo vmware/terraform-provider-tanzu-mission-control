@@ -8,12 +8,12 @@ package client
 import (
 	"net/http"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/transport"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
 
-	clusterclient "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/cluster"
-	clustergroupclient "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/clustergroup"
-	namespaceclient "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/namespace"
-	workspaceclient "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/workspace"
+	clusterclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/cluster"
+	clustergroupclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/clustergroup"
+	namespaceclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/namespace"
+	workspaceclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/workspace"
 )
 
 // NewHTTPClient creates a new  tanzu mission control HTTP client.

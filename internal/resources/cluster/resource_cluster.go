@@ -15,12 +15,12 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	k8sClient "sigs.k8s.io/controller-runtime/pkg/client"
 
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/authctx"
-	clienterrors "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/client/errors"
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/helper"
-	clustermodel "gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/models/cluster"
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/cluster/manifest"
-	"gitlab.eng.vmware.com/olympus/terraform-provider-tanzu/internal/resources/common"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
+	clienterrors "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/errors"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
+	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/manifest"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 func ResourceTMCCluster() *schema.Resource {
