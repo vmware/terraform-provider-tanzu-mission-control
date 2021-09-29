@@ -46,7 +46,7 @@ func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m inter
 
 		d.SetId(resp.Cluster.Meta.UID)
 
-		if *(resp.Cluster.Status.Phase) != clustermodel.VmwareTanzuManageV1alpha1ClusterPhaseREADY {
+		if clustermodel.NewVmwareTanzuManageV1alpha1ClusterPhase(clustermodel.VmwareTanzuManageV1alpha1ClusterPhaseREADY) != resp.Cluster.Status.Phase {
 			return true, nil
 		}
 
@@ -103,7 +103,35 @@ func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m inter
 	return diags
 }
 
+type clusterType int
+
+const (
+	attach clusterType = iota
+	tkgsVsphere
+	tkgmVsphere
+)
+
+func getClusterType(cluster *clustermodel.VmwareTanzuManageV1alpha1ClusterCluster) clusterType {
+	var typeCheck clusterType
+
+	switch {
+	case cluster.Spec.TkgVsphere != nil:
+		typeCheck = tkgmVsphere
+	case cluster.Spec.TkgServiceVsphere != nil:
+		typeCheck = tkgsVsphere
+	default:
+		typeCheck = attach
+	}
+
+	return typeCheck
+}
+
 func populateNodePools(config authctx.TanzuContext, resp *clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse) (diags diag.Diagnostics) {
+	checkClusterType := getClusterType(resp.Cluster)
+	if checkClusterType == attach {
+		return diags
+	}
+
 	nodePoolSpecListResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterNodePoolSpecResourceList(resp.Cluster.FullName)
 
 	if err != nil || nodePoolSpecListResp == nil {
@@ -115,8 +143,8 @@ func populateNodePools(config authctx.TanzuContext, resp *clustermodel.VmwareTan
 		return diags
 	}
 
-	switch {
-	case resp.Cluster.Spec.TkgVsphere != nil:
+	switch checkClusterType {
+	case tkgmVsphere:
 		resp.Cluster.Spec.TkgVsphere.Topology.NodePools = make([]*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition, 0)
 
 		for _, np := range nodePoolSpecListResp.Nodepools {
@@ -139,7 +167,7 @@ func populateNodePools(config authctx.TanzuContext, resp *clustermodel.VmwareTan
 			resp.Cluster.Spec.TkgVsphere.Topology.NodePools = append(resp.Cluster.Spec.TkgVsphere.Topology.NodePools, clusterNodePool)
 		}
 
-	case resp.Cluster.Spec.TkgServiceVsphere != nil:
+	case tkgsVsphere:
 		resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools = make([]*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition, 0)
 
 		for _, np := range nodePoolSpecListResp.Nodepools {
