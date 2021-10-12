@@ -4,13 +4,13 @@
 default: build
 
 build:
-	go build -o bin/terraform-provider-tmc ./cmd/main.go
+	go build -o bin/terraform-provider-tmc
 	mkdir -p ~/.terraform.d/plugins/vmware/tanzu/tmc/0.1.1/darwin_amd64/
 	cp bin/terraform-provider-tmc ~/.terraform.d/plugins/vmware/tanzu/tmc/0.1.1/darwin_amd64/
 
 test: | gofmt vet lint
 	go mod tidy
-	go test ./internal/... ./cmd/... -cover
+	go test ./internal/... -cover
 
 # Run go fmt against code
 gofmt:
@@ -23,4 +23,4 @@ vet:
 
 # Linter
 lint: gofmt
-	golangci-lint run -c ./.golangci.yml ./cmd/... ./internal/...
+	golangci-lint run -c ./.golangci.yml ./internal/...
