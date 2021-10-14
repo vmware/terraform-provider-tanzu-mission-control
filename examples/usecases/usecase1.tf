@@ -71,6 +71,61 @@ resource "tmc_namespace" "create_namespace" {
   }
 }
 
+# Create TMC TKG Service Vsphere workload cluster entry
+resource "tmc_cluster" "create_tkgs_workload" {
+  management_cluster_name = "test-tkgs"
+  provisioner_name        = "test-gc-e2e-demo-ns"
+  name                    = "cluster"
+
+  meta {
+    labels      = { "key" : "test"}
+  }
+
+  spec {
+    cluster_group = "default"
+    tkg_service_vsphere {
+      settings  {
+        network  {
+          pods  {
+            cidr_blocks = [
+              "172.20.0.0/16",
+            ]
+          }
+          services  {
+            cidr_blocks = [
+              "10.96.0.0/16",
+            ]
+          }
+        }
+      }
+
+      distribution  {
+        version = "v1.20.8+vmware.1-tkg.2"
+      }
+
+      topology  {
+        control_plane  {
+          class = "best-effort-xsmall"
+          storage_class = "wcpglobal-storage-profile"
+          high_availability = false
+        }
+        node_pools  {
+          spec  {
+            worker_node_count = "1"
+            tkg_service_vsphere  {
+              class = "best-effort-xsmall"
+              storage_class = "wcpglobal-storage-profile"
+            }
+          }
+          info {
+            name = "default-nodepool"
+          }
+        }
+      }
+    }
+  }
+}
+
 output "cluster_group" {
   value = tmc_cluster_group.create_cluster_group
 }
@@ -85,4 +140,8 @@ output "namespace" {
 
 output "attach_output" {
   value = tmc_cluster.attach_cluster_with_kubeconfig
+}
+
+output "display_cluster" {
+  value = tmc_cluster.create_tkgs_workload
 }
