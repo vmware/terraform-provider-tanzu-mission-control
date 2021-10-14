@@ -17,7 +17,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apiextensionsv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -29,6 +28,8 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes/scheme"
 	k8sClient "sigs.k8s.io/controller-runtime/pkg/client"
+
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
 )
 
 type manifest struct {
