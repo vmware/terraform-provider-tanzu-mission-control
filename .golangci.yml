@@ -68,7 +68,11 @@ linters-settings:
   funlen:
     lines: 150
     statements: 100
-  gci:
+  nestif:
+    min-complexity: 14
+  gocognit:
+    min-complexity: 45
+  goimports:
     local-prefixes: github.com/vmware-tanzu/terraform-provider-tanzu-mission-control
 
 issues:

@@ -20,6 +20,7 @@ import (
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
 	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/manifest"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgservicevsphere"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
@@ -110,6 +111,7 @@ var clusterSpec = &schema.Schema{
 				Default:  clusterGroupDefaultValue,
 				Optional: true,
 			},
+			tkgServiceVsphereKey: tkgservicevsphere.TkgServiceVsphere,
 		},
 	},
 }
@@ -124,7 +126,7 @@ func constructSpec(d *schema.ResourceData) (spec *clustermodel.VmwareTanzuManage
 		return spec
 	}
 
-	data := value.([]interface{})
+	data, _ := value.([]interface{})
 
 	if len(data) == 0 || data[0] == nil {
 		return spec
@@ -134,6 +136,12 @@ func constructSpec(d *schema.ResourceData) (spec *clustermodel.VmwareTanzuManage
 
 	if v, ok := specData[clusterGroupKey]; ok {
 		spec.ClusterGroupName = v.(string)
+	}
+
+	if v, ok := specData[tkgServiceVsphereKey]; ok {
+		if v1, ok := v.([]interface{}); ok {
+			spec.TkgServiceVsphere = tkgservicevsphere.ConstructTKGSSpec(v1)
+		}
 	}
 
 	return spec
@@ -147,6 +155,10 @@ func flattenSpec(spec *clustermodel.VmwareTanzuManageV1alpha1ClusterSpec) (data 
 	flattenSpecData := make(map[string]interface{})
 
 	flattenSpecData[clusterGroupKey] = spec.ClusterGroupName
+
+	if spec.TkgServiceVsphere != nil {
+		flattenSpecData[tkgServiceVsphereKey] = tkgservicevsphere.FlattenTKGSSpec(spec.TkgServiceVsphere)
+	}
 
 	return []interface{}{flattenSpecData}
 }
@@ -290,6 +302,8 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 	if incomingCGName.(string) != "" {
 		getResp.Cluster.Spec.ClusterGroupName = incomingCGName.(string)
 	}
+
+	//TODO: check if node pool is updated, update the getResp by calling nodePool update endpoint
 
 	_, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceUpdate(
 		&clustermodel.VmwareTanzuManageV1alpha1ClusterRequest{

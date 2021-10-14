@@ -18,4 +18,5 @@ const (
 	attachClusterDescriptionKey = "description"
 	waitKey                     = "wait_until_ready"
 	ResourceName                = "tmc_cluster"
+	tkgServiceVsphereKey        = "tkg_service_vsphere"
 )

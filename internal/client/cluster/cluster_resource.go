@@ -11,6 +11,7 @@ import (
 
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
 	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
+	tkgservicevspheremodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgservicevsphere"
 )
 
 // New creates a new cluster resource service API client.
@@ -34,12 +35,42 @@ type ClientService interface {
 	ManageV1alpha1ClusterResourceServiceGet(fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName) (*clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse, error)
 
 	ManageV1alpha1ClusterResourceServiceUpdate(request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error)
+
+	ManageV1alpha1TkgServiceVsphereClusterNodePoolSpecResourceServiceList(fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName) (*tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolListNodepoolsResponse, error)
+}
+
+/*
+ManageV1alpha1ClusterNodePoolSpecResourceServiceList lists node pool.
+*/
+func (c *Client) ManageV1alpha1TkgServiceVsphereClusterNodePoolSpecResourceServiceList(
+	fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName,
+) (*tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolListNodepoolsResponse, error) {
+	queryParams := url.Values{}
+
+	if fn.ManagementClusterName != "" {
+		queryParams["searchScope.managementClusterName"] = []string{fn.ManagementClusterName}
+	}
+
+	if fn.ProvisionerName != "" {
+		queryParams["searchScope.provisionerName"] = []string{fn.ProvisionerName}
+	}
+
+	// It is unlikely for a cluster to have more number of node pools. Hence, pagination is not unhandled
+	queryParams["includeTotalCount"] = []string{"true"}
+
+	requestURL := fmt.Sprintf("%s/%s/%s?%s", "v1alpha1/clusters", fn.Name, "nodepools", queryParams.Encode())
+	clusterNodePoolSpecResponse := &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolListNodepoolsResponse{}
+	err := c.Get(requestURL, clusterNodePoolSpecResponse)
+
+	return clusterNodePoolSpecResponse, err
 }
 
 /*
 ManageV1alpha1ClusterResourceServiceCreate creates a cluster.
 */
-func (c *Client) ManageV1alpha1ClusterResourceServiceCreate(request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error) {
+func (c *Client) ManageV1alpha1ClusterResourceServiceCreate(
+	request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest,
+) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error) {
 	response := &clustermodel.VmwareTanzuManageV1alpha1ClusterResponse{}
 	err := c.Create("v1alpha1/clusters", request, response)
 
@@ -49,7 +80,9 @@ func (c *Client) ManageV1alpha1ClusterResourceServiceCreate(request *clustermode
 /*
 ManageV1alpha1ClusterResourceServiceUpdate updates a cluster.
 */
-func (c *Client) ManageV1alpha1ClusterResourceServiceUpdate(request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error) {
+func (c *Client) ManageV1alpha1ClusterResourceServiceUpdate(
+	request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest,
+) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error) {
 	response := &clustermodel.VmwareTanzuManageV1alpha1ClusterResponse{}
 	requestURL := fmt.Sprintf("%s/%s", "v1alpha1/clusters", request.Cluster.FullName.Name)
 	err := c.Update(requestURL, request, response)
@@ -60,7 +93,9 @@ func (c *Client) ManageV1alpha1ClusterResourceServiceUpdate(request *clustermode
 /*
 ManageV1alpha1ClusterResourceServiceDelete deletes a cluster.
 */
-func (c *Client) ManageV1alpha1ClusterResourceServiceDelete(fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName, force string) error {
+func (c *Client) ManageV1alpha1ClusterResourceServiceDelete(
+	fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName, force string,
+) error {
 	queryParams := url.Values{
 		"force": []string{force},
 	}
@@ -81,7 +116,9 @@ func (c *Client) ManageV1alpha1ClusterResourceServiceDelete(fn *clustermodel.Vmw
 /*
 ManageV1alpha1ClusterResourceServiceGet gets a cluster.
 */
-func (c *Client) ManageV1alpha1ClusterResourceServiceGet(fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName) (*clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse, error) {
+func (c *Client) ManageV1alpha1ClusterResourceServiceGet(
+	fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName,
+) (*clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse, error) {
 	queryParams := url.Values{}
 
 	if fn.ManagementClusterName != "" {

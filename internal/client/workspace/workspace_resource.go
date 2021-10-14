@@ -38,7 +38,9 @@ type ClientService interface {
 /*
   ManageV1alpha1WorkspaceResourceServiceUpdate updates a workspace.
 */
-func (c *Client) ManageV1alpha1WorkspaceResourceServiceUpdate(request *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceRequest) (*workspacemodel.VmwareTanzuManageV1alphaWorkspaceResponse, error) {
+func (c *Client) ManageV1alpha1WorkspaceResourceServiceUpdate(
+	request *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceRequest,
+) (*workspacemodel.VmwareTanzuManageV1alphaWorkspaceResponse, error) {
 	requestURL := fmt.Sprintf("%s/%s", "v1alpha1/workspaces", request.Workspace.FullName.Name)
 	namespaceResponse := &workspacemodel.VmwareTanzuManageV1alphaWorkspaceResponse{}
 	err := c.Update(requestURL, request, namespaceResponse)
@@ -49,7 +51,9 @@ func (c *Client) ManageV1alpha1WorkspaceResourceServiceUpdate(request *workspace
 /*
   ManageV1alpha1WorkspaceResourceServiceCreate creates a workspace.
 */
-func (c *Client) ManageV1alpha1WorkspaceResourceServiceCreate(request *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceRequest) (*workspacemodel.VmwareTanzuManageV1alphaWorkspaceResponse, error) {
+func (c *Client) ManageV1alpha1WorkspaceResourceServiceCreate(
+	request *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceRequest,
+) (*workspacemodel.VmwareTanzuManageV1alphaWorkspaceResponse, error) {
 	namespaceResponse := &workspacemodel.VmwareTanzuManageV1alphaWorkspaceResponse{}
 	err := c.Create("v1alpha1/workspaces", request, namespaceResponse)
 
@@ -59,7 +63,9 @@ func (c *Client) ManageV1alpha1WorkspaceResourceServiceCreate(request *workspace
 /*
   ManageV1alpha1WorkspaceResourceServiceGet gets a workspace.
 */
-func (c *Client) ManageV1alpha1WorkspaceResourceServiceGet(fn *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName) (*workspacemodel.VmwareTanzuManageV1alpha1WorkspaceGetWorkspaceResponse, error) {
+func (c *Client) ManageV1alpha1WorkspaceResourceServiceGet(
+	fn *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName,
+) (*workspacemodel.VmwareTanzuManageV1alpha1WorkspaceGetWorkspaceResponse, error) {
 	requestURL := fmt.Sprintf("%s/%s", "v1alpha1/workspaces", fn.Name)
 	workspaceResponse := &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceGetWorkspaceResponse{}
 
@@ -71,7 +77,9 @@ func (c *Client) ManageV1alpha1WorkspaceResourceServiceGet(fn *workspacemodel.Vm
 /*
   ManageV1alpha1WorkspaceResourceServiceDelete deletes a workspace.
 */
-func (c *Client) ManageV1alpha1WorkspaceResourceServiceDelete(fn *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName) error {
+func (c *Client) ManageV1alpha1WorkspaceResourceServiceDelete(
+	fn *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName,
+) error {
 	requestURL := fmt.Sprintf("%s/%s", "v1alpha1/workspaces", fn.Name)
 
 	return c.Delete(requestURL)

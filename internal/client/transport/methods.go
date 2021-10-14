@@ -35,8 +35,8 @@ func (c *Client) Update(url string, request Request, response Response) error {
 
 func (c *Client) invokeAction(httpMethodType string, url string, request Request, response Response) error {
 	requestURL := fmt.Sprintf("%s/%s", c.Host, strings.TrimPrefix(url, "/"))
-
 	body, err := request.MarshalBinary()
+
 	if err != nil {
 		return errors.Wrap(err, "marshall request body")
 	}

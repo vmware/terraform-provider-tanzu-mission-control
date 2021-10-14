@@ -11,6 +11,7 @@ require (
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.7.0
+	golang.org/x/tools v0.1.7 // indirect
 	k8s.io/apiextensions-apiserver v0.18.2
 	k8s.io/apimachinery v0.18.2
 	k8s.io/client-go v0.18.2

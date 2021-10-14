@@ -17,6 +17,7 @@ import (
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
 	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
+	tkgservicevspheremodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgservicevsphere"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
@@ -91,8 +92,46 @@ func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m inter
 		return diag.FromErr(err)
 	}
 
+	if resp.Cluster.Spec.TkgServiceVsphere != nil {
+		diags = populateTKGServiceVsphereNodePools(config, resp)
+	}
+
 	if err := d.Set(specKey, flattenSpec(resp.Cluster.Spec)); err != nil {
 		return diag.FromErr(err)
+	}
+
+	return diags
+}
+
+func populateTKGServiceVsphereNodePools(config authctx.TanzuContext, resp *clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse) (diags diag.Diagnostics) {
+	nodePoolSpecListResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1TkgServiceVsphereClusterNodePoolSpecResourceServiceList(resp.Cluster.FullName)
+
+	if err != nil || nodePoolSpecListResp == nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Unable to retrieve node pool entries",
+		})
+
+		return diags
+	}
+
+	resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools = make([]*tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition, 0)
+
+	for _, np := range nodePoolSpecListResp.Nodepools {
+		clusterNodePool := &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
+			Info: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
+				Name: np.FullName.Name,
+			},
+			Spec: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
+				WorkerNodeCount: np.Spec.WorkerNodeCount,
+				TkgServiceVsphere: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
+					Class:        np.Spec.TkgServiceVsphere.Class,
+					StorageClass: np.Spec.TkgServiceVsphere.StorageClass,
+				},
+			},
+		}
+
+		resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools = append(resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools, clusterNodePool)
 	}
 
 	return diags

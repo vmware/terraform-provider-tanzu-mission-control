@@ -39,7 +39,9 @@ type ClientService interface {
 /*
 ManageV1alpha1NamespaceResourceServiceCreate creates a Namespace.
 */
-func (c *Client) ManageV1alpha1NamespaceResourceServiceCreate(request *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceRequest) (*namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceResponse, error) {
+func (c *Client) ManageV1alpha1NamespaceResourceServiceCreate(
+	request *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceRequest,
+) (*namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceResponse, error) {
 	requestURL := fmt.Sprintf("%s/%s/%s", "v1alpha1/clusters", request.Namespace.FullName.ClusterName, "namespaces")
 	namespaceResponse := &namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceResponse{}
 	err := c.Create(requestURL, request, namespaceResponse)
@@ -50,7 +52,9 @@ func (c *Client) ManageV1alpha1NamespaceResourceServiceCreate(request *namespace
 /*
 ManageV1alpha1NamespaceResourceServiceUpdate updates a Namespace.
 */
-func (c *Client) ManageV1alpha1NamespaceResourceServiceUpdate(request *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceRequest) (*namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceResponse, error) {
+func (c *Client) ManageV1alpha1NamespaceResourceServiceUpdate(
+	request *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceRequest,
+) (*namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceResponse, error) {
 	requestURL := fmt.Sprintf("%s/%s/%s/%s", "v1alpha1/clusters", request.Namespace.FullName.ClusterName, "namespaces", request.Namespace.FullName.Name)
 	namespaceResponse := &namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceResponse{}
 	err := c.Update(requestURL, request, namespaceResponse)
@@ -61,7 +65,9 @@ func (c *Client) ManageV1alpha1NamespaceResourceServiceUpdate(request *namespace
 /*
 ManageV1alpha1NamespaceResourceServiceDelete deletes a Namespace.
 */
-func (c *Client) ManageV1alpha1NamespaceResourceServiceDelete(fn *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName) error {
+func (c *Client) ManageV1alpha1NamespaceResourceServiceDelete(
+	fn *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName,
+) error {
 	queryParams := url.Values{}
 
 	if fn.ManagementClusterName != "" {
@@ -80,7 +86,9 @@ func (c *Client) ManageV1alpha1NamespaceResourceServiceDelete(fn *namespacemodel
 /*
 ManageV1alpha1NamespaceResourceServiceGet gets a namespace.
 */
-func (c *Client) ManageV1alpha1NamespaceResourceServiceGet(fn *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName) (*namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceGetNamespaceResponse, error) {
+func (c *Client) ManageV1alpha1NamespaceResourceServiceGet(
+	fn *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName,
+) (*namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceGetNamespaceResponse, error) {
 	queryParams := url.Values{}
 
 	if fn.ManagementClusterName != "" {

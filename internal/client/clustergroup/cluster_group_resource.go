@@ -38,7 +38,9 @@ type ClientService interface {
 /*
   ManageV1alpha1ClusterGroupResourceServiceGet gets a cluster group
 */
-func (c *Client) ManageV1alpha1ClusterGroupResourceServiceGet(fn *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupGetClusterGroupResponse, error) {
+func (c *Client) ManageV1alpha1ClusterGroupResourceServiceGet(
+	fn *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName,
+) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupGetClusterGroupResponse, error) {
 	requestURL := fmt.Sprintf("%s/%s", "v1alpha1/clustergroups", fn.Name)
 	clusterGroupResponse := &clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupGetClusterGroupResponse{}
 
@@ -50,7 +52,9 @@ func (c *Client) ManageV1alpha1ClusterGroupResourceServiceGet(fn *clustergroupmo
 /*
   ManageV1alpha1ClusterGroupResourceServiceDelete deletes a cluster group
 */
-func (c *Client) ManageV1alpha1ClusterGroupResourceServiceDelete(fn *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName) error {
+func (c *Client) ManageV1alpha1ClusterGroupResourceServiceDelete(
+	fn *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName,
+) error {
 	requestURL := fmt.Sprintf("%s/%s", "v1alpha1/clustergroups", fn.Name)
 
 	return c.Delete(requestURL)
@@ -59,7 +63,9 @@ func (c *Client) ManageV1alpha1ClusterGroupResourceServiceDelete(fn *clustergrou
 /*
   ManageV1alpha1ClusterGroupResourceServiceCreate creates a cluster group
 */
-func (c *Client) ManageV1alpha1ClusterGroupResourceServiceCreate(request *clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupRequest) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupResponse, error) {
+func (c *Client) ManageV1alpha1ClusterGroupResourceServiceCreate(
+	request *clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupRequest,
+) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupResponse, error) {
 	clusterGroupResponse := &clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupResponse{}
 	err := c.Create("v1alpha1/clustergroups", request, clusterGroupResponse)
 
@@ -69,7 +75,9 @@ func (c *Client) ManageV1alpha1ClusterGroupResourceServiceCreate(request *cluste
 /*
   ManageV1alpha1ClusterGroupResourceServiceUpdate updates a cluster group
 */
-func (c *Client) ManageV1alpha1ClusterGroupResourceServiceUpdate(request *clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupRequest) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupResponse, error) {
+func (c *Client) ManageV1alpha1ClusterGroupResourceServiceUpdate(
+	request *clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupRequest,
+) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupResponse, error) {
 	requestURL := fmt.Sprintf("%s/%s", "v1alpha1/clustergroups", request.ClusterGroup.FullName.Name)
 	clusterGroupResponse := &clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupResponse{}
 	err := c.Update(requestURL, request, clusterGroupResponse)
