@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
+	nodepoolmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 	tkgservicevspheremodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgservicevsphere"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
@@ -80,7 +81,7 @@ var settings = &schema.Schema{
 
 var network = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "NetworkSettings specifies network-related settings for the cluster",
+	Description: "Network Settings specifies network-related settings for the cluster",
 	Required:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
@@ -450,11 +451,11 @@ var storageClass = &schema.Schema{
 	Required:    true,
 }
 
-func expandTKGSTopologyNodePool(data interface{}) (nodePools *tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition) {
+func expandTKGSTopologyNodePool(data interface{}) (nodePools *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition) {
 	nodePoolData := data.(map[string]interface{})
-	nodePools = &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
-		Spec: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{},
-		Info: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{},
+	nodePools = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
+		Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{},
+		Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{},
 	}
 
 	if v, ok := nodePoolData[specKey]; ok {
@@ -500,13 +501,13 @@ func expandTKGSTopologyNodePool(data interface{}) (nodePools *tkgservicevspherem
 	return nodePools
 }
 
-func expandNodePoolTKGSServiceVsphere(data []interface{}) (tkgsServiceVsphere *tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool) {
+func expandNodePoolTKGSServiceVsphere(data []interface{}) (tkgsServiceVsphere *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool) {
 	if len(data) == 0 || data[0] == nil {
 		return tkgsServiceVsphere
 	}
 
 	tkgsServiceVsphereData, _ := data[0].(map[string]interface{})
-	tkgsServiceVsphere = &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{}
+	tkgsServiceVsphere = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{}
 
 	if v, ok := tkgsServiceVsphereData[classKey]; ok {
 		tkgsServiceVsphere.Class, _ = v.(string)
@@ -519,7 +520,7 @@ func expandNodePoolTKGSServiceVsphere(data []interface{}) (tkgsServiceVsphere *t
 	return tkgsServiceVsphere
 }
 
-func FlattenTKGSTopologyNodePool(nodePool *tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition) (data interface{}) {
+func FlattenTKGSTopologyNodePool(nodePool *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition) (data interface{}) {
 	flattenNodePool := make(map[string]interface{})
 
 	if nodePool == nil {

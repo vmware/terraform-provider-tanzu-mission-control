@@ -10,6 +10,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	nodepoolmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 	tkgservicevspheremodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgservicevsphere"
 )
 
@@ -51,17 +52,17 @@ func TestFlattenTopology(t *testing.T) {
 		{
 			name: "normal scenario with node pool data of topology",
 			input: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereTopology{
-				NodePools: []*tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
+				NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 					{
-						Info: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
+						Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
 							Name:        "test",
 							Description: "testing topology flatten function",
 						},
-						Spec: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
+						Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 							CloudLabels:     map[string]string{"cloud-key": "cloud-value"},
 							NodeLabels:      map[string]string{"node-key": "node-value"},
 							WorkerNodeCount: "1",
-							TkgServiceVsphere: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
+							TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
 								Class:        "test-class-spec",
 								StorageClass: "test-storage-spec",
 							},
@@ -106,17 +107,17 @@ func TestFlattenTopology(t *testing.T) {
 					HighAvailability: false,
 					StorageClass:     "test-storage-class",
 				},
-				NodePools: []*tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
+				NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 					{
-						Info: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
+						Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
 							Name:        "test",
 							Description: "testing topology flatten function",
 						},
-						Spec: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
+						Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 							CloudLabels:     map[string]string{"cloud-key": "cloud-value"},
 							NodeLabels:      map[string]string{"node-key": "node-value"},
 							WorkerNodeCount: "1",
-							TkgServiceVsphere: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
+							TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
 								Class:        "test-class-spec",
 								StorageClass: "test-storage-spec",
 							},

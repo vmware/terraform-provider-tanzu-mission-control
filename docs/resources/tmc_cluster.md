@@ -57,27 +57,27 @@ resource "tmc_cluster" "attach_cluster_with_kubeconfig" {
   # The deployment link and the command needed to be run to attach this cluster would be provided in the output.status.execution_cmd
 }
 
-# Create TMC TKG Service Vsphere  workload cluster entry
+# Create TMC TKG Service Vsphere workload cluster entry
 resource "tmc_cluster" "create_tkgs_workload" {
   management_cluster_name = "test-tkgs"
   provisioner_name        = "test-gc-e2e-demo-ns"
   name                    = "cluster"
 
   meta {
-    labels      = { "key" : "test"}
+    labels = { "key" : "test" }
   }
 
   spec {
     cluster_group = "default"
     tkg_service_vsphere {
-      settings  {
-        network  {
-          pods  {
+      settings {
+        network {
+          pods {
             cidr_blocks = [
               "172.20.0.0/16", # pods cidr block by default has the value `172.20.0.0/16`
             ]
           }
-          services  {
+          services {
             cidr_blocks = [
               "10.96.0.0/16", # services cidr block by default has the value `10.96.0.0/16`
             ]
@@ -85,26 +85,110 @@ resource "tmc_cluster" "create_tkgs_workload" {
         }
       }
 
-      distribution  {
+      distribution {
         version = "v1.20.8+vmware.1-tkg.2"
       }
 
-      topology  {
-        control_plane  {
-          class = "best-effort-xsmall"
-          storage_class = "wcpglobal-storage-profile" # storage class is either `wcpglobal-storage-profile` or `gc-storage-profile`
+      topology {
+        control_plane {
+          class             = "best-effort-xsmall"
+          storage_class     = "wcpglobal-storage-profile"
+          # storage class is either `wcpglobal-storage-profile` or `gc-storage-profile`
           high_availability = false
         }
-        node_pools  {
-          spec  {
+        node_pools {
+          spec {
             worker_node_count = "1"
-            tkg_service_vsphere  {
-              class = "best-effort-xsmall"
-              storage_class = "wcpglobal-storage-profile" # storage class is either `wcpglobal-storage-profile` or `gc-storage-profile`
+            tkg_service_vsphere {
+              class         = "best-effort-xsmall"
+              storage_class = "wcpglobal-storage-profile"
+              # storage class is either `wcpglobal-storage-profile` or `gc-storage-profile`
             }
           }
           info {
             name = "default-nodepool" # default node pool name `default-nodepool`
+          }
+        }
+      }
+    }
+  }
+}
+
+# Create a TKGm Vsphere workload cluster entry
+resource "tmc_cluster" "create_tkg_vsphere_cluster" {
+  management_cluster_name = "tkg-vsphere-test"
+  provisioner_name        = "default"
+  name                    = "demo-tkg-vsphere-cluster"
+
+  meta {
+    description = "description of the cluster"
+    labels      = { "key" : "value" }
+  }
+
+  spec {
+    cluster_group = "default" # Default: default
+    tkg_vsphere {
+      settings {
+        network {
+          pods {
+            cidr_blocks = [
+              "172.20.0.0/16",
+            ]
+          }
+
+          services {
+            cidr_blocks = [
+              "10.96.0.0/16",
+            ]
+          }
+
+          control_plane_end_point = "10.185.107.47"
+        }
+
+        security {
+          ssh_key = "default"
+        }
+      }
+
+      distribution {
+        version = "v1.20.4+vmware.1-tkg.1"
+
+        workspace {
+          datacenter        = "/dc0"
+          datastore         = "/dc0/datastore/local-0"
+          workspace_network = "/dc0/network/Avi Internal"
+          folder            = "/dc0/vm"
+          resource_pool     = "/dc0/host/cluster0/Resources"
+        }
+      }
+
+      topology {
+        control_plane {
+          vm_config {
+            cpu       = "2"
+            disk_size = "20"
+            memory    = "4096"
+          }
+
+          high_availability = false
+        }
+
+        node_pools {
+          node_pool_spec {
+            worker_node_count = "1"
+
+            tkg_vsphere {
+              vm_config {
+                cpu       = "2"
+                disk_size = "40"
+                memory    = "8192"
+              }
+            }
+          }
+
+          node_pool_info {
+            node_pool_name        = "default-nodepool"
+            node_pool_description = "my nodepool"
           }
         }
       }
@@ -164,6 +248,7 @@ Optional:
 
 - **cluster_group** (String)
 - **tkg_service_vsphere** (Block List, Max: 1) The tkg service vsphere cluster spec (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))
+- **tkg_vsphere** (Block List, Max: 1) The TKG Vsphere cluster spec (see [below for nested schema](#nestedblock--spec--tkg_vsphere))
 
 <a id="nestedblock--spec--tkg_service_vsphere"></a>
 ### Nested Schema for `spec.tkg_service_vsphere`
@@ -276,5 +361,165 @@ Required:
 
 - **class** (String) Control plane instance type
 - **storage_class** (String) Storage Class to be used for storage of the disks which store the root filesystems of the nodes
+
+
+
+
+
+
+<a id="nestedblock--spec--tkg_vsphere"></a>
+### Nested Schema for `spec.tkg_vsphere`
+
+Required:
+
+- **distribution** (Block List, Min: 1, Max: 1) VSphere specific distribution (see [below for nested schema](#nestedblock--spec--tkg_vsphere--distribution))
+- **settings** (Block List, Min: 1, Max: 1) VSphere related settings for workload cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings))
+- **topology** (Block List, Min: 1, Max: 1) Topology specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology))
+
+<a id="nestedblock--spec--tkg_vsphere--distribution"></a>
+### Nested Schema for `spec.tkg_vsphere.distribution`
+
+Required:
+
+- **version** (String) Version specifies the version of the Kubernetes cluster
+- **workspace** (Block List, Min: 1, Max: 1) Workspace defines a workspace configuration for the vSphere cloud provider (see [below for nested schema](#nestedblock--spec--tkg_vsphere--distribution--workspace))
+
+<a id="nestedblock--spec--tkg_vsphere--distribution--workspace"></a>
+### Nested Schema for `spec.tkg_vsphere.distribution.workspace`
+
+Required:
+
+- **datacenter** (String)
+- **datastore** (String)
+- **folder** (String)
+- **resource_pool** (String)
+- **workspace_network** (String)
+
+
+
+<a id="nestedblock--spec--tkg_vsphere--settings"></a>
+### Nested Schema for `spec.tkg_vsphere.settings`
+
+Required:
+
+- **network** (Block List, Min: 1, Max: 1) NetworkSettings specifies network-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--network))
+- **security** (Block List, Min: 1, Max: 1) SecuritySettings specifies security-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--security))
+
+<a id="nestedblock--spec--tkg_vsphere--settings--network"></a>
+### Nested Schema for `spec.tkg_vsphere.settings.security`
+
+Required:
+
+- **control_plane_end_point** (String) ControlPlaneEndpoint specifies the control plane virtual IP address. The value should be unique for every create request, else cluster creation shall fail
+- **pods** (Block List, Min: 1) Pod CIDR for Kubernetes pods defaults to 192.168.0.0/16 (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--security--pods))
+- **services** (Block List, Min: 1) Service CIDR for kubernetes services defaults to 10.96.0.0/12 (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--security--services))
+
+<a id="nestedblock--spec--tkg_vsphere--settings--security--pods"></a>
+### Nested Schema for `spec.tkg_vsphere.settings.security.pods`
+
+Required:
+
+- **cidr_blocks** (List of String) CIDRBlocks specifies one or more ranges of IP addresses
+
+
+<a id="nestedblock--spec--tkg_vsphere--settings--security--services"></a>
+### Nested Schema for `spec.tkg_vsphere.settings.security.services`
+
+Required:
+
+- **cidr_blocks** (List of String) CIDRBlocks specifies one or more ranges of IP addresses
+
+
+
+<a id="nestedblock--spec--tkg_vsphere--settings--security"></a>
+### Nested Schema for `spec.tkg_vsphere.settings.security`
+
+Required:
+
+- **ssh_key** (String) SSH key for provisioning and accessing the cluster VMs
+
+
+
+<a id="nestedblock--spec--tkg_vsphere--topology"></a>
+### Nested Schema for `spec.tkg_vsphere.topology`
+
+Required:
+
+- **control_plane** (Block List, Min: 1, Max: 1) VSphere specific control plane configuration for workload cluster object (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--control_plane))
+
+Optional:
+
+- **node_pools** (Block List) Nodepool specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools))
+
+<a id="nestedblock--spec--tkg_vsphere--topology--control_plane"></a>
+### Nested Schema for `spec.tkg_vsphere.topology.node_pools`
+
+Required:
+
+- **vm_config** (Block List, Min: 1, Max: 1) VM specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--vm_config))
+
+Optional:
+
+- **high_availability** (Boolean) High Availability or Non High Availability Cluster. HA cluster creates three controlplane machines, and non HA creates just one
+
+<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--vm_config"></a>
+### Nested Schema for `spec.tkg_vsphere.topology.node_pools.vm_config`
+
+Optional:
+
+- **cpu** (String)
+- **disk_size** (String)
+- **memory** (String)
+
+
+
+<a id="nestedblock--spec--tkg_vsphere--topology--node_pools"></a>
+### Nested Schema for `spec.tkg_vsphere.topology.node_pools`
+
+Required:
+
+- **node_pool_info** (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_info))
+
+Optional:
+
+- **node_pool_spec** (Block List, Max: 1) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_spec))
+
+<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_info"></a>
+### Nested Schema for `spec.tkg_vsphere.topology.node_pools.node_pool_info`
+
+Required:
+
+- **node_pool_name** (String)
+
+Optional:
+
+- **node_pool_description** (String)
+
+
+<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_spec"></a>
+### Nested Schema for `spec.tkg_vsphere.topology.node_pools.node_pool_spec`
+
+Optional:
+
+- **cloud_labels** (Map of String) Cloud labels
+- **node_labels** (Map of String) Node labels
+- **tkg_vsphere** (Block List, Max: 1) Nodepool config for tkgm vsphere (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_spec--tkg_vsphere))
+- **worker_node_count** (String) Count is the number of nodes
+
+<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_spec--tkg_vsphere"></a>
+### Nested Schema for `spec.tkg_vsphere.topology.node_pools.node_pool_spec.worker_node_count`
+
+Required:
+
+- **vm_config** (Block List, Min: 1, Max: 1) VM specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_spec--worker_node_count--vm_config))
+
+<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_spec--worker_node_count--vm_config"></a>
+### Nested Schema for `spec.tkg_vsphere.topology.node_pools.node_pool_spec.worker_node_count.vm_config`
+
+Optional:
+
+- **cpu** (String)
+- **disk_size** (String)
+- **memory** (String)
 
 

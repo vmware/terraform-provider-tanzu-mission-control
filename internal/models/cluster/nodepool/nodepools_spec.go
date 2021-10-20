@@ -3,7 +3,7 @@ Copyright © 2021 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package tkgservicevspheremodel
+package nodepool
 
 import "github.com/go-openapi/swag"
 
@@ -20,6 +20,9 @@ type VmwareTanzuManageV1alpha1ClusterNodepoolSpec struct {
 
 	// Nodepool config for tkg service vsphere.
 	TkgServiceVsphere *VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool `json:"tkgServiceVsphere,omitempty"`
+
+	// Nodepool config for tkg vsphere.
+	TkgVsphere *VmwareTanzuManageV1alpha1ClusterNodepoolTKGVsphereNodepool `json:"tkgVsphere,omitempty"`
 
 	// Count is the number of nodes.
 	WorkerNodeCount string `json:"workerNodeCount,omitempty"`

@@ -3,7 +3,7 @@ Copyright © 2021 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package tkgservicevspheremodel
+package nodepool
 
 import "github.com/go-openapi/swag"
 
