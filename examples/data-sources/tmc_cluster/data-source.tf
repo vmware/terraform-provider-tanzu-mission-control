@@ -11,3 +11,10 @@ data "tmc_cluster" "read_tkgs_cluster" {
   provisioner_name        = "test-gc-e2e-demo-ns"
   name                    = "cluster"
 }
+
+# Read TMC TKGVsphere Resource : fetch tkg_vsphere details
+data "tmc_cluster" "read_tkg_vsphere_cluster" {
+  management_cluster_name = "tkgm-vsphere"
+  provisioner_name        = "default"
+  name                    = "new-read"
+}
