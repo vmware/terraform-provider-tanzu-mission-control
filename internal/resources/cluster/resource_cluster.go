@@ -21,6 +21,7 @@ import (
 	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/manifest"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgservicevsphere"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgvsphere"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
@@ -112,6 +113,7 @@ var clusterSpec = &schema.Schema{
 				Optional: true,
 			},
 			tkgServiceVsphereKey: tkgservicevsphere.TkgServiceVsphere,
+			tkgVsphereClusterKey: tkgvsphere.TkgVsphereClusterSpec,
 		},
 	},
 }
@@ -144,6 +146,12 @@ func constructSpec(d *schema.ResourceData) (spec *clustermodel.VmwareTanzuManage
 		}
 	}
 
+	if v, ok := specData[tkgVsphereClusterKey]; ok {
+		if v1, ok := v.([]interface{}); ok {
+			spec.TkgVsphere = tkgvsphere.ConstructTKGVsphereClusterSpec(v1)
+		}
+	}
+
 	return spec
 }
 
@@ -158,6 +166,10 @@ func flattenSpec(spec *clustermodel.VmwareTanzuManageV1alpha1ClusterSpec) (data 
 
 	if spec.TkgServiceVsphere != nil {
 		flattenSpecData[tkgServiceVsphereKey] = tkgservicevsphere.FlattenTKGSSpec(spec.TkgServiceVsphere)
+	}
+
+	if spec.TkgVsphere != nil {
+		flattenSpecData[tkgVsphereClusterKey] = tkgvsphere.FlattenTKGVsphereClusterSpec(spec.TkgVsphere)
 	}
 
 	return []interface{}{flattenSpecData}

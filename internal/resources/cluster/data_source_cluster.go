@@ -17,7 +17,7 @@ import (
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
 	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
-	tkgservicevspheremodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgservicevsphere"
+	nodepoolmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
@@ -92,8 +92,8 @@ func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m inter
 		return diag.FromErr(err)
 	}
 
-	if resp.Cluster.Spec.TkgServiceVsphere != nil {
-		diags = populateTKGServiceVsphereNodePools(config, resp)
+	if resp.Cluster.Spec != nil {
+		diags = populateNodePools(config, resp)
 	}
 
 	if err := d.Set(specKey, flattenSpec(resp.Cluster.Spec)); err != nil {
@@ -103,8 +103,8 @@ func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m inter
 	return diags
 }
 
-func populateTKGServiceVsphereNodePools(config authctx.TanzuContext, resp *clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse) (diags diag.Diagnostics) {
-	nodePoolSpecListResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1TkgServiceVsphereClusterNodePoolSpecResourceServiceList(resp.Cluster.FullName)
+func populateNodePools(config authctx.TanzuContext, resp *clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse) (diags diag.Diagnostics) {
+	nodePoolSpecListResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterNodePoolSpecResourceList(resp.Cluster.FullName)
 
 	if err != nil || nodePoolSpecListResp == nil {
 		diags = append(diags, diag.Diagnostic{
@@ -115,23 +115,49 @@ func populateTKGServiceVsphereNodePools(config authctx.TanzuContext, resp *clust
 		return diags
 	}
 
-	resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools = make([]*tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition, 0)
+	switch {
+	case resp.Cluster.Spec.TkgVsphere != nil:
+		resp.Cluster.Spec.TkgVsphere.Topology.NodePools = make([]*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition, 0)
 
-	for _, np := range nodePoolSpecListResp.Nodepools {
-		clusterNodePool := &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
-			Info: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-				Name: np.FullName.Name,
-			},
-			Spec: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
+		for _, np := range nodePoolSpecListResp.Nodepools {
+			spec := &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 				WorkerNodeCount: np.Spec.WorkerNodeCount,
-				TkgServiceVsphere: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
+				TkgVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGVsphereNodepool{
+					VMConfig: &nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGVsphereVMConfig{
+						CPU:       np.Spec.TkgVsphere.VMConfig.CPU,
+						DiskGib:   np.Spec.TkgVsphere.VMConfig.DiskGib,
+						MemoryMib: np.Spec.TkgVsphere.VMConfig.MemoryMib,
+					},
+				},
+			}
+			clusterNodePool := &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
+				Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
+					Name: np.FullName.Name,
+				},
+				Spec: spec,
+			}
+			resp.Cluster.Spec.TkgVsphere.Topology.NodePools = append(resp.Cluster.Spec.TkgVsphere.Topology.NodePools, clusterNodePool)
+		}
+
+	case resp.Cluster.Spec.TkgServiceVsphere != nil:
+		resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools = make([]*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition, 0)
+
+		for _, np := range nodePoolSpecListResp.Nodepools {
+			spec := &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
+				WorkerNodeCount: np.Spec.WorkerNodeCount,
+				TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
 					Class:        np.Spec.TkgServiceVsphere.Class,
 					StorageClass: np.Spec.TkgServiceVsphere.StorageClass,
 				},
-			},
+			}
+			clusterNodePool := &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
+				Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
+					Name: np.FullName.Name,
+				},
+				Spec: spec,
+			}
+			resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools = append(resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools, clusterNodePool)
 		}
-
-		resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools = append(resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools, clusterNodePool)
 	}
 
 	return diags
