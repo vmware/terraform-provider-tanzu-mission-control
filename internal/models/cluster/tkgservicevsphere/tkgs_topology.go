@@ -7,6 +7,8 @@ package tkgservicevspheremodel
 
 import (
 	"github.com/go-openapi/swag"
+
+	nodepoolmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 )
 
 // VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereTopology Topology is the topology for tkg service vsphere cluster.
@@ -18,7 +20,7 @@ type VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereTopology str
 	ControlPlane *VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereControlPlane `json:"controlPlane,omitempty"`
 
 	// Nodepool specific configuration.
-	NodePools []*VmwareTanzuManageV1alpha1ClusterNodepoolDefinition `json:"nodePools"`
+	NodePools []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition `json:"nodePools"`
 }
 
 // MarshalBinary interface implementation.

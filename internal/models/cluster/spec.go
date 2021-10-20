@@ -9,6 +9,8 @@ import (
 	"github.com/go-openapi/swag"
 
 	tkgservicevspheremodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgservicevsphere"
+
+	tkgvspheremodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgvsphere"
 )
 
 // VmwareTanzuManageV1alpha1ClusterSpec Spec of the cluster.
@@ -25,6 +27,9 @@ type VmwareTanzuManageV1alpha1ClusterSpec struct {
 
 	// TKG Service vSphere cluster spec.
 	TkgServiceVsphere *tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereSpec `json:"tkgServiceVsphere,omitempty"`
+
+	// TKG vSphere cluster spec.
+	TkgVsphere *tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereSpec `json:"tkgVsphere,omitempty"`
 }
 
 // MarshalBinary interface implementation.
