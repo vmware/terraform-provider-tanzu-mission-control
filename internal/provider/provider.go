@@ -10,6 +10,7 @@ import (
 
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/nodepools"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/namespace"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/workspace"
@@ -24,12 +25,14 @@ func Provider() *schema.Provider {
 			workspace.ResourceName:    workspace.ResourceWorkspace(),
 			namespace.ResourceName:    namespace.ResourceNamespace(),
 			clustergroup.ResourceName: clustergroup.ResourceClusterGroup(),
+			nodepools.ResourceName:    nodepools.ResourceNodePool(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:      cluster.DataSourceTMCCluster(),
 			workspace.ResourceName:    workspace.DataSourceWorkspace(),
 			namespace.ResourceName:    namespace.DataSourceNamespace(),
 			clustergroup.ResourceName: clustergroup.DataSourceClusterGroup(),
+			nodepools.ResourceName:    nodepools.DataSourceClusterNodePool(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}

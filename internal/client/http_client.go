@@ -8,11 +8,11 @@ package client
 import (
 	"net/http"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
-
 	clusterclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/cluster"
 	clustergroupclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/clustergroup"
 	namespaceclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/namespace"
+	nodepoolclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/nodepool"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
 	workspaceclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/workspace"
 )
 
@@ -32,6 +32,7 @@ func NewHTTPClient() *TanzuMissionControl {
 		WorkspaceResourceService:    workspaceclient.New(httpClient),
 		NamespaceResourceService:    namespaceclient.New(httpClient),
 		ClusterGroupResourceService: clustergroupclient.New(httpClient),
+		NodePoolResourceService:     nodepoolclient.New(httpClient),
 	}
 }
 
@@ -42,4 +43,5 @@ type TanzuMissionControl struct {
 	WorkspaceResourceService    workspaceclient.ClientService
 	NamespaceResourceService    namespaceclient.ClientService
 	ClusterGroupResourceService clustergroupclient.ClientService
+	NodePoolResourceService     nodepoolclient.ClientService
 }

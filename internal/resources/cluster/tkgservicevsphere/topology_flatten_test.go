@@ -28,6 +28,22 @@ func TestFlattenTopology(t *testing.T) {
 			expected: nil,
 		},
 		{
+			name: "normal scenario with empty node pool data of topology",
+			input: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereTopology{
+				NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
+					nil,
+				},
+			},
+			expected: []interface{}{
+				map[string]interface{}{
+					controlPlaneKey: []interface{}(nil),
+					nodePoolsKey: []interface{}{
+						nil,
+					},
+				},
+			},
+		},
+		{
 			name: "normal scenario with control plane data of topology",
 			input: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereTopology{
 				ControlPlane: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereControlPlane{

@@ -16,12 +16,13 @@ import (
 )
 
 const (
-	MetaKey         = "meta"
-	LabelsKey       = "labels"
-	DescriptionKey  = "description"
-	annotationsKey  = "annotations"
-	uidKey          = "uid"
-	CreatorLabelKey = "tmc.cloud.vmware.com/creator"
+	MetaKey            = "meta"
+	LabelsKey          = "labels"
+	DescriptionKey     = "description"
+	annotationsKey     = "annotations"
+	uidKey             = "uid"
+	resourceVersionKey = "resource_version"
+	CreatorLabelKey    = "tmc.cloud.vmware.com/creator"
 )
 
 var Meta = &schema.Schema{
@@ -52,6 +53,10 @@ var Meta = &schema.Schema{
 				Optional: true,
 			},
 			uidKey: {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			resourceVersionKey: {
 				Type:     schema.TypeString,
 				Computed: true,
 			},

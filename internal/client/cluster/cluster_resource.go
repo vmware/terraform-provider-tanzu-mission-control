@@ -11,7 +11,6 @@ import (
 
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
 	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
-	nodepoolmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 )
 
 // New creates a new cluster resource service API client.
@@ -35,34 +34,6 @@ type ClientService interface {
 	ManageV1alpha1ClusterResourceServiceGet(fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName) (*clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse, error)
 
 	ManageV1alpha1ClusterResourceServiceUpdate(request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error)
-
-	ManageV1alpha1ClusterNodePoolSpecResourceList(fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName) (*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolListNodepoolsResponse, error)
-}
-
-/*
-ManageV1alpha1ClusterNodePoolSpecResourceList lists node pool.
-*/
-func (c *Client) ManageV1alpha1ClusterNodePoolSpecResourceList(
-	fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName,
-) (*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolListNodepoolsResponse, error) {
-	queryParams := url.Values{}
-
-	if fn.ManagementClusterName != "" {
-		queryParams["searchScope.managementClusterName"] = []string{fn.ManagementClusterName}
-	}
-
-	if fn.ProvisionerName != "" {
-		queryParams["searchScope.provisionerName"] = []string{fn.ProvisionerName}
-	}
-
-	// It is unlikely for a cluster to have more number of node pools. Hence, pagination is not unhandled
-	queryParams["includeTotalCount"] = []string{"true"}
-
-	requestURL := fmt.Sprintf("%s/%s/%s?%s", "v1alpha1/clusters", fn.Name, "nodepools", queryParams.Encode())
-	clusterNodePoolSpecResponse := &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolListNodepoolsResponse{}
-	err := c.Get(requestURL, clusterNodePoolSpecResponse)
-
-	return clusterNodePoolSpecResponse, err
 }
 
 /*

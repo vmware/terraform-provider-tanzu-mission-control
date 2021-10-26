@@ -36,13 +36,13 @@ func ResourceTMCCluster() *schema.Resource {
 }
 
 var clusterSchema = map[string]*schema.Schema{
-	managementClusterNameKey: {
+	ManagementClusterNameKey: {
 		Type:     schema.TypeString,
 		Default:  "attached",
 		Optional: true,
 		ForceNew: true,
 	},
-	provisionerNameKey: {
+	ProvisionerNameKey: {
 		Type:     schema.TypeString,
 		Default:  "attached",
 		Optional: true,
@@ -55,8 +55,8 @@ var clusterSchema = map[string]*schema.Schema{
 	},
 	attachClusterKey: attachCluster,
 	common.MetaKey:   common.Meta,
-	specKey:          clusterSpec,
-	statusKey: {
+	SpecKey:          clusterSpec,
+	StatusKey: {
 		Type:     schema.TypeMap,
 		Computed: true,
 		Elem:     &schema.Schema{Type: schema.TypeString},
@@ -71,12 +71,12 @@ var clusterSchema = map[string]*schema.Schema{
 func constructFullname(d *schema.ResourceData) (fullname *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName) {
 	fullname = &clustermodel.VmwareTanzuManageV1alpha1ClusterFullName{}
 
-	if value, ok := d.GetOk(managementClusterNameKey); ok {
+	if value, ok := d.GetOk(ManagementClusterNameKey); ok {
 		fullname.ManagementClusterName = value.(string)
 	}
 
-	fullname.ManagementClusterName, _ = d.Get(managementClusterNameKey).(string)
-	fullname.ProvisionerName, _ = d.Get(provisionerNameKey).(string)
+	fullname.ManagementClusterName, _ = d.Get(ManagementClusterNameKey).(string)
+	fullname.ProvisionerName, _ = d.Get(ProvisionerNameKey).(string)
 	fullname.Name, _ = d.Get(clusterNameKey).(string)
 
 	return fullname
@@ -123,7 +123,7 @@ func constructSpec(d *schema.ResourceData) (spec *clustermodel.VmwareTanzuManage
 		ClusterGroupName: clusterGroupDefaultValue,
 	}
 
-	value, ok := d.GetOk(specKey)
+	value, ok := d.GetOk(SpecKey)
 	if !ok {
 		return spec
 	}
@@ -285,7 +285,7 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 	switch {
 	case common.HasMetaChanged(d):
 		fallthrough
-	case d.HasChange(helper.GetFirstElementOf(specKey, clusterGroupKey)):
+	case d.HasChange(helper.GetFirstElementOf(SpecKey, clusterGroupKey)):
 		updateRequired = true
 	}
 
@@ -309,7 +309,7 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 		getResp.Cluster.Meta.Description = meta.Description
 	}
 
-	incomingCGName := d.Get(helper.GetFirstElementOf(specKey, clusterGroupKey))
+	incomingCGName := d.Get(helper.GetFirstElementOf(SpecKey, clusterGroupKey))
 
 	if incomingCGName.(string) != "" {
 		getResp.Cluster.Spec.ClusterGroupName = incomingCGName.(string)
