@@ -23,4 +23,4 @@ vet:
 
 # Linter
 lint: gofmt
-	golangci-lint run -c ./.golangci.yml ./internal/...
+	golangci-lint run -c ./.golangci.yml ./internal/... .

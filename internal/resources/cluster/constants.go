@@ -6,12 +6,12 @@ SPDX-License-Identifier: MPL-2.0
 package cluster
 
 const (
-	managementClusterNameKey    = "management_cluster_name"
-	provisionerNameKey          = "provisioner_name"
+	ManagementClusterNameKey    = "management_cluster_name"
+	ProvisionerNameKey          = "provisioner_name"
 	clusterGroupKey             = "cluster_group"
 	clusterNameKey              = "name"
-	specKey                     = "spec"
-	statusKey                   = "status"
+	SpecKey                     = "spec"
+	StatusKey                   = "status"
 	clusterGroupDefaultValue    = "default"
 	attachClusterKubeConfigKey  = "kubeconfig_file"
 	attachClusterKey            = "attach_k8s_cluster"

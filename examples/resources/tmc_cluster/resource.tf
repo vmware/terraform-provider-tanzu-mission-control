@@ -44,9 +44,9 @@ resource "tmc_cluster" "attach_cluster_with_kubeconfig" {
 
 # Create TMC TKG Service Vsphere workload cluster entry
 resource "tmc_cluster" "create_tkgs_workload" {
-  management_cluster_name = "test-tkgs"
+  management_cluster_name = "tkgs-terraform"
   provisioner_name        = "test-gc-e2e-demo-ns"
-  name                    = "cluster"
+  name                    = "tkgs-workload"
 
   meta {
     labels = { "key" : "test" }
@@ -71,13 +71,13 @@ resource "tmc_cluster" "create_tkgs_workload" {
       }
 
       distribution {
-        version = "v1.20.8+vmware.1-tkg.2"
+        version = "v1.21.2+vmware.1-tkg.1.aad2fe1"
       }
 
       topology {
         control_plane {
           class             = "best-effort-xsmall"
-          storage_class     = "wcpglobal-storage-profile"
+          storage_class     = "gc-storage-profile"
           # storage class is either `wcpglobal-storage-profile` or `gc-storage-profile`
           high_availability = false
         }
@@ -86,12 +86,13 @@ resource "tmc_cluster" "create_tkgs_workload" {
             worker_node_count = "1"
             tkg_service_vsphere {
               class         = "best-effort-xsmall"
-              storage_class = "wcpglobal-storage-profile"
+              storage_class = "gc-storage-profile"
               # storage class is either `wcpglobal-storage-profile` or `gc-storage-profile`
             }
           }
           info {
             name = "default-nodepool" # default node pool name `default-nodepool`
+            description = "tkgs workload nodepool"
           }
         }
       }
@@ -101,9 +102,9 @@ resource "tmc_cluster" "create_tkgs_workload" {
 
 # Create a TKGm Vsphere workload cluster entry
 resource "tmc_cluster" "create_tkg_vsphere_cluster" {
-  management_cluster_name = "tkg-vsphere-test"
+  management_cluster_name = "tkgm-terraform"
   provisioner_name        = "default"
-  name                    = "demo-tkg-vsphere-cluster"
+  name                    = "tkgm-workload-test"
 
   meta {
     description = "description of the cluster"
@@ -127,7 +128,7 @@ resource "tmc_cluster" "create_tkg_vsphere_cluster" {
             ]
           }
 
-          control_plane_end_point = "10.185.107.47"
+          control_plane_end_point = "10.191.249.39"
         }
 
         security {
@@ -136,12 +137,12 @@ resource "tmc_cluster" "create_tkg_vsphere_cluster" {
       }
 
       distribution {
-        version = "v1.20.4+vmware.1-tkg.1"
+        version = "v1.20.5+vmware.2-tkg.1"
 
         workspace {
           datacenter        = "/dc0"
           datastore         = "/dc0/datastore/local-0"
-          workspace_network = "/dc0/network/Avi Internal"
+          workspace_network = "/dc0/network/VM Network"
           folder            = "/dc0/vm"
           resource_pool     = "/dc0/host/cluster0/Resources"
         }
@@ -159,21 +160,21 @@ resource "tmc_cluster" "create_tkg_vsphere_cluster" {
         }
 
         node_pools {
-          node_pool_spec {
+          spec {
             worker_node_count = "1"
 
             tkg_vsphere {
               vm_config {
                 cpu       = "2"
                 disk_size = "40"
-                memory    = "8192"
+                memory    = "4096"
               }
             }
           }
 
-          node_pool_info {
-            node_pool_name        = "default-nodepool"
-            node_pool_description = "my nodepool"
+          info {
+            name        = "default-nodepool"
+            description = "my nodepool"
           }
         }
       }

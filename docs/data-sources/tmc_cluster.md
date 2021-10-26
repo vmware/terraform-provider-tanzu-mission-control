@@ -76,6 +76,7 @@ Optional:
 Read-Only:
 
 - **annotations** (Map of String)
+- **resource_version** (String)
 - **uid** (String)
 
 
@@ -110,7 +111,7 @@ Required:
 
 Required:
 
-- **network** (Block List, Min: 1, Max: 1) NetworkSettings specifies network-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--settings--network))
+- **network** (Block List, Min: 1, Max: 1) Network Settings specifies network-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--settings--network))
 
 <a id="nestedblock--spec--tkg_service_vsphere--settings--network"></a>
 ### Nested Schema for `spec.tkg_service_vsphere.settings.network`
@@ -147,10 +148,10 @@ Required:
 
 Optional:
 
-- **node_pools** (Block List) Nodepool specific configuration (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools))
+- **node_pool** (Block List) Nodepool specific configuration (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pool))
 
 <a id="nestedblock--spec--tkg_service_vsphere--topology--control_plane"></a>
-### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools`
+### Nested Schema for `spec.tkg_service_vsphere.topology.node_pool`
 
 Required:
 
@@ -162,19 +163,19 @@ Optional:
 - **high_availability** (Boolean) High Availability or Non High Availability Cluster. HA cluster creates three controlplane machines, and non HA creates just one
 
 
-<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools"></a>
-### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools`
+<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pool"></a>
+### Nested Schema for `spec.tkg_service_vsphere.topology.node_pool`
 
 Required:
 
-- **info** (Block List, Min: 1, Max: 1) Info is the meta information of nodepool for cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--info))
+- **info** (Block List, Min: 1, Max: 1) Info is the meta information of nodepool for cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pool--info))
 
 Optional:
 
-- **spec** (Block List, Max: 1) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec))
+- **spec** (Block List, Max: 1) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pool--spec))
 
-<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--info"></a>
-### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.info`
+<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pool--info"></a>
+### Nested Schema for `spec.tkg_service_vsphere.topology.node_pool.info`
 
 Optional:
 
@@ -182,18 +183,18 @@ Optional:
 - **name** (String) Name of the nodepool
 
 
-<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec"></a>
-### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.spec`
+<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pool--spec"></a>
+### Nested Schema for `spec.tkg_service_vsphere.topology.node_pool.spec`
 
 Optional:
 
 - **cloud_label** (Map of String) Cloud labels
 - **node_label** (Map of String) Node labels
-- **tkg_service_vsphere** (Block List, Max: 1) Nodepool config for tkg service vsphere (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--tkg_service_vsphere))
+- **tkg_service_vsphere** (Block List, Max: 1) Nodepool config for tkg service vsphere (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pool--spec--tkg_service_vsphere))
 - **worker_node_count** (String) Count is the number of nodes
 
-<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--tkg_service_vsphere"></a>
-### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.spec.worker_node_count`
+<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pool--spec--tkg_service_vsphere"></a>
+### Nested Schema for `spec.tkg_service_vsphere.topology.node_pool.spec.worker_node_count`
 
 Required:
 
@@ -240,8 +241,8 @@ Required:
 
 Required:
 
-- **network** (Block List, Min: 1, Max: 1) NetworkSettings specifies network-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--network))
-- **security** (Block List, Min: 1, Max: 1) SecuritySettings specifies security-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--security))
+- **network** (Block List, Min: 1, Max: 1) Network Settings specifies network-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--network))
+- **security** (Block List, Min: 1, Max: 1) Security Settings specifies security-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--security))
 
 <a id="nestedblock--spec--tkg_vsphere--settings--network"></a>
 ### Nested Schema for `spec.tkg_vsphere.settings.security`
@@ -316,43 +317,43 @@ Optional:
 
 Required:
 
-- **node_pool_info** (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_info))
+- **info** (Block List, Min: 1, Max: 1) (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--info))
 
 Optional:
 
-- **node_pool_spec** (Block List, Max: 1) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_spec))
+- **spec** (Block List, Max: 1) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--spec))
 
-<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_info"></a>
-### Nested Schema for `spec.tkg_vsphere.topology.node_pools.node_pool_info`
+<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--info"></a>
+### Nested Schema for `spec.tkg_vsphere.topology.node_pools.info`
 
 Required:
 
-- **node_pool_name** (String)
+- **name** (String)
 
 Optional:
 
-- **node_pool_description** (String)
+- **description** (String)
 
 
-<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_spec"></a>
-### Nested Schema for `spec.tkg_vsphere.topology.node_pools.node_pool_spec`
+<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--spec"></a>
+### Nested Schema for `spec.tkg_vsphere.topology.node_pools.spec`
 
 Optional:
 
 - **cloud_labels** (Map of String) Cloud labels
 - **node_labels** (Map of String) Node labels
-- **tkg_vsphere** (Block List, Max: 1) Nodepool config for tkgm vsphere (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_spec--tkg_vsphere))
+- **tkg_vsphere** (Block List, Max: 1) Nodepool config for tkgm vsphere (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--spec--tkg_vsphere))
 - **worker_node_count** (String) Count is the number of nodes
 
-<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_spec--tkg_vsphere"></a>
-### Nested Schema for `spec.tkg_vsphere.topology.node_pools.node_pool_spec.worker_node_count`
+<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--spec--tkg_vsphere"></a>
+### Nested Schema for `spec.tkg_vsphere.topology.node_pools.spec.worker_node_count`
 
 Required:
 
-- **vm_config** (Block List, Min: 1, Max: 1) VM specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_spec--worker_node_count--vm_config))
+- **vm_config** (Block List, Min: 1, Max: 1) VM specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--spec--worker_node_count--vm_config))
 
-<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--node_pool_spec--worker_node_count--vm_config"></a>
-### Nested Schema for `spec.tkg_vsphere.topology.node_pools.node_pool_spec.worker_node_count.vm_config`
+<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--spec--worker_node_count--vm_config"></a>
+### Nested Schema for `spec.tkg_vsphere.topology.node_pools.spec.worker_node_count.vm_config`
 
 Optional:
 

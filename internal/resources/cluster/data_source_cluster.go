@@ -84,7 +84,7 @@ func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m inter
 		status["execution_cmd"] = fmt.Sprintf("kubectl create -f '%s'", resp.Cluster.Status.InstallerLink)
 	}
 
-	if err := d.Set(statusKey, status); err != nil {
+	if err := d.Set(StatusKey, status); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -96,7 +96,7 @@ func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m inter
 		diags = populateNodePools(config, resp)
 	}
 
-	if err := d.Set(specKey, flattenSpec(resp.Cluster.Spec)); err != nil {
+	if err := d.Set(SpecKey, flattenSpec(resp.Cluster.Spec)); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -132,7 +132,7 @@ func populateNodePools(config authctx.TanzuContext, resp *clustermodel.VmwareTan
 		return diags
 	}
 
-	nodePoolSpecListResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterNodePoolSpecResourceList(resp.Cluster.FullName)
+	nodePoolSpecListResp, err := config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolSpecResourceList(resp.Cluster.FullName)
 
 	if err != nil || nodePoolSpecListResp == nil {
 		diags = append(diags, diag.Diagnostic{

@@ -33,7 +33,7 @@ func ConstructTKGSSpec(data []interface{}) (spec *tkgservicevspheremodel.VmwareT
 		return spec
 	}
 
-	specData := data[0].(map[string]interface{})
+	specData, _ := data[0].(map[string]interface{})
 	spec = &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereSpec{}
 
 	if v, ok := specData[settingsKey]; ok {
@@ -116,7 +116,7 @@ func expandTKGSSettings(data []interface{}) (settings *tkgservicevspheremodel.Vm
 	}
 
 	settings = &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereSettings{}
-	settingData := data[0].(map[string]interface{})
+	settingData, _ := data[0].(map[string]interface{})
 
 	if v, ok := settingData[networkKey]; ok {
 		networks, _ := v.([]interface{})
@@ -125,14 +125,14 @@ func expandTKGSSettings(data []interface{}) (settings *tkgservicevspheremodel.Vm
 			return settings
 		}
 
-		networkData := networks[0].(map[string]interface{})
+		networkData, _ := networks[0].(map[string]interface{})
 		settings.Network = &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereNetworkSettings{
 			Pods:     &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereNetworkRanges{},
 			Services: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereNetworkRanges{},
 		}
 
 		if pods, ok := networkData[podsKey]; ok {
-			podsData := pods.([]interface{})
+			podsData, _ := pods.([]interface{})
 
 			if len(podsData) != 0 || podsData[0] != nil {
 				cidrBlockData, _ := podsData[0].(map[string]interface{})
@@ -486,7 +486,7 @@ func expandTKGSTopologyNodePool(data interface{}) (nodePools *nodepoolmodel.Vmwa
 		infoData, _ := v1.([]interface{})
 
 		if len(infoData) != 0 || infoData[0] != nil {
-			info := infoData[0].(map[string]interface{})
+			info, _ := infoData[0].(map[string]interface{})
 
 			if v2, k2 := info[clusterNameKey]; k2 {
 				nodePools.Info.Name = v2.(string)

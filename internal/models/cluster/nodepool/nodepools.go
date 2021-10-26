@@ -7,6 +7,8 @@ package nodepool
 
 import (
 	"github.com/go-openapi/swag"
+
+	objectmetamodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 )
 
 // VmwareTanzuManageV1alpha1ClusterNodepoolDefinition Definition is the definition of nodepool for cluster
@@ -50,8 +52,14 @@ type VmwareTanzuManageV1alpha1ClusterNodepoolNodepool struct {
 	// Full name for the Nodepool.
 	FullName *VmwareTanzuManageV1alpha1ClusterNodepoolFullName `json:"fullName,omitempty"`
 
+	// Metadata for the Nodepool object.
+	Meta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta `json:"meta,omitempty"`
+
 	// Spec for the Nodepool.
 	Spec *VmwareTanzuManageV1alpha1ClusterNodepoolSpec `json:"spec,omitempty"`
+
+	// Status of the Nodepool.
+	Status *VmwareTanzuManageV1alpha1ClusterNodepoolStatus `json:"status,omitempty"`
 }
 
 // MarshalBinary interface implementation.
