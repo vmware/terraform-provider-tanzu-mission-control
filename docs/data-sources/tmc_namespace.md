@@ -53,6 +53,7 @@ Optional:
 Read-Only:
 
 - **annotations** (Map of String)
+- **resource_version** (String)
 - **uid** (String)
 
 
