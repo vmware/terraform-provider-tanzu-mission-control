@@ -40,29 +40,29 @@ data "tmc_cluster" "read_tkg_vsphere_cluster" {
 
 ### Required
 
-- **name** (String)
+- **name** (String) Name of this cluster
 
 ### Optional
 
 - **attach_k8s_cluster** (Block List, Max: 1) (see [below for nested schema](#nestedblock--attach_k8s_cluster))
 - **id** (String) The ID of this resource.
-- **management_cluster_name** (String)
-- **meta** (Block List, Max: 1) (see [below for nested schema](#nestedblock--meta))
-- **provisioner_name** (String)
-- **spec** (Block List, Max: 1) (see [below for nested schema](#nestedblock--spec))
-- **wait_until_ready** (Boolean)
+- **management_cluster_name** (String) Name of the management cluster
+- **meta** (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
+- **provisioner_name** (String) Provisioner of the cluster
+- **spec** (Block List, Max: 1) Spec for the cluster (see [below for nested schema](#nestedblock--spec))
+- **wait_until_ready** (Boolean) Wait flag of the cluster
 
 ### Read-Only
 
-- **status** (Map of String)
+- **status** (Map of String) Status of the cluster
 
 <a id="nestedblock--attach_k8s_cluster"></a>
 ### Nested Schema for `attach_k8s_cluster`
 
 Optional:
 
-- **description** (String)
-- **kubeconfig_file** (String)
+- **description** (String) Attach cluster description
+- **kubeconfig_file** (String) Attach cluster KUBECONFIG path
 
 
 <a id="nestedblock--meta"></a>
@@ -70,14 +70,14 @@ Optional:
 
 Optional:
 
-- **description** (String)
-- **labels** (Map of String)
+- **description** (String) Description of the resource
+- **labels** (Map of String) Labels for the resource
 
 Read-Only:
 
-- **annotations** (Map of String)
-- **resource_version** (String)
-- **uid** (String)
+- **annotations** (Map of String) Annotations for the resource
+- **resource_version** (String) Resource version of the resource
+- **uid** (String) UID of the resource
 
 
 <a id="nestedblock--spec"></a>
@@ -85,7 +85,8 @@ Read-Only:
 
 Optional:
 
-- **cluster_group** (String)
+- **cluster_group** (String) Name of the cluster group to which this cluster belongs
+- **proxy** (String) Optional proxy name is the name of the Proxy Config to be used for the cluster
 - **tkg_service_vsphere** (Block List, Max: 1) The tkg service vsphere cluster spec (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))
 - **tkg_vsphere** (Block List, Max: 1) The TKG Vsphere cluster spec (see [below for nested schema](#nestedblock--spec--tkg_vsphere))
 
@@ -148,10 +149,10 @@ Required:
 
 Optional:
 
-- **node_pool** (Block List) Nodepool specific configuration (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pool))
+- **node_pools** (Block List) Nodepool specific configuration (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools))
 
 <a id="nestedblock--spec--tkg_service_vsphere--topology--control_plane"></a>
-### Nested Schema for `spec.tkg_service_vsphere.topology.node_pool`
+### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools`
 
 Required:
 
@@ -163,19 +164,19 @@ Optional:
 - **high_availability** (Boolean) High Availability or Non High Availability Cluster. HA cluster creates three controlplane machines, and non HA creates just one
 
 
-<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pool"></a>
-### Nested Schema for `spec.tkg_service_vsphere.topology.node_pool`
+<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools"></a>
+### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools`
 
 Required:
 
-- **info** (Block List, Min: 1, Max: 1) Info is the meta information of nodepool for cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pool--info))
+- **info** (Block List, Min: 1, Max: 1) Info is the meta information of nodepool for cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--info))
 
 Optional:
 
-- **spec** (Block List, Max: 1) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pool--spec))
+- **spec** (Block List, Max: 1) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec))
 
-<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pool--info"></a>
-### Nested Schema for `spec.tkg_service_vsphere.topology.node_pool.info`
+<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--info"></a>
+### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.info`
 
 Optional:
 
@@ -183,18 +184,18 @@ Optional:
 - **name** (String) Name of the nodepool
 
 
-<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pool--spec"></a>
-### Nested Schema for `spec.tkg_service_vsphere.topology.node_pool.spec`
+<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec"></a>
+### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.spec`
 
 Optional:
 
 - **cloud_label** (Map of String) Cloud labels
 - **node_label** (Map of String) Node labels
-- **tkg_service_vsphere** (Block List, Max: 1) Nodepool config for tkg service vsphere (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pool--spec--tkg_service_vsphere))
+- **tkg_service_vsphere** (Block List, Max: 1) Nodepool config for tkg service vsphere (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--tkg_service_vsphere))
 - **worker_node_count** (String) Count is the number of nodes
 
-<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pool--spec--tkg_service_vsphere"></a>
-### Nested Schema for `spec.tkg_service_vsphere.topology.node_pool.spec.worker_node_count`
+<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--tkg_service_vsphere"></a>
+### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.spec.worker_node_count`
 
 Required:
 

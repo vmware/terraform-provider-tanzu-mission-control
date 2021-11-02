@@ -26,21 +26,24 @@ const (
 )
 
 var Meta = &schema.Schema{
-	Type:     schema.TypeList,
-	Optional: true,
-	Computed: true,
-	MaxItems: 1,
+	Type:        schema.TypeList,
+	Description: "Metadata for the resource",
+	Optional:    true,
+	Computed:    true,
+	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			annotationsKey: {
-				Type:     schema.TypeMap,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeMap,
+				Description: "Annotations for the resource",
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			LabelsKey: {
-				Type:     schema.TypeMap,
-				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeMap,
+				Description: "Labels for the resource",
+				Optional:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					if strings.Contains(k, "tmc.cloud.vmware.com/creator") || strings.Contains(k, "tmc.cloud.vmware.com/managed") || strings.Contains(k, "tmc.cloud.vmware.com/workspace") {
 						return true
@@ -49,16 +52,19 @@ var Meta = &schema.Schema{
 				},
 			},
 			DescriptionKey: {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Description: "Description of the resource",
+				Optional:    true,
 			},
 			uidKey: {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Description: "UID of the resource",
+				Computed:    true,
 			},
 			resourceVersionKey: {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Description: "Resource version of the resource",
+				Computed:    true,
 			},
 		},
 	},

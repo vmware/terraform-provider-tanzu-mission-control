@@ -37,34 +37,39 @@ func ResourceTMCCluster() *schema.Resource {
 
 var clusterSchema = map[string]*schema.Schema{
 	ManagementClusterNameKey: {
-		Type:     schema.TypeString,
-		Default:  "attached",
-		Optional: true,
-		ForceNew: true,
+		Type:        schema.TypeString,
+		Description: "Name of the management cluster",
+		Default:     "attached",
+		Optional:    true,
+		ForceNew:    true,
 	},
 	ProvisionerNameKey: {
-		Type:     schema.TypeString,
-		Default:  "attached",
-		Optional: true,
-		ForceNew: true,
+		Type:        schema.TypeString,
+		Description: "Provisioner of the cluster",
+		Default:     "attached",
+		Optional:    true,
+		ForceNew:    true,
 	},
 	clusterNameKey: {
-		Type:     schema.TypeString,
-		Required: true,
-		ForceNew: true,
+		Type:        schema.TypeString,
+		Description: "Name of this cluster",
+		Required:    true,
+		ForceNew:    true,
 	},
 	attachClusterKey: attachCluster,
 	common.MetaKey:   common.Meta,
 	SpecKey:          clusterSpec,
 	StatusKey: {
-		Type:     schema.TypeMap,
-		Computed: true,
-		Elem:     &schema.Schema{Type: schema.TypeString},
+		Type:        schema.TypeMap,
+		Description: "Status of the cluster",
+		Computed:    true,
+		Elem:        &schema.Schema{Type: schema.TypeString},
 	},
 	waitKey: {
-		Type:     schema.TypeBool,
-		Default:  false,
-		Optional: true,
+		Type:        schema.TypeBool,
+		Description: "Wait flag of the cluster",
+		Default:     false,
+		Optional:    true,
 	},
 }
 
@@ -89,28 +94,37 @@ var attachCluster = &schema.Schema{
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			attachClusterKubeConfigKey: {
-				Type:     schema.TypeString,
-				ForceNew: true,
-				Optional: true,
+				Type:        schema.TypeString,
+				Description: "Attach cluster KUBECONFIG path",
+				ForceNew:    true,
+				Optional:    true,
 			},
 			attachClusterDescriptionKey: {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Description: "Attach cluster description",
+				Optional:    true,
 			},
 		},
 	},
 }
 
 var clusterSpec = &schema.Schema{
-	Type:     schema.TypeList,
-	Optional: true,
-	MaxItems: 1,
+	Type:        schema.TypeList,
+	Description: "Spec for the cluster",
+	Optional:    true,
+	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			clusterGroupKey: {
-				Type:     schema.TypeString,
-				Default:  clusterGroupDefaultValue,
-				Optional: true,
+				Type:        schema.TypeString,
+				Description: "Name of the cluster group to which this cluster belongs",
+				Default:     clusterGroupDefaultValue,
+				Optional:    true,
+			},
+			proxyNameKey: {
+				Type:        schema.TypeString,
+				Description: "Optional proxy name is the name of the Proxy Config to be used for the cluster",
+				Optional:    true,
 			},
 			tkgServiceVsphereKey: tkgservicevsphere.TkgServiceVsphere,
 			tkgVsphereClusterKey: tkgvsphere.TkgVsphereClusterSpec,
@@ -140,6 +154,10 @@ func constructSpec(d *schema.ResourceData) (spec *clustermodel.VmwareTanzuManage
 		spec.ClusterGroupName = v.(string)
 	}
 
+	if v, ok := specData[proxyNameKey]; ok {
+		spec.ProxyName = v.(string)
+	}
+
 	if v, ok := specData[tkgServiceVsphereKey]; ok {
 		if v1, ok := v.([]interface{}); ok {
 			spec.TkgServiceVsphere = tkgservicevsphere.ConstructTKGSSpec(v1)
@@ -163,6 +181,8 @@ func flattenSpec(spec *clustermodel.VmwareTanzuManageV1alpha1ClusterSpec) (data 
 	flattenSpecData := make(map[string]interface{})
 
 	flattenSpecData[clusterGroupKey] = spec.ClusterGroupName
+
+	flattenSpecData[proxyNameKey] = spec.ProxyName
 
 	if spec.TkgServiceVsphere != nil {
 		flattenSpecData[tkgServiceVsphereKey] = tkgservicevsphere.FlattenTKGSSpec(spec.TkgServiceVsphere)

@@ -42,6 +42,25 @@ resource "tmc_cluster" "attach_cluster_with_kubeconfig" {
   # The deployment link and the command needed to be run to attach this cluster would be provided in the output.status.execution_cmd
 }
 
+# Create TMC attach cluster entry with proxy
+resource "tmc_cluster" "attach_cluster_with_proxy" {
+  management_cluster_name = "attached"         # Default: attached
+  provisioner_name        = "attached"         # Default: attached
+  name                    = "terraform-attach-proxy" # Required
+
+  meta {
+    description = "create attach cluster from terraform"
+    labels      = { "key" : "value" }
+  }
+
+  spec {
+    cluster_group = "default" # Default: default
+    proxy = "proxy-name"
+  }
+
+  wait_until_ready = false
+}
+
 # Create TMC TKG Service Vsphere workload cluster entry
 resource "tmc_cluster" "create_tkgs_workload" {
   management_cluster_name = "tkgs-terraform"

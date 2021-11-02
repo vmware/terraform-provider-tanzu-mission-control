@@ -25,7 +25,7 @@ description: |-
 ### Optional
 
 - **id** (String) The ID of this resource.
-- **meta** (Block List, Max: 1) (see [below for nested schema](#nestedblock--meta))
+- **meta** (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
 - **spec** (Block List) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec))
 
 ### Read-Only
@@ -37,14 +37,14 @@ description: |-
 
 Optional:
 
-- **description** (String)
-- **labels** (Map of String)
+- **description** (String) Description of the resource
+- **labels** (Map of String) Labels for the resource
 
 Read-Only:
 
-- **annotations** (Map of String)
-- **resource_version** (String)
-- **uid** (String)
+- **annotations** (Map of String) Annotations for the resource
+- **resource_version** (String) Resource version of the resource
+- **uid** (String) UID of the resource
 
 
 <a id="nestedblock--spec"></a>
