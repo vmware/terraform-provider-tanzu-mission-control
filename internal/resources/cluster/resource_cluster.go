@@ -315,8 +315,6 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 		getResp.Cluster.Spec.ClusterGroupName = incomingCGName.(string)
 	}
 
-	//TODO: check if node pool is updated, update the getResp by calling nodePool update endpoint
-
 	_, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceUpdate(
 		&clustermodel.VmwareTanzuManageV1alpha1ClusterRequest{
 			Cluster: getResp.Cluster,

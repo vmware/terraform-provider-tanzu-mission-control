@@ -17,7 +17,6 @@ import (
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
 	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
-	nodepoolmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
@@ -92,100 +91,17 @@ func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m inter
 		return diag.FromErr(err)
 	}
 
-	if resp.Cluster.Spec != nil {
-		diags = populateNodePools(config, resp)
+	clusterSpec := constructSpec(d)
+
+	switch {
+	case resp.Cluster.Spec.TkgServiceVsphere != nil:
+		resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools = clusterSpec.TkgServiceVsphere.Topology.NodePools
+	case resp.Cluster.Spec.TkgVsphere != nil:
+		resp.Cluster.Spec.TkgVsphere.Topology.NodePools = clusterSpec.TkgVsphere.Topology.NodePools
 	}
 
 	if err := d.Set(SpecKey, flattenSpec(resp.Cluster.Spec)); err != nil {
 		return diag.FromErr(err)
-	}
-
-	return diags
-}
-
-type clusterType int
-
-const (
-	attach clusterType = iota
-	tkgsVsphere
-	tkgmVsphere
-)
-
-func getClusterType(cluster *clustermodel.VmwareTanzuManageV1alpha1ClusterCluster) clusterType {
-	var typeCheck clusterType
-
-	switch {
-	case cluster.Spec.TkgVsphere != nil:
-		typeCheck = tkgmVsphere
-	case cluster.Spec.TkgServiceVsphere != nil:
-		typeCheck = tkgsVsphere
-	default:
-		typeCheck = attach
-	}
-
-	return typeCheck
-}
-
-func populateNodePools(config authctx.TanzuContext, resp *clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse) (diags diag.Diagnostics) {
-	checkClusterType := getClusterType(resp.Cluster)
-	if checkClusterType == attach {
-		return diags
-	}
-
-	nodePoolSpecListResp, err := config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolSpecResourceList(resp.Cluster.FullName)
-
-	if err != nil || nodePoolSpecListResp == nil {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "Unable to retrieve node pool entries",
-		})
-
-		return diags
-	}
-
-	switch checkClusterType {
-	case tkgmVsphere:
-		resp.Cluster.Spec.TkgVsphere.Topology.NodePools = make([]*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition, 0)
-
-		for _, np := range nodePoolSpecListResp.Nodepools {
-			spec := &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
-				WorkerNodeCount: np.Spec.WorkerNodeCount,
-				TkgVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGVsphereNodepool{
-					VMConfig: &nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGVsphereVMConfig{
-						CPU:       np.Spec.TkgVsphere.VMConfig.CPU,
-						DiskGib:   np.Spec.TkgVsphere.VMConfig.DiskGib,
-						MemoryMib: np.Spec.TkgVsphere.VMConfig.MemoryMib,
-					},
-				},
-			}
-			clusterNodePool := &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
-				Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-					Name: np.FullName.Name,
-				},
-				Spec: spec,
-			}
-			resp.Cluster.Spec.TkgVsphere.Topology.NodePools = append(resp.Cluster.Spec.TkgVsphere.Topology.NodePools, clusterNodePool)
-		}
-
-	case tkgsVsphere:
-		resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools = make([]*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition, 0)
-
-		for _, np := range nodePoolSpecListResp.Nodepools {
-			spec := &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
-				WorkerNodeCount: np.Spec.WorkerNodeCount,
-				TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
-					Class:        np.Spec.TkgServiceVsphere.Class,
-					StorageClass: np.Spec.TkgServiceVsphere.StorageClass,
-				},
-			}
-			clusterNodePool := &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
-				Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-					Name: np.FullName.Name,
-				},
-				Spec: spec,
-			}
-			resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools = append(resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools, clusterNodePool)
-		}
 	}
 
 	return diags
