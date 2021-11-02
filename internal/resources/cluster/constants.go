@@ -20,4 +20,5 @@ const (
 	ResourceName                = "tmc_cluster"
 	tkgServiceVsphereKey        = "tkg_service_vsphere"
 	tkgVsphereClusterKey        = "tkg_vsphere"
+	proxyNameKey                = "proxy"
 )

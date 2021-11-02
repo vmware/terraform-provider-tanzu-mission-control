@@ -34,7 +34,7 @@ data "tmc_namespace" "read_namespace" {
 
 - **id** (String) The ID of this resource.
 - **management_cluster_name** (String)
-- **meta** (Block List, Max: 1) (see [below for nested schema](#nestedblock--meta))
+- **meta** (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
 - **provisioner_name** (String)
 - **spec** (Block List, Max: 1) (see [below for nested schema](#nestedblock--spec))
 
@@ -47,14 +47,14 @@ data "tmc_namespace" "read_namespace" {
 
 Optional:
 
-- **description** (String)
-- **labels** (Map of String)
+- **description** (String) Description of the resource
+- **labels** (Map of String) Labels for the resource
 
 Read-Only:
 
-- **annotations** (Map of String)
-- **resource_version** (String)
-- **uid** (String)
+- **annotations** (Map of String) Annotations for the resource
+- **resource_version** (String) Resource version of the resource
+- **uid** (String) UID of the resource
 
 
 <a id="nestedblock--spec"></a>

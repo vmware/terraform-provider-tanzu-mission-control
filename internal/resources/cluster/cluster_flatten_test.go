@@ -27,13 +27,27 @@ func TestFlattenSpec(t *testing.T) {
 			expected: nil,
 		},
 		{
-			name: "normal scenario with cluster group and proxy",
+			name: "normal scenario with cluster group",
 			input: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
 				ClusterGroupName: "default",
 			},
 			expected: []interface{}{
 				map[string]interface{}{
 					clusterGroupKey: "default",
+					proxyNameKey:    "",
+				},
+			},
+		},
+		{
+			name: "normal scenario with cluster group and proxy",
+			input: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
+				ClusterGroupName: "default",
+				ProxyName:        "proxy",
+			},
+			expected: []interface{}{
+				map[string]interface{}{
+					clusterGroupKey: "default",
+					proxyNameKey:    "proxy",
 				},
 			},
 		},
