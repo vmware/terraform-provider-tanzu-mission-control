@@ -24,3 +24,20 @@ vet:
 # Linter
 lint: gofmt
 	golangci-lint run -c ./.golangci.yml ./internal/... .
+
+website-lint:
+	@echo "==> Checking website against linters..."
+	@misspell -error -source=text website/ || (echo; \
+	    echo "Unexpected mispelling found in website files."; \
+	    echo "To automatically fix the misspelling, run 'make website-lint-fix' and commit the changes."; \
+	    exit 1)
+	@terrafmt diff ./docs --check --pattern '*.markdown' --quiet || (echo; \
+	    echo "Unexpected differences in website HCL formatting."; \
+	    echo "To see the full differences, run: terrafmt diff ./website --pattern '*.markdown'"; \
+	    echo "To automatically fix the formatting, run 'make website-lint-fix' and commit the changes."; \
+	    exit 1)
+
+website-lint-fix:
+	@echo "==> Applying automatic website linter fixes..."
+	@misspell -w -source=text website/
+	@terrafmt fmt ./docs --pattern '*.markdown'

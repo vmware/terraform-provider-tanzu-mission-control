@@ -59,6 +59,7 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 
 func testGetResourceClusterDefinition(t *testing.T, opts ...testAcceptanceOption) string {
 	templateConfig := testGetDefaultAcceptanceConfig()
+
 	for _, option := range opts {
 		option(templateConfig)
 	}

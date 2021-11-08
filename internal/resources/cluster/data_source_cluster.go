@@ -8,6 +8,7 @@ package cluster
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -46,6 +47,7 @@ func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m inter
 		d.SetId(resp.Cluster.Meta.UID)
 
 		if clustermodel.NewVmwareTanzuManageV1alpha1ClusterPhase(clustermodel.VmwareTanzuManageV1alpha1ClusterPhaseREADY) != resp.Cluster.Status.Phase {
+			log.Printf("[DEBUG] waiting for cluster(%s) to be in READY phase", constructFullname(d).ToString())
 			return true, nil
 		}
 
