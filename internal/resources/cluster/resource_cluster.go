@@ -7,6 +7,7 @@ package cluster
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -210,6 +211,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		if kubeconfigfile != "" {
 			k8sclient, err = getK8sClient(kubeconfigfile)
 			if err != nil {
+				log.Println("[ERROR] error while creating kubernetes client: ", err.Error())
 				return diag.FromErr(err)
 			}
 		}
@@ -242,20 +244,14 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 			return append(diags, diag.FromErr(err)...)
 		}
 
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "Creating deployment link manifests objects on to kubernetes cluster",
-		})
+		log.Printf("[INFO] Applying %s cluster's deployment link manifest objects on to kubernetes cluster", constructFullname(d).ToString())
 
 		err = manifest.Create(k8sclient, deploymentManifests, true)
 		if err != nil {
 			return append(diags, diag.FromErr(err)...)
 		}
 
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "TMC resources applied to the cluster successfully",
-		})
+		log.Printf("[INFO] Cluster attach successful. TMC resources applied to the cluster(%s) successfully", constructFullname(d).ToString())
 	}
 
 	return append(diags, dataSourceTMCClusterRead(ctx, d, m)...)
