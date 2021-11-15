@@ -28,8 +28,8 @@ const (
 var Meta = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "Metadata for the resource",
-	Optional:    true,
 	Computed:    true,
+	Optional:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{

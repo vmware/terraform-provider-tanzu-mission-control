@@ -35,21 +35,33 @@ var (
 func TestAcceptanceForAttachClusterResource(t *testing.T) {
 	var provider = initTestProvider(t)
 
+	clusterConfig := map[string][]testAcceptanceOption{
+		"attach":               {withClusterName("tf-attach-test")},
+		"attachWithKubeConfig": {withKubeConfig(), withClusterName("tf-attach-kf-test")},
+		"tkgs":                 {withClusterName("tf-tkgs-test"), withTKGsCluster()},
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
 		ProviderFactories: testhelper.GetTestProviderFactories(provider),
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
-				Config: testGetResourceClusterDefinition(t, withClusterName("tf-attach-test")),
+				Config: testGetResourceClusterDefinition(t, clusterConfig["attach"]...),
 				Check: resource.ComposeTestCheckFunc(
-					checkResourceAttributes(provider, "tf-attach-test"),
+					checkResourceAttributes(provider, clusterConfig["attach"]...),
 				),
 			},
 			{
-				Config: testGetResourceClusterDefinition(t, withClusterName("tf-attach-kubeconfig-test"), withKubeConfig()),
+				Config: testGetResourceClusterDefinition(t, clusterConfig["attachWithKubeConfig"]...),
 				Check: resource.ComposeTestCheckFunc(
-					checkResourceAttributes(provider, "tf-attach-kubeconfig-test"),
+					checkResourceAttributes(provider, clusterConfig["attachWithKubeConfig"]...),
+				),
+			},
+			{
+				Config: testGetResourceClusterDefinition(t, clusterConfig["tkgs"]...),
+				Check: resource.ComposeTestCheckFunc(
+					checkResourceAttributes(provider, clusterConfig["tkgs"]...),
 				),
 			},
 		},
@@ -59,33 +71,45 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 
 func testGetResourceClusterDefinition(t *testing.T, opts ...testAcceptanceOption) string {
 	templateConfig := testGetDefaultAcceptanceConfig()
-
 	for _, option := range opts {
 		option(templateConfig)
 	}
 
-	if templateConfig.accTestType == attachClusterTypeWithKubeConfig {
+	switch templateConfig.accTestType {
+	case attachClusterTypeWithKubeConfig:
 		if templateConfig.KubeConfigPath == "" {
 			t.Skipf("KUBECONFIG env var is not set: %s", templateConfig.KubeConfigPath)
+		}
+
+	case tkgsCluster:
+		if templateConfig.ManagementClusterName == "" || templateConfig.ProvisionerName == "" || templateConfig.Version == "" || templateConfig.StorageClass == "" {
+			t.Skip("MANAGEMENT CLUSTER, PROVISIONER, VERSION or STORAGE CLASS env var is not set for TKGs acceptance test")
 		}
 	}
 
 	definition, err := parse(templateConfig, templateConfig.templateData)
 	if err != nil {
-		t.Skipf("unable to parse cluster script: %s", definition)
+		t.Skipf("unable to parse cluster script: %s", err)
 	}
 
 	return definition
 }
 
-func checkResourceAttributes(provider *schema.Provider, clusterName string) resource.TestCheckFunc {
+func checkResourceAttributes(provider *schema.Provider, opts ...testAcceptanceOption) resource.TestCheckFunc {
+	testConfig := testGetDefaultAcceptanceConfig()
+	for _, option := range opts {
+		option(testConfig)
+	}
+
 	var check = []resource.TestCheckFunc{
-		verifyClusterResourceCreation(provider, resourceName, clusterName),
-		resource.TestCheckResourceAttr(resourceName, "name", clusterName),
+		verifyClusterResourceCreation(provider, resourceName, testConfig),
+		resource.TestCheckResourceAttr(resourceName, "name", testConfig.Name),
 		resource.TestCheckResourceAttr(resourceName, helper.GetFirstElementOf("spec", "cluster_group"), "default"),
 	}
 
-	check = append(check, testhelper.MetaResourceAttributeCheck(resourceName)...)
+	if testConfig.accTestType != tkgsCluster {
+		check = append(check, testhelper.MetaResourceAttributeCheck(resourceName)...)
+	}
 
 	return resource.ComposeTestCheckFunc(check...)
 }
@@ -93,7 +117,7 @@ func checkResourceAttributes(provider *schema.Provider, clusterName string) reso
 func verifyClusterResourceCreation(
 	provider *schema.Provider,
 	resourceName string,
-	clusterName string,
+	testConfig *testAcceptanceConfig,
 ) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if provider == nil {
@@ -122,9 +146,9 @@ func verifyClusterResourceCreation(
 		}
 
 		fn := &clustermodel.VmwareTanzuManageV1alpha1ClusterFullName{
-			Name:                  clusterName,
-			ManagementClusterName: "attached",
-			ProvisionerName:       "attached",
+			Name:                  testConfig.Name,
+			ManagementClusterName: testConfig.ManagementClusterName,
+			ProvisionerName:       testConfig.ProvisionerName,
 		}
 
 		resp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(fn)

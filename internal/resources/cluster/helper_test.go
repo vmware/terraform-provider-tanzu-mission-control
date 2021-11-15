@@ -18,24 +18,40 @@ type acceptanceTestType int
 const (
 	attachClusterType acceptanceTestType = iota
 	attachClusterTypeWithKubeConfig
+	tkgsCluster
 )
 
 type testAcceptanceOption func(config *testAcceptanceConfig)
 
 type testAcceptanceConfig struct {
-	ResourceName      string
-	ResourceNameVar   string
-	DataSourceNameVar string
-	Name              string
-	KubeConfigPath    string
-	Meta              string
-	accTestType       acceptanceTestType
-	templateData      string
+	ResourceName          string
+	ResourceNameVar       string
+	DataSourceNameVar     string
+	Name                  string
+	KubeConfigPath        string
+	Meta                  string
+	accTestType           acceptanceTestType
+	templateData          string
+	ManagementClusterName string
+	ProvisionerName       string
+	Version               string
+	StorageClass          string
 }
 
 func withClusterName(name string) testAcceptanceOption {
 	return func(config *testAcceptanceConfig) {
 		config.Name = name
+	}
+}
+
+func withTKGsCluster() testAcceptanceOption {
+	return func(config *testAcceptanceConfig) {
+		config.ManagementClusterName = os.Getenv("MANAGEMENT_CLUSTER")
+		config.ProvisionerName = os.Getenv("PROVISIONER_NAME")
+		config.Version = os.Getenv("VERSION")
+		config.StorageClass = os.Getenv("STORAGE_CLASS")
+		config.accTestType = tkgsCluster
+		config.templateData = testTKGsClusterScript
 	}
 }
 
@@ -56,11 +72,13 @@ func withDataSourceScript() testAcceptanceOption {
 
 func testGetDefaultAcceptanceConfig() *testAcceptanceConfig {
 	return &testAcceptanceConfig{
-		ResourceName:    clusterResource,
-		ResourceNameVar: clusterResourceVar,
-		Meta:            testhelper.MetaTemplate,
-		accTestType:     attachClusterType,
-		templateData:    testDefaultAttachClusterScript,
+		ResourceName:          clusterResource,
+		ResourceNameVar:       clusterResourceVar,
+		Meta:                  testhelper.MetaTemplate,
+		accTestType:           attachClusterType,
+		templateData:          testDefaultAttachClusterScript,
+		ManagementClusterName: "attached",
+		ProvisionerName:       "attached",
 	}
 }
 
