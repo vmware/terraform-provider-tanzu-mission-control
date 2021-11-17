@@ -19,6 +19,7 @@ const (
 	attachClusterType acceptanceTestType = iota
 	attachClusterTypeWithKubeConfig
 	tkgsCluster
+	tkgVsphereCluster
 )
 
 type testAcceptanceOption func(config *testAcceptanceConfig)
@@ -36,6 +37,7 @@ type testAcceptanceConfig struct {
 	ProvisionerName       string
 	Version               string
 	StorageClass          string
+	ControlPlaneEndPoint  string
 }
 
 func withClusterName(name string) testAcceptanceOption {
@@ -52,6 +54,15 @@ func withTKGsCluster() testAcceptanceOption {
 		config.StorageClass = os.Getenv("STORAGE_CLASS")
 		config.accTestType = tkgsCluster
 		config.templateData = testTKGsClusterScript
+	}
+}
+
+func withTKGmVsphereCluster() testAcceptanceOption {
+	return func(config *testAcceptanceConfig) {
+		config.ManagementClusterName = os.Getenv("MANAGEMENT_CLUSTER")
+		config.ControlPlaneEndPoint = os.Getenv("CONTROL_PLANE_ENDPOINT")
+		config.accTestType = tkgVsphereCluster
+		config.templateData = testTKGmVsphereClusterScript
 	}
 }
 

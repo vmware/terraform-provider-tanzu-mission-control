@@ -94,8 +94,8 @@ func TestFlattenTopology(t *testing.T) {
 							},
 							nodePoolSpecKey: []interface{}{
 								map[string]interface{}{
-									cloudLabelsKey:     map[string]string{"cloud-key": "cloud-value"},
-									nodeLabelsKey:      map[string]string{"node-key": "node-value"},
+									cloudLabelKey:      map[string]string{"cloud-key": "cloud-value"},
+									nodeLabelKey:       map[string]string{"node-key": "node-value"},
 									workerNodeCountKey: "1",
 									tkgVsphereKey: []interface{}{
 										map[string]interface{}{
@@ -171,8 +171,8 @@ func TestFlattenTopology(t *testing.T) {
 							},
 							nodePoolSpecKey: []interface{}{
 								map[string]interface{}{
-									cloudLabelsKey:     map[string]string{"cloud-key": "cloud-value"},
-									nodeLabelsKey:      map[string]string{"node-key": "node-value"},
+									cloudLabelKey:      map[string]string{"cloud-key": "cloud-value"},
+									nodeLabelKey:       map[string]string{"node-key": "node-value"},
 									workerNodeCountKey: "1",
 									tkgVsphereKey: []interface{}{
 										map[string]interface{}{

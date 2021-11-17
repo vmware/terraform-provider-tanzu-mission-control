@@ -68,8 +68,14 @@ resource "tmc_cluster" "create_tkg_vsphere_cluster" {
         }
 
         node_pools {
-          node_pool_spec {
+          spec {
             worker_node_count = "<worker-node-count>" // Required
+            cloud_label = {
+              "<key>": "<val>"
+            }
+            node_label = {
+              "<key>": "<val>"
+            }
 
             tkg_vsphere {
               vm_config {
@@ -80,9 +86,9 @@ resource "tmc_cluster" "create_tkg_vsphere_cluster" {
             }
           }
 
-          node_pool_info {
-            node_pool_name        = "<node-pool-name>" // Required
-            node_pool_description = "<node-pool-description>"
+          info {
+            name        = "<node-pool-name>" // Required
+            description = "<node-pool-description>"
           }
         }
       }
