@@ -48,7 +48,13 @@ resource "tmc_cluster" "create_tkgs_workload" {
         }
         node_pools  {
           spec  {
-            worker_node_count = "<worker-node-count>" //// Required
+            worker_node_count = "<worker-node-count>" // Required
+            cloud_label = {
+              "<key>": "<val>"
+            }
+            node_label = {
+              "<key>": "<val>"
+            }
             tkg_service_vsphere  {
               class = "<class>" // Required
               storage_class = "<storage-class>" // Required

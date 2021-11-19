@@ -571,13 +571,13 @@ var tkgVsphereNodePoolSpec = &schema.Schema{
 				Description: "Count is the number of nodes",
 				Optional:    true,
 			},
-			nodeLabelsKey: {
+			nodeLabelKey: {
 				Type:        schema.TypeMap,
 				Description: "Node labels",
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			cloudLabelsKey: {
+			cloudLabelKey: {
 				Type:        schema.TypeMap,
 				Description: "Cloud labels",
 				Optional:    true,
@@ -615,12 +615,12 @@ func expandTKGVsphereTopologyNodePool(data interface{}) (nodePools *nodepoolmode
 				nodePools.Spec.WorkerNodeCount, _ = v1.(string)
 			}
 
-			if v1, ok := spec[nodeLabelsKey]; ok {
+			if v1, ok := spec[nodeLabelKey]; ok {
 				nodeLabels, _ := v1.(map[string]interface{})
 				nodePools.Spec.NodeLabels = common.GetTypeMapData(nodeLabels)
 			}
 
-			if v1, ok := spec[cloudLabelsKey]; ok {
+			if v1, ok := spec[cloudLabelKey]; ok {
 				cloudLabels, _ := v1.(map[string]interface{})
 				nodePools.Spec.CloudLabels = common.GetTypeMapData(cloudLabels)
 			}
@@ -672,8 +672,8 @@ func flattenTKGVsphereTopologyNodePool(nodePool *nodepoolmodel.VmwareTanzuManage
 		flattenNodePoolSpec := make(map[string]interface{})
 
 		flattenNodePoolSpec[workerNodeCountKey] = nodePool.Spec.WorkerNodeCount
-		flattenNodePoolSpec[nodeLabelsKey] = nodePool.Spec.NodeLabels
-		flattenNodePoolSpec[cloudLabelsKey] = nodePool.Spec.CloudLabels
+		flattenNodePoolSpec[nodeLabelKey] = nodePool.Spec.NodeLabels
+		flattenNodePoolSpec[cloudLabelKey] = nodePool.Spec.CloudLabels
 
 		if nodePool.Spec.TkgVsphere != nil {
 			flattenNodePoolSpec[tkgVsphereKey] = flattenNodePoolTKGVsphere(nodePool.Spec.TkgVsphere)

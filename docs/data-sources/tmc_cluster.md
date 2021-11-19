@@ -341,8 +341,8 @@ Optional:
 
 Optional:
 
-- **cloud_labels** (Map of String) Cloud labels
-- **node_labels** (Map of String) Node labels
+- **cloud_label** (Map of String) Cloud labels
+- **node_label** (Map of String) Node labels
 - **tkg_vsphere** (Block List, Max: 1) Nodepool config for tkgm vsphere (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--spec--tkg_vsphere))
 - **worker_node_count** (String) Count is the number of nodes
 

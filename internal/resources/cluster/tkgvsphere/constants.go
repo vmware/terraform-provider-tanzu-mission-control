@@ -35,8 +35,8 @@ const (
 	nodePoolSpecKey                  = "spec"
 	nodePoolDescriptionKey           = "description"
 	nodePoolNameKey                  = "name"
-	cloudLabelsKey                   = "cloud_labels"
-	nodeLabelsKey                    = "node_labels"
+	cloudLabelKey                    = "cloud_label"
+	nodeLabelKey                     = "node_label"
 	tkgVsphereKey                    = "tkg_vsphere"
 	workerNodeCountKey               = "worker_node_count"
 )

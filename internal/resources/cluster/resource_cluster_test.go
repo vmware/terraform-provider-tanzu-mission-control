@@ -39,6 +39,7 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 		"attach":               {withClusterName("tf-attach-test")},
 		"attachWithKubeConfig": {withKubeConfig(), withClusterName("tf-attach-kf-test")},
 		"tkgs":                 {withClusterName("tf-tkgs-test"), withTKGsCluster()},
+		"tkgVsphere":           {withClusterName("tf-tkgm-vsphere-test"), withTKGmVsphereCluster()},
 	}
 
 	resource.Test(t, resource.TestCase{
@@ -64,6 +65,12 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 					checkResourceAttributes(provider, clusterConfig["tkgs"]...),
 				),
 			},
+			{
+				Config: testGetResourceClusterDefinition(t, clusterConfig["tkgVsphere"]...),
+				Check: resource.ComposeTestCheckFunc(
+					checkResourceAttributes(provider, clusterConfig["tkgVsphere"]...),
+				),
+			},
 		},
 	})
 	t.Log("cluster resource acceptance test complete!")
@@ -84,6 +91,11 @@ func testGetResourceClusterDefinition(t *testing.T, opts ...testAcceptanceOption
 	case tkgsCluster:
 		if templateConfig.ManagementClusterName == "" || templateConfig.ProvisionerName == "" || templateConfig.Version == "" || templateConfig.StorageClass == "" {
 			t.Skip("MANAGEMENT CLUSTER, PROVISIONER, VERSION or STORAGE CLASS env var is not set for TKGs acceptance test")
+		}
+
+	case tkgVsphereCluster:
+		if templateConfig.ManagementClusterName == "" || templateConfig.ControlPlaneEndPoint == "" {
+			t.Skip("MANAGEMENT CLUSTER or CONTROL PLANE ENDPOINT env var is not set for TKGm Vsphere acceptance test")
 		}
 	}
 
@@ -107,7 +119,7 @@ func checkResourceAttributes(provider *schema.Provider, opts ...testAcceptanceOp
 		resource.TestCheckResourceAttr(resourceName, helper.GetFirstElementOf("spec", "cluster_group"), "default"),
 	}
 
-	if testConfig.accTestType != tkgsCluster {
+	if testConfig.accTestType == attachClusterType || testConfig.accTestType == attachClusterTypeWithKubeConfig {
 		check = append(check, testhelper.MetaResourceAttributeCheck(resourceName)...)
 	}
 

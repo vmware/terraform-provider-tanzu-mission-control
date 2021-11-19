@@ -118,6 +118,13 @@ resource "tmc_cluster" "create_tkgs_workload" {
         node_pools {
           spec {
             worker_node_count = "1"
+            cloud_label = {
+              "key1": "val1"
+            }
+            node_label = {
+              "key2": "val2"
+            }
+
             tkg_service_vsphere {
               class         = "best-effort-xsmall"
               storage_class = "gc-storage-profile"
@@ -176,7 +183,7 @@ resource "tmc_cluster" "create_tkg_vsphere_cluster" {
         workspace {
           datacenter        = "/dc0"
           datastore         = "/dc0/datastore/local-0"
-          workspace_network = "/dc0/network/VM Network"
+          workspace_network = "/dc0/network/Avi Internal"
           folder            = "/dc0/vm"
           resource_pool     = "/dc0/host/cluster0/Resources"
         }
@@ -196,6 +203,12 @@ resource "tmc_cluster" "create_tkg_vsphere_cluster" {
         node_pools {
           spec {
             worker_node_count = "1"
+            cloud_label = {
+              "key1": "val1"
+            }
+            node_label = {
+              "key2": "val2"
+            }
 
             tkg_vsphere {
               vm_config {
@@ -523,8 +536,8 @@ Optional:
 
 Optional:
 
-- **cloud_labels** (Map of String) Cloud labels
-- **node_labels** (Map of String) Node labels
+- **cloud_label** (Map of String) Cloud labels
+- **node_label** (Map of String) Node labels
 - **tkg_vsphere** (Block List, Max: 1) Nodepool config for tkgm vsphere (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--spec--tkg_vsphere))
 - **worker_node_count** (String) Count is the number of nodes
 
