@@ -41,7 +41,7 @@ func (c *Client) invokeAction(httpMethodType string, url string, request Request
 		return errors.Wrap(err, "marshall request body")
 	}
 
-	headers := c.Headers
+	headers := c.Headers.Clone()
 	headers.Set(contentLengthKey, fmt.Sprintf("%d", len(body)))
 
 	var resp *http.Response
