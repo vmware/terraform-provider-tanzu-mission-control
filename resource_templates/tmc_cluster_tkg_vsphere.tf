@@ -48,20 +48,20 @@ resource "tmc_cluster" "create_tkg_vsphere_cluster" {
         version = "<version>" // Required
 
         workspace {
-          datacenter        = "<datacenter>" // Required
-          datastore         = "<datastore>" // Required
+          datacenter        = "<datacenter>"        // Required
+          datastore         = "<datastore>"         // Required
           workspace_network = "<workspace_network>" // Required
-          folder            = "<folder>" // Required
-          resource_pool     = "<resource_pool>" // Required
+          folder            = "<folder>"            // Required
+          resource_pool     = "<resource_pool>"     // Required
         }
       }
 
       topology {
         control_plane {
           vm_config {
-            cpu       = "<cpu>" // Required
+            cpu       = "<cpu>"       // Required
             disk_size = "<disk_size>" // Required
-            memory    = "<memory>" // Required
+            memory    = "<memory>"    // Required
           }
 
           high_availability = false // Default: false
@@ -71,17 +71,17 @@ resource "tmc_cluster" "create_tkg_vsphere_cluster" {
           spec {
             worker_node_count = "<worker-node-count>" // Required
             cloud_label = {
-              "<key>": "<val>"
+              "<key>" : "<val>"
             }
             node_label = {
-              "<key>": "<val>"
+              "<key>" : "<val>"
             }
 
             tkg_vsphere {
               vm_config {
-                cpu       = "<cpu>" // Required
+                cpu       = "<cpu>"       // Required
                 disk_size = "<disk_size>" // Required
-                memory    = "<memory>" // Required
+                memory    = "<memory>"    // Required
               }
             }
           }

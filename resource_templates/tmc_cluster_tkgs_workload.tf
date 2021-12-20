@@ -15,20 +15,20 @@ resource "tmc_cluster" "create_tkgs_workload" {
   name                    = "<cluster-name>"
 
   meta {
-    labels      = { "key" : "test"}
+    labels = { "key" : "test" }
   }
 
   spec {
     cluster_group = "<cluster-group>" // Default: default
     tkg_service_vsphere {
-      settings  {
-        network  {
-          pods  {
+      settings {
+        network {
+          pods {
             cidr_blocks = [
               "<pods-cidr-blocks>", // Required
             ]
           }
-          services  {
+          services {
             cidr_blocks = [
               "<services-cidr-blocks>", // Required
             ]
@@ -36,27 +36,27 @@ resource "tmc_cluster" "create_tkgs_workload" {
         }
       }
 
-      distribution  {
+      distribution {
         version = "<version>" // Required
       }
 
-      topology  {
-        control_plane  {
-          class = "<class>" // Required
-          storage_class = "<storage-class" // Required
-          high_availability = false // Default: false
+      topology {
+        control_plane {
+          class             = "<class>"        // Required
+          storage_class     = "<storage-class" // Required
+          high_availability = false            // Default: false
         }
-        node_pools  {
-          spec  {
+        node_pools {
+          spec {
             worker_node_count = "<worker-node-count>" // Required
             cloud_label = {
-              "<key>": "<val>"
+              "<key>" : "<val>"
             }
             node_label = {
-              "<key>": "<val>"
+              "<key>" : "<val>"
             }
-            tkg_service_vsphere  {
-              class = "<class>" // Required
+            tkg_service_vsphere {
+              class         = "<class>"         // Required
               storage_class = "<storage-class>" // Required
             }
           }
