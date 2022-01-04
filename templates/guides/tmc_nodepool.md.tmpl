@@ -1,0 +1,14 @@
+---
+Title: "Provisioning Nodepool Resource"
+Description: |-
+    Adding the nodepool resource to a cluster.
+---
+
+# Provisioning nodepool on a cluster
+
+A nodepool can be added to a workload cluster. For provisioning of a cluster, refer to the `tmc_cluster` in `guides`.
+
+We support Create, read, update and delete operations for node pool.
+You could create/manage a `nodepool` for a cluster with the following config:
+
+{{ tffile "resource_templates/tmc_nodepool.tf" }}

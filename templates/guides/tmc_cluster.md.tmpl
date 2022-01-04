@@ -1,0 +1,26 @@
+---
+Title: "Provisioning of a workload cluster"
+Description: |-
+    An example of provisioning a TKGs and a TKGm workload cluster.
+---
+
+# TKGs Workload Cluster
+
+The TKGs workload cluster can be provisioned through the terraform provider using the following example. For the
+provisioning, it is expected that the user already has a management cluster registered of the kind `vSphere with Tanzu`
+on their TMC instance. The following example demonstrates the resource of a TKG Service Vsphere workload cluster:
+
+{{ tffile "resource_templates/tmc_cluster_tkgs_workload.tf" }}
+
+# TKGm Vsphere Workload Cluster
+
+The TKGm Vsphere workload cluster can be provisioned through the terraform provider using the following example. For the
+provisioning, it is expected that the user already has a management cluster registered of the kind `Tanzu Kubernetes Grid`
+on their TMC instance. The following example demonstrates the resource of a TKGm Vsphere workload cluster:
+
+{{ tffile "resource_templates/tmc_cluster_tkg_vsphere.tf" }}
+
+When you apply these configurations it will create the respective workload cluster on the chosen management cluster.
+If you need to update the cluster, you simply make an update to the rule definition and Terraform will
+apply/update it across all the sites. If you add / or remove a site from the list, Terraform will also
+handle creating or removing the rule on the subsequent `terraform apply`.

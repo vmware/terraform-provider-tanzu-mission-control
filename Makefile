@@ -25,6 +25,13 @@ vet:
 lint: gofmt
 	golangci-lint run -c ./.golangci.yml ./internal/... .
 
+set-tf-acc:
+	@echo Setting Acceptance test env variable
+	export TF_ACC=true;\
+	echo $$TF_ACC
+
+acc-test: set-tf-acc test
+
 website-lint:
 	@echo "==> Checking website against linters..."
 	@misspell -error -source=text website/ || (echo; \

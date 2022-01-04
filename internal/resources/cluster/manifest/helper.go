@@ -1,11 +1,8 @@
 /*
-Copyright (c) 2021 VMware, Inc. All rights reserved.
-
-Proprietary and confidential.
-
-Unauthorized copying or use of this file, in any medium or form,
-is strictly prohibited.
+Copyright © 2021 VMware, Inc. All Rights Reserved.
+SPDX-License-Identifier: MPL-2.0
 */
+
 package manifest
 
 import (
