@@ -152,7 +152,7 @@ func resourceNamespaceCreate(ctx context.Context, d *schema.ResourceData, m inte
 	namespaceResponse, err := config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceCreate(namespaceRequest)
 
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "unable to create tanzu TMC namespace entry, name : %s", nameKey))
+		return diag.FromErr(errors.Wrapf(err, "unable to create Tanzu Mission Control namespace entry, name : %s", nameKey))
 	}
 
 	d.SetId(namespaceResponse.Namespace.Meta.UID)
@@ -170,7 +170,7 @@ func resourceNamespaceDelete(_ context.Context, d *schema.ResourceData, m interf
 
 	err := config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceDelete(constructFullname(d))
 	if err != nil && !clienterrors.IsNotFoundError(err) {
-		return diag.FromErr(errors.Wrapf(err, "unable to delete tanzu TMC namespace entry, name : %s", namespaceName))
+		return diag.FromErr(errors.Wrapf(err, "unable to delete Tanzu Mission Control namespace entry, name : %s", namespaceName))
 	}
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but
@@ -199,7 +199,7 @@ func resourceNamespaceInPlaceUpdate(ctx context.Context, d *schema.ResourceData,
 
 	getResp, err := config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceGet(constructFullname(d))
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "unable to get tanzu TMC namespace entry, name : %s", d.Get(clusterNameKey)))
+		return diag.FromErr(errors.Wrapf(err, "unable to get Tanzu Mission Control namespace entry, name : %s", d.Get(clusterNameKey)))
 	}
 
 	if common.HasMetaChanged(d) {
@@ -225,7 +225,7 @@ func resourceNamespaceInPlaceUpdate(ctx context.Context, d *schema.ResourceData,
 		},
 	)
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "unable to update tanzu TMC namespace entry, name : %s", d.Get(clusterNameKey)))
+		return diag.FromErr(errors.Wrapf(err, "unable to update Tanzu Mission Control namespace entry, name : %s", d.Get(clusterNameKey)))
 	}
 
 	return dataSourceNamespaceRead(ctx, d, m)

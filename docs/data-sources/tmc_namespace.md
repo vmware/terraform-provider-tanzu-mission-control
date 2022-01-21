@@ -6,12 +6,20 @@ Description: |-
 
 # Namespace
 
-A namespace can be read.
+Manage a namespace using this Terraform module.
+
+In managed clusters, both attached and provisioned, you can create namespaces that you can manage through Tanzu Mission Control.
+When you create a namespace through Tanzu Mission Control, you specify the workspace to which the namespace belongs.
+
+To create a namespace, you must have `cluster.edit` permissions on the cluster and `workspace.edit` permissions in Tanzu Mission Control.
+For more information, see [create a Managed Namespace.][namespace]
+
+[namespace]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-FB8AD386-8DA1-4287-AE85-1287F5C0101B.html
 
 ## Example Usage
 
 ```terraform
-# Read TMC namespace : fetch namespace details
+# Read Tanzu Mission Control namespace : fetch namespace details
 data "tmc_namespace" "read_namespace" {
   name                    = "tf-namespace" # Required
   cluster_name            = "testcluster"  # Required

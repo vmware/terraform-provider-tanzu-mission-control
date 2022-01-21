@@ -1,4 +1,4 @@
-# Create namespace with attached set as default value.
+# Create Tanzu Mission Control namespace with attached set as default value.
 resource "tmc_namespace" "create_namespace" {
   name                    = "tf-namespace" # Required
   cluster_name            = "testcluster"  # Required
@@ -16,7 +16,7 @@ resource "tmc_namespace" "create_namespace" {
   }
 }
 
-# Create namespace with attached set as 'true'
+# Create Tanzu Mission Control namespace with attached set as 'true'
 resource "tmc_namespace" "create_namespace_attached" {
   name                    = "tf-namespace" # Required
   cluster_name            = "testcluster"  # Required

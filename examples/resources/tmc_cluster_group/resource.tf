@@ -1,4 +1,4 @@
-# Create cluster group
+# Create Tanzu Mission Control cluster group
 resource "tmc_cluster_group" "create_cluster_group" {
   name = "tf-cluster-group"
   meta {

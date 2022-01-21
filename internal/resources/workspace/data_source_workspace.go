@@ -38,7 +38,7 @@ func dataSourceWorkspaceRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	resp, err := config.TMCConnection.WorkspaceResourceService.ManageV1alpha1WorkspaceResourceServiceGet(fn)
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to get tanzu TMC workspace entry, name : %s", workspaceName))
+		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control workspace entry, name : %s", workspaceName))
 	}
 
 	d.SetId(resp.Workspace.Meta.UID)

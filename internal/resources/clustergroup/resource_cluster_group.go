@@ -99,7 +99,7 @@ func resourceClusterGroupDelete(_ context.Context, d *schema.ResourceData, m int
 
 	err := config.TMCConnection.ClusterGroupResourceService.ManageV1alpha1ClusterGroupResourceServiceDelete(fn)
 	if err != nil && !clienterrors.IsNotFoundError(err) {
-		return diag.FromErr(errors.Wrapf(err, "Unable to delete tanzu TMC cluster group entry, name : %s", clusterGroupName))
+		return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control cluster group entry, name : %s", clusterGroupName))
 	}
 
 	d.SetId("")
@@ -127,7 +127,7 @@ func resourceClusterGroupCreate(_ context.Context, d *schema.ResourceData, m int
 	clusterGroupResponse, err := config.TMCConnection.ClusterGroupResourceService.ManageV1alpha1ClusterGroupResourceServiceCreate(clusterGroupRequest)
 
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to create tanzu TMC cluster group entry, name : %s", clusterGroupName))
+		return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control cluster group entry, name : %s", clusterGroupName))
 	}
 
 	d.SetId(clusterGroupResponse.ClusterGroup.Meta.UID)

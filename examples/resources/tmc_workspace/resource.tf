@@ -1,4 +1,4 @@
-# Create workspace
+# Create Tanzu Mission Control workspace
 resource "tmc_workspace" "create_workspace" {
   name = "tf-workspace-test"
 

@@ -53,7 +53,7 @@ func resourceWorkspaceDelete(ctx context.Context, d *schema.ResourceData, m inte
 
 	err := config.TMCConnection.WorkspaceResourceService.ManageV1alpha1WorkspaceResourceServiceDelete(fn)
 	if err != nil && !clienterrors.IsNotFoundError(err) {
-		return diag.FromErr(errors.Wrapf(err, "Unable to delete tanzu TMC workspace entry, name : %s", workspaceName))
+		return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control workspace entry, name : %s", workspaceName))
 	}
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but
@@ -80,7 +80,7 @@ func resourceWorkspaceCreate(ctx context.Context, d *schema.ResourceData, m inte
 	workspaceResponse, err := config.TMCConnection.WorkspaceResourceService.ManageV1alpha1WorkspaceResourceServiceCreate(workspaceRequest)
 
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to create tanzu TMC workspace entry, name : %s", workspaceName))
+		return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control workspace entry, name : %s", workspaceName))
 	}
 
 	d.SetId(workspaceResponse.Workspace.Meta.UID)
@@ -108,7 +108,7 @@ func resourceWorkspaceInPlaceUpdate(ctx context.Context, d *schema.ResourceData,
 
 	getResp, err := config.TMCConnection.WorkspaceResourceService.ManageV1alpha1WorkspaceResourceServiceGet(fn)
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to get tanzu TMC wrokspace entry, name : %s", workspaceName))
+		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control wrokspace entry, name : %s", workspaceName))
 	}
 
 	if updateRequired {
@@ -128,7 +128,7 @@ func resourceWorkspaceInPlaceUpdate(ctx context.Context, d *schema.ResourceData,
 		},
 	)
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to update tanzu TMC workspace entry, name : %s", workspaceName))
+		return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control workspace entry, name : %s", workspaceName))
 	}
 
 	return dataSourceWorkspaceRead(ctx, d, m)

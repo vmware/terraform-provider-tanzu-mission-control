@@ -1,7 +1,7 @@
-// TMC Cluster Group
+// Tanzu Mission Control Cluster Group
 // Operations supported : Create, Read, Update and Delete
 
-// Create TMC cluster group entry
+// Create Tanzu Mission Control cluster group entry
 resource "tmc_cluster_group" "create_cluster_group" {
   name = "<cluster-group--name>" // Required
 
@@ -11,12 +11,12 @@ resource "tmc_cluster_group" "create_cluster_group" {
   }
 }
 
-// Create TMC cluster group entry with minimal information
+// Create Tanzu Mission Control cluster group entry with minimal information
 resource "tmc_cluster_group" "cluster_group_create_min_info" {
   name = "<cluster-group-name>" // Required
 }
 
-// Read TMC cluster group : fetch cluster group details
+// Read Tanzu Mission Control cluster group : fetch cluster group details
 data "tmc_cluster_group" "read_cluster_group" {
   name = "<cluster-name-group>" // Required
 }

@@ -1,7 +1,7 @@
-// TMC Workspace:
+// Tanzu Mission Control Workspace
 // Operations supported : Read, Create, Update & Delete
 
-// Create TMC workspace entry
+// Create Tanzu Mission Control workspace entry
 resource "tmc_workspace" "create_workspace" {
   name = "<workspace-name>" // Required
   meta {                    // Optional
@@ -10,12 +10,12 @@ resource "tmc_workspace" "create_workspace" {
   }
 }
 
-// Create TMC workspace entry with minimal information
+// Create Tanzu Mission Control workspace entry with minimal information
 resource "tmc_workspace" "create_workspace_min_info" {
   name = "<workspace-name>" // Required
 }
 
-// Read TMC workspace entry
+// Read Tanzu Mission Control workspace entry : fetch workspace details
 data "tmc_workspace" "workspace_read" {
   name = "<workspace-name>"
 }

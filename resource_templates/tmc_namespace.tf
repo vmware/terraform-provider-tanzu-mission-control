@@ -1,7 +1,7 @@
-// TMC Namespace:
+// Tanzu Mission Control Namespace
 // Operations supported : Read, Create, Update & Delete
 
-// Read TMC namespace : fetch namespace details
+// Read Tanzu Mission Control namespace : fetch namespace details
 data "tmc_namespace" "read_namespace" {
   name                    = "<namespace-name>"     // Required
   cluster_name            = "<cluster-name>"       // Required
@@ -9,7 +9,7 @@ data "tmc_namespace" "read_namespace" {
   provisioner_name        = "<prov-name>"          // Default: attached
 }
 
-// Create TMC namespace entry
+// Create Tanzu Mission Control namespace entry
 resource "tmc_namespace" "create_namespace" {
   name                    = "<namespace-name>"     // Required
   cluster_name            = "<cluster_name>"       // Required
@@ -27,7 +27,7 @@ resource "tmc_namespace" "create_namespace" {
   }
 }
 
-// Create TMC namespace entry with minimal information
+// Create Tanzu Mission Control namespace entry with minimal information
 resource "tmc_namespace" "create_namespace_min_info" {
   name         = "<namespace-name>" // Required
   cluster_name = "<cluster_name>"   // Required

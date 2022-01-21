@@ -50,8 +50,8 @@ func setContext(config TanzuContext) (TanzuContext, diag.Diagnostics) {
 	if (config.ServerEndpoint == "") || (config.Token == "") {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  "TANZU TMC credentials environment is not set",
-			Detail:   fmt.Sprintf("Please set %s, %s & %s to authenticate to TANZU TMC provider", ServerEndpointEnvVar, CSPEndpointEnvVar, CSPTokenEnvVar),
+			Summary:  "Tanzu Mission Control credentials environment is not set",
+			Detail:   fmt.Sprintf("Please set %s, %s & %s to authenticate to Tanzu Mission Control provider", ServerEndpointEnvVar, CSPEndpointEnvVar, CSPTokenEnvVar),
 		})
 
 		return config, diags
@@ -62,7 +62,7 @@ func setContext(config TanzuContext) (TanzuContext, diag.Diagnostics) {
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  "Unable to create connection to TMC",
+			Summary:  "Unable to create connection to Tanzu Mission Control",
 			Detail:   fmt.Sprintf("Detailed error message: %s", err.Error()),
 		})
 

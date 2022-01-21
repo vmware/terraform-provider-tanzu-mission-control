@@ -1,14 +1,42 @@
 ---
 Title: "Tanzu Mission Control Provider"
 Description: |-
-  The TMC provider facilitates provisioning of TMC Resources through Terraform plugin.
+  The Tanzu Mission Control provider facilitates provisioning of Tanzu Mission Control Resources through Terraform plugin.
 ---
 
-# TMC Provider
+# Tanzu Mission Control Provider
 
-The TMC provider facilitates provisioning of TMC Resources through Terraform plugin.
+Manage your Kubernetes clusters in Tanzu Mission Control using this Terraform provider.
+The Tanzu Mission Control provider facilitates the provisioning of resources that you can use to manage Tanzu Kubernetes Grid workload clusters (and other conformant Kubernetes clusters) in Tanzu Mission Control.
+For more information, please refer [What is Tanzu Mission Control][vmware-tanzu-tmc] in VMware Tanzu Mission Control Concepts.
 
--More detailed Description-
+[vmware-tanzu-tmc]: https://tanzu.vmware.com/mission-control
+
+To use the **Tanzu Mission Control provider** for Terraform, you must have access to Tanzu Mission Control through an VMware Cloud services organization.
+Prior to initializing this provider in Terraform, make sure you have the following information:
+
+- The endpoint for your Tanzu Mission Control organization.
+- An active API token.
+
+To gather this information, you need to do the following:
+
+1. [Log in to the Tanzu Mission Control console.][login]
+
+    After you have logged in, the domain in the URL displayed in your browser represents the endpoint for your organization.
+
+    For example, the URL for the Clusters page in the Tanzu Mission Control console is something like this:
+
+    `my-org.tmc.cloud.vmware.com/clusters`
+
+    Here, the endpoint is `my-org.tmc.cloud.vmware.com`
+
+[login]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-855A8998-E19A-46AC-A833-12C347486EF7.html
+
+2. In the Tanzu Mission Control console, click on your name in the top right corner, and then click **My Account**.
+
+3. On the My Account page of the VMware Cloud Services console, click the **API Tokens** tab.
+
+From this page, you can generate a new API token, and then copy it to use for the Tanzu Mission Control provider in Terraform.
 
 ## Example Usage
 

@@ -1,14 +1,14 @@
-// TMC Cluster Type: TKGServiceVsphere workload.
+// Tanzu Mission Control Cluster Type: Tanzu Kubernetes Grid Service workload.
 // Operations supported : Read, Create, Update & Delete (except nodepools)
 
-// Read TMC TKG Service Vsphere workload cluster : fetch cluster details
+// Read Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster : fetch cluster details
 data "tmc_cluster" "ready_only_cluster_view" {
   management_cluster_name = "<management-cluster>" // Required
   provisioner_name        = "<prov-name>"          // Required
   name                    = "<cluster-name>"       // Required
 }
 
-# Create TMC TKG Service Vsphere workload cluster entry
+# Create Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster entry
 resource "tmc_cluster" "create_tkgs_workload" {
   management_cluster_name = "<management-cluster>"
   provisioner_name        = "<prov-name>"
