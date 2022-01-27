@@ -1,4 +1,5 @@
 bin/*
+dist/*
 _output/*
 .DS_Store
 .vscode
