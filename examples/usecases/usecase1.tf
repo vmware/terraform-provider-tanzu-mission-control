@@ -11,7 +11,7 @@ terraform {
   }
 }
 
-# Create TMC TKG Service Vsphere workload cluster entry
+# Create Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster entry
 resource "tmc_cluster" "create_tkgs_workload" {
   management_cluster_name = "tkgs-terraform"
   provisioner_name        = "test-gc-e2e-demo-ns"
@@ -66,7 +66,7 @@ resource "tmc_cluster" "create_tkgs_workload" {
   }
 }
 
-# Create a TKGm Vsphere workload cluster entry
+# Create a Tanzu Kubernetes Grid vSphere workload cluster entry
 resource "tmc_cluster" "create_tkg_vsphere_cluster" {
   management_cluster_name = "tkgm-terraform"
   provisioner_name        = "default"
@@ -148,7 +148,7 @@ resource "tmc_cluster" "create_tkg_vsphere_cluster" {
   }
 }
 
-# Create TMC nodepool entry
+# Create Tanzu Mission Control nodepool entry
 resource "tmc_cluster_node_pool" "create_node_pool" {
 
   management_cluster_name = "tkgs-terraform"

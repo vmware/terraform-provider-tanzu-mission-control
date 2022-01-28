@@ -1,17 +1,24 @@
 ---
 Title: "Cluster Group Resource"
 Description: |-
-    Adding the cluster group resource to a cluster.
+    Creating the cluster group resource to a cluster.
 ---
 
 # Cluster Group
 
-A cluster group is needed for a cluster
+Group clusters together into a cluster group for more efficient management using this Terraform module.
+
+A cluster group is a logical grouping of clusters in the Tanzu Mission Control object hierarchy that provides for better management of your Kubernetes clusters.
+
+To create a cluster group, you must have `organization.edit` permissions in Tanzu Mission Control.
+For more information, please refer [create a Cluster Group.][cluster-group]
+
+[cluster-group]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-E36D5205-5291-4201-809D-B8E26277CCF4.html
 
 ## Example Usage
 
 ```terraform
-# Create cluster group
+# Create Tanzu Mission Control cluster group
 resource "tmc_cluster_group" "create_cluster_group" {
   name = "tf-cluster-group"
   meta {

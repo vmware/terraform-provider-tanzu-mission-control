@@ -1,4 +1,4 @@
-# Read TMC namespace : fetch namespace details
+# Read Tanzu Mission Control namespace : fetch namespace details
 data "tmc_namespace" "read_namespace" {
   name                    = "tf-namespace" # Required
   cluster_name            = "testcluster"  # Required

@@ -37,7 +37,7 @@ func dataSourceNamespaceRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	resp, err = config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceGet(constructFullname(d))
 	if err != nil || resp == nil {
-		return diag.FromErr(errors.Wrapf(err, "unable to get tanzu TMC namespace entry, name : %s", namespaceName))
+		return diag.FromErr(errors.Wrapf(err, "unable to get Tanzu Mission Control namespace entry, name : %s", namespaceName))
 	}
 
 	d.SetId(resp.Namespace.Meta.UID)

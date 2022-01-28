@@ -1,22 +1,33 @@
 ---
 Title: "Cluster Resource"
 Description: |-
-    Adding the cluster resource.
+    Creating the Tanzu Kubernetes cluster resource.
 ---
 
 # Cluster
 
-Different flavours such as attach cluster, attach cluster with kubeconfig, attach cluster with proxy, TKG service workload and TKG Vsphere workload clusters can be added.
+The tmc_cluster resource enables you to attach conformant Kubernetes clusters for management through Tanzu Mission Control.
+With Tanzu Kubernetes clusters, you can also provision resources to create new workload clusters.
 
+A Tanzu Kubernetes cluster is an opinionated installation of Kubernetes open-source software that is built and supported by VMware.
+It is part of a Tanzu Kubernetes Grid instance that includes the following components:
+
+- **management cluster** - a Kubernetes cluster that performs the role of the primary management and operational center for the Tanzu Kubernetes Grid instance
+- **provisioner** - a namespace on the management cluster that contains one or more workload clusters
+- **workload cluster** - a Tanzu Kubernetes cluster that runs your application workloads
 
 # Attach Cluster
 
-<Description>
+To use the **Tanzu Mission Control provider** to attach an existing conformant Kubernetes cluster,
+you must have `cluster.admin` permissions on the cluster and `clustergroup.edit` permissions in Tanzu Mission Control.
+For more information, please refer [Attach a Cluster.][attach-cluster]
+
+[attach-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-6DF2CE3E-DD07-499B-BC5E-6B3B2E02A070.html
 
 ## Example Usage
 
 ```terraform
-# Create TMC attach cluster entry
+# Create Tanzu Mission Control attach cluster entry
 resource "tmc_cluster" "attach_cluster_without_apply" {
   management_cluster_name = "attached"         # Default: attached
   provisioner_name        = "attached"         # Default: attached
@@ -38,12 +49,10 @@ resource "tmc_cluster" "attach_cluster_without_apply" {
 
 # Attach Cluster with Kubeconfig
 
-<Description>
-
 ## Example Usage
 
 ```terraform
-# Create TMC attach cluster with k8s cluster kubeconfig provided
+# Create Tanzu Mission Control attach cluster with k8s cluster kubeconfig provided
 # The provider would create the cluster entry and apply the deployment link manifests on to the k8s kubeconfig provided.
 resource "tmc_cluster" "attach_cluster_with_kubeconfig" {
   management_cluster_name = "attached"     # Default: attached
@@ -73,12 +82,10 @@ resource "tmc_cluster" "attach_cluster_with_kubeconfig" {
 
 # Attach Cluster with Proxy
 
-<Description>
-
 ## Example Usage
 
 ```terraform
-# Create TMC attach cluster entry with proxy
+# Create Tanzu Mission Control attach cluster entry with proxy
 resource "tmc_cluster" "attach_cluster_with_proxy" {
   management_cluster_name = "attached"               # Default: attached
   provisioner_name        = "attached"               # Default: attached
@@ -99,14 +106,25 @@ resource "tmc_cluster" "attach_cluster_with_proxy" {
 ```
 
 
-# TKGs Workload Cluster
+# Tanzu Kubernetes Grid Service Workload Cluster
 
-<Description>
+To use the **Tanzu Mission Control provider** for creating a new cluster, you must have access to an existing Tanzu Kubernetes Grid management cluster with a provisioner namespace wherein the cluster needs to be created.
+For more information, please refer [managing the Lifecycle of Tanzu Kubernetes Clusters][create-cluster]
+and
+[Cluster Lifecycle Management.][lifecycle-management]
+
+You must also have the appropriate permissions:
+
+- To provision a cluster, you must have admin permissions on the management cluster to provision resources within it.
+- You must also have `clustergroup.edit` permissions on the cluster group in which you want to put the new cluster.
+
+[create-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-1F847180-1F98-4F8F-9062-46DE9AD8F79D.html
+[lifecycle-management]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-A6B0184F-269F-41D3-B7FE-5C4F96B3A099.html
 
 ## Example Usage
 
 ```terraform
-# Create TMC TKG Service Vsphere workload cluster entry
+# Create Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster entry
 resource "tmc_cluster" "create_tkgs_workload" {
   management_cluster_name = "tkgs-terraform"
   provisioner_name        = "test-gc-e2e-demo-ns"
@@ -173,14 +191,25 @@ resource "tmc_cluster" "create_tkgs_workload" {
 ```
 
 
-# TKGm Vsphere Workload Cluster
+# Tanzu Kubernetes Grid Vsphere Workload Cluster
 
-<Description>
+To use the **Tanzu Mission Control provider** for creating a new cluster, you must have access to an existing Tanzu Kubernetes Grid management cluster with a provisioner namespace wherein the cluster needs to be created.
+For more information, please refer [Managing the Lifecycle of Tanzu Kubernetes Clusters][create-cluster]
+and
+[Cluster Lifecycle Management.][lifecycle-management]
+
+You must also have the appropriate permissions:
+
+- To provision a cluster, you must have admin permissions on the management cluster to provision resources within it.
+- You must also have `clustergroup.edit` permissions on the cluster group in which you want to put the new cluster.
+
+[create-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-1F847180-1F98-4F8F-9062-46DE9AD8F79D.html
+[lifecycle-management]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-A6B0184F-269F-41D3-B7FE-5C4F96B3A099.html
 
 ## Example Usage
 
 ```terraform
-# Create a TKGm Vsphere workload cluster entry
+# Create a Tanzu Kubernetes Grid Vsphere workload cluster entry
 resource "tmc_cluster" "create_tkg_vsphere_cluster" {
   management_cluster_name = "tkgm-terraform"
   provisioner_name        = "default"
@@ -322,8 +351,8 @@ Optional:
 
 - **cluster_group** (String) Name of the cluster group to which this cluster belongs
 - **proxy** (String) Optional proxy name is the name of the Proxy Config to be used for the cluster
-- **tkg_service_vsphere** (Block List, Max: 1) The tkg service vsphere cluster spec (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))
-- **tkg_vsphere** (Block List, Max: 1) The TKG Vsphere cluster spec (see [below for nested schema](#nestedblock--spec--tkg_vsphere))
+- **tkg_service_vsphere** (Block List, Max: 1) The Tanzu Kubernetes Grid service vsphere cluster spec (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))
+- **tkg_vsphere** (Block List, Max: 1) The Tanzu Kubernetes Grid Vsphere cluster spec (see [below for nested schema](#nestedblock--spec--tkg_vsphere))
 
 <a id="nestedblock--spec--tkg_service_vsphere"></a>
 ### Nested Schema for `spec.tkg_service_vsphere`
@@ -426,7 +455,7 @@ Optional:
 
 - **cloud_label** (Map of String) Cloud labels
 - **node_label** (Map of String) Node labels
-- **tkg_service_vsphere** (Block List, Max: 1) Nodepool config for tkg service vsphere (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--tkg_service_vsphere))
+- **tkg_service_vsphere** (Block List, Max: 1) Nodepool config for Tanzu Kubernetes Grid service vsphere (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--tkg_service_vsphere))
 - **worker_node_count** (String) Count is the number of nodes
 
 <a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--tkg_service_vsphere"></a>

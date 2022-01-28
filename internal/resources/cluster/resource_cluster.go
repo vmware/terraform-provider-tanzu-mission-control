@@ -227,7 +227,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 
 	clusterResponse, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceCreate(clusterReq)
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to create tanzu TMC cluster entry, name : %s", d.Get(clusterNameKey)))
+		return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey)))
 	}
 
 	// always run
@@ -251,7 +251,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 			return append(diags, diag.FromErr(err)...)
 		}
 
-		log.Printf("[INFO] Cluster attach successful. TMC resources applied to the cluster(%s) successfully", constructFullname(d).ToString())
+		log.Printf("[INFO] Cluster attach successful. Tanzu Mission Control resources applied to the cluster(%s) successfully", constructFullname(d).ToString())
 	}
 
 	return append(diags, dataSourceTMCClusterRead(ctx, d, m)...)
@@ -265,7 +265,7 @@ func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interfac
 
 	err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceDelete(constructFullname(d), "false")
 	if err != nil && !clienterrors.IsNotFoundError(err) {
-		return diag.FromErr(errors.Wrapf(err, "Unable to delete tanzu TMC cluster entry, name : %s", d.Get(clusterNameKey)))
+		return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey)))
 	}
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but
@@ -311,7 +311,7 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 
 	getResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to get tanzu TMC cluster entry, name : %s", d.Get(clusterNameKey)))
+		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey)))
 	}
 
 	if common.HasMetaChanged(d) {
@@ -337,7 +337,7 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 		},
 	)
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to update tanzu TMC cluster entry, name : %s", d.Get(clusterNameKey)))
+		return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey)))
 	}
 
 	return dataSourceTMCClusterRead(ctx, d, m)

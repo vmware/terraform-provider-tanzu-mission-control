@@ -41,7 +41,7 @@ func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m inter
 	getClusterResourceRetryableFn := func() (retry bool, err error) {
 		resp, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
 		if err != nil {
-			return true, errors.Wrapf(err, "Unable to get tanzu TMC cluster entry, name : %s", d.Get(clusterNameKey))
+			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey))
 		}
 
 		d.SetId(resp.Cluster.Meta.UID)
@@ -62,7 +62,7 @@ func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m inter
 	}
 
 	if err != nil || resp == nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to get tanzu TMC cluster entry, name : %s", d.Get(clusterNameKey)))
+		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey)))
 	}
 
 	// always run

@@ -38,7 +38,7 @@ func dataSourceClusterGroupRead(_ context.Context, d *schema.ResourceData, m int
 
 	resp, err := config.TMCConnection.ClusterGroupResourceService.ManageV1alpha1ClusterGroupResourceServiceGet(fn)
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to get tanzu TMC cluster group entry, name : %s", clusterGroupName))
+		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster group entry, name : %s", clusterGroupName))
 	}
 
 	d.SetId(resp.ClusterGroup.Meta.UID)

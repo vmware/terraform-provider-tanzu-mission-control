@@ -6,12 +6,15 @@ Description: |-
 
 # Nodepool
 
-A nodepool can be read.
+Create, delete, and update nodepools for your clusters using this Terraform module.
+
+For clusters that you create in Tanzu Mission Control, you can define a pool of worker nodes on which your workloads can run
+because Tanzu Mission Control cannot provision additional resources in a cluster that is created elsewhere and subsequently attached, you cannot create a node pool in an attached cluster.
 
 ## Example Usage
 
 ```terraform
-# Read TMC cluster nodepool : fetch cluster nodepool details
+# Read Tanzu Mission Control cluster nodepool : fetch cluster nodepool details
 data "tmc_cluster_node_pool" "read_node_pool" {
   management_cluster_name = "tkgs-terraform"
   provisioner_name = "test-gc-e2e-demo-ns"
@@ -62,7 +65,7 @@ Optional:
 
 - **cloud_labels** (Map of String) Cloud labels
 - **node_labels** (Map of String) Node labels
-- **tkg_service_vsphere** (Block List) TKGServiceVsphereNodepool is the nodepool spec for TKG service vsphere cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))
+- **tkg_service_vsphere** (Block List) TKGServiceVsphereNodepool is the nodepool spec for Tanzu Kubernetes Grid service vsphere cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))
 - **worker_node_count** (String) Count is the number of nodes
 
 <a id="nestedblock--spec--tkg_service_vsphere"></a>

@@ -1,4 +1,4 @@
-# Create a TKGm Vsphere workload cluster entry
+# Create a Tanzu Kubernetes Grid Vsphere workload cluster entry
 resource "tmc_cluster" "create_tkg_vsphere_cluster" {
   management_cluster_name = "tkgm-terraform"
   provisioner_name        = "default"

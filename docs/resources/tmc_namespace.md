@@ -1,17 +1,25 @@
 ---
 Title: "Namespace Resource"
 Description: |-
-    Adding the namespace resource.
+    Creating the namespace resource.
 ---
 
 # Namespace
 
-A namespace can be created.
+Manage a namespace using this Terraform module.
+
+In managed clusters, both attached and provisioned, you can create namespaces that you can manage through Tanzu Mission Control.
+When you create a namespace through Tanzu Mission Control, you specify the workspace to which the namespace belongs.
+
+To create a namespace, you must have `cluster.edit` permissions on the cluster and `workspace.edit` permissions in Tanzu Mission Control.
+For more information, see [create a Managed Namespace.][namespace]
+
+[namespace]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-FB8AD386-8DA1-4287-AE85-1287F5C0101B.html
 
 ## Example Usage
 
 ```terraform
-# Create namespace with attached set as default value.
+# Create Tanzu Mission Control namespace with attached set as default value.
 resource "tmc_namespace" "create_namespace" {
   name                    = "tf-namespace" # Required
   cluster_name            = "testcluster"  # Required
@@ -29,7 +37,7 @@ resource "tmc_namespace" "create_namespace" {
   }
 }
 
-# Create namespace with attached set as 'true'
+# Create Tanzu Mission Control namespace with attached set as 'true'
 resource "tmc_namespace" "create_namespace_attached" {
   name                    = "tf-namespace" # Required
   cluster_name            = "testcluster"  # Required

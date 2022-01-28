@@ -1,4 +1,4 @@
-# Create TMC attach cluster entry
+# Create Tanzu Mission Control attach cluster entry
 resource "tmc_cluster" "attach_cluster_without_apply" {
   management_cluster_name = "attached"         # Default: attached
   provisioner_name        = "attached"         # Default: attached

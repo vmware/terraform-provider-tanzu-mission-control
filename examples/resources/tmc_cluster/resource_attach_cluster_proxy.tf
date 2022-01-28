@@ -1,4 +1,4 @@
-# Create TMC attach cluster entry with proxy
+# Create Tanzu Mission Control attach cluster entry with proxy
 resource "tmc_cluster" "attach_cluster_with_proxy" {
   management_cluster_name = "attached"               # Default: attached
   provisioner_name        = "attached"               # Default: attached

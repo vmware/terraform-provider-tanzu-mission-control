@@ -3,7 +3,11 @@
 This is the repository for the Terraform Tanzu Mission Control Provider, which one can use with Terraform to work with
 [VMware Tanzu Mission Control][vmware-tanzu-tmc].
 
+For general information about Terraform, visit the [official website][hashicorp-terraform] and the [GitHub project page.][terraform-github]
+
 [vmware-tanzu-tmc]: https://tanzu.vmware.com/mission-control
+[hashicorp-terraform]: https://www.terraform.io
+[terraform-github]: https://github.com/hashicorp/terraform
 
 # Using the Provider
 
@@ -37,12 +41,12 @@ Version locking uses a pessimistic operator, so this version lock would mean any
 ## Cloning the Project
 
 First, you will want to clone the repository to
-`github.com/vmware-tanzu/terraform-provider-tanzu-mission-control`:
+`github.com/vmware/terraform-provider-tanzu-mission-control`:
 
 ```sh
-mkdir -p $GOPATH/src/github.com/vmware-tanzu/terraform-provider-tanzu-mission-control
-cd $GOPATH/src/github.com/vmware-tanzu/terraform-provider-tanzu-mission-control
-git clone git@github.com:vmware-tanzu/terraform-provider-tanzu-mission-control.git
+mkdir -p $GOPATH/src/github.com/vmware/terraform-provider-tanzu-mission-control
+cd $GOPATH/src/github.com/vmware/terraform-provider-tanzu-mission-control
+git clone git@github.com:vmware/terraform-provider-tanzu-mission-control.git
 ```
 
 ## Building and Installing the Provider
@@ -51,7 +55,7 @@ Recommended golang version is go1.14 onwards.
 After the clone has been completed, you can enter the provider directory and build the provider.
 
 ```sh
-cd github.com/vmware-tanzu/terraform-provider-tanzu-mission-control
+cd github.com/vmware/terraform-provider-tanzu-mission-control
 make
 ```
 
@@ -81,20 +85,38 @@ correctly setup a [GOPATH][gopath], as well as adding `$GOPATH/bin` to your
 See [Manual Installation](#manual-installation) for details on building the
 provider.
 
-# Testing 
+# Testing the Provider
 
-**Flattening and Helper Tests:** These can be run by `make test` directly.
+## Flattening and Helper Tests
+Run the command:
+```sh
+$ make test
+```
 
-**Acceptance Tests:** Set the environment variables in your IDE configurations or Terminal.
+## Acceptance Tests
+
+### Configuring Environment Variables:
+Set the environment variables in your IDE configurations or Terminal.
 Environment variables that are required to be set universally are `TMC_ENDPOINT`, `TMC_CSP_ENDPOINT` and `TMC_CSP_TOKEN`.
+
+Example:
+
+```shell
+$ export TMC_ENDPOINT = my-org.tmc.cloud.vmware.com
+$ export TMC_CSP_ENDPOINT = console.cloud.vmware.com
+```
 
 Environment variables specific to particular resources:
 
 - **Attach Cluster with Kubeconfig and Namespace Resource** - `KUBECONFIG`  
-- **TKGs workload cluster** - `MANAGEMENT_CLUSTER`, `PROVISIONER_NAME`, `VERSION` and `STORAGE_CLASS`.
-- **TKGm Vsphere workload cluster** - `MANAGEMENT_CLUSTER` and `CONTROL_PLANE_ENDPOINT`.
+- **Tanzu Kubernetes Grid  Service for vSphere workload cluster** - `MANAGEMENT_CLUSTER`, `PROVISIONER_NAME`, `VERSION` and `STORAGE_CLASS`.
+- **Tanzu Kubernetes Grid workload cluster** - `MANAGEMENT_CLUSTER` and `CONTROL_PLANE_ENDPOINT`.
 
-After the environment variables are set, run `make acc-test`.
+### Running the Test:
+Run the command:
+```sh
+$ make acc-test
+```
 
 ## Provider Documentation
 
@@ -114,6 +136,6 @@ The Tanzu Mission Control Terraform provider is now VMware supported as well as 
 
 # License
 
-Copyright © 2015-2021 VMware, Inc. All Rights Reserved.
+Copyright © 2015-2022 VMware, Inc. All Rights Reserved.
 
 The Tanzu Mission Control Terraform provider is available under [MPL2.0 license](https://github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/blob/main/LICENSE).

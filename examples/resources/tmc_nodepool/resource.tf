@@ -1,4 +1,4 @@
-# Create TMC nodepool entry
+# Create Tanzu Mission Control nodepool entry
 resource "tmc_cluster_node_pool" "create_node_pool" {
 
   management_cluster_name = "tkgs-terraform"
