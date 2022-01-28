@@ -101,7 +101,7 @@ Environment variables that are required to be set universally are `TMC_ENDPOINT`
 
 Example:
 
-```shell
+```sh
 $ export TMC_ENDPOINT = my-org.tmc.cloud.vmware.com
 $ export TMC_CSP_ENDPOINT = console.cloud.vmware.com
 ```
