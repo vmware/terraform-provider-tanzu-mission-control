@@ -1,11 +1,11 @@
 # Terraform VMware Tanzu Mission Control Provider
 
-This is the repository for the Terraform Tanzu Mission Control Provider, which one can use with Terraform to work with
-[VMware Tanzu Mission Control][vmware-tanzu-tanzu-mission-control].
+This is the repository for the Terraform Tanzu Mission Control Provider and can be used with
+[VMware Tanzu Mission Control][vmware-tanzu-mission-control].
 
 For general information about Terraform, visit the [official website][hashicorp-terraform] and the [GitHub project page.][terraform-github]
 
-[vmware-tanzu-tanzu-mission-control]: https://tanzu.vmware.com/mission-control
+[vmware-tanzu-mission-control]: https://tanzu.vmware.com/mission-control
 [hashicorp-terraform]: https://www.terraform.io
 [terraform-github]: https://github.com/hashicorp/terraform
 

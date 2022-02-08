@@ -9,7 +9,7 @@ SPDX-License-Identifier: MPL-2.0
 package testing
 
 const (
-	providerName = "tmc"
+	providerName = "tanzu-mission-control"
 	value1       = "value1"
 	value2       = "value2"
 	description  = "resource with description"
