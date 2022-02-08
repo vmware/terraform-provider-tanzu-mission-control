@@ -14,5 +14,5 @@ resource "tmc_cluster" "attach_cluster_with_proxy" {
     proxy         = "proxy-name"
   }
 
-  wait_until_ready = false
+  ready_wait_timeout = "15m" # Default: waits until 3 min for the cluster to become ready
 }

@@ -28,7 +28,7 @@ func DataSourceTMCCluster() *schema.Resource {
 	}
 }
 
-func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	config := m.(authctx.TanzuContext)
 
 	// Warning or errors can be collected in a slice type
@@ -54,11 +54,39 @@ func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m inter
 		return false, nil
 	}
 
-	switch value, _ := d.Get(waitKey).(bool); value {
-	case true:
-		_, err = helper.Retry(getClusterResourceRetryableFn, 10*time.Second, 18)
-	case false:
+	timeoutValueData, _ := d.Get(waitKey).(string)
+
+	if ctx.Value(contextMethodKey{}) != "create" {
+		timeoutValueData = "do_not_retry"
+	}
+
+	switch timeoutValueData {
+	case "do_not_retry":
 		_, err = getClusterResourceRetryableFn()
+	case "":
+		fallthrough
+	case "default":
+		_, attachClusterWithKubeconfig := d.GetOk(attachClusterKey)
+		fn := constructFullname(d)
+
+		if fn.ManagementClusterName == attachedValue && !attachClusterWithKubeconfig {
+			_, err = getClusterResourceRetryableFn()
+			break
+		}
+
+		timeoutValueData = "3m"
+
+		fallthrough
+	default:
+		timeoutDuration, parseErr := time.ParseDuration(timeoutValueData)
+		if parseErr != nil {
+			log.Printf("[INFO] unable to prase the duration value for the key %s. Defaulting to 3 minutes(3m)"+
+				" Please refer to 'https://pkg.go.dev/time#ParseDuration' for providing the right value", waitKey)
+
+			timeoutDuration = 3 * time.Minute
+		}
+
+		_, err = helper.RetryUntilTimeout(getClusterResourceRetryableFn, 10*time.Second, timeoutDuration)
 	}
 
 	if err != nil || resp == nil {
@@ -80,7 +108,7 @@ func dataSourceTMCClusterRead(_ context.Context, d *schema.ResourceData, m inter
 		"infra_provider_region": resp.Cluster.Status.InfrastructureProviderRegion,
 	}
 
-	if resp.Cluster.FullName.ManagementClusterName == "attached" && resp.Cluster.Status.InstallerLink != "" {
+	if resp.Cluster.FullName.ManagementClusterName == attachedValue && resp.Cluster.Status.InstallerLink != "" {
 		status["installer_link"] = resp.Cluster.Status.InstallerLink
 		status["execution_cmd"] = fmt.Sprintf("kubectl create -f '%s'", resp.Cluster.Status.InstallerLink)
 	}
