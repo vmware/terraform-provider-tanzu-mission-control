@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	clusterGroupResource      = "tmc_cluster_group"
+	clusterGroupResource      = "tanzu-mission-control_cluster_group"
 	clusterGroupResourceVar   = "test_cluster_group"
 	clusterGroupDataSourceVar = "test_data_cluster_group"
 )
@@ -54,7 +54,7 @@ resource "%s" "%s" {
 }
 
 data "%s" "%s" {
-  name = tmc_cluster_group.test_cluster_group.name
+  name = tanzu-mission-control_cluster_group.test_cluster_group.name
 }
 `, clusterGroupResource, clusterGroupResourceVar, clusterGroupName, meta, clusterGroupResource, clusterGroupDataSourceVar)
 }

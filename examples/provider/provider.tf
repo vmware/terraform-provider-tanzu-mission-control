@@ -1,4 +1,4 @@
-provider "tmc" {
+provider "tanzu-mission-control" {
   endpoint = var.endpoint # optionally use TMC_ENDPOINT env var
   token = var.token # optionally use TMC_CSP_TOKEN env var
 

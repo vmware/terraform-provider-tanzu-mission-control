@@ -16,7 +16,7 @@ import (
 
 var TkgServiceVsphere = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "The tkg service vsphere cluster spec",
+	Description: "The Tanzu Kubernetes Grid Service (TKGs) cluster spec",
 	Optional:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{

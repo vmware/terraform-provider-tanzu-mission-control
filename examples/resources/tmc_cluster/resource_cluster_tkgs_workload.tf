@@ -1,5 +1,5 @@
 # Create Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster entry
-resource "tmc_cluster" "create_tkgs_workload" {
+resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
   management_cluster_name = "tkgs-terraform"
   provisioner_name        = "test-gc-e2e-demo-ns"
   name                    = "tkgs-workload"
