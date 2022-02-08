@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	workspaceResource      = "tmc_workspace"
+	workspaceResource      = "tanzu-mission-control_workspace"
 	workspaceResourceVar   = "test_workspace"
 	workspaceDataSourceVar = "test_data_workspace"
 )
@@ -53,7 +53,7 @@ resource "%s" "%s" {
 }
 
 data "%s" "%s" {
-  name = tmc_workspace.test_workspace.name
+  name = tanzu-mission-control_workspace.test_workspace.name
 }
 `, workspaceResource, workspaceResourceVar, workspaceName, testhelper.MetaTemplate, workspaceResource, workspaceDataSourceVar)
 }

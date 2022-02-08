@@ -20,7 +20,7 @@ import (
 
 const (
 	clusterGroupName = "name"
-	ResourceName     = "tmc_cluster_group"
+	ResourceName     = "tanzu-mission-control_cluster_group"
 )
 
 func ResourceClusterGroup() *schema.Resource {

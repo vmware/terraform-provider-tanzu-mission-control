@@ -1,6 +1,6 @@
 # Create Tanzu Mission Control attach cluster with k8s cluster kubeconfig provided
 # The provider would create the cluster entry and apply the deployment link manifests on to the k8s kubeconfig provided.
-resource "tmc_cluster" "attach_cluster_with_kubeconfig" {
+resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
   management_cluster_name = "attached"     # Default: attached
   provisioner_name        = "attached"     # Default: attached
   name                    = "demo-cluster" # Required

@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	clusterResource      = "tmc_cluster"
+	clusterResource      = "tanzu-mission-control_cluster"
 	clusterResourceVar   = "test_attach_cluster"
 	clusterDataSourceVar = "test_data_attach_cluster"
 )

@@ -1,5 +1,5 @@
 # Create Tanzu Mission Control nodepool entry
-resource "tmc_cluster_node_pool" "create_node_pool" {
+resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
 
   management_cluster_name = "tkgs-terraform"
   provisioner_name = "test-gc-e2e-demo-ns"

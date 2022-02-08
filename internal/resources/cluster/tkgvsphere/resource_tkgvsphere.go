@@ -16,7 +16,7 @@ import (
 
 var TkgVsphereClusterSpec = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "The TKG Vsphere cluster spec",
+	Description: "The Tanzu Kubernetes Grid (TKGm) VSphere cluster spec",
 	Optional:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{

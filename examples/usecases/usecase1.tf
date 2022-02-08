@@ -5,14 +5,14 @@
 
 terraform {
   required_providers {
-    tmc = {
-      source = "vmware/tanzu/tmc"
+    tanzu-mission-control = {
+      source = "vmware/tanzu-mission-control"
     }
   }
 }
 
 # Create Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster entry
-resource "tmc_cluster" "create_tkgs_workload" {
+resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
   management_cluster_name = "tkgs-terraform"
   provisioner_name        = "test-gc-e2e-demo-ns"
   name                    = "tkgs-workload-test"
@@ -67,7 +67,7 @@ resource "tmc_cluster" "create_tkgs_workload" {
 }
 
 # Create a Tanzu Kubernetes Grid vSphere workload cluster entry
-resource "tmc_cluster" "create_tkg_vsphere_cluster" {
+resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
   management_cluster_name = "tkgm-terraform"
   provisioner_name        = "default"
   name                    = "tkgm-workload-test"
@@ -149,7 +149,7 @@ resource "tmc_cluster" "create_tkg_vsphere_cluster" {
 }
 
 # Create Tanzu Mission Control nodepool entry
-resource "tmc_cluster_node_pool" "create_node_pool" {
+resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
 
   management_cluster_name = "tkgs-terraform"
   provisioner_name = "test-gc-e2e-demo-ns"

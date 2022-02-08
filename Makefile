@@ -4,9 +4,9 @@
 default: build
 
 build:
-	go build -o bin/terraform-provider-tmc
-	mkdir -p ~/.terraform.d/plugins/vmware/tanzu/tmc/0.1.1/darwin_amd64/
-	cp bin/terraform-provider-tmc ~/.terraform.d/plugins/vmware/tanzu/tmc/0.1.1/darwin_amd64/
+	go build -o bin/terraform-provider-tanzu-mission-control_v1.0.0
+	mkdir -p ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/1.0.0/darwin_amd64/
+	cp bin/terraform-provider-tanzu-mission-control_v1.0.0 ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/1.0.0/darwin_amd64/
 
 test: | gofmt vet lint
 	go mod tidy

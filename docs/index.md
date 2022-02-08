@@ -8,9 +8,9 @@ Description: |-
 
 Manage your Kubernetes clusters in Tanzu Mission Control using this Terraform provider.
 The Tanzu Mission Control provider facilitates the provisioning of resources that you can use to manage Tanzu Kubernetes Grid workload clusters (and other conformant Kubernetes clusters) in Tanzu Mission Control.
-For more information, please refer [What is Tanzu Mission Control][vmware-tanzu-tmc] in VMware Tanzu Mission Control Concepts.
+For more information, please refer [What is Tanzu Mission Control][vmware-tanzu-mission-control] in VMware Tanzu Mission Control Concepts.
 
-[vmware-tanzu-tmc]: https://tanzu.vmware.com/mission-control
+[vmware-tanzu-mission-control]: https://tanzu.vmware.com/mission-control
 
 To use the **Tanzu Mission Control provider** for Terraform, you must have access to Tanzu Mission Control through an VMware Cloud services organization.
 Prior to initializing this provider in Terraform, make sure you have the following information:
@@ -41,7 +41,7 @@ From this page, you can generate a new API token, and then copy it to use for th
 ## Example Usage
 
 ```terraform
-provider "tmc" {
+provider "tanzu-mission-control" {
   endpoint = var.endpoint # optionally use TMC_ENDPOINT env var
   token = var.token # optionally use TMC_CSP_TOKEN env var
 

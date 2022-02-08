@@ -20,7 +20,7 @@ import (
 
 const (
 	workspacesName = "name"
-	ResourceName   = "tmc_workspace"
+	ResourceName   = "tanzu-mission-control_workspace"
 )
 
 func ResourceWorkspace() *schema.Resource {
