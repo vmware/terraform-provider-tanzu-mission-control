@@ -13,5 +13,5 @@ resource "tmc_cluster" "attach_cluster_without_apply" {
     cluster_group = "default" # Default: default
   }
 
-  wait_until_ready = false
+  # The deployment link and the command needed to be run to attach this cluster would be provided in the output.status.execution_cmd
 }

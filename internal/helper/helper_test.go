@@ -7,6 +7,7 @@ package helper
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 )
@@ -47,4 +48,15 @@ func TestGetFirstElementOf(t *testing.T) {
 			require.Equal(t, test.expected, actual)
 		})
 	}
+}
+
+func TestRetryUntilTimeout(t *testing.T) {
+	testFun := func() (bool, error) {
+		return true, nil
+	}
+
+	retries, err := RetryUntilTimeout(testFun, 1*time.Second, 6*time.Second)
+
+	require.NoError(t, err)
+	require.Equal(t, 4, retries)
 }

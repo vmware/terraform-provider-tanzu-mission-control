@@ -26,6 +26,8 @@ import (
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
+type contextMethodKey struct{}
+
 func ResourceTMCCluster() *schema.Resource {
 	return &schema.Resource{
 		ReadContext:   dataSourceTMCClusterRead,
@@ -40,14 +42,14 @@ var clusterSchema = map[string]*schema.Schema{
 	ManagementClusterNameKey: {
 		Type:        schema.TypeString,
 		Description: "Name of the management cluster",
-		Default:     "attached",
+		Default:     attachedValue,
 		Optional:    true,
 		ForceNew:    true,
 	},
 	ProvisionerNameKey: {
 		Type:        schema.TypeString,
 		Description: "Provisioner of the cluster",
-		Default:     "attached",
+		Default:     attachedValue,
 		Optional:    true,
 		ForceNew:    true,
 	},
@@ -67,9 +69,9 @@ var clusterSchema = map[string]*schema.Schema{
 		Elem:        &schema.Schema{Type: schema.TypeString},
 	},
 	waitKey: {
-		Type:        schema.TypeBool,
-		Description: "Wait flag of the cluster",
-		Default:     false,
+		Type:        schema.TypeString,
+		Description: "Wait timeout duration until cluster resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero",
+		Default:     "default",
 		Optional:    true,
 	},
 }
@@ -254,7 +256,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		log.Printf("[INFO] Cluster attach successful. Tanzu Mission Control resources applied to the cluster(%s) successfully", constructFullname(d).ToString())
 	}
 
-	return append(diags, dataSourceTMCClusterRead(ctx, d, m)...)
+	return append(diags, dataSourceTMCClusterRead(context.WithValue(ctx, contextMethodKey{}, "create"), d, m)...)
 }
 
 func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

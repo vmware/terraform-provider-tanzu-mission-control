@@ -23,7 +23,7 @@ resource "tmc_cluster" "attach_cluster" {
     cluster_group = "<cluster-group>" // Default: default
   }
 
-  wait_until_ready = false // Default: false, when set resource waits until 3 min for the cluster to become ready
+  ready_wait_timeout = "15m" // Default: waits until 3 min for the cluster to become ready
 
   // The deployment link and the command needed to be run to attach this cluster would be provided in the output. status.execution_cmd
 }
@@ -49,9 +49,7 @@ resource "tmc_cluster" "attach_cluster_with_kubeconfig" {
     cluster_group = "<cluster-group>" // Default: default
   }
 
-  wait_until_ready = true // Default: false, when set resource waits until 3 min for the cluster to become ready
-
-  // The deployment link and the command needed to be run to attach this cluster would be provided in the output.status.execution_cmd
+   ready_wait_timeout = "3m" // Default: waits until 3 min for the cluster to become ready
 }
 
 // Create Tanzu Mission Control attach cluster entry with minimal information

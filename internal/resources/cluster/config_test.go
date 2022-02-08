@@ -17,7 +17,7 @@ const testDefaultAttachClusterScript = `
 		cluster_group = "default"
 	  }
 
-	  wait_until_ready = false
+	  ready_wait_timeout = "3m"
 	}
 `
 
@@ -38,7 +38,7 @@ const testAttachClusterWithKubeConfigScript = `
 		cluster_group = "default"
 	  }
 
-	  wait_until_ready = true
+	  ready_wait_timeout = "3m"
 	}
 `
 
@@ -54,7 +54,7 @@ const testDataSourceAttachClusterScript = `
 		cluster_group = "default"
 	  }
 
-	  wait_until_ready = false
+	  ready_wait_timeout = "3m"
 	}
 
 	data {{.ResourceName}} {{.DataSourceNameVar}} {

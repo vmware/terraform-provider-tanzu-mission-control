@@ -16,9 +16,10 @@ const (
 	attachClusterKubeConfigKey  = "kubeconfig_file"
 	attachClusterKey            = "attach_k8s_cluster"
 	attachClusterDescriptionKey = "description"
-	waitKey                     = "wait_until_ready"
+	waitKey                     = "ready_wait_timeout"
 	ResourceName                = "tmc_cluster"
 	tkgServiceVsphereKey        = "tkg_service_vsphere"
 	tkgVsphereClusterKey        = "tkg_vsphere"
 	proxyNameKey                = "proxy"
+	attachedValue               = "attached"
 )

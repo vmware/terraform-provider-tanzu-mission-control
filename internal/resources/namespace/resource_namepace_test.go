@@ -63,7 +63,7 @@ resource "%s" "%s" {
     cluster_group = "default"
   }
 
-  wait_until_ready = true
+  ready_wait_timeout = "3m"
 }
 
 resource "%s" "%s" {

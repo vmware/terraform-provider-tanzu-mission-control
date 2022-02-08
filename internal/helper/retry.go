@@ -32,3 +32,30 @@ func Retry(f Retryable, interval time.Duration, attempts int) (int, error) {
 
 	return retries, err
 }
+
+// Retry is a wrapper to retry functions.
+func RetryUntilTimeout(f Retryable, interval time.Duration, timeout time.Duration) (int, error) {
+	var (
+		err   error
+		retry bool
+	)
+
+	timeElapsedInSeconds := 0
+
+	retries := 1
+
+	for timeElapsedInSeconds < int(timeout.Seconds()) {
+		retry, err = f()
+		if !retry {
+			break
+		}
+
+		presentBackOffInterval := (retries * int(interval.Seconds()))
+		time.Sleep(time.Duration(presentBackOffInterval) * time.Second)
+
+		timeElapsedInSeconds += presentBackOffInterval
+		retries++
+	}
+
+	return retries, err
+}
