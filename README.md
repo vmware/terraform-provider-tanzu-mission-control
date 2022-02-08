@@ -97,13 +97,13 @@ $ make test
 
 ### Configuring Environment Variables:
 Set the environment variables in your IDE configurations or Terminal.
-Environment variables that are required to be set universally are `TMC_ENDPOINT`, `TMC_CSP_ENDPOINT` and `TMC_CSP_TOKEN`.
+Environment variables that are required to be set universally are `TMC_ENDPOINT`, `VMW_CLOUD_ENDPOINT` and `VMW_CLOUD_API_TOKEN`.
 
 Example:
 
 ```shell
 $ export TMC_ENDPOINT = my-org.tmc.cloud.vmware.com
-$ export TMC_CSP_ENDPOINT = console.cloud.vmware.com
+$ export VMW_CLOUD_ENDPOINT = console.cloud.vmware.com
 ```
 
 Environment variables specific to particular resources:

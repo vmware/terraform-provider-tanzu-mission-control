@@ -1,9 +1,9 @@
 variable "endpoint" {
 }
 
-variable "token" {
+variable "vmw_cloud_api_token" {
 }
 
-variable "csp_endpoint" {
+variable "vmw_cloud_api_endpoint" {
   default = "console.cloud.vmware.com"
 }
