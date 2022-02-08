@@ -12,16 +12,16 @@ import (
 )
 
 const (
-	ServerEndpointEnvVar = "TMC_ENDPOINT"
-	CSPEndpointEnvVar    = "TMC_CSP_ENDPOINT"
-	CSPTokenEnvVar       = "TMC_CSP_TOKEN"
+	ServerEndpointEnvVar   = "TMC_ENDPOINT"
+	VMWCloudEndpointEnvVar = "VMW_CLOUD_ENDPOINT"
+	VMWCloudAPITokenEnvVar = "VMW_CLOUD_API_TOKEN"
 )
 
 type TanzuContext struct {
-	ServerEndpoint string
-	Token          string
-	CSPEndPoint    string
-	TMCConnection  *client.TanzuMissionControl
+	ServerEndpoint   string
+	Token            string
+	VMWCloudEndPoint string
+	TMCConnection    *client.TanzuMissionControl
 }
 
 func (cfg *TanzuContext) Setup() error {

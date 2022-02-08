@@ -14,5 +14,5 @@ terraform {
 // Basic details needed to configure Tanzu Mission Control provider
 provider "tmc" {
   endpoint = "<stack-name>.tmc-dev.cloud.vmware.com" // Required, environment variable: TMC_ENDPOINT
-  token    = "<csp-token>"                           // Required, environment variable: TMC_CSP_TOKEN
+  vmw_cloud_api_token    = "<vmw-cloud-api-token>"   // Required, environment variable: VMW_CLOUD_API_TOKEN
 }

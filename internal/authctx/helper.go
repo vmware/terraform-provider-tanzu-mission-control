@@ -20,16 +20,16 @@ func ProviderAuthSchema() map[string]*schema.Schema {
 			Required:    true,
 			DefaultFunc: schema.EnvDefaultFunc(ServerEndpointEnvVar, nil),
 		},
-		cspEndpoint: {
+		vmwCloudEndpoint: {
 			Type:        schema.TypeString,
 			Required:    true,
-			DefaultFunc: schema.EnvDefaultFunc(CSPEndpointEnvVar, defaultCSPEndpoint),
+			DefaultFunc: schema.EnvDefaultFunc(VMWCloudEndpointEnvVar, defaultCSPEndpoint),
 		},
-		token: {
+		vmwCloudAPIToken: {
 			Type:        schema.TypeString,
 			Required:    true,
 			Sensitive:   true,
-			DefaultFunc: schema.EnvDefaultFunc(CSPTokenEnvVar, nil),
+			DefaultFunc: schema.EnvDefaultFunc(VMWCloudAPITokenEnvVar, nil),
 		},
 	}
 }
@@ -38,8 +38,8 @@ func ProviderConfigureContext(_ context.Context, d *schema.ResourceData) (interf
 	config := TanzuContext{}
 
 	config.ServerEndpoint, _ = d.Get(endpoint).(string)
-	config.CSPEndPoint, _ = d.Get(cspEndpoint).(string)
-	config.Token, _ = d.Get(token).(string)
+	config.VMWCloudEndPoint, _ = d.Get(vmwCloudEndpoint).(string)
+	config.Token, _ = d.Get(vmwCloudAPIToken).(string)
 
 	return setContext(config)
 }
@@ -51,7 +51,7 @@ func setContext(config TanzuContext) (TanzuContext, diag.Diagnostics) {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "Tanzu Mission Control credentials environment is not set",
-			Detail:   fmt.Sprintf("Please set %s, %s & %s to authenticate to Tanzu Mission Control provider", ServerEndpointEnvVar, CSPEndpointEnvVar, CSPTokenEnvVar),
+			Detail:   fmt.Sprintf("Please set %s, %s & %s to authenticate to Tanzu Mission Control provider", ServerEndpointEnvVar, VMWCloudEndpointEnvVar, VMWCloudAPITokenEnvVar),
 		})
 
 		return config, diags

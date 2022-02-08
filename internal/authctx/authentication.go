@@ -104,7 +104,7 @@ func getUserAuthCtx(config *TanzuContext) (map[string]string, error) {
 	)
 
 	for i := 0; i < 3; i++ {
-		token, err = getBearerToken(config.CSPEndPoint, config.Token)
+		token, err = getBearerToken(config.VMWCloudEndPoint, config.Token)
 		if err == nil {
 			break
 		}
@@ -113,7 +113,7 @@ func getUserAuthCtx(config *TanzuContext) (map[string]string, error) {
 	}
 
 	if err != nil {
-		return nil, errors.Wrap(err, "while getting bearer token")
+		return nil, errors.Wrap(err, "while getting bearer token from VMware Cloud API Token")
 	}
 
 	md := map[string]string{

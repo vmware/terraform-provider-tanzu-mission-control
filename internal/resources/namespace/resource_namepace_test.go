@@ -117,9 +117,9 @@ func verifyNamespaceResourceCreation(
 		}
 
 		config := authctx.TanzuContext{
-			ServerEndpoint: os.Getenv(authctx.ServerEndpointEnvVar),
-			Token:          os.Getenv(authctx.CSPTokenEnvVar),
-			CSPEndPoint:    os.Getenv(authctx.CSPEndpointEnvVar),
+			ServerEndpoint:   os.Getenv(authctx.ServerEndpointEnvVar),
+			Token:            os.Getenv(authctx.VMWCloudAPITokenEnvVar),
+			VMWCloudEndPoint: os.Getenv(authctx.VMWCloudEndpointEnvVar),
 		}
 
 		err := config.Setup()

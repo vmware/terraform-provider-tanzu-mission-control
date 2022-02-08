@@ -18,7 +18,7 @@ import (
 
 func TestPreCheck(t *testing.T) func() {
 	return func() {
-		for _, env := range []string{authctx.ServerEndpointEnvVar, authctx.CSPTokenEnvVar, authctx.CSPEndpointEnvVar} {
+		for _, env := range []string{authctx.ServerEndpointEnvVar, authctx.VMWCloudAPITokenEnvVar, authctx.VMWCloudEndpointEnvVar} {
 			require.NotEmpty(t, os.Getenv(env))
 		}
 	}
