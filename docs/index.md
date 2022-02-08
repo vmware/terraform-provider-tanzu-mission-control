@@ -8,9 +8,9 @@ Description: |-
 
 Manage your Kubernetes clusters in Tanzu Mission Control using this Terraform provider.
 The Tanzu Mission Control provider facilitates the provisioning of resources that you can use to manage Tanzu Kubernetes Grid workload clusters (and other conformant Kubernetes clusters) in Tanzu Mission Control.
-For more information, please refer [What is Tanzu Mission Control][vmware-tanzu-mission-control] in VMware Tanzu Mission Control Concepts.
+For more information, please refer [What is Tanzu Mission Control][vmware-tanzu-tmc] in VMware Tanzu Mission Control Concepts.
 
-[vmware-tanzu-mission-control]: https://tanzu.vmware.com/mission-control
+[vmware-tanzu-tmc]: https://tanzu.vmware.com/mission-control
 
 To use the **Tanzu Mission Control provider** for Terraform, you must have access to Tanzu Mission Control through an VMware Cloud services organization.
 Prior to initializing this provider in Terraform, make sure you have the following information:
@@ -42,12 +42,12 @@ From this page, you can generate a new API token, and then copy it to use for th
 
 ```terraform
 provider "tanzu-mission-control" {
-  endpoint = var.endpoint # optionally use TMC_ENDPOINT env var
+  endpoint            = var.endpoint            # optionally use TMC_ENDPOINT env var
   vmw_cloud_api_token = var.vmw_cloud_api_token # optionally use VMW_CLOUD_API_TOKEN env var
 
   # if you are using dev or different csp endpoint, change the default value below
   # for production environments the csp_endpoint is console.cloud.vmware.com
-  # csp_endpoint = "console.cloud.vmware.com" or optionally use TMC_CSP_ENDPOINT env var
+  # vmw_cloud_api_endpoint = "console.cloud.vmware.com" or optionally use VMW_CLOUD_ENDPOINT env var
 }
 ```
 
@@ -57,8 +57,8 @@ provider "tanzu-mission-control" {
 ### Required
 
 - **endpoint** (String)
-- **token** (String, Sensitive)
+- **vmw_cloud_api_token** (String, Sensitive)
 
 ### Optional
 
-- **csp_endpoint** (String)
+- **vmw_cloud_endpoint** (String)
