@@ -7,7 +7,6 @@ package common
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -45,10 +44,7 @@ var Meta = &schema.Schema{
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					if strings.Contains(k, "tmc.cloud.vmware.com/creator") || strings.Contains(k, "tmc.cloud.vmware.com/managed") || strings.Contains(k, "tmc.cloud.vmware.com/workspace") {
-						return true
-					}
-					return false
+					return true
 				},
 			},
 			DescriptionKey: {

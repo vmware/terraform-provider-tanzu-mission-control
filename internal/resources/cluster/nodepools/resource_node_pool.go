@@ -87,12 +87,18 @@ var nodePoolSpec = &schema.Schema{
 				Description: "Cloud labels",
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return true
+				},
 			},
 			nodeLabelsKey: {
 				Type:        schema.TypeMap,
 				Description: "Node labels",
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return true
+				},
 			},
 			tkgServiceVsphereKey: NodePoolTkgServiceVsphere,
 		},
