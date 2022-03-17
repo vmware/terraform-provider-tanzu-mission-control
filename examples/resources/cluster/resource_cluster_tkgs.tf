@@ -36,6 +36,12 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
           storage_class = "gc-storage-profile"
           # storage class is either `wcpglobal-storage-profile` or `gc-storage-profile`
           high_availability = false
+          volumes {
+            capacity          = 4
+            mount_path        = "/var/lib/etcd"
+            name              = "etcd-0"
+            pvc_storage_class = "tkgs-k8s-obj-policy"
+          }
         }
         node_pools {
           spec {
@@ -51,6 +57,12 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
               class         = "best-effort-xsmall"
               storage_class = "gc-storage-profile"
               # storage class is either `wcpglobal-storage-profile` or `gc-storage-profile`
+              volumes {
+                capacity          = 4
+                mount_path        = "/var/lib/etcd"
+                name              = "etcd-0"
+                pvc_storage_class = "tkgs-k8s-obj-policy"
+              }
             }
           }
           info {

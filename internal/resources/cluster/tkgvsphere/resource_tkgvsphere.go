@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
+Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
@@ -15,7 +15,7 @@ import (
 
 var TkgVsphereClusterSpec = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "The Tanzu Kubernetes Grid (TKGm) VSphere cluster spec",
+	Description: "The Tanzu Kubernetes Grid (TKGm) vSphere cluster spec",
 	Optional:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
@@ -154,6 +154,12 @@ var tkgVsphereNetwork = &schema.Schema{
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			apiServerPortKey: {
+				Type:        schema.TypeInt,
+				Default:     apiServerPortDefaultValue,
+				Description: "APIServerPort specifies the port address for the cluster that defaults to 6443.",
+				Optional:    true,
+			},
 			controlPlaneEndPointKey: {
 				Type:        schema.TypeString,
 				Description: "ControlPlaneEndpoint specifies the control plane virtual IP address. The value should be unique for every create request, else cluster creation shall fail",
@@ -200,9 +206,15 @@ func expandTKGVsphereNetworkSettings(data []interface{}) (network *tkgvspheremod
 
 	lookUpNetwork, _ := data[0].(map[string]interface{})
 	network = &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereNetworkSettings{
+		APIServerPort:        apiServerPortDefaultValue,
 		ControlPlaneEndpoint: controlPlaneEndpointDefaultValue,
 		Pods:                 &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereNetworkRanges{},
 		Services:             &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereNetworkRanges{},
+	}
+
+	if v, ok := lookUpNetwork[apiServerPortKey]; ok {
+		apiServerPort := v.(int)
+		network.APIServerPort = int32(apiServerPort)
 	}
 
 	if v, ok := lookUpNetwork[controlPlaneEndPointKey]; ok {
@@ -259,6 +271,7 @@ func flattenTKGVsphereNetworkSettings(network *tkgvspheremodel.VmwareTanzuManage
 		return nil
 	}
 
+	flattenNetworkSettings[apiServerPortKey] = network.APIServerPort
 	flattenNetworkSettings[controlPlaneEndPointKey] = network.ControlPlaneEndpoint
 
 	if network.Pods != nil {
@@ -486,16 +499,19 @@ var tkgVsphereVMConfig = &schema.Schema{
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			cpuKey: {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Description: "Number of CPUs per node",
+				Optional:    true,
 			},
 			diskKey: {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Description: "Root disk size in gigabytes for the VM",
+				Optional:    true,
 			},
 			memoryKey: {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Description: "Memory associated with the node in megabytes",
+				Optional:    true,
 			},
 		},
 	},
@@ -547,12 +563,14 @@ var tkgVsphereNodePoolInfo = &schema.Schema{
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			nodePoolNameKey: {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Description: "Name of the nodepool",
+				Required:    true,
 			},
 			nodePoolDescriptionKey: {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Description: "Description for the nodepool",
+				Optional:    true,
 			},
 		},
 	},

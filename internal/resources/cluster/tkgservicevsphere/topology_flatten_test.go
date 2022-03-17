@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
+Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
@@ -50,6 +50,14 @@ func TestFlattenTopology(t *testing.T) {
 					Class:            "test-class",
 					HighAvailability: false,
 					StorageClass:     "test-storage-class",
+					Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
+						{
+							Capacity:     4,
+							MountPath:    "/var/lib/etcd",
+							Name:         "etcd-0",
+							StorageClass: "tkgs-k8s-obj-policy",
+						},
+					},
 				},
 			},
 			expected: []interface{}{
@@ -59,6 +67,14 @@ func TestFlattenTopology(t *testing.T) {
 							classKey:            "test-class",
 							highAvailabilityKey: false,
 							storageClassKey:     "test-storage-class",
+							volumesKey: []interface{}{
+								map[string]interface{}{
+									capacityKey:        float32(4),
+									mountPathKey:       "/var/lib/etcd",
+									volumeNameKey:      "etcd-0",
+									pvcStorageClassKey: "tkgs-k8s-obj-policy",
+								},
+							},
 						},
 					},
 					nodePoolsKey: []interface{}{},
@@ -81,6 +97,14 @@ func TestFlattenTopology(t *testing.T) {
 							TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
 								Class:        "test-class-spec",
 								StorageClass: "test-storage-spec",
+								Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
+									{
+										Capacity:     4,
+										MountPath:    "/var/lib/etcd",
+										Name:         "etcd-0",
+										StorageClass: "tkgs-k8s-obj-policy",
+									},
+								},
 							},
 						},
 					},
@@ -93,8 +117,8 @@ func TestFlattenTopology(t *testing.T) {
 						map[string]interface{}{
 							infoKey: []interface{}{
 								map[string]interface{}{
-									clusterNameKey: "test",
-									descriptionKey: "testing topology flatten function",
+									nodepoolNameKey: "test",
+									descriptionKey:  "testing topology flatten function",
 								},
 							},
 							specKey: []interface{}{
@@ -106,6 +130,14 @@ func TestFlattenTopology(t *testing.T) {
 										map[string]interface{}{
 											classKey:        "test-class-spec",
 											storageClassKey: "test-storage-spec",
+											volumesKey: []interface{}{
+												map[string]interface{}{
+													capacityKey:        float32(4),
+													mountPathKey:       "/var/lib/etcd",
+													volumeNameKey:      "etcd-0",
+													pvcStorageClassKey: "tkgs-k8s-obj-policy",
+												},
+											},
 										},
 									},
 								},
@@ -122,6 +154,14 @@ func TestFlattenTopology(t *testing.T) {
 					Class:            "test-class",
 					HighAvailability: false,
 					StorageClass:     "test-storage-class",
+					Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
+						{
+							Capacity:     4,
+							MountPath:    "/var/lib/etcd",
+							Name:         "etcd-0",
+							StorageClass: "tkgs-k8s-obj-policy",
+						},
+					},
 				},
 				NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 					{
@@ -136,6 +176,14 @@ func TestFlattenTopology(t *testing.T) {
 							TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
 								Class:        "test-class-spec",
 								StorageClass: "test-storage-spec",
+								Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
+									{
+										Capacity:     4,
+										MountPath:    "/var/lib/etcd",
+										Name:         "etcd-0",
+										StorageClass: "tkgs-k8s-obj-policy",
+									},
+								},
 							},
 						},
 					},
@@ -148,14 +196,22 @@ func TestFlattenTopology(t *testing.T) {
 							classKey:            "test-class",
 							highAvailabilityKey: false,
 							storageClassKey:     "test-storage-class",
+							volumesKey: []interface{}{
+								map[string]interface{}{
+									capacityKey:        float32(4),
+									mountPathKey:       "/var/lib/etcd",
+									volumeNameKey:      "etcd-0",
+									pvcStorageClassKey: "tkgs-k8s-obj-policy",
+								},
+							},
 						},
 					},
 					nodePoolsKey: []interface{}{
 						map[string]interface{}{
 							infoKey: []interface{}{
 								map[string]interface{}{
-									clusterNameKey: "test",
-									descriptionKey: "testing topology flatten function",
+									nodepoolNameKey: "test",
+									descriptionKey:  "testing topology flatten function",
 								},
 							},
 							specKey: []interface{}{
@@ -167,6 +223,14 @@ func TestFlattenTopology(t *testing.T) {
 										map[string]interface{}{
 											classKey:        "test-class-spec",
 											storageClassKey: "test-storage-spec",
+											volumesKey: []interface{}{
+												map[string]interface{}{
+													capacityKey:        float32(4),
+													mountPathKey:       "/var/lib/etcd",
+													volumeNameKey:      "etcd-0",
+													pvcStorageClassKey: "tkgs-k8s-obj-policy",
+												},
+											},
 										},
 									},
 								},

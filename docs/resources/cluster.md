@@ -160,6 +160,12 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
           storage_class = "gc-storage-profile"
           # storage class is either `wcpglobal-storage-profile` or `gc-storage-profile`
           high_availability = false
+          volumes {
+            capacity          = 4
+            mount_path        = "/var/lib/etcd"
+            name              = "etcd-0"
+            pvc_storage_class = "tkgs-k8s-obj-policy"
+          }
         }
         node_pools {
           spec {
@@ -175,6 +181,12 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
               class         = "best-effort-xsmall"
               storage_class = "gc-storage-profile"
               # storage class is either `wcpglobal-storage-profile` or `gc-storage-profile`
+              volumes {
+                capacity          = 4
+                mount_path        = "/var/lib/etcd"
+                name              = "etcd-0"
+                pvc_storage_class = "tkgs-k8s-obj-policy"
+              }
             }
           }
           info {
@@ -235,6 +247,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
             ]
           }
 
+          api_server_port = 6443
           control_plane_end_point = "10.191.249.39"
         }
 
@@ -350,7 +363,7 @@ Optional:
 - **cluster_group** (String) Name of the cluster group to which this cluster belongs
 - **proxy** (String) Optional proxy name is the name of the Proxy Config to be used for the cluster
 - **tkg_service_vsphere** (Block List, Max: 1) The Tanzu Kubernetes Grid Service (TKGs) cluster spec (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))
-- **tkg_vsphere** (Block List, Max: 1) The Tanzu Kubernetes Grid (TKGm) cluster spec (see [below for nested schema](#nestedblock--spec--tkg_vsphere))
+- **tkg_vsphere** (Block List, Max: 1) The Tanzu Kubernetes Grid (TKGm) vSphere cluster spec (see [below for nested schema](#nestedblock--spec--tkg_vsphere))
 
 <a id="nestedblock--spec--tkg_service_vsphere"></a>
 ### Nested Schema for `spec.tkg_service_vsphere`
@@ -399,9 +412,6 @@ Required:
 
 - **cidr_blocks** (List of String) CIDRBlocks specifies one or more ranges of IP addresses
 
-
-
-
 <a id="nestedblock--spec--tkg_service_vsphere--topology"></a>
 ### Nested Schema for `spec.tkg_service_vsphere.topology`
 
@@ -424,6 +434,18 @@ Required:
 Optional:
 
 - **high_availability** (Boolean) High Availability or Non High Availability Cluster. HA cluster creates three controlplane machines, and non HA creates just one
+- **volumes** (Block List) Configurable volumes for control plane nodes (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--volumes))
+
+<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--volumes"></a>
+### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.volumes`
+
+Optional:
+
+- **capacity** (Number) Volume capacity is in gib
+- **mount_path** (String) It is the directory where the volume device is to be mounted
+- **name** (String) It is the volume name
+- **pvc_storage_class** (String) This is the storage class for PVC which in case omitted, default storage class will be used for the disks
+
 
 
 <a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools"></a>
@@ -463,6 +485,21 @@ Required:
 
 - **class** (String) Control plane instance type
 - **storage_class** (String) Storage Class to be used for storage of the disks which store the root filesystems of the nodes
+
+Optional:
+
+- **volumes** (Block List) Configurable volumes for control plane nodes (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--worker_node_count--volumes))
+
+<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--worker_node_count--volumes"></a>
+### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.spec.worker_node_count.volumes`
+
+Optional:
+
+- **capacity** (Number) Volume capacity is in gib
+- **mount_path** (String) It is the directory where the volume device is to be mounted
+- **name** (String) It is the volume name
+- **pvc_storage_class** (String) This is the storage class for PVC which in case omitted, default storage class will be used for the disks
+
 
 
 
@@ -515,6 +552,10 @@ Required:
 - **control_plane_end_point** (String) ControlPlaneEndpoint specifies the control plane virtual IP address. The value should be unique for every create request, else cluster creation shall fail
 - **pods** (Block List, Min: 1) Pod CIDR for Kubernetes pods defaults to 192.168.0.0/16 (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--security--pods))
 - **services** (Block List, Min: 1) Service CIDR for kubernetes services defaults to 10.96.0.0/12 (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--security--services))
+
+Optional:
+
+- **api_server_port** (Number) APIServerPort specifies the port address for the cluster that defaults to 6443.
 
 <a id="nestedblock--spec--tkg_vsphere--settings--security--pods"></a>
 ### Nested Schema for `spec.tkg_vsphere.settings.security.pods`
@@ -569,9 +610,9 @@ Optional:
 
 Optional:
 
-- **cpu** (String)
-- **disk_size** (String)
-- **memory** (String)
+- **cpu** (String) Number of CPUs per node
+- **disk_size** (String) Root disk size in gigabytes for the VM
+- **memory** (String) Memory associated with the node in megabytes
 
 
 
@@ -591,11 +632,11 @@ Optional:
 
 Required:
 
-- **name** (String)
+- **name** (String) Name of the nodepool
 
 Optional:
 
-- **description** (String)
+- **description** (String) Description for the nodepool
 
 
 <a id="nestedblock--spec--tkg_vsphere--topology--node_pools--spec"></a>
@@ -603,8 +644,6 @@ Optional:
 
 Optional:
 
-- **cloud_label** (Map of String) Cloud labels
-- **node_label** (Map of String) Node labels
 - **tkg_vsphere** (Block List, Max: 1) Nodepool config for tkgm vsphere (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--spec--tkg_vsphere))
 - **worker_node_count** (String) Count is the number of nodes
 
@@ -620,6 +659,6 @@ Required:
 
 Optional:
 
-- **cpu** (String)
-- **disk_size** (String)
-- **memory** (String)
+- **cpu** (String) Number of CPUs per node
+- **disk_size** (String) Root disk size in gigabytes for the VM
+- **memory** (String) Memory associated with the node in megabytes
