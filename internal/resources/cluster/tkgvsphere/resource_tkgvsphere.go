@@ -557,9 +557,10 @@ func flattenTKGVsphereTopologyControlPlane(controlPlane *tkgvspheremodel.VmwareT
 }
 
 var tkgVsphereNodePoolInfo = &schema.Schema{
-	Type:     schema.TypeList,
-	Required: true,
-	MaxItems: 1,
+	Type:        schema.TypeList,
+	Description: "Info is the meta information of nodepool for cluster",
+	Required:    true,
+	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			nodePoolNameKey: {
@@ -569,7 +570,7 @@ var tkgVsphereNodePoolInfo = &schema.Schema{
 			},
 			nodePoolDescriptionKey: {
 				Type:        schema.TypeString,
-				Description: "Description for the nodepool",
+				Description: "Description of the nodepool",
 				Optional:    true,
 			},
 		},

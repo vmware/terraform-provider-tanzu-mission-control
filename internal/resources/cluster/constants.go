@@ -18,6 +18,7 @@ const (
 	attachClusterDescriptionKey = "description"
 	waitKey                     = "ready_wait_timeout"
 	ResourceName                = "tanzu-mission-control_cluster"
+	tkgAWSClusterKey            = "tkg_aws"
 	tkgServiceVsphereKey        = "tkg_service_vsphere"
 	tkgVsphereClusterKey        = "tkg_vsphere"
 	proxyNameKey                = "proxy"

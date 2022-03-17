@@ -38,6 +38,7 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 	clusterConfig := map[string][]testAcceptanceOption{
 		"attach":               {withClusterName("tf-attach-test")},
 		"attachWithKubeConfig": {withKubeConfig(), withClusterName("tf-attach-kf-test")},
+		"tkgAWS":               {withClusterName("tf-tkgm-aws-test"), withTKGmAWSCluster()},
 		"tkgs":                 {withClusterName("tf-tkgs-test"), withTKGsCluster()},
 		"tkgVsphere":           {withClusterName("tf-tkgm-vsphere-test"), withTKGmVsphereCluster()},
 	}
@@ -57,6 +58,12 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 				Config: testGetResourceClusterDefinition(t, clusterConfig["attachWithKubeConfig"]...),
 				Check: resource.ComposeTestCheckFunc(
 					checkResourceAttributes(provider, clusterConfig["attachWithKubeConfig"]...),
+				),
+			},
+			{
+				Config: testGetResourceClusterDefinition(t, clusterConfig["tkgAWS"]...),
+				Check: resource.ComposeTestCheckFunc(
+					checkResourceAttributes(provider, clusterConfig["tkgAWS"]...),
 				),
 			},
 			{
@@ -88,14 +95,19 @@ func testGetResourceClusterDefinition(t *testing.T, opts ...testAcceptanceOption
 			t.Skipf("KUBECONFIG env var is not set: %s", templateConfig.KubeConfigPath)
 		}
 
-	case tkgsCluster:
-		if templateConfig.ManagementClusterName == "" || templateConfig.ProvisionerName == "" || templateConfig.Version == "" || templateConfig.StorageClass == "" {
-			t.Skip("MANAGEMENT CLUSTER, PROVISIONER, VERSION or STORAGE CLASS env var is not set for TKGs acceptance test")
+	case tkgAWSCluster:
+		if templateConfig.ManagementClusterName == "" || templateConfig.ProvisionerName == "" {
+			t.Skip("MANAGEMENT CLUSTER or PROVISIONER env var is not set for TKGm AWS acceptance test")
 		}
 
 	case tkgVsphereCluster:
 		if templateConfig.ManagementClusterName == "" || templateConfig.ProvisionerName == "" || templateConfig.ControlPlaneEndPoint == "" {
 			t.Skip("MANAGEMENT CLUSTER, PROVISIONER or CONTROL PLANE ENDPOINT env var is not set for TKGm Vsphere acceptance test")
+		}
+
+	case tkgsCluster:
+		if templateConfig.ManagementClusterName == "" || templateConfig.ProvisionerName == "" || templateConfig.Version == "" || templateConfig.StorageClass == "" {
+			t.Skip("MANAGEMENT CLUSTER, PROVISIONER, VERSION or STORAGE CLASS env var is not set for TKGs acceptance test")
 		}
 	}
 
