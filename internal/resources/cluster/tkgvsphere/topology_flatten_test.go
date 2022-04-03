@@ -67,8 +67,6 @@ func TestFlattenTopology(t *testing.T) {
 							Description: "testing topology flatten function",
 						},
 						Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
-							CloudLabels:     map[string]string{"cloud-key": "cloud-value"},
-							NodeLabels:      map[string]string{"node-key": "node-value"},
 							WorkerNodeCount: "1",
 							TkgVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGVsphereNodepool{
 								VMConfig: &nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGVsphereVMConfig{
@@ -94,8 +92,6 @@ func TestFlattenTopology(t *testing.T) {
 							},
 							nodePoolSpecKey: []interface{}{
 								map[string]interface{}{
-									cloudLabelKey:      map[string]string{"cloud-key": "cloud-value"},
-									nodeLabelKey:       map[string]string{"node-key": "node-value"},
 									workerNodeCountKey: "1",
 									tkgVsphereKey: []interface{}{
 										map[string]interface{}{
@@ -133,8 +129,6 @@ func TestFlattenTopology(t *testing.T) {
 							Description: "testing topology flatten function",
 						},
 						Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
-							CloudLabels:     map[string]string{"cloud-key": "cloud-value"},
-							NodeLabels:      map[string]string{"node-key": "node-value"},
 							WorkerNodeCount: "1",
 							TkgVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGVsphereNodepool{
 								VMConfig: &nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGVsphereVMConfig{
@@ -171,8 +165,6 @@ func TestFlattenTopology(t *testing.T) {
 							},
 							nodePoolSpecKey: []interface{}{
 								map[string]interface{}{
-									cloudLabelKey:      map[string]string{"cloud-key": "cloud-value"},
-									nodeLabelKey:       map[string]string{"node-key": "node-value"},
 									workerNodeCountKey: "1",
 									tkgVsphereKey: []interface{}{
 										map[string]interface{}{

@@ -16,12 +16,6 @@ type ClientErrors struct {
 	err      error
 }
 
-func Error(err error) ClientErrors {
-	return ClientErrors{
-		err: err,
-	}
-}
-
 func ErrorWithHTTPCode(httpCode int, err error) ClientErrors {
 	return ClientErrors{
 		httpCode: httpCode,

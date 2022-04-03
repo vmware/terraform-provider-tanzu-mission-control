@@ -11,7 +11,6 @@ import (
 
 	nodepoolmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 	tkgvspheremodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgvsphere"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 var TkgVsphereClusterSpec = &schema.Schema{
@@ -571,18 +570,6 @@ var tkgVsphereNodePoolSpec = &schema.Schema{
 				Description: "Count is the number of nodes",
 				Optional:    true,
 			},
-			nodeLabelKey: {
-				Type:        schema.TypeMap,
-				Description: "Node labels",
-				Optional:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-			},
-			cloudLabelKey: {
-				Type:        schema.TypeMap,
-				Description: "Cloud labels",
-				Optional:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-			},
 			tkgVsphereKey: {
 				Type:        schema.TypeList,
 				Description: "Nodepool config for tkgm vsphere",
@@ -613,16 +600,6 @@ func expandTKGVsphereTopologyNodePool(data interface{}) (nodePools *nodepoolmode
 
 			if v1, ok := spec[workerNodeCountKey]; ok {
 				nodePools.Spec.WorkerNodeCount, _ = v1.(string)
-			}
-
-			if v1, ok := spec[nodeLabelKey]; ok {
-				nodeLabels, _ := v1.(map[string]interface{})
-				nodePools.Spec.NodeLabels = common.GetTypeMapData(nodeLabels)
-			}
-
-			if v1, ok := spec[cloudLabelKey]; ok {
-				cloudLabels, _ := v1.(map[string]interface{})
-				nodePools.Spec.CloudLabels = common.GetTypeMapData(cloudLabels)
 			}
 
 			if v1, ok := spec[tkgVsphereKey]; ok {
@@ -672,8 +649,6 @@ func flattenTKGVsphereTopologyNodePool(nodePool *nodepoolmodel.VmwareTanzuManage
 		flattenNodePoolSpec := make(map[string]interface{})
 
 		flattenNodePoolSpec[workerNodeCountKey] = nodePool.Spec.WorkerNodeCount
-		flattenNodePoolSpec[nodeLabelKey] = nodePool.Spec.NodeLabels
-		flattenNodePoolSpec[cloudLabelKey] = nodePool.Spec.CloudLabels
 
 		if nodePool.Spec.TkgVsphere != nil {
 			flattenNodePoolSpec[tkgVsphereKey] = flattenNodePoolTKGVsphere(nodePool.Spec.TkgVsphere)

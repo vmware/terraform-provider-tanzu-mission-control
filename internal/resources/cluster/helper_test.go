@@ -60,6 +60,7 @@ func withTKGsCluster() testAcceptanceOption {
 func withTKGmVsphereCluster() testAcceptanceOption {
 	return func(config *testAcceptanceConfig) {
 		config.ManagementClusterName = os.Getenv("MANAGEMENT_CLUSTER")
+		config.ProvisionerName = os.Getenv("PROVISIONER_NAME")
 		config.ControlPlaneEndPoint = os.Getenv("CONTROL_PLANE_ENDPOINT")
 		config.accTestType = tkgVsphereCluster
 		config.templateData = testTKGmVsphereClusterScript
