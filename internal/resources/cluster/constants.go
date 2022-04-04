@@ -22,4 +22,6 @@ const (
 	tkgVsphereClusterKey        = "tkg_vsphere"
 	proxyNameKey                = "proxy"
 	attachedValue               = "attached"
+	distributionKey             = "distribution"
+	versionKey                  = "version"
 )
