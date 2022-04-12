@@ -357,7 +357,7 @@ func withMetaUpdate(d *schema.ResourceData, cluster *clustermodel.VmwareTanzuMan
 	cluster.Meta.Labels = objectMeta.Labels
 	cluster.Meta.Description = objectMeta.Description
 
-	log.Printf("[INFO] updating meta data")
+	log.Printf("[INFO] updating cluster meta data")
 
 	return true
 }
