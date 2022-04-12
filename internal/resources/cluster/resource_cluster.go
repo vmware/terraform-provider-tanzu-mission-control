@@ -26,7 +26,10 @@ import (
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
-type contextMethodKey struct{}
+type (
+	contextMethodKey struct{}
+	updateCheck      []func(*schema.ResourceData, *clustermodel.VmwareTanzuManageV1alpha1ClusterCluster) bool
+)
 
 func ResourceTMCCluster() *schema.Resource {
 	return &schema.Resource{
@@ -295,68 +298,117 @@ func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interfac
 	return diags
 }
 
+func withTKGmVsphereVersionUpdate(d *schema.ResourceData, cluster *clustermodel.VmwareTanzuManageV1alpha1ClusterCluster) bool {
+	if d.HasChange(helper.GetFirstElementOf(SpecKey, tkgVsphereClusterKey, distributionKey, versionKey)) {
+		newVersion := d.Get(helper.GetFirstElementOf(SpecKey, tkgVsphereClusterKey, distributionKey, versionKey))
+		if newVersion.(string) != "" {
+			cluster.Spec.TkgVsphere.Distribution.Version = newVersion.(string)
+
+			log.Printf("[INFO] updating TKGm vSphere workload cluster version to %s", newVersion.(string))
+
+			return true
+		}
+	}
+
+	return false
+}
+
+func withTKGsVsphereVersionUpdate(d *schema.ResourceData, cluster *clustermodel.VmwareTanzuManageV1alpha1ClusterCluster) bool {
+	if d.HasChange(helper.GetFirstElementOf(SpecKey, tkgServiceVsphereKey, distributionKey, versionKey)) {
+		newVersion := d.Get(helper.GetFirstElementOf(SpecKey, tkgServiceVsphereKey, distributionKey, versionKey))
+		if newVersion.(string) != "" {
+			cluster.Spec.TkgServiceVsphere.Distribution.Version = newVersion.(string)
+
+			log.Printf("[INFO] updating TKGs workload cluster version to %s", newVersion.(string))
+
+			return true
+		}
+	}
+
+	return false
+}
+
+func withClusterGroupUpdate(d *schema.ResourceData, cluster *clustermodel.VmwareTanzuManageV1alpha1ClusterCluster) bool {
+	if d.HasChange(helper.GetFirstElementOf(SpecKey, clusterGroupKey)) {
+		newClusterGroupName := d.Get(helper.GetFirstElementOf(SpecKey, clusterGroupKey))
+		if newClusterGroupName.(string) != "" {
+			cluster.Spec.ClusterGroupName = newClusterGroupName.(string)
+
+			log.Printf("[INFO] updating cluster group to %s", newClusterGroupName.(string))
+
+			return true
+		}
+	}
+
+	return false
+}
+
+func withMetaUpdate(d *schema.ResourceData, cluster *clustermodel.VmwareTanzuManageV1alpha1ClusterCluster) bool {
+	if !common.HasMetaChanged(d) {
+		return false
+	}
+
+	objectMeta := common.ConstructMeta(d)
+
+	if value, ok := cluster.Meta.Labels[common.CreatorLabelKey]; ok {
+		objectMeta.Labels[common.CreatorLabelKey] = value
+	}
+
+	cluster.Meta.Labels = objectMeta.Labels
+	cluster.Meta.Description = objectMeta.Description
+
+	log.Printf("[INFO] updating meta data")
+
+	return true
+}
+
 func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	updateRequired := false
+	var updateAvailable bool
 
-	switch {
-	case common.HasMetaChanged(d):
-		fallthrough
-	case d.HasChange(helper.GetFirstElementOf(SpecKey, clusterGroupKey)):
-		updateRequired = true
-	}
-
-	if !updateRequired {
-		return diags
-	}
-
+	// Get call to initialise the cluster struct
 	getResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey)))
 	}
 
-	if common.HasMetaChanged(d) {
-		meta := common.ConstructMeta(d)
+	updates := updateCheck{withMetaUpdate, withClusterGroupUpdate, withTKGsVsphereVersionUpdate, withTKGmVsphereVersionUpdate}
 
-		if value, ok := getResp.Cluster.Meta.Labels[common.CreatorLabelKey]; ok {
-			meta.Labels[common.CreatorLabelKey] = value
+	for _, update := range updates {
+		if update(d, getResp.Cluster) {
+			updateAvailable = true
+		}
+	}
+
+	if updateAvailable {
+		_, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceUpdate(
+			&clustermodel.VmwareTanzuManageV1alpha1ClusterRequest{
+				Cluster: getResp.Cluster,
+			},
+		)
+		if err != nil {
+			return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey)))
 		}
 
-		getResp.Cluster.Meta.Labels = meta.Labels
-		getResp.Cluster.Meta.Description = meta.Description
-	}
-
-	incomingCGName := d.Get(helper.GetFirstElementOf(SpecKey, clusterGroupKey))
-
-	if incomingCGName.(string) != "" {
-		getResp.Cluster.Spec.ClusterGroupName = incomingCGName.(string)
-	}
-
-	_, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceUpdate(
-		&clustermodel.VmwareTanzuManageV1alpha1ClusterRequest{
-			Cluster: getResp.Cluster,
-		},
-	)
-	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey)))
+		log.Printf("[INFO] cluster update successful")
 	}
 
 	return dataSourceTMCClusterRead(ctx, d, m)
 }
 
-func getK8sClient(kubeconfigfile string) (k8sClient.Client, error) {
-	restconfig, err := clientcmd.BuildConfigFromFlags("", kubeconfigfile)
+func getK8sClient(kubeConfigFile string) (k8sClient.Client, error) {
+	restConfig, err := clientcmd.BuildConfigFromFlags("", kubeConfigFile)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "Invalid kubeconfig file path provided, filepath : %s", kubeconfigfile)
+		return nil, errors.WithMessagef(err, "Invalid kubeconfig file path provided, filepath : %s", kubeConfigFile)
 	}
 
-	restconfig.Timeout = 10 * time.Second
+	restConfig.Timeout = 10 * time.Second
 
-	k8sclient, err := k8sClient.New(restconfig, k8sClient.Options{})
+	k8sClient, err := k8sClient.New(restConfig, k8sClient.Options{})
 	if err != nil {
-		return nil, errors.WithMessagef(err, "Error in creating kubernetes client from kubeconfig file provided, filepath : %s", kubeconfigfile)
+		return nil, errors.WithMessagef(err, "Error in creating kubernetes client from kubeconfig file provided, filepath : %s", kubeConfigFile)
 	}
 
-	return k8sclient, nil
+	return k8sClient, nil
 }

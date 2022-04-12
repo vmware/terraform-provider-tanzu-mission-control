@@ -6,9 +6,7 @@ SPDX-License-Identifier: MPL-2.0
 package main
 
 import (
-	"context"
 	"flag"
-	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 
@@ -26,12 +24,7 @@ func main() {
 	}
 
 	if debugMode {
-		err := plugin.Debug(context.Background(), "vmware/tanzu/tmc", opts)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-
-		return
+		opts.ProviderAddr = "vmware/dev/tanzu-mission-control"
 	}
 
 	plugin.Serve(opts)
