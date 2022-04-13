@@ -172,12 +172,6 @@ const testTKGmVsphereClusterScript = `
          	}
          	node_pools {
            		spec {
- 					cloud_label = {
- 						"key1": "val1"
- 					}
- 					node_label = {
- 						"key2": "val2"
- 					}
              		worker_node_count = "1"
              		tkg_vsphere {
  						vm_config {

@@ -94,8 +94,8 @@ func testGetResourceClusterDefinition(t *testing.T, opts ...testAcceptanceOption
 		}
 
 	case tkgVsphereCluster:
-		if templateConfig.ManagementClusterName == "" || templateConfig.ControlPlaneEndPoint == "" {
-			t.Skip("MANAGEMENT CLUSTER or CONTROL PLANE ENDPOINT env var is not set for TKGm Vsphere acceptance test")
+		if templateConfig.ManagementClusterName == "" || templateConfig.ProvisionerName == "" || templateConfig.ControlPlaneEndPoint == "" {
+			t.Skip("MANAGEMENT CLUSTER, PROVISIONER or CONTROL PLANE ENDPOINT env var is not set for TKGm Vsphere acceptance test")
 		}
 	}
 

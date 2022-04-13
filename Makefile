@@ -23,7 +23,7 @@ vet:
 
 # Linter
 lint: gofmt
-	golangci-lint run -c ./.golangci.yml ./internal/... .
+	GO111MODULE=on golangci-lint run -c ./.golangci.yml ./internal/... .
 
 set-tf-acc:
 	@echo Setting Acceptance test env variable
