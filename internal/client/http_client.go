@@ -7,6 +7,7 @@ package client
 
 import (
 	"net/http"
+	"runtime"
 
 	clusterclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/cluster"
 	clustergroupclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/clustergroup"
@@ -23,6 +24,9 @@ func NewHTTPClient() *TanzuMissionControl {
 	headers := http.Header{}
 	headers.Set("Content-Type", "application/json")
 	headers.Set("Connection", "keep-alive")
+	headers.Set("x-client-name", "tmc-terraform-provider")
+	headers.Set("x-client-platform", runtime.GOOS)
+	headers.Set("x-client-version", "1.0.2")
 
 	httpClient.AddHeaders(headers)
 
