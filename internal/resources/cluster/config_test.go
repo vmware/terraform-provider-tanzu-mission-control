@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
+Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
@@ -97,6 +97,12 @@ const testTKGsClusterScript = `
           		class             = "best-effort-xsmall"
           		storage_class     = "{{.StorageClass}}"
           		high_availability = false
+				volumes {
+					capacity          = 4
+					mount_path        = "/var/lib/etcd"
+					name              = "etcd-0"
+					pvc_storage_class = "tkgs-k8s-obj-policy"
+              	}
         	}
         	node_pools {
           		spec {
@@ -110,6 +116,12 @@ const testTKGsClusterScript = `
             		tkg_service_vsphere {
 						class = "best-effort-xsmall"
               			storage_class = "{{.StorageClass}}"
+						volumes {
+							capacity          = 4
+							mount_path        = "/var/lib/etcd"
+							name              = "etcd-0"
+							pvc_storage_class = "tkgs-k8s-obj-policy"
+						}
             		}
           		}
           		info {
@@ -143,6 +155,7 @@ const testTKGmVsphereClusterScript = `
 						"10.96.0.0/16",
 					]
 				}
+				api_server_port = 6443
 				control_plane_end_point = "{{.ControlPlaneEndPoint}}"
 			}
 			security {

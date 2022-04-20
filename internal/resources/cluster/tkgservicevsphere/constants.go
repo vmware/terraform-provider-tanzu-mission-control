@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
+Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
@@ -20,12 +20,17 @@ const (
 	classKey             = "class"
 	storageClassKey      = "storage_class"
 	highAvailabilityKey  = "high_availability"
+	volumesKey           = "volumes"
+	capacityKey          = "capacity"
+	mountPathKey         = "mount_path"
+	volumeNameKey        = "name"
+	pvcStorageClassKey   = "pvc_storage_class"
 	workerNodeCountKey   = "worker_node_count"
 	nodeLabelKey         = "node_label"
 	cloudLabelKey        = "cloud_label"
 	tkgServiceVsphereKey = "tkg_service_vsphere"
 	descriptionKey       = "description"
 	specKey              = "spec"
-	clusterNameKey       = "name"
+	nodepoolNameKey      = "name"
 	defaultNodePoolName  = "default-nodepool"
 )

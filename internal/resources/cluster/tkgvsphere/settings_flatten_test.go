@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
+Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
@@ -30,6 +30,7 @@ func TestFlattenSettings(t *testing.T) {
 			name: "normal scenario with TKGm Vsphere workload settings network data",
 			input: &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereSettings{
 				Network: &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereNetworkSettings{
+					APIServerPort:        6443,
 					ControlPlaneEndpoint: "10.185.107.47",
 					Pods: &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereNetworkRanges{
 						CidrBlocks: []string{"127.0.0.1"},
@@ -46,6 +47,7 @@ func TestFlattenSettings(t *testing.T) {
 				map[string]interface{}{
 					networkKey: []interface{}{
 						map[string]interface{}{
+							apiServerPortKey:        int32(6443),
 							controlPlaneEndPointKey: "10.185.107.47",
 							podsKey: []interface{}{
 								map[string]interface{}{

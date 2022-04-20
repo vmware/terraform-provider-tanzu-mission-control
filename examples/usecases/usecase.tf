@@ -73,9 +73,9 @@ resource "tanzu-mission-control_namespace" "create_namespace" {
 
 # Create Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster entry
 resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
-  management_cluster_name = "tkgs-terraform"
-  provisioner_name        = "test-gc-e2e-demo-ns"
-  name                    = "tkgs-workload-test"
+  management_cluster_name = "tkgs-terraform-test"
+  provisioner_name        = "testns"
+  name                    = "tkgs-workload"
 
   meta {
     labels = { "key" : "test" }
@@ -100,21 +100,39 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
       }
 
       distribution {
-        version = "v1.21.2+vmware.1-tkg.1.fea8785"
+        version = "v1.21.6+vmware.1-tkg.1.b3d708a"
       }
 
       topology {
         control_plane {
-          class             = "best-effort-xsmall"
-          storage_class     = "gc-storage-profile"
+          class             = "guaranteed-xsmall"
+          storage_class     = "tkgs-k8s-obj-policy"
           high_availability = false
+          volumes {
+            capacity          = 4
+            mount_path        = "/var/lib/etcd"
+            name              = "etcd-0"
+            pvc_storage_class = "tkgs-k8s-obj-policy"
+          }
+          volumes {
+            capacity          = 4
+            mount_path        = "/var/lib/etcd"
+            name              = "etcd-1"
+            pvc_storage_class = "tkgs-k8s-obj-policy"
+          }
         }
         node_pools {
           spec {
-            worker_node_count = "1"
+            worker_node_count = "2"
             tkg_service_vsphere {
-              class         = "best-effort-xsmall"
-              storage_class = "gc-storage-profile"
+              class         = "guaranteed-xsmall"
+              storage_class = "tkgs-k8s-obj-policy"
+              volumes {
+                capacity          = 4
+                mount_path        = "/var/lib/etcd"
+                name              = "etcd-0"
+                pvc_storage_class = "tkgs-k8s-obj-policy"
+              }
             }
           }
           info {
@@ -153,7 +171,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
               "10.96.0.0/16",
             ]
           }
-
+          api_server_port = 6443
           control_plane_end_point = "10.191.143.100"
         }
 
@@ -199,7 +217,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
           }
 
           info {
-            name        = "default-nodepool"
+            name        = "md-0"
             description = "my nodepool"
           }
         }

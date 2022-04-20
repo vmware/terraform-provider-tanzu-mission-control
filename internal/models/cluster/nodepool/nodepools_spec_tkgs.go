@@ -20,6 +20,9 @@ type VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool struct {
 	// Storage Class to be used for storage of the disks which store the root filesystem of the nodes.
 	// The potential values could be found using cluster:options api.
 	StorageClass string `json:"storageClass,omitempty"`
+
+	// Configure volumes for node pool nodes.
+	Volumes []*VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume `json:"volumes"`
 }
 
 // MarshalBinary interface implementation.

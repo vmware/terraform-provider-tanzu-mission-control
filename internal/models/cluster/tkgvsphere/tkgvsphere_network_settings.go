@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
+Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
@@ -13,6 +13,10 @@ import (
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.cluster.infrastructure.tkgvsphere.NetworkSettings
 type VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereNetworkSettings struct {
+
+	// APIServerPort specifies the port address for the cluster (optional).
+	// The port value defaults to 6443.
+	APIServerPort int32 `json:"apiServerPort,omitempty"`
 
 	// ControlPlaneEndpoint specifies the control plane virtual IP address.
 	ControlPlaneEndpoint string `json:"controlPlaneEndpoint,omitempty"`

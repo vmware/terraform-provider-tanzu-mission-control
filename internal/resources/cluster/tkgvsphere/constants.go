@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
+Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
@@ -13,6 +13,8 @@ const (
 	securityKey                      = "security"
 	controlPlaneEndPointKey          = "control_plane_end_point"
 	controlPlaneEndpointDefaultValue = "default"
+	apiServerPortKey                 = "api_server_port"
+	apiServerPortDefaultValue        = 6443
 	podsKey                          = "pods"
 	servicesKey                      = "services"
 	cidrBlockKey                     = "cidr_blocks"

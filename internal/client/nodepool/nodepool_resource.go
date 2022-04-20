@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
+Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
@@ -37,7 +37,7 @@ type ClientService interface {
 }
 
 /*
-ManageV1alpha1ClusterNodePoolsResourceServiceCreate creates a node pool resource.
+ManageV1alpha1ClusterNodePoolResourceServiceCreate creates a node pool resource.
 */
 func (c *Client) ManageV1alpha1ClusterNodePoolResourceServiceCreate(request *nodepoolsmodel.VmwareTanzuManageV1alpha1ClusterNodepoolCreateNodepoolRequest) (*nodepoolsmodel.VmwareTanzuManageV1alpha1ClusterNodepoolCreateNodepoolResponse, error) {
 	response := &nodepoolsmodel.VmwareTanzuManageV1alpha1ClusterNodepoolCreateNodepoolResponse{}

@@ -26,6 +26,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
             ]
           }
 
+          api_server_port = 6443
           control_plane_end_point = "10.191.249.39"
         }
 

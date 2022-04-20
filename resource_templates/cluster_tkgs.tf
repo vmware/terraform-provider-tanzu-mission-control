@@ -43,8 +43,14 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
       topology {
         control_plane {
           class             = "<class>"        // Required
-          storage_class     = "<storage-class" // Required
+          storage_class     = "<storage-class>" // Required
           high_availability = false            // Default: false
+          volumes {
+            capacity          = volume-capacity
+            mount_path        = "<mount-path>"
+            name              = "<volume-name>"
+            pvc_storage_class = "<storage-class>"
+          }
         }
         node_pools {
           spec {
@@ -58,6 +64,12 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
             tkg_service_vsphere {
               class         = "<class>"         // Required
               storage_class = "<storage-class>" // Required
+              volumes {
+                capacity          = volume-capacity
+                mount_path        = "<mount-path>"
+                name              = "<volume-name>"
+                pvc_storage_class = "<storage-class>"
+              }
             }
           }
           info {

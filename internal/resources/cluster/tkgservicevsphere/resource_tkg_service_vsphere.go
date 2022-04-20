@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
+Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
@@ -115,7 +115,9 @@ func expandTKGSSettings(data []interface{}) (settings *tkgservicevspheremodel.Vm
 		return settings
 	}
 
-	settings = &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereSettings{}
+	settings = &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereSettings{
+		Network: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereNetworkSettings{},
+	}
 	settingData, _ := data[0].(map[string]interface{})
 
 	if v, ok := settingData[networkKey]; ok {
@@ -336,6 +338,7 @@ var controlPlane = &schema.Schema{
 				Default:     false,
 				Optional:    true,
 			},
+			volumesKey: tkgServiceVolumes,
 		},
 	},
 }
@@ -346,7 +349,9 @@ func expandTKGSTopologyControlPlane(data []interface{}) (controlPlane *tkgservic
 	}
 
 	controlPlaneData, _ := data[0].(map[string]interface{})
-	controlPlane = &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereControlPlane{}
+	controlPlane = &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereControlPlane{
+		Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{},
+	}
 
 	if v, ok := controlPlaneData[classKey]; ok {
 		controlPlane.Class, _ = v.(string)
@@ -360,6 +365,13 @@ func expandTKGSTopologyControlPlane(data []interface{}) (controlPlane *tkgservic
 		controlPlane.HighAvailability, _ = v.(bool)
 	}
 
+	if v, ok := controlPlaneData[volumesKey]; ok {
+		volumes, _ := v.([]interface{})
+		for _, volume := range volumes {
+			controlPlane.Volumes = append(controlPlane.Volumes, expandTKGSVolumes(volume))
+		}
+	}
+
 	return controlPlane
 }
 
@@ -370,11 +382,90 @@ func flattenTKGSTopologyControlPlane(controlPlane *tkgservicevspheremodel.Vmware
 		return nil
 	}
 
+	vms := make([]interface{}, 0)
+
+	for _, vs := range controlPlane.Volumes {
+		vms = append(vms, flattenTKGSVolumes(vs))
+	}
+
+	flattenControlPlane[volumesKey] = vms
 	flattenControlPlane[classKey] = controlPlane.Class
 	flattenControlPlane[storageClassKey] = controlPlane.StorageClass
 	flattenControlPlane[highAvailabilityKey] = controlPlane.HighAvailability
 
 	return []interface{}{flattenControlPlane}
+}
+
+var tkgServiceVolumes = &schema.Schema{
+	Type:        schema.TypeList,
+	Description: "Configurable volumes for control plane nodes",
+	Optional:    true,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			capacityKey: {
+				Type:        schema.TypeFloat,
+				Description: "Volume capacity is in gib",
+				Optional:    true,
+			},
+			mountPathKey: {
+				Type:        schema.TypeString,
+				Description: "It is the directory where the volume device is to be mounted",
+				Optional:    true,
+			},
+			volumeNameKey: {
+				Type:        schema.TypeString,
+				Description: "It is the volume name",
+				Optional:    true,
+			},
+			pvcStorageClassKey: {
+				Type:        schema.TypeString,
+				Description: "This is the storage class for PVC which in case omitted, default storage class will be used for the disks",
+				Optional:    true,
+			},
+		},
+	},
+}
+
+func expandTKGSVolumes(data interface{}) (volume *nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume) {
+	if data == nil {
+		return volume
+	}
+
+	lookUpVolumes, _ := data.(map[string]interface{})
+	volume = &nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{}
+
+	if v, ok := lookUpVolumes[capacityKey]; ok {
+		volume.Capacity, _ = v.(float32)
+	}
+
+	if v, ok := lookUpVolumes[mountPathKey]; ok {
+		volume.MountPath, _ = v.(string)
+	}
+
+	if v, ok := lookUpVolumes[volumeNameKey]; ok {
+		volume.Name, _ = v.(string)
+	}
+
+	if v, ok := lookUpVolumes[pvcStorageClassKey]; ok {
+		volume.StorageClass, _ = v.(string)
+	}
+
+	return volume
+}
+
+func flattenTKGSVolumes(volume *nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume) (data interface{}) {
+	flattenVolumes := make(map[string]interface{})
+
+	if volume == nil {
+		return nil
+	}
+
+	flattenVolumes[capacityKey] = volume.Capacity
+	flattenVolumes[mountPathKey] = volume.MountPath
+	flattenVolumes[volumeNameKey] = volume.Name
+	flattenVolumes[pvcStorageClassKey] = volume.StorageClass
+
+	return flattenVolumes
 }
 
 var nodePoolSpec = &schema.Schema{
@@ -410,6 +501,7 @@ var nodePoolSpec = &schema.Schema{
 					Schema: map[string]*schema.Schema{
 						classKey:        class,
 						storageClassKey: storageClass,
+						volumesKey:      tkgServiceVolumes,
 					},
 				},
 			},
@@ -424,7 +516,7 @@ var info = &schema.Schema{
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			clusterNameKey: {
+			nodepoolNameKey: {
 				Type:        schema.TypeString,
 				Description: "Name of the nodepool",
 				Default:     defaultNodePoolName,
@@ -488,7 +580,7 @@ func expandTKGSTopologyNodePool(data interface{}) (nodePools *nodepoolmodel.Vmwa
 		if len(infoData) != 0 || infoData[0] != nil {
 			info, _ := infoData[0].(map[string]interface{})
 
-			if v2, k2 := info[clusterNameKey]; k2 {
+			if v2, k2 := info[nodepoolNameKey]; k2 {
 				nodePools.Info.Name = v2.(string)
 			}
 
@@ -507,7 +599,9 @@ func expandNodePoolTKGSServiceVsphere(data []interface{}) (tkgsServiceVsphere *n
 	}
 
 	tkgsServiceVsphereData, _ := data[0].(map[string]interface{})
-	tkgsServiceVsphere = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{}
+	tkgsServiceVsphere = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
+		Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{},
+	}
 
 	if v, ok := tkgsServiceVsphereData[classKey]; ok {
 		tkgsServiceVsphere.Class, _ = v.(string)
@@ -515,6 +609,13 @@ func expandNodePoolTKGSServiceVsphere(data []interface{}) (tkgsServiceVsphere *n
 
 	if v, ok := tkgsServiceVsphereData[storageClassKey]; ok {
 		tkgsServiceVsphere.StorageClass, _ = v.(string)
+	}
+
+	if v, ok := tkgsServiceVsphereData[volumesKey]; ok {
+		volumes, _ := v.([]interface{})
+		for _, volume := range volumes {
+			tkgsServiceVsphere.Volumes = append(tkgsServiceVsphere.Volumes, expandTKGSVolumes(volume))
+		}
 	}
 
 	return tkgsServiceVsphere
@@ -530,7 +631,7 @@ func FlattenTKGSTopologyNodePool(nodePool *nodepoolmodel.VmwareTanzuManageV1alph
 	if nodePool.Info != nil {
 		flattenNodePoolInfo := make(map[string]interface{})
 
-		flattenNodePoolInfo[clusterNameKey] = nodePool.Info.Name
+		flattenNodePoolInfo[nodepoolNameKey] = nodePool.Info.Name
 		flattenNodePoolInfo[descriptionKey] = nodePool.Info.Description
 
 		flattenNodePool[infoKey] = []interface{}{flattenNodePoolInfo}
@@ -545,6 +646,14 @@ func FlattenTKGSTopologyNodePool(nodePool *nodepoolmodel.VmwareTanzuManageV1alph
 
 		if nodePool.Spec.TkgServiceVsphere != nil {
 			flattenNodePoolSpecTKGS := make(map[string]interface{})
+
+			vls := make([]interface{}, 0)
+
+			for _, vl := range nodePool.Spec.TkgServiceVsphere.Volumes {
+				vls = append(vls, flattenTKGSVolumes(vl))
+			}
+
+			flattenNodePoolSpecTKGS[volumesKey] = vls
 
 			flattenNodePoolSpecTKGS[classKey] = nodePool.Spec.TkgServiceVsphere.Class
 			flattenNodePoolSpecTKGS[storageClassKey] = nodePool.Spec.TkgServiceVsphere.StorageClass

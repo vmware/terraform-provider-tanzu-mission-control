@@ -1,11 +1,15 @@
 /*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
+Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
 package tkgservicevspheremodel
 
-import "github.com/go-openapi/swag"
+import (
+	"github.com/go-openapi/swag"
+
+	nodepoolmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
+)
 
 // VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereControlPlane VSphere specific control plane configuration for workload cluster object.
 //
@@ -21,6 +25,9 @@ type VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereControlPlane
 
 	// Storage Class to be used for storage of the disks which store the root filesystems of the nodes.
 	StorageClass string `json:"storageClass,omitempty"`
+
+	// Configure volumes for control plane nodes.
+	Volumes []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume `json:"volumes"`
 }
 
 // MarshalBinary interface implementation.
