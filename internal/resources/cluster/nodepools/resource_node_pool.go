@@ -95,6 +95,8 @@ var nodePoolSpec = &schema.Schema{
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			tkgServiceVsphereKey: NodePoolTkgServiceVsphere,
+			tkgVsphereKey:        NodePoolTkgVsphere,
+			tkgAWSKey:            NodePoolTkgAWS,
 		},
 	},
 }
@@ -102,6 +104,61 @@ var nodePoolSpec = &schema.Schema{
 var NodePoolTkgServiceVsphere = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "TKGServiceVsphereNodepool is the nodepool spec for TKG service vsphere cluster",
+	Optional:    true,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			classKey: {
+				Type:        schema.TypeString,
+				Description: "Nodepool instance type",
+				Optional:    true,
+			},
+			storageClassKey: {
+				Type:        schema.TypeString,
+				Description: "Storage Class to be used for storage of the disks which store the root filesystem of the nodes",
+				Optional:    true,
+			},
+		},
+	},
+}
+
+var NodePoolTkgVsphere = &schema.Schema{
+	Type:        schema.TypeList,
+	Description: "TkgVsphereNodepool is the nodepool config for the TKG vsphere cluster",
+	Optional:    true,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			vmConfigKey: {
+				Type:        schema.TypeList,
+				Description: "VM specific configuration",
+				Required:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						cpuKey: {
+							Type:        schema.TypeString,
+							Description: "Number of CPUs per node",
+							Optional:    true,
+						},
+						diskKey: {
+							Type:        schema.TypeString,
+							Description: "Root disk size in gigabytes for the VM",
+							Optional:    true,
+						},
+						memoryKey: {
+							Type:        schema.TypeString,
+							Description: "Memory associated with the node in megabytes",
+							Optional:    true,
+						},
+					},
+				},
+			},
+		},
+	},
+}
+
+var NodePoolTkgAWS = &schema.Schema{
+	Type:        schema.TypeList,
+	Description: "TKGAWSNodepool is the nodepool spec for TKG AWS cluster",
 	Optional:    true,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -147,6 +204,7 @@ func constructNodePoolSpec(d *schema.ResourceData) (spec *nodepoolmodel.VmwareTa
 		CloudLabels:       make(map[string]string),
 		NodeLabels:        make(map[string]string),
 		TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{},
+		TkgAws:            &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodepool{},
 		TkgVsphere:        &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGVsphereNodepool{},
 	}
 
@@ -179,6 +237,18 @@ func constructNodePoolSpec(d *schema.ResourceData) (spec *nodepoolmodel.VmwareTa
 		}
 	}
 
+	if v, ok := specData[tkgAWSKey]; ok {
+		if v1, ok := v.([]interface{}); ok {
+			spec.TkgAws = constructTkgAWS(v1)
+		}
+	}
+
+	if v, ok := specData[tkgVsphereKey]; ok {
+		if v1, ok := v.([]interface{}); ok {
+			spec.TkgVsphere = constructTkgVsphere(v1)
+		}
+	}
+
 	if v, ok := specData[tkgServiceVsphereKey]; ok {
 		if v1, ok := v.([]interface{}); ok {
 			spec.TkgServiceVsphere = constructTkgServiceVsphere(v1)
@@ -186,6 +256,116 @@ func constructNodePoolSpec(d *schema.ResourceData) (spec *nodepoolmodel.VmwareTa
 	}
 
 	return spec
+}
+
+func constructTkgAWS(data []interface{}) (tkgAWS *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodepool) {
+	if len(data) == 0 || data[0] == nil {
+		return tkgAWS
+	}
+
+	lookUpTKGAWS, _ := data[0].(map[string]interface{})
+	tkgAWS = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodepool{}
+
+	if v, ok := lookUpTKGAWS[nodepoolAvailabilityZoneKey]; ok {
+		tkgAWS.AvailabilityZone, _ = v.(string)
+	}
+
+	if v, ok := lookUpTKGAWS[nodepoolInstanceTypeKey]; ok {
+		tkgAWS.InstanceType, _ = v.(string)
+	}
+
+	if v, ok := lookUpTKGAWS[nodePlacementKey]; ok {
+		nodeplacements, _ := v.([]interface{})
+		for _, np := range nodeplacements {
+			tkgAWS.NodePlacement = append(tkgAWS.NodePlacement, constructTKGAWSNodePlacement(np))
+		}
+	}
+
+	if v, ok := lookUpTKGAWS[privateSubnetIDKey]; ok {
+		tkgAWS.SubnetID, _ = v.(string)
+	}
+
+	if v, ok := lookUpTKGAWS[nodepoolVersionKey]; ok {
+		tkgAWS.Version, _ = v.(string)
+	}
+
+	return tkgAWS
+}
+
+func constructTKGAWSNodePlacement(data interface{}) (nodeplacement *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodePlacement) {
+	if data == nil {
+		return nodeplacement
+	}
+
+	lookUpNodePlacement, _ := data.(map[string]interface{})
+	nodeplacement = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodePlacement{}
+
+	if v, ok := lookUpNodePlacement[awsAvailabilityZoneKey]; ok {
+		nodeplacement.AvailabilityZone, _ = v.(string)
+	}
+
+	return nodeplacement
+}
+
+func constructTkgVsphere(data []interface{}) (tkgsVsphere *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGVsphereNodepool) {
+	if len(data) == 0 || data[0] == nil {
+		return tkgsVsphere
+	}
+
+	tkgsVsphereData, _ := data[0].(map[string]interface{})
+	tkgsVsphere = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGVsphereNodepool{
+		VMConfig: &nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGVsphereVMConfig{},
+	}
+
+	if v, ok := tkgsVsphereData[vmConfigKey]; ok {
+		if v1, ok := v.([]interface{}); ok {
+			tkgsVsphere.VMConfig = constructTKGVsphereVMConfig(v1)
+		}
+	}
+
+	return tkgsVsphere
+}
+
+func constructTKGVsphereVMConfig(data []interface{}) (vmConfig *nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGVsphereVMConfig) {
+	if len(data) == 0 || data[0] == nil {
+		return vmConfig
+	}
+
+	lookUpVMConfig, _ := data[0].(map[string]interface{})
+	vmConfig = &nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGVsphereVMConfig{}
+
+	if v, ok := lookUpVMConfig[cpuKey]; ok {
+		vmConfig.CPU, _ = v.(string)
+	}
+
+	if v, ok := lookUpVMConfig[diskKey]; ok {
+		vmConfig.DiskGib, _ = v.(string)
+	}
+
+	if v, ok := lookUpVMConfig[memoryKey]; ok {
+		vmConfig.MemoryMib, _ = v.(string)
+	}
+
+	return vmConfig
+}
+
+func constructTkgServiceVsphere(data []interface{}) (tkgServiceVsphere *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool) {
+	if len(data) == 0 || data[0] == nil {
+		return tkgServiceVsphere
+	}
+
+	lookUpTkgServiceVsphere, _ := data[0].(map[string]interface{})
+	tkgServiceVsphere = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{}
+
+	if v, ok := lookUpTkgServiceVsphere[classKey]; ok {
+		tkgServiceVsphere.Class, _ = v.(string)
+	}
+
+	if v, ok := lookUpTkgServiceVsphere[storageClassKey]; ok {
+		tkgServiceVsphere.StorageClass, _ = v.(string)
+	}
+
+	return tkgServiceVsphere
 }
 
 func flattenSpec(spec *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec) (data []interface{}) {
@@ -199,6 +379,10 @@ func flattenSpec(spec *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpe
 	flattenSpecData[nodeLabelsKey] = spec.NodeLabels
 	flattenSpecData[workerNodeCountKey] = spec.WorkerNodeCount
 
+	if spec.TkgAws != nil {
+		flattenSpecData[tkgAWSKey] = flattenNodePoolTKGAWS(spec.TkgAws)
+	}
+
 	if spec.TkgServiceVsphere != nil {
 		flattenSpecData[tkgServiceVsphereKey] = flattenTkgServiceVsphere(spec.TkgServiceVsphere)
 	}
@@ -210,8 +394,48 @@ func flattenSpec(spec *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpe
 	return []interface{}{flattenSpecData}
 }
 
+func flattenNodePoolTKGAWS(tkgAWS *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodepool) (data []interface{}) {
+	flattenTKGAWS := make(map[string]interface{})
+
+	if tkgAWS == nil {
+		return nil
+	}
+
+	flattenTKGAWS[nodepoolAvailabilityZoneKey] = tkgAWS.AvailabilityZone
+	flattenTKGAWS[nodepoolInstanceTypeKey] = tkgAWS.InstanceType
+
+	nps := make([]interface{}, 0)
+
+	for _, np := range tkgAWS.NodePlacement {
+		nps = append(nps, flattenTKGAWSNodePlacement(np))
+	}
+
+	flattenTKGAWS[nodePlacementKey] = nps
+
+	flattenTKGAWS[privateSubnetIDKey] = tkgAWS.SubnetID
+	flattenTKGAWS[nodepoolVersionKey] = tkgAWS.Version
+
+	return []interface{}{flattenTKGAWS}
+}
+
+func flattenTKGAWSNodePlacement(nodeplacement *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodePlacement) (data []interface{}) {
+	flattenNodePlacement := make(map[string]interface{})
+
+	if nodeplacement == nil {
+		return nil
+	}
+
+	flattenNodePlacement[awsAvailabilityZoneKey] = nodeplacement.AvailabilityZone
+
+	return []interface{}{flattenNodePlacement}
+}
+
 func flattenNodePoolTKGVsphere(tkgVsphere *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGVsphereNodepool) (data []interface{}) {
 	flattenTKGVsphere := make(map[string]interface{})
+
+	if tkgVsphere == nil {
+		return nil
+	}
 
 	if tkgVsphere.VMConfig != nil {
 		flattenTKGVsphere[vmConfigKey] = flattenTKGVsphereVMConfig(tkgVsphere.VMConfig)
@@ -237,25 +461,6 @@ func flattenTkgServiceVsphere(tkgServiceVsphere *nodepoolmodel.VmwareTanzuManage
 	flattenTkgServiceVsphereData[storageClassKey] = tkgServiceVsphere.StorageClass
 
 	return []interface{}{flattenTkgServiceVsphereData}
-}
-
-func constructTkgServiceVsphere(data []interface{}) (tkgServiceVsphere *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool) {
-	if len(data) == 0 || data[0] == nil {
-		return tkgServiceVsphere
-	}
-
-	lookUpTkgServiceVsphere, _ := data[0].(map[string]interface{})
-	tkgServiceVsphere = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{}
-
-	if v, ok := lookUpTkgServiceVsphere[classKey]; ok {
-		tkgServiceVsphere.Class, _ = v.(string)
-	}
-
-	if v, ok := lookUpTkgServiceVsphere[storageClassKey]; ok {
-		tkgServiceVsphere.StorageClass, _ = v.(string)
-	}
-
-	return tkgServiceVsphere
 }
 
 func resourceNodePoolCreate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {

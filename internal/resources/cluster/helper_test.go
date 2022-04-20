@@ -18,6 +18,7 @@ type acceptanceTestType int
 const (
 	attachClusterType acceptanceTestType = iota
 	attachClusterTypeWithKubeConfig
+	tkgAWSCluster
 	tkgsCluster
 	tkgVsphereCluster
 )
@@ -43,6 +44,15 @@ type testAcceptanceConfig struct {
 func withClusterName(name string) testAcceptanceOption {
 	return func(config *testAcceptanceConfig) {
 		config.Name = name
+	}
+}
+
+func withTKGmAWSCluster() testAcceptanceOption {
+	return func(config *testAcceptanceConfig) {
+		config.ManagementClusterName = os.Getenv("MANAGEMENT_CLUSTER")
+		config.ProvisionerName = os.Getenv("PROVISIONER_NAME")
+		config.accTestType = tkgAWSCluster
+		config.templateData = testTKGmAWSClusterScript
 	}
 }
 

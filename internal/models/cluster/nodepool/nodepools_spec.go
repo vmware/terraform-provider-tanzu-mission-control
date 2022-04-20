@@ -18,6 +18,9 @@ type VmwareTanzuManageV1alpha1ClusterNodepoolSpec struct {
 	// Node labels.
 	NodeLabels map[string]string `json:"nodeLabels,omitempty"`
 
+	// Nodepool config for tkg aws.
+	TkgAws *VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodepool `json:"tkgAws,omitempty"`
+
 	// Nodepool config for tkg service vsphere.
 	TkgServiceVsphere *VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool `json:"tkgServiceVsphere,omitempty"`
 

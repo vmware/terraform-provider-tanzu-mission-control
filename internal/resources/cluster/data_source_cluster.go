@@ -124,6 +124,8 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 	clusterSpec := constructSpec(d)
 
 	switch {
+	case resp.Cluster.Spec.TkgAws != nil:
+		resp.Cluster.Spec.TkgAws.Topology.NodePools = clusterSpec.TkgAws.Topology.NodePools
 	case resp.Cluster.Spec.TkgServiceVsphere != nil:
 		resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools = clusterSpec.TkgServiceVsphere.Topology.NodePools
 	case resp.Cluster.Spec.TkgVsphere != nil:

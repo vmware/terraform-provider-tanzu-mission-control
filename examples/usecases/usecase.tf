@@ -11,7 +11,7 @@ terraform {
   }
 }
 
-// Create workspace
+# Create workspace
 resource "tanzu-mission-control_workspace" "create_workspace" {
   name = "demo-workspace"
 
@@ -23,13 +23,13 @@ resource "tanzu-mission-control_workspace" "create_workspace" {
   }
 }
 
-// Create cluster group
+# Create cluster group
 resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
   name = "demo-cluster-group"
 }
 
-// Create Tanzu Mission Control attach cluster with k8s cluster kubeconfig provided
-// The provider would create the cluster entry and apply the deployment link manifests on to the k8s kubeconfig provided.
+# Attach a Tanzu Mission Control cluster with k8s cluster kubeconfig provided
+# The provider would create the cluster entry and apply the deployment link manifests on to the k8s kubeconfig provided.
 resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
   management_cluster_name = "attached"     // Default: attached
   provisioner_name        = "attached"     // Default: attached
@@ -53,7 +53,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
   // The deployment link and the command needed to be run to attach this cluster would be provided in the output.status.execution_cmd
 }
 
-// Create namespace with attached set as 'true' (need a running cluster)
+# Create namespace with attached set as 'true' (need a running cluster)
 resource "tanzu-mission-control_namespace" "create_namespace" {
   name                    = "demo-namespace"                                                  // Required
   cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name // Required
@@ -72,9 +72,9 @@ resource "tanzu-mission-control_namespace" "create_namespace" {
 }
 
 # Create Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
-  management_cluster_name = "tkgs-terraform-test"
-  provisioner_name        = "testns"
+resource "tanzu-mission-control_cluster" "create_tkgs_workload_cluster" {
+  management_cluster_name = "tkgs-terraform"
+  provisioner_name        = "test-gc-e2e-demo-ns"
   name                    = "tkgs-workload"
 
   meta {
@@ -123,7 +123,7 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
         }
         node_pools {
           spec {
-            worker_node_count = "2"
+            worker_node_count = "1"
             tkg_service_vsphere {
               class         = "guaranteed-xsmall"
               storage_class = "tkgs-k8s-obj-policy"
@@ -148,7 +148,7 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
 resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
   management_cluster_name = "tkgm-terraform"
   provisioner_name        = "default"
-  name                    = "tkgm-workload-test"
+  name                    = "tkgm-workload"
 
   meta {
     description = "description of the cluster"
@@ -171,7 +171,8 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
               "10.96.0.0/16",
             ]
           }
-          api_server_port = 6443
+
+          api_server_port         = 6443
           control_plane_end_point = "10.191.143.100"
         }
 
@@ -219,6 +220,89 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
           info {
             name        = "md-0"
             description = "my nodepool"
+          }
+        }
+      }
+    }
+  }
+}
+
+# Create Tanzu Mission Control Tanzu Kubernetes Grid AWS workload cluster entry
+resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
+  management_cluster_name = "tkgm-aws" // Default: attached
+  provisioner_name        = "default"            // Default: attached
+  name                    = "tkgm-aws-workload"  // Required
+
+  meta {
+    description = "new description"
+    labels      = { "key" : "value" }
+  }
+
+  spec {
+    cluster_group = "default" // Default: default
+    tkg_aws {
+      settings {
+        network {
+          cluster {
+            pods {
+              cidr_blocks = "100.96.0.0/11"
+            }
+
+            services {
+              cidr_blocks = "100.64.0.0/13"
+            }
+          }
+          provider {
+            subnets {
+              availability_zone = "us-west-2a"
+              cidr_block_subnet = "10.0.0.0/24"
+            }
+            subnets {
+              availability_zone = "us-west-2a"
+              cidr_block_subnet = "10.0.1.0/24"
+              is_public         = true
+            }
+
+            vpc {
+              cidr_block_vpc = "10.0.0.0/16"
+            }
+          }
+        }
+
+        security {
+          ssh_key = "jumper_ssh_key-sh-1643378-220418-062857" // Required
+        }
+      }
+
+      distribution {
+        region  = "us-west-2"              // Required
+        version = "v1.21.2+vmware.1-tkg.2" // Required
+      }
+
+      topology {
+        control_plane {
+          availability_zones = [
+            "us-west-2a",
+          ]
+          instance_type = "m5.large"
+        }
+
+        node_pools {
+          spec {
+            worker_node_count = "2"
+            tkg_aws {
+              availability_zone = "us-west-2a"
+              instance_type     = "m5.large"
+              node_placement {
+                aws_availability_zone = "us-west-2a"
+              }
+
+              version = "v1.21.2+vmware.1-tkg.2"
+            }
+          }
+
+          info {
+            name = "md-0" // Required
           }
         }
       }

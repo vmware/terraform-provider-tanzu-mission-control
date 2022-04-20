@@ -2,7 +2,7 @@
 resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
   management_cluster_name = "tkgm-terraform"
   provisioner_name        = "default"
-  name                    = "tkgm-workload-test"
+  name                    = "tkgm-workload"
 
   meta {
     description = "description of the cluster"

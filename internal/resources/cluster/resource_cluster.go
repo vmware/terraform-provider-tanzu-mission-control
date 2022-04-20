@@ -21,6 +21,7 @@ import (
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
 	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/manifest"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgaws"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgservicevsphere"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgvsphere"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
@@ -132,6 +133,7 @@ var clusterSpec = &schema.Schema{
 				Description: "Optional proxy name is the name of the Proxy Config to be used for the cluster",
 				Optional:    true,
 			},
+			tkgAWSClusterKey:     tkgaws.TkgAWSClusterSpec,
 			tkgServiceVsphereKey: tkgservicevsphere.TkgServiceVsphere,
 			tkgVsphereClusterKey: tkgvsphere.TkgVsphereClusterSpec,
 		},
@@ -164,6 +166,12 @@ func constructSpec(d *schema.ResourceData) (spec *clustermodel.VmwareTanzuManage
 		spec.ProxyName = v.(string)
 	}
 
+	if v, ok := specData[tkgAWSClusterKey]; ok {
+		if v1, ok := v.([]interface{}); ok {
+			spec.TkgAws = tkgaws.ConstructTKGAWSClusterSpec(v1)
+		}
+	}
+
 	if v, ok := specData[tkgServiceVsphereKey]; ok {
 		if v1, ok := v.([]interface{}); ok {
 			spec.TkgServiceVsphere = tkgservicevsphere.ConstructTKGSSpec(v1)
@@ -189,6 +197,10 @@ func flattenSpec(spec *clustermodel.VmwareTanzuManageV1alpha1ClusterSpec) (data 
 	flattenSpecData[clusterGroupKey] = spec.ClusterGroupName
 
 	flattenSpecData[proxyNameKey] = spec.ProxyName
+
+	if spec.TkgAws != nil {
+		flattenSpecData[tkgAWSClusterKey] = tkgaws.FlattenTKGAWSClusterSpec(spec.TkgAws)
+	}
 
 	if spec.TkgServiceVsphere != nil {
 		flattenSpecData[tkgServiceVsphereKey] = tkgservicevsphere.FlattenTKGSSpec(spec.TkgServiceVsphere)

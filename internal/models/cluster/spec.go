@@ -8,8 +8,8 @@ package clustermodel
 import (
 	"github.com/go-openapi/swag"
 
+	tkgawsmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgaws"
 	tkgservicevspheremodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgservicevsphere"
-
 	tkgvspheremodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgvsphere"
 )
 
@@ -24,6 +24,9 @@ type VmwareTanzuManageV1alpha1ClusterSpec struct {
 	// Optional proxy name is the name of the Proxy Config
 	// to be used for the cluster.
 	ProxyName string `json:"proxyName,omitempty"`
+
+	// TKG AWS cluster spec.
+	TkgAws *tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSpec `json:"tkgAws,omitempty"`
 
 	// TKG Service vSphere cluster spec.
 	TkgServiceVsphere *tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereSpec `json:"tkgServiceVsphere,omitempty"`
