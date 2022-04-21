@@ -97,6 +97,12 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload_cluster" {
             ]
           }
         }
+        storage {
+          classes = [
+            "wcpglobal-storage-profile",
+          ]
+          default_class = "wcpglobal-storage-profile"
+        }
       }
 
       distribution {

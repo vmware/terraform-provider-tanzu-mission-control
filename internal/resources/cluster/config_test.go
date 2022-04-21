@@ -145,7 +145,7 @@ const testTKGsClusterScript = `
 		name                    = "{{.Name}}"
 		
 		spec {
-			cluster_group = "default"
+			cluster_group = "e2e-cvs-cg"
 			tkg_service_vsphere {
 				settings {
 					network {
@@ -160,6 +160,12 @@ const testTKGsClusterScript = `
 							]
 						}
 					}
+					storage {
+						classes = [
+							"wcpglobal-storage-profile",
+						]
+						default_class = "wcpglobal-storage-profile"
+					}
 				}
 			
 				distribution {
@@ -168,14 +174,14 @@ const testTKGsClusterScript = `
 			
 				topology {
 					control_plane {
-						class             = "best-effort-xsmall"
+						class             = "best-effort-2xlarge"
 						storage_class     = "{{.StorageClass}}"
 						high_availability = false
 						volumes {
 							capacity          = 4
 							mount_path        = "/var/lib/etcd"
 							name              = "etcd-0"
-							pvc_storage_class = "tkgs-k8s-obj-policy"
+							pvc_storage_class = "wcpglobal-storage-profile"
 						}
 					}
 					node_pools {
@@ -188,13 +194,13 @@ const testTKGsClusterScript = `
 							}
 							worker_node_count = "1"
 							tkg_service_vsphere {
-								class = "best-effort-xsmall"
+								class = "best-effort-2xlarge"
 								storage_class = "{{.StorageClass}}"
 								volumes {
 									capacity          = 4
 									mount_path        = "/var/lib/etcd"
 									name              = "etcd-0"
-									pvc_storage_class = "tkgs-k8s-obj-policy"
+									pvc_storage_class = "wcpglobal-storage-profile"
 								}
 							}
 						}

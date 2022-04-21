@@ -71,6 +71,12 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
             ]
           }
         }
+        storage {
+          classes = [
+            "<storage-classes>",
+          ]
+          default_class = "<default-storage-class>"
+        }
       }
 
       distribution {

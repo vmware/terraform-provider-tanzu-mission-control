@@ -75,6 +75,7 @@ var settings = &schema.Schema{
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			networkKey: network,
+			storageKey: storage,
 		},
 	},
 }
@@ -110,6 +111,30 @@ var network = &schema.Schema{
 	},
 }
 
+var storage = &schema.Schema{
+	Type:        schema.TypeList,
+	Description: "StorageSettings specifies storage-related settings for the cluster",
+	Optional:    true,
+	MaxItems:    1,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			classesKey: {
+				Type:        schema.TypeList,
+				Description: "Classes is a list of storage classes from the supervisor namespace to expose within a cluster. If omitted, all storage classes from the supervisor namespace will be exposed within the cluster.",
+				Optional:    true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			defaultClassKey: {
+				Type:        schema.TypeString,
+				Description: "DefaultClass is the valid storage class name which is treated as the default storage class within a cluster. If omitted, no default storage class is set.",
+				Optional:    true,
+			},
+		},
+	},
+}
+
 func expandTKGSSettings(data []interface{}) (settings *tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereSettings) {
 	if len(data) == 0 || data[0] == nil {
 		return settings
@@ -117,6 +142,7 @@ func expandTKGSSettings(data []interface{}) (settings *tkgservicevspheremodel.Vm
 
 	settings = &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereSettings{
 		Network: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereNetworkSettings{},
+		Storage: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereStorageSettings{},
 	}
 	settingData, _ := data[0].(map[string]interface{})
 
@@ -172,6 +198,32 @@ func expandTKGSSettings(data []interface{}) (settings *tkgservicevspheremodel.Vm
 		}
 	}
 
+	if v, ok := settingData[storageKey]; ok {
+		storage, _ := v.([]interface{})
+
+		if len(storage) == 0 || storage[0] == nil {
+			return settings
+		}
+
+		storageData, _ := storage[0].(map[string]interface{})
+		settings.Storage = &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereStorageSettings{}
+
+		if classes, ok := storageData[classesKey]; ok {
+			cs, _ := classes.([]interface{})
+			s := make([]string, 0)
+
+			for _, raw := range cs {
+				s = append(s, raw.(string))
+			}
+
+			settings.Storage.Classes = s
+		}
+
+		if v1, ok := storageData[defaultClassKey]; ok {
+			settings.Storage.DefaultClass, _ = v1.(string)
+		}
+	}
+
 	return settings
 }
 
@@ -200,6 +252,14 @@ func flattenTKGSSettings(settings *tkgservicevspheremodel.VmwareTanzuManageV1alp
 		}
 
 		flattenSettings[networkKey] = []interface{}{flattenSettingsNetwork}
+	}
+
+	if settings.Storage != nil {
+		flattenSettingsStorage := make(map[string]interface{})
+		flattenSettingsStorage[classesKey] = settings.Storage.Classes
+		flattenSettingsStorage[defaultClassKey] = settings.Storage.DefaultClass
+
+		flattenSettings[storageKey] = []interface{}{flattenSettingsStorage}
 	}
 
 	return []interface{}{flattenSettings}
