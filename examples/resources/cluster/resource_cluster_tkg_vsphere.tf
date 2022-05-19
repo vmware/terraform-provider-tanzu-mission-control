@@ -16,13 +16,13 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
         network {
           pods {
             cidr_blocks = [
-              "172.20.0.0/16",
+              "172.20.0.0/16", # pods cidr block by default has the value `172.20.0.0/16`
             ]
           }
 
           services {
             cidr_blocks = [
-              "10.96.0.0/16",
+              "10.96.0.0/16", # services cidr block by default has the value `10.96.0.0/16`
             ]
           }
 
@@ -78,7 +78,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
           }
 
           info {
-            name        = "default-nodepool"
+            name        = "default-nodepool" # default node pool name `default-nodepool`
             description = "my nodepool"
           }
         }

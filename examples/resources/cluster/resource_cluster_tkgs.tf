@@ -24,6 +24,12 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
             ]
           }
         }
+        storage {
+          classes = [
+            "wcpglobal-storage-profile",
+          ]
+          default_class = "tkgs-k8s-obj-policy"
+        }
       }
 
       distribution {

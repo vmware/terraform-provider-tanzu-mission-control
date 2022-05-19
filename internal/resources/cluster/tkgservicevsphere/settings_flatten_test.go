@@ -37,6 +37,10 @@ func TestFlattenSettings(t *testing.T) {
 						CidrBlocks: []string{"192.0.0.3"},
 					},
 				},
+				Storage: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereStorageSettings{
+					Classes:      []string{"wcpglobal-storage-class"},
+					DefaultClass: "default",
+				},
 			},
 			expected: []interface{}{
 				map[string]interface{}{
@@ -52,6 +56,12 @@ func TestFlattenSettings(t *testing.T) {
 									cidrBlocksKey: []string{"192.0.0.3"},
 								},
 							},
+						},
+					},
+					storageKey: []interface{}{
+						map[string]interface{}{
+							classesKey:      []string{"wcpglobal-storage-class"},
+							defaultClassKey: "default",
 						},
 					},
 				},

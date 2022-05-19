@@ -148,6 +148,12 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
             ]
           }
         }
+        storage {
+          classes = [
+            "wcpglobal-storage-profile",
+          ]
+          default_class = "tkgs-k8s-obj-policy"
+        }
       }
 
       distribution {
@@ -237,13 +243,13 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
         network {
           pods {
             cidr_blocks = [
-              "172.20.0.0/16",
+              "172.20.0.0/16", # pods cidr block by default has the value `172.20.0.0/16`
             ]
           }
 
           services {
             cidr_blocks = [
-              "10.96.0.0/16",
+              "10.96.0.0/16", # services cidr block by default has the value `10.96.0.0/16`
             ]
           }
 
@@ -299,7 +305,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
           }
 
           info {
-            name        = "default-nodepool"
+            name        = "default-nodepool" # default node pool name `default-nodepool`
             description = "my nodepool"
           }
         }
@@ -674,6 +680,10 @@ Required:
 
 - **network** (Block List, Min: 1, Max: 1) Network Settings specifies network-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--settings--network))
 
+Optional:
+
+- **storage** (Block List, Max: 1) StorageSettings specifies storage-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--settings--storage))
+
 <a id="nestedblock--spec--tkg_service_vsphere--settings--network"></a>
 ### Nested Schema for `spec.tkg_service_vsphere.settings.network`
 
@@ -696,6 +706,14 @@ Required:
 Required:
 
 - **cidr_blocks** (List of String) CIDRBlocks specifies one or more ranges of IP addresses
+
+<a id="nestedblock--spec--tkg_service_vsphere--settings--storage"></a>
+### Nested Schema for `spec.tkg_service_vsphere.settings.storage`
+
+Optional:
+
+- **classes** (List of String) Classes is a list of storage classes from the supervisor namespace to expose within a cluster. If omitted, all storage classes from the supervisor namespace will be exposed within the cluster.
+- **default_class** (String) DefaultClass is the valid storage class name which is treated as the default storage class within a cluster. If omitted, no default storage class is set.
 
 <a id="nestedblock--spec--tkg_service_vsphere--topology"></a>
 ### Nested Schema for `spec.tkg_service_vsphere.topology`
