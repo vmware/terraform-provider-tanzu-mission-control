@@ -228,13 +228,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
         node_pools {
           spec {
             worker_node_count = "<worker-node-count>" // Required
-            cloud_label = {
-              "<key>" : "<val>"
-            }
-            node_label = {
-              "<key>" : "<val>"
-            }
-
+          
             tkg_vsphere {
               vm_config {
                 cpu       = "<cpu>"       // Required
