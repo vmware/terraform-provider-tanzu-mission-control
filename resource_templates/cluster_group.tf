@@ -3,7 +3,7 @@
 
 // Create Tanzu Mission Control cluster group entry
 resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
-  name = "<cluster-group--name>" // Required
+  name = "<cluster-group-name>" // Required
 
   meta { // Optional
     description = "description of the cluster group"
