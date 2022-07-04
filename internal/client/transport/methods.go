@@ -33,6 +33,10 @@ func (c *Client) Update(url string, request Request, response Response) error {
 	return c.invokeAction(http.MethodPut, url, request, response)
 }
 
+func (c *Client) Patch(url string, request Request, response Response) error {
+	return c.invokeAction(http.MethodPatch, url, request, response)
+}
+
 func (c *Client) invokeAction(httpMethodType string, url string, request Request, response Response) error {
 	requestURL := fmt.Sprintf("%s/%s", c.Host, strings.TrimPrefix(url, "/"))
 	body, err := request.MarshalBinary()
@@ -57,6 +61,11 @@ func (c *Client) invokeAction(httpMethodType string, url string, request Request
 		resp, err = c.put(requestURL, bytes.NewReader(body), headers)
 		if err != nil {
 			return errors.Wrap(err, "update")
+		}
+	case http.MethodPatch:
+		resp, err = c.patch(requestURL, bytes.NewReader(body), headers)
+		if err != nil {
+			return errors.Wrap(err, "patch")
 		}
 	default:
 		return errors.New("unsupported http method type invoked")
