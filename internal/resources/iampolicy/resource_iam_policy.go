@@ -229,16 +229,18 @@ func resourceIAMPolicyRead(_ context.Context, d *schema.ResourceData, m interfac
 
 	d.SetId(d.State().ID)
 
-	if err := d.Set(common.MetaKey, common.FlattenMeta(meta)); err != nil {
-		return diag.FromErr(err)
-	}
-
 	// iterate over the policy lists: state and server, and store the intersection of the two
 	for _, policy := range policyList {
 		if policy.Meta.UID == d.State().ID {
 			rbServerList = append(rbServerList, policy.RoleBindings...)
+			meta = policy.Meta
 		}
 	}
+
+	if err := d.Set(common.MetaKey, common.FlattenMeta(meta)); err != nil {
+		return diag.FromErr(err)
+	}
+
 	// nested iteration for preserving order of role binding lists.
 	for _, stateRB := range rbStateList {
 		for _, serverRB := range rbServerList {
