@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
+	clienterrors "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/errors"
 	clustergroupmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/clustergroup"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
@@ -38,6 +39,11 @@ func dataSourceClusterGroupRead(_ context.Context, d *schema.ResourceData, m int
 
 	resp, err := config.TMCConnection.ClusterGroupResourceService.ManageV1alpha1ClusterGroupResourceServiceGet(fn)
 	if err != nil {
+		if clienterrors.IsNotFoundError(err) {
+			d.SetId("")
+			return
+		}
+
 		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster group entry, name : %s", clusterGroupName))
 	}
 

@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
+	clienterrors "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/errors"
 	workspacemodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/workspace"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
@@ -38,6 +39,11 @@ func dataSourceWorkspaceRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	resp, err := config.TMCConnection.WorkspaceResourceService.ManageV1alpha1WorkspaceResourceServiceGet(fn)
 	if err != nil {
+		if clienterrors.IsNotFoundError(err) {
+			d.SetId("")
+			return
+		}
+
 		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control workspace entry, name : %s", workspaceName))
 	}
 

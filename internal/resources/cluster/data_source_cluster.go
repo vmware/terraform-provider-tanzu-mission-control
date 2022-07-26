@@ -16,6 +16,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
+	clienterrors "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
 	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
@@ -41,6 +42,11 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 	getClusterResourceRetryableFn := func() (retry bool, err error) {
 		resp, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
 		if err != nil {
+			if clienterrors.IsNotFoundError(err) {
+				d.SetId("")
+				return false, nil
+			}
+
 			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey))
 		}
 
