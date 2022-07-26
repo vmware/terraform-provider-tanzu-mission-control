@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
+	clienterrors "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/errors"
 	namespacemodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/namespace"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
@@ -37,6 +38,11 @@ func dataSourceNamespaceRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	resp, err = config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceGet(constructFullname(d))
 	if err != nil || resp == nil {
+		if clienterrors.IsNotFoundError(err) {
+			d.SetId("")
+			return diags
+		}
+
 		return diag.FromErr(errors.Wrapf(err, "unable to get Tanzu Mission Control namespace entry, name : %s", namespaceName))
 	}
 
