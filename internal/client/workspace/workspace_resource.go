@@ -38,6 +38,7 @@ type ClientService interface {
 /*
   ManageV1alpha1WorkspaceResourceServiceUpdate updates a workspace.
 */
+
 func (c *Client) ManageV1alpha1WorkspaceResourceServiceUpdate(
 	request *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceRequest,
 ) (*workspacemodel.VmwareTanzuManageV1alphaWorkspaceResponse, error) {
@@ -51,6 +52,7 @@ func (c *Client) ManageV1alpha1WorkspaceResourceServiceUpdate(
 /*
   ManageV1alpha1WorkspaceResourceServiceCreate creates a workspace.
 */
+
 func (c *Client) ManageV1alpha1WorkspaceResourceServiceCreate(
 	request *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceRequest,
 ) (*workspacemodel.VmwareTanzuManageV1alphaWorkspaceResponse, error) {
@@ -63,6 +65,7 @@ func (c *Client) ManageV1alpha1WorkspaceResourceServiceCreate(
 /*
   ManageV1alpha1WorkspaceResourceServiceGet gets a workspace.
 */
+
 func (c *Client) ManageV1alpha1WorkspaceResourceServiceGet(
 	fn *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName,
 ) (*workspacemodel.VmwareTanzuManageV1alpha1WorkspaceGetWorkspaceResponse, error) {
@@ -77,6 +80,7 @@ func (c *Client) ManageV1alpha1WorkspaceResourceServiceGet(
 /*
   ManageV1alpha1WorkspaceResourceServiceDelete deletes a workspace.
 */
+
 func (c *Client) ManageV1alpha1WorkspaceResourceServiceDelete(
 	fn *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName,
 ) error {

@@ -18,8 +18,9 @@ func New(transport *transport.Client) ClientService {
 }
 
 /*
-  Client for cluster group resource service API
+  Client for cluster group resource service API.
 */
+
 type Client struct {
 	*transport.Client
 }
@@ -36,8 +37,9 @@ type ClientService interface {
 }
 
 /*
-  ManageV1alpha1ClusterGroupResourceServiceGet gets a cluster group
+  ManageV1alpha1ClusterGroupResourceServiceGet gets a cluster group.
 */
+
 func (c *Client) ManageV1alpha1ClusterGroupResourceServiceGet(
 	fn *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName,
 ) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupGetClusterGroupResponse, error) {
@@ -50,8 +52,9 @@ func (c *Client) ManageV1alpha1ClusterGroupResourceServiceGet(
 }
 
 /*
-  ManageV1alpha1ClusterGroupResourceServiceDelete deletes a cluster group
+  ManageV1alpha1ClusterGroupResourceServiceDelete deletes a cluster group.
 */
+
 func (c *Client) ManageV1alpha1ClusterGroupResourceServiceDelete(
 	fn *clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName,
 ) error {
@@ -61,8 +64,9 @@ func (c *Client) ManageV1alpha1ClusterGroupResourceServiceDelete(
 }
 
 /*
-  ManageV1alpha1ClusterGroupResourceServiceCreate creates a cluster group
+  ManageV1alpha1ClusterGroupResourceServiceCreate creates a cluster group.
 */
+
 func (c *Client) ManageV1alpha1ClusterGroupResourceServiceCreate(
 	request *clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupRequest,
 ) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupResponse, error) {
@@ -73,8 +77,9 @@ func (c *Client) ManageV1alpha1ClusterGroupResourceServiceCreate(
 }
 
 /*
-  ManageV1alpha1ClusterGroupResourceServiceUpdate updates a cluster group
+  ManageV1alpha1ClusterGroupResourceServiceUpdate updates a cluster group.
 */
+
 func (c *Client) ManageV1alpha1ClusterGroupResourceServiceUpdate(
 	request *clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupRequest,
 ) (*clustergroupmodel.VmwareTanzuManageV1alpha1ClusterGroupResponse, error) {

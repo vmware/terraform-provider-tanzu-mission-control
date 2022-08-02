@@ -10,14 +10,19 @@ import (
 	"runtime"
 
 	clusterclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/cluster"
+	iamclusterclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/cluster/iam_policy"
 	clustergroupclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/clustergroup"
+	iamclustergroupclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/clustergroup/iam_policy"
 	namespaceclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/namespace"
+	iamnamespaceclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/namespace/iam_policy"
 	nodepoolclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/nodepool"
+	iamorganizationclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/organization/iam_policy"
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
 	workspaceclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/workspace"
+	iamworkspaceclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/workspace/iam_policy"
 )
 
-// NewHTTPClient creates a new  tanzu mission control HTTP client.
+// NewHTTPClient creates a new tanzu mission control HTTP client.
 func NewHTTPClient() *TanzuMissionControl {
 	httpClient := transport.NewClient()
 
@@ -31,21 +36,31 @@ func NewHTTPClient() *TanzuMissionControl {
 	httpClient.AddHeaders(headers)
 
 	return &TanzuMissionControl{
-		Client:                      httpClient,
-		ClusterResourceService:      clusterclient.New(httpClient),
-		WorkspaceResourceService:    workspaceclient.New(httpClient),
-		NamespaceResourceService:    namespaceclient.New(httpClient),
-		ClusterGroupResourceService: clustergroupclient.New(httpClient),
-		NodePoolResourceService:     nodepoolclient.New(httpClient),
+		Client:                         httpClient,
+		ClusterResourceService:         clusterclient.New(httpClient),
+		WorkspaceResourceService:       workspaceclient.New(httpClient),
+		NamespaceResourceService:       namespaceclient.New(httpClient),
+		ClusterGroupResourceService:    clustergroupclient.New(httpClient),
+		NodePoolResourceService:        nodepoolclient.New(httpClient),
+		ClusterIAMResourceService:      iamclusterclient.New(httpClient),
+		ClusterGroupIAMResourceService: iamclustergroupclient.New(httpClient),
+		WorkspaceIAMResourceService:    iamworkspaceclient.New(httpClient),
+		NamespaceIAMResourceService:    iamnamespaceclient.New(httpClient),
+		OrganizationIAMResourceService: iamorganizationclient.New(httpClient),
 	}
 }
 
-// TanzuMissionControl is a client for  tanzu mission control.
+// TanzuMissionControl is a client for tanzu mission control.
 type TanzuMissionControl struct {
 	*transport.Client
-	ClusterResourceService      clusterclient.ClientService
-	WorkspaceResourceService    workspaceclient.ClientService
-	NamespaceResourceService    namespaceclient.ClientService
-	ClusterGroupResourceService clustergroupclient.ClientService
-	NodePoolResourceService     nodepoolclient.ClientService
+	ClusterResourceService         clusterclient.ClientService
+	WorkspaceResourceService       workspaceclient.ClientService
+	NamespaceResourceService       namespaceclient.ClientService
+	ClusterGroupResourceService    clustergroupclient.ClientService
+	NodePoolResourceService        nodepoolclient.ClientService
+	ClusterIAMResourceService      iamclusterclient.ClientService
+	ClusterGroupIAMResourceService iamclustergroupclient.ClientService
+	WorkspaceIAMResourceService    iamworkspaceclient.ClientService
+	NamespaceIAMResourceService    iamnamespaceclient.ClientService
+	OrganizationIAMResourceService iamorganizationclient.ClientService
 }
