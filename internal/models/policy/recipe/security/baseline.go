@@ -1,6 +1,8 @@
 /*
 Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
+The contents of this file are not auto-generated using swagger CLI as the schema defined for the recipes are not a part of the TMC API models.
+The models defined here are used to map the API request and response bodies to and from the terraform provider schema.
 */
 
 package policyrecipesecuritymodel
