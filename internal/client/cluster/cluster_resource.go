@@ -6,11 +6,18 @@ SPDX-License-Identifier: MPL-2.0
 package clusterclient
 
 import (
-	"fmt"
 	"net/url"
 
 	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
+	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
 	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
+)
+
+const (
+	apiVersionAndGroup                 = "v1alpha1/clusters"
+	queryParamKeyForce                 = "force"
+	queryParamKeyManagementClusterName = "fullName.managementClusterName"
+	queryParamKeyProvisionerName       = "fullName.provisionerName"
 )
 
 // New creates a new cluster resource service API client.
@@ -43,7 +50,7 @@ func (c *Client) ManageV1alpha1ClusterResourceServiceCreate(
 	request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest,
 ) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error) {
 	response := &clustermodel.VmwareTanzuManageV1alpha1ClusterResponse{}
-	err := c.Create("v1alpha1/clusters", request, response)
+	err := c.Create(apiVersionAndGroup, request, response)
 
 	return response, err
 }
@@ -55,7 +62,7 @@ func (c *Client) ManageV1alpha1ClusterResourceServiceUpdate(
 	request *clustermodel.VmwareTanzuManageV1alpha1ClusterRequest,
 ) (*clustermodel.VmwareTanzuManageV1alpha1ClusterResponse, error) {
 	response := &clustermodel.VmwareTanzuManageV1alpha1ClusterResponse{}
-	requestURL := fmt.Sprintf("%s/%s", "v1alpha1/clusters", request.Cluster.FullName.Name)
+	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, request.Cluster.FullName.Name).String()
 	err := c.Update(requestURL, request, response)
 
 	return response, err
@@ -68,18 +75,18 @@ func (c *Client) ManageV1alpha1ClusterResourceServiceDelete(
 	fn *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName, force string,
 ) error {
 	queryParams := url.Values{
-		"force": []string{force},
+		queryParamKeyForce: []string{force},
 	}
 
 	if fn.ManagementClusterName != "" {
-		queryParams["fullName.managementClusterName"] = []string{fn.ManagementClusterName}
+		queryParams.Add(queryParamKeyManagementClusterName, fn.ManagementClusterName)
 	}
 
 	if fn.ProvisionerName != "" {
-		queryParams["fullName.provisionerName"] = []string{fn.ProvisionerName}
+		queryParams.Add(queryParamKeyProvisionerName, fn.ProvisionerName)
 	}
 
-	requestURL := fmt.Sprintf("%s/%s?%s", "v1alpha1/clusters", fn.Name, queryParams.Encode())
+	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, fn.Name).AppendQueryParams(queryParams).String()
 
 	return c.Delete(requestURL)
 }
@@ -93,14 +100,14 @@ func (c *Client) ManageV1alpha1ClusterResourceServiceGet(
 	queryParams := url.Values{}
 
 	if fn.ManagementClusterName != "" {
-		queryParams["fullName.managementClusterName"] = []string{fn.ManagementClusterName}
+		queryParams.Add(queryParamKeyManagementClusterName, fn.ManagementClusterName)
 	}
 
 	if fn.ProvisionerName != "" {
-		queryParams["fullName.provisionerName"] = []string{fn.ProvisionerName}
+		queryParams.Add(queryParamKeyProvisionerName, fn.ProvisionerName)
 	}
 
-	requestURL := fmt.Sprintf("%s/%s?%s", "v1alpha1/clusters", fn.Name, queryParams.Encode())
+	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, fn.Name).AppendQueryParams(queryParams).String()
 	clusterResponse := &clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse{}
 	err := c.Get(requestURL, clusterResponse)
 
