@@ -42,11 +42,11 @@ func NewHTTPClient() *TanzuMissionControl {
 		NamespaceResourceService:       namespaceclient.New(httpClient),
 		ClusterGroupResourceService:    clustergroupclient.New(httpClient),
 		NodePoolResourceService:        nodepoolclient.New(httpClient),
-		ClusterIAMResourceService:      iamclusterclient.New(httpClient),
+		OrganizationIAMResourceService: iamorganizationclient.New(httpClient),
 		ClusterGroupIAMResourceService: iamclustergroupclient.New(httpClient),
+		ClusterIAMResourceService:      iamclusterclient.New(httpClient),
 		WorkspaceIAMResourceService:    iamworkspaceclient.New(httpClient),
 		NamespaceIAMResourceService:    iamnamespaceclient.New(httpClient),
-		OrganizationIAMResourceService: iamorganizationclient.New(httpClient),
 	}
 }
 
@@ -58,9 +58,9 @@ type TanzuMissionControl struct {
 	NamespaceResourceService       namespaceclient.ClientService
 	ClusterGroupResourceService    clustergroupclient.ClientService
 	NodePoolResourceService        nodepoolclient.ClientService
-	ClusterIAMResourceService      iamclusterclient.ClientService
+	OrganizationIAMResourceService iamorganizationclient.ClientService
 	ClusterGroupIAMResourceService iamclustergroupclient.ClientService
+	ClusterIAMResourceService      iamclusterclient.ClientService
 	WorkspaceIAMResourceService    iamworkspaceclient.ClientService
 	NamespaceIAMResourceService    iamnamespaceclient.ClientService
-	OrganizationIAMResourceService iamorganizationclient.ClientService
 }

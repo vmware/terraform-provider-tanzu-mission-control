@@ -5,6 +5,7 @@ default: build
 
 build:
 	go build -o bin/terraform-provider-tanzu-mission-control_v1.0.0
+	rm -rf ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/*
 	mkdir -p ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/1.0.0/darwin_amd64/
 	cp bin/terraform-provider-tanzu-mission-control_v1.0.0 ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/1.0.0/darwin_amd64/
 
