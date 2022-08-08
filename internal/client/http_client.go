@@ -9,12 +9,12 @@ import (
 	"net/http"
 	"runtime"
 
-	clusterclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/cluster"
-	clustergroupclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/clustergroup"
-	namespaceclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/namespace"
-	nodepoolclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/nodepool"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
-	workspaceclient "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/workspace"
+	clusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster"
+	clustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup"
+	namespaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/namespace"
+	nodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/nodepool"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
+	workspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace"
 )
 
 // NewHTTPClient creates a new  tanzu mission control HTTP client.

@@ -8,7 +8,7 @@ package tkgvspheremodel
 import (
 	"github.com/go-openapi/swag"
 
-	nodepoolmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
+	nodepoolmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 )
 
 // VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereControlPlane VSphere specific control plane configuration for workload cluster object.

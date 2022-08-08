@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	nodepoolmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
+	nodepoolmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 )
 
 func TestFlattenNodePoolSpec(t *testing.T) {

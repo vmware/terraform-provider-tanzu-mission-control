@@ -16,9 +16,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
-	namespacemodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/namespace"
-	testhelper "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/testing"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	namespacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/namespace"
+	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
 func TestAcceptanceForNamespaceResource(t *testing.T) {

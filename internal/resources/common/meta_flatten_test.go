@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	objectmetamodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
+	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 )
 
 func TestFlattenMeta(t *testing.T) {

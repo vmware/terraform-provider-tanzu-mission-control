@@ -16,9 +16,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
-	workspacemodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/workspace"
-	testhelper "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/testing"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	workspacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/workspace"
+	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
 func TestAcceptanceForWorkspaceResource(t *testing.T) {

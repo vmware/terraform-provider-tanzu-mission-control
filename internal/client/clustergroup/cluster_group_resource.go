@@ -8,8 +8,8 @@ package clustergroupclient
 import (
 	"fmt"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
-	clustergroupmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/clustergroup"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
+	clustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/clustergroup"
 )
 
 // New creates a new cluster group resource service API client.

@@ -8,7 +8,7 @@ package tkgawsmodel
 import (
 	"github.com/go-openapi/swag"
 
-	nodepoolmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
+	nodepoolmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 )
 
 // VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsTopology Topology is the topology definition for the cluster.
