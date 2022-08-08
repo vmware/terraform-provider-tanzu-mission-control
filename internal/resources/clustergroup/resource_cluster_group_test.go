@@ -16,9 +16,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
-	clustergroupmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/clustergroup"
-	testhelper "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/testing"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	clustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/clustergroup"
+	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
 func TestAcceptanceForClusterGroupResource(t *testing.T) {

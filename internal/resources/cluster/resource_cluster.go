@@ -16,15 +16,15 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	k8sClient "sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
-	clienterrors "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/errors"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
-	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/manifest"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgaws"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgservicevsphere"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgvsphere"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
+	clustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/manifest"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgaws"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgservicevsphere"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgvsphere"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 type (

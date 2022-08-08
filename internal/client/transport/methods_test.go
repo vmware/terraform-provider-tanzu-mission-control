@@ -11,7 +11,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	workspacemodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/workspace"
+	workspacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/workspace"
 )
 
 type Invoke struct {

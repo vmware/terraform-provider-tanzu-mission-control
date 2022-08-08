@@ -8,6 +8,11 @@ build:
 	mkdir -p ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/1.0.0/darwin_amd64/
 	cp bin/terraform-provider-tanzu-mission-control_v1.0.0 ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/1.0.0/darwin_amd64/
 
+build-arm:
+	go build -o bin/terraform-provider-tanzu-mission-control_v1.0.0
+	mkdir -p ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/1.0.0/darwin_arm64/
+	cp bin/terraform-provider-tanzu-mission-control_v1.0.0 ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/1.0.0/darwin_arm64/
+
 test: | gofmt vet lint
 	go mod tidy
 	go test ./internal/... -cover

@@ -10,7 +10,7 @@ import (
 	"os"
 	"text/template"
 
-	testhelper "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/testing"
+	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
 type acceptanceTestType int

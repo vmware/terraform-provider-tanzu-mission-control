@@ -8,8 +8,8 @@ package tkgaws
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	nodepoolmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
-	tkgawsmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgaws"
+	nodepoolmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
+	tkgawsmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgaws"
 )
 
 var TkgAWSClusterSpec = &schema.Schema{

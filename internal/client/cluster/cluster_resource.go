@@ -8,9 +8,9 @@ package clusterclient
 import (
 	"net/url"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
-	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
+	clustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster"
 )
 
 const (

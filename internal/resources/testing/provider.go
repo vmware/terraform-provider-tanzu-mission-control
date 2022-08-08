@@ -13,7 +13,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 )
 
 func TestPreCheck(t *testing.T) func() {

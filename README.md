@@ -79,8 +79,8 @@ For developing, consider using [dev overrides configuration][dev-overrides]. Ple
 work is not being duplicated. For further clarification, you can also ask in a
 new issue.
 
-[gh-issues]: https://github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/issues
-[gh-prs]: https://github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/pulls
+[gh-issues]: https://github.com/vmware/terraform-provider-tanzu-mission-control/issues
+[gh-prs]: https://github.com/vmware/terraform-provider-tanzu-mission-control/pulls
 
 If you wish to work on the provider, you'll first need [Go][go-website]
 installed on your machine (version 1.14+ is recommended). You'll also need to
@@ -170,4 +170,4 @@ The Tanzu Mission Control Terraform provider is now VMware supported as well as 
 
 Copyright © 2015-2022 VMware, Inc. All Rights Reserved.
 
-The Tanzu Mission Control Terraform provider is available under [MPL2.0 license](https://github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/blob/main/LICENSE).
+The Tanzu Mission Control Terraform provider is available under [MPL2.0 license](https://github.com/vmware/terraform-provider-tanzu-mission-control/blob/main/LICENSE).
