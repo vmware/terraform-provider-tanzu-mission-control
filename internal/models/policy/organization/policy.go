@@ -8,8 +8,8 @@ package policyorganizationmodel
 import (
 	"github.com/go-openapi/swag"
 
-	objectmetamodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
-	policymodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/policy"
+	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
+	policymodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy"
 )
 
 // VmwareTanzuManageV1alpha1OrganizationPolicyPolicy A Policy to apply on all Kubernetes clusters/managed namespaces in the organization.

@@ -8,9 +8,9 @@ package policyorganizationclient
 import (
 	"net/url"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
-	policyorganizationmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/policy/organization"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
+	policyorganizationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/organization"
 )
 
 const (

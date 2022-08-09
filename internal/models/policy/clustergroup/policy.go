@@ -8,8 +8,8 @@ package policyclustergroupmodel
 import (
 	"github.com/go-openapi/swag"
 
-	objectmetamodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
-	policymodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/policy"
+	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
+	policymodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy"
 )
 
 // VmwareTanzuManageV1alpha1ClustergroupPolicyPolicy A Policy to apply on a group of Kubernetes clusters.
