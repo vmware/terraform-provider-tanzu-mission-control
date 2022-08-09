@@ -9,6 +9,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -70,6 +71,8 @@ func constructSpec(d *schema.ResourceData) (spec *policymodel.VmwareTanzuManageV
 					if inputRecipeData.inputStrict != nil {
 						spec.Input = *inputRecipeData.inputStrict
 					}
+				case unknownRecipe:
+					log.Fatalf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(recipesAllowed[:], `, `))
 				}
 			}
 		}
@@ -137,6 +140,8 @@ func flattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 					recipe:      strictRecipe,
 					inputStrict: &strictRecipeInput,
 				}
+			case string(unknownRecipe):
+				log.Fatalf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(recipesAllowed[:], `, `))
 			}
 
 			flattenSpecData[inputKey] = flattenInput(inputRecipeData)
