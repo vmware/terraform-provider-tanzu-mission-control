@@ -6,9 +6,9 @@ SPDX-License-Identifier: MPL-2.0
 package policyworkspaceclient
 
 import (
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
-	policyworkspacemodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/policy/workspace"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
+	policyworkspacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/workspace"
 )
 
 const (
