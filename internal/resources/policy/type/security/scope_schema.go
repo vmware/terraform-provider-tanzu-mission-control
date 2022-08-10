@@ -8,6 +8,7 @@ package security
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,21 +19,24 @@ import (
 	scoperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 )
 
-var scopeSchema = &schema.Schema{
-	Type:        schema.TypeList,
-	Description: "Scope for the security policy, having one of the valid scopes: cluster, cluster_group or organization.",
-	Required:    true,
-	ForceNew:    true,
-	MaxItems:    1,
-	MinItems:    1,
-	Elem: &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			clusterKey:      scoperesource.ClusterPolicyFullname,
-			clusterGroupKey: scoperesource.ClusterGroupPolicyFullname,
-			organizationKey: scoperesource.OrganizationPolicyFullname,
+var (
+	scopeSchema = &schema.Schema{
+		Type:        schema.TypeList,
+		Description: "Scope for the security policy, having one of the valid scopes: cluster, cluster_group or organization.",
+		Required:    true,
+		ForceNew:    true,
+		MaxItems:    1,
+		MinItems:    1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				clusterKey:      scoperesource.ClusterPolicyFullname,
+				clusterGroupKey: scoperesource.ClusterGroupPolicyFullname,
+				organizationKey: scoperesource.OrganizationPolicyFullname,
+			},
 		},
-	},
-}
+	}
+	scopesAllowed = [...]string{clusterKey, clusterGroupKey, organizationKey}
+)
 
 type (
 	scope int64
@@ -106,6 +110,8 @@ func flattenScope(scopedFullname *scopedFullname) (data []interface{}, name stri
 	case organizationScope:
 		name = scopedFullname.fullnameOrganization.Name
 		flattenScopeData[organizationKey] = scoperesource.FlattenOrganizationPolicyFullname(scopedFullname.fullnameOrganization)
+	case unknownScope:
+		log.Fatalf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
 	}
 
 	return []interface{}{flattenScopeData}, name
@@ -125,7 +131,6 @@ func validateScope(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 
 	scopeData := data[0].(map[string]interface{})
 	scopesFound := make([]string, 0)
-	scopesAllowed := []string{clusterKey, clusterGroupKey, organizationKey}
 
 	if v, ok := scopeData[clusterKey]; ok {
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
@@ -146,7 +151,7 @@ func validateScope(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 	}
 
 	if len(scopesFound) == 0 {
-		return fmt.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v", strings.Join(scopesAllowed, `, `))
+		return fmt.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v", strings.Join(scopesAllowed[:], `, `))
 	} else if len(scopesFound) > 1 {
 		return fmt.Errorf("found scopes: %v are not valid: maximum one valid scope type block is allowed", strings.Join(scopesFound, `, `))
 	}
