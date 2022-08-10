@@ -8,9 +8,9 @@ package policyclusterclient
 import (
 	"net/url"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
-	policyclustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/policy/cluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
+	policyclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/cluster"
 )
 
 const (

@@ -6,9 +6,9 @@ SPDX-License-Identifier: MPL-2.0
 package policyclustergroupclient
 
 import (
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
-	policyclustergroupmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/policy/clustergroup"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
+	policyclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/clustergroup"
 )
 
 const (

@@ -826,7 +826,7 @@ func init() {
 type VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomAllowedHostPath struct {
 
 	// Read only flag.
-	ReadOnly bool `json:"read_only,omitempty"`
+	ReadOnly bool `json:"readOnly,omitempty"`
 
 	// Path prefix.
 	PathPrefix string `json:"pathPrefix,omitempty"`
