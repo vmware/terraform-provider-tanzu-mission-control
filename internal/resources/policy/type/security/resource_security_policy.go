@@ -8,6 +8,7 @@ package security
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
@@ -113,6 +114,8 @@ func resourceSecurityPolicyCreate(ctx context.Context, d *schema.ResourceData, m
 
 				UID = securityPolicyResponse.Policy.Meta.UID
 			}
+		case unknownScope:
+			log.Fatalf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
 		}
 
 		// always run
@@ -235,6 +238,8 @@ func resourceSecurityPolicyRead(ctx context.Context, d *schema.ResourceData, m i
 				meta = resp.Policy.Meta
 				spec = resp.Policy.Spec
 			}
+		case unknownScope:
+			log.Fatalf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
 		}
 
 		// always run
@@ -306,6 +311,8 @@ func resourceSecurityPolicyInPlaceUpdate(ctx context.Context, d *schema.Resource
 				meta = getResp.Policy.Meta
 				spec = getResp.Policy.Spec
 			}
+		case unknownScope:
+			log.Fatalf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
 		}
 
 		if updateCheckForMeta(d, meta) {
@@ -363,6 +370,8 @@ func resourceSecurityPolicyInPlaceUpdate(ctx context.Context, d *schema.Resource
 						return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control organization security policy entry, name : %s", securityPolicyName))
 					}
 				}
+			case unknownScope:
+				log.Fatalf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
 			}
 
 			log.Printf("[INFO] security policy update successful")
@@ -438,6 +447,8 @@ func resourceSecurityPolicyDelete(ctx context.Context, d *schema.ResourceData, m
 					return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control organization security policy entry, name : %s", securityPolicyName))
 				}
 			}
+		case unknownScope:
+			log.Fatalf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
 		}
 	}
 

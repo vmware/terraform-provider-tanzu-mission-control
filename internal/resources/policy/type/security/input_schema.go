@@ -8,6 +8,7 @@ package security
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,21 +17,24 @@ import (
 	reciperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/type/security/recipe"
 )
 
-var inputSchema = &schema.Schema{
-	Type:        schema.TypeList,
-	Description: "Input for the security policy, having one of the valid recipes: baseline, custom or strict.",
-	Required:    true,
-	MaxItems:    1,
-	MinItems:    1,
-	ForceNew:    true,
-	Elem: &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			reciperesource.BaselineKey: reciperesource.Baseline,
-			reciperesource.CustomKey:   reciperesource.Custom,
-			reciperesource.StrictKey:   reciperesource.Strict,
+var (
+	inputSchema = &schema.Schema{
+		Type:        schema.TypeList,
+		Description: "Input for the security policy, having one of the valid recipes: baseline, custom or strict.",
+		Required:    true,
+		MaxItems:    1,
+		MinItems:    1,
+		ForceNew:    true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				reciperesource.BaselineKey: reciperesource.Baseline,
+				reciperesource.CustomKey:   reciperesource.Custom,
+				reciperesource.StrictKey:   reciperesource.Strict,
+			},
 		},
-	},
-}
+	}
+	recipesAllowed = [...]string{reciperesource.BaselineKey, reciperesource.CustomKey, reciperesource.StrictKey}
+)
 
 type (
 	recipe string
@@ -94,6 +98,8 @@ func flattenInput(inputRecipeData *inputRecipe) (data []interface{}) {
 		flattenInputData[reciperesource.CustomKey] = reciperesource.FlattenCustom(inputRecipeData.inputCustom)
 	case strictRecipe:
 		flattenInputData[reciperesource.StrictKey] = reciperesource.FlattenStrict(inputRecipeData.inputStrict)
+	case unknownRecipe:
+		log.Fatalf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(recipesAllowed[:], `, `))
 	}
 
 	return []interface{}{flattenInputData}
@@ -129,7 +135,6 @@ func validateInput(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 
 	inputData, _ := v1[0].(map[string]interface{})
 	recipesFound := make([]string, 0)
-	recipesAllowed := []string{reciperesource.BaselineKey, reciperesource.CustomKey, reciperesource.StrictKey}
 
 	if v, ok := inputData[reciperesource.BaselineKey]; ok {
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
@@ -150,7 +155,7 @@ func validateInput(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 	}
 
 	if len(recipesFound) == 0 {
-		return fmt.Errorf("no valid input recipe block found: minimum one valid input recipe block is required among: %v", strings.Join(recipesAllowed, `, `))
+		return fmt.Errorf("no valid input recipe block found: minimum one valid input recipe block is required among: %v", strings.Join(recipesAllowed[:], `, `))
 	} else if len(recipesFound) > 1 {
 		return fmt.Errorf("found input recipes: %v are not valid: maximum one valid input recipe block is allowed", strings.Join(recipesFound, `, `))
 	}

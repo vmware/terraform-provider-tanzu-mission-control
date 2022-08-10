@@ -22,13 +22,15 @@ const (
 
 // Allowed scopes.
 const (
-	clusterScope scope = iota
+	unknownScope scope = iota
+	clusterScope
 	clusterGroupScope
 	organizationScope
 )
 
 // Allowed input recipes.
 const (
+	unknownRecipe  recipe = ""
 	baselineRecipe recipe = reciperesource.BaselineKey
 	customRecipe   recipe = reciperesource.CustomKey
 	strictRecipe   recipe = reciperesource.StrictKey
