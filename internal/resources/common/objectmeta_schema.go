@@ -111,11 +111,15 @@ func ConstructMeta(d *schema.ResourceData) (objectMeta *objectmetamodel.VmwareTa
 	}
 
 	if v, ok := objectMetaData[DescriptionKey]; ok {
-		objectMeta.Description = v.(string)
+		helper.SetPrimitiveValue(v, &objectMeta.Description, DescriptionKey)
 	}
 
 	if v, ok := objectMetaData[uidKey]; ok {
-		objectMeta.UID = v.(string)
+		helper.SetPrimitiveValue(v, &objectMeta.UID, uidKey)
+	}
+
+	if v, ok := objectMetaData[resourceVersionKey]; ok {
+		helper.SetPrimitiveValue(v, &objectMeta.ResourceVersion, resourceVersionKey)
 	}
 
 	return objectMeta
@@ -132,6 +136,7 @@ func FlattenMeta(objectMeta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta) 
 	flattenMetaData[LabelsKey] = objectMeta.Labels
 	flattenMetaData[DescriptionKey] = objectMeta.Description
 	flattenMetaData[uidKey] = objectMeta.UID
+	flattenMetaData[resourceVersionKey] = objectMeta.ResourceVersion
 
 	return []interface{}{flattenMetaData}
 }
