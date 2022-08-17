@@ -29,7 +29,7 @@ func ConstructRequestURL(paths ...string) (url RequestURL) {
 
 // AppendQueryParams appends query parameters to a request URL.
 func (ru RequestURL) AppendQueryParams(queryParameters url.Values) (url RequestURL) {
-	if queryParameters == nil || len(queryParameters) == 0 {
+	if len(queryParameters) == 0 {
 		return ru
 	}
 

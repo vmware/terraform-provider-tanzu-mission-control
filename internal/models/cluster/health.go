@@ -10,14 +10,15 @@ import (
 )
 
 // VmwareTanzuManageV1alpha1CommonClusterHealth Health describes the health of a resource.
-//
-//  - HEALTH_UNSPECIFIED: Unspecified health.
-//  - HEALTHY: Resource is healthy.
-//  - WARNING: Resource is in warning state.
-//  - UNHEALTHY: Resource is unhealthy.
-//  - DISCONNECTED: Resource is disconnected.
-//
-// swagger:model vmware.tanzu.manage.v1alpha1.common.cluster.Health
+/*
+  - HEALTH_UNSPECIFIED: Unspecified health.
+  - HEALTHY: Resource is healthy.
+  - WARNING: Resource is in warning state.
+  - UNHEALTHY: Resource is unhealthy.
+  - DISCONNECTED: Resource is disconnected.
+
+ swagger:model vmware.tanzu.manage.v1alpha1.common.cluster.Health
+*/
 type VmwareTanzuManageV1alpha1CommonClusterHealth string
 
 func NewVmwareTanzuManageV1alpha1CommonClusterHealth(value VmwareTanzuManageV1alpha1CommonClusterHealth) *VmwareTanzuManageV1alpha1CommonClusterHealth {

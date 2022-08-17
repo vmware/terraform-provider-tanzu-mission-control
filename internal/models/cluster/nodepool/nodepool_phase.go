@@ -8,18 +8,19 @@ package nodepool
 import "encoding/json"
 
 // VmwareTanzuManageV1alpha1ClusterNodepoolStatusPhase Phase of the nodepool resource.
-//
-//  - PHASE_UNSPECIFIED: Unspecified phase.
-//  - CREATING: Resource is pending processing.
-//  - READY: Resource is in ready state.
-//  - ERROR: Error in processing.
-//  - DELETING: Resource is being deleted.
-//  - RESIZING: Resizing state.
-//  - UPGRADING: An upgrade is in progress.
-//  - UPGRADE_FAILED: An upgrade has failed.
-//  - WAITING: The cluster is not created yet. so wait till then.
-//
-// swagger:model vmware.tanzu.manage.v1alpha1.cluster.nodepool.Status.Phase
+/*
+  - PHASE_UNSPECIFIED: Unspecified phase.
+  - CREATING: Resource is pending processing.
+  - READY: Resource is in ready state.
+  - ERROR: Error in processing.
+  - DELETING: Resource is being deleted.
+  - RESIZING: Resizing state.
+  - UPGRADING: An upgrade is in progress.
+  - UPGRADE_FAILED: An upgrade has failed.
+  - WAITING: The cluster is not created yet. so wait till then.
+
+ swagger:model vmware.tanzu.manage.v1alpha1.cluster.nodepool.Status.Phase
+*/
 type VmwareTanzuManageV1alpha1ClusterNodepoolStatusPhase string
 
 func NewVmwareTanzuManageV1alpha1ClusterNodepoolStatusPhase(value VmwareTanzuManageV1alpha1ClusterNodepoolStatusPhase) *VmwareTanzuManageV1alpha1ClusterNodepoolStatusPhase {

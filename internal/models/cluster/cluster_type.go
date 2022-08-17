@@ -10,14 +10,15 @@ import (
 )
 
 // VmwareTanzuManageV1alpha1ClusterType Type describe type of cluster.
-//
-//  - TYPE_UNSPECIFIED: TYPE_UNSPECIFIED cluster type.
-//  - ATTACHED: ATTACHED cluster type.
-//  - PROVISIONED: PROVISIONED cluster type.
-//  - TANZU_KUBERNETES_GRID_SERVICE: Tanzu Kubernetes Grid Service cluster type.
-//  - TANZU_KUBERNETES_GRID: Tanzu Kubernetes Grid cluster type.
-//
-// swagger:model vmware.tanzu.manage.v1alpha1.cluster.Type
+/*
+  - TYPE_UNSPECIFIED: TYPE_UNSPECIFIED cluster type.
+  - ATTACHED: ATTACHED cluster type.
+  - PROVISIONED: PROVISIONED cluster type.
+  - TANZU_KUBERNETES_GRID_SERVICE: Tanzu Kubernetes Grid Service cluster type.
+  - TANZU_KUBERNETES_GRID: Tanzu Kubernetes Grid cluster type.
+
+ swagger:model vmware.tanzu.manage.v1alpha1.cluster.Type
+*/
 type VmwareTanzuManageV1alpha1ClusterType string
 
 func NewVmwareTanzuManageV1alpha1ClusterType(value VmwareTanzuManageV1alpha1ClusterType) *VmwareTanzuManageV1alpha1ClusterType {

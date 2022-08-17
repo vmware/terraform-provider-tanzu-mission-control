@@ -10,13 +10,14 @@ import (
 )
 
 // VmwareTanzuManageV1alpha1CommonClusterKubernetesProviderType KubernetesProviderType definition - indicates the k8s provider Type.
-//
-//  - KUBERNETES_PROVIDER_UNSPECIFIED: Unspecified k8s provider (default).
-//  - VMWARE_TANZU_KUBERNETES_GRID: VMware Tanzu Kubernetes Grid.
-//  - VMWARE_TANZU_KUBERNETES_GRID_SERVICE: VMware Tanzu Kubernetes Grid Service (Guest Cluster Management).
-//  - VMWARE_TANZU_KUBERNETES_GRID_HOSTED: VMware Tanzu Kubernetes Grid hosted in TMC.
-//
-// swagger:model vmware.tanzu.manage.v1alpha1.common.cluster.KubernetesProviderType
+/*
+  - KUBERNETES_PROVIDER_UNSPECIFIED: Unspecified k8s provider (default).
+  - VMWARE_TANZU_KUBERNETES_GRID: VMware Tanzu Kubernetes Grid.
+  - VMWARE_TANZU_KUBERNETES_GRID_SERVICE: VMware Tanzu Kubernetes Grid Service (Guest Cluster Management).
+  - VMWARE_TANZU_KUBERNETES_GRID_HOSTED: VMware Tanzu Kubernetes Grid hosted in TMC.
+
+ swagger:model vmware.tanzu.manage.v1alpha1.common.cluster.KubernetesProviderType
+*/
 type VmwareTanzuManageV1alpha1CommonClusterKubernetesProviderType string
 
 func NewVmwareTanzuManageV1alpha1CommonClusterKubernetesProviderType(value VmwareTanzuManageV1alpha1CommonClusterKubernetesProviderType) *VmwareTanzuManageV1alpha1CommonClusterKubernetesProviderType {

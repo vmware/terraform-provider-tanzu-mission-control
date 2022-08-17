@@ -8,13 +8,14 @@ package nodepool
 import "encoding/json"
 
 // VmwareTanzuCoreV1alpha1StatusConditionSeverity Severity expresses the severity of a Condition Type failing.
-//
-//  - SEVERITY_UNSPECIFIED: Unspecified severity.
-//  - ERROR: Failure of a condition type should be viewed as an error.
-//  - WARNING: Failure of a condition type should be viewed as a warning, but that things could still work.
-//  - INFO: Failure of a condition type should be viewed as purely informational, and that things could still work.
-//
-// swagger:model vmware.tanzu.core.v1alpha1.status.Condition.Severity
+/*
+  - SEVERITY_UNSPECIFIED: Unspecified severity.
+  - ERROR: Failure of a condition type should be viewed as an error.
+  - WARNING: Failure of a condition type should be viewed as a warning, but that things could still work.
+  - INFO: Failure of a condition type should be viewed as purely informational, and that things could still work.
+
+ swagger:model vmware.tanzu.core.v1alpha1.status.Condition.Severity
+*/
 type VmwareTanzuCoreV1alpha1StatusConditionSeverity string
 
 func NewVmwareTanzuCoreV1alpha1StatusConditionSeverity(value VmwareTanzuCoreV1alpha1StatusConditionSeverity) *VmwareTanzuCoreV1alpha1StatusConditionSeverity {
