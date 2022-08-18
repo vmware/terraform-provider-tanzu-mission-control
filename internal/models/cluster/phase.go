@@ -10,19 +10,20 @@ import (
 )
 
 // VmwareTanzuManageV1alpha1ClusterPhase Phase of the cluster resource.
-//
-//  - PHASE_UNSPECIFIED: Unspecified phase.
-//  - PENDING: Resource is pending processing.
-//  - PROCESSING: Processing the resource.
-//  - CREATING: Resource is being created.
-//  - READY: Resource is ready state.
-//  - DELETING: Resource is being deleted.
-//  - ERROR: Error in processing.
-//  - DETACHING: Resource is being detached.
-//  - UPGRADING: An upgrade is in progress.
-//  - UPGRADE_FAILED: An upgrade has failed.
-//
-// swagger:model vmware.tanzu.manage.v1alpha1.cluster.Phase
+/*
+  - PHASE_UNSPECIFIED: Unspecified phase.
+  - PENDING: Resource is pending processing.
+  - PROCESSING: Processing the resource.
+  - CREATING: Resource is being created.
+  - READY: Resource is ready state.
+  - DELETING: Resource is being deleted.
+  - ERROR: Error in processing.
+  - DETACHING: Resource is being detached.
+  - UPGRADING: An upgrade is in progress.
+  - UPGRADE_FAILED: An upgrade has failed.
+
+ swagger:model vmware.tanzu.manage.v1alpha1.cluster.Phase
+*/
 type VmwareTanzuManageV1alpha1ClusterPhase string
 
 func NewVmwareTanzuManageV1alpha1ClusterPhase(value VmwareTanzuManageV1alpha1ClusterPhase) *VmwareTanzuManageV1alpha1ClusterPhase {

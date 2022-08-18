@@ -10,15 +10,16 @@ import (
 )
 
 // VmwareTanzuManageV1alpha1ClusterNamespaceStatusPhase The overall phase of the namespace.
-//
-//  - PHASE_UNSPECIFIED: Phase_unspecified is the default phase
-//  - CREATING: Creating phase is set when the namespace is being created.
-//  - ATTACHING: Attaching phase is set when the namespace is being attached.
-//  - UPDATING: Updating phase is set when the namespace is being updated.
-//  - READY: Ready phase is set when the namespace is successfully created/attached/updated.
-//  - ERROR: Error phase is set when there was a failure while creating/attaching/updating the namespace.
-//
-// swagger:model vmware.tanzu.manage.v1alpha1.cluster.namespace.Status.Phase
+/*
+  - PHASE_UNSPECIFIED: Phase_unspecified is the default phase
+  - CREATING: Creating phase is set when the namespace is being created.
+  - ATTACHING: Attaching phase is set when the namespace is being attached.
+  - UPDATING: Updating phase is set when the namespace is being updated.
+  - READY: Ready phase is set when the namespace is successfully created/attached/updated.
+  - ERROR: Error phase is set when there was a failure while creating/attaching/updating the namespace.
+
+ swagger:model vmware.tanzu.manage.v1alpha1.cluster.namespace.Status.Phase
+*/
 type VmwareTanzuManageV1alpha1ClusterNamespaceStatusPhase string
 
 func NewVmwareTanzuManageV1alpha1ClusterNamespaceStatusPhase(value VmwareTanzuManageV1alpha1ClusterNamespaceStatusPhase) *VmwareTanzuManageV1alpha1ClusterNamespaceStatusPhase {
