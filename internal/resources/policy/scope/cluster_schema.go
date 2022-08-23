@@ -16,6 +16,7 @@ var ClusterPolicyFullname = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "The schema for cluster policy full name",
 	Optional:    true,
+	ForceNew:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{

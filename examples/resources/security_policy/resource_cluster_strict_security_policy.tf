@@ -1,7 +1,7 @@
 /*
 Cluster scoped Tanzu Mission Control security policy with strict input recipe.
-This policy is applied on a cluster with the strict configuration option.
-The scope and input blocks defined can be updated to change the policy's scope and it's recipe respectively.
+This policy is applied to a cluster with the strict configuration option.
+The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
 resource "tanzu-mission-control_security_policy" "cluster_scoped_strict_security_policy" {
   name = "tf-sp-test"

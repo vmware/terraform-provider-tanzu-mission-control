@@ -1,0 +1,98 @@
+---
+Title: "Security Policy Resource"
+Description: |-
+    Creating the Tanzu Kubernetes security policy resource.
+---
+
+# Security Policy
+
+The `tanzu-mission-control_security_policy` resource enables you to attach a security policy with an input recipe to a particular scope for management through Tanzu Mission Control.
+
+Security policies allow you to manage the security context in which deployed pods operate in your clusters by imposing constraints that define what pods can do and which resources they can access. For more information, see [Pod Security Management.][pod-security-management]
+
+[pod-security-management]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-6C65B33B-C1EA-465D-B909-3C4F51704C1A.html#GUID-6C65B33B-C1EA-465D-B909-3C4F51704C1A
+
+## Input Recipe
+
+In the Tanzu Mission Control security policy resource, there are three types of security templates that you can use:
+- **baseline** - The Baseline template is a preconfigured set of constraints that prevent known privilege escalations but is less stringent than the Strict template to ease the adoption of the security policy for typical containerized workloads. The detailed options defined in this template are displayed on the form in the Tanzu Mission Control console.
+- **custom** - The Custom template allows you to specify how to handle the various aspects of pod security for your clusters.
+- **strict** - The Strict template is a preconfigured set of constraints that define a tight security context for pods in your clusters. The detailed options described in this template are displayed on the form in the Tanzu Mission Control console.
+
+## Policy Scope and Inheritance
+
+In the Tanzu Mission Control resource hierarchy, there are three levels at which you can specify security policy resources:
+- **organization** - `organization` block under `scope` sub-resource
+- **object groups** - `cluster_group` block under `scope` sub-resource
+- **Kubernetes objects** - `cluster` block under `scope` sub-resource
+
+In addition to the direct policy defined for a given object, each object has inherited policies described in the parent objects. For example, a cluster has a direct policy and inherited policies from the cluster group and organization to which it is attached.
+
+## Managing Pod Security
+
+To use the **Tanzu Mission Control provider** for creating a security policy for an object, you must be associated with the `.admin` role for that object.
+For more information, see [Managing Pod Security.][managing-pod-security]
+
+[managing-pod-security]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-939955FC-17EF-4A84-B686-CAF0BBE018D4.html
+
+## Cluster scoped Baseline Security Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/security_policy/resource_cluster_baseline_security_policy.tf" }}
+
+
+## Cluster scoped Custom Security Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/security_policy/resource_cluster_custom_security_policy.tf" }}
+
+
+## Cluster scoped Strict Security Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/security_policy/resource_cluster_strict_security_policy.tf" }}
+
+
+## Cluster group scoped Baseline Security Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/security_policy/resource_cluster_group_baseline_security_policy.tf" }}
+
+
+## Cluster group scoped Custom Security Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/security_policy/resource_cluster_group_custom_security_policy.tf" }}
+
+
+## Cluster group scoped Strict Security Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/security_policy/resource_cluster_group_strict_security_policy.tf" }}
+
+
+## Organization scoped Baseline Security Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/security_policy/resource_organization_baseline_security_policy.tf" }}
+
+
+## Organization scoped Custom Security Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/security_policy/resource_organization_custom_security_policy.tf" }}
+
+
+## Organization scoped Strict Security Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/security_policy/resource_organization_strict_security_policy.tf" }}

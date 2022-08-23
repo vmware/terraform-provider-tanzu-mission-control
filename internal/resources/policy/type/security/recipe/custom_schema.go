@@ -17,6 +17,7 @@ var Custom = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "The input schema for security policy custom recipe version v1",
 	Optional:    true,
+	ForceNew:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{

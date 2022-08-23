@@ -1,7 +1,7 @@
 /*
-Cluster group scoped Tanzu Mission Control security policy with custom input recipe.
-This policy is applied on a cluster group with the custom configuration option and is inherited by the clusters.
-The scope and input blocks defined can be updated to change the policy's scope and it's recipe respectively.
+Cluster group scoped Tanzu Mission Control security policy with a custom input recipe.
+This policy is applied to a cluster group with the custom configuration option and is inherited by the clusters.
+The defined scope and input blocks can be updated to change the policy's scope and recipe.
 */
 resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_security_policy" {
   name = "tf-sp-test"
@@ -111,9 +111,9 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_se
 
         allowed_se_linux_options {
           level = "s0"
-          role = "sysadm_r"
-          type = "httpd_sys_content_t"
-          user = "root"
+          role  = "sysadm_r"
+          type  = "httpd_sys_content_t"
+          user  = "root"
         }
 
         sysctls {

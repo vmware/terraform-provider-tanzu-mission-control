@@ -129,35 +129,35 @@ func (m *VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomRange) Unmarsh
 
 // VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomAllowedVolume Allowed volumes.
 //
-//  - *: A volume type.
-//  - configMap: A volume type.
-//  - downwardAPI: A volume type.
-//  - emptyDir: A volume type.
-//  - persistentVolumeClaim: A volume type.
-//  - secret: A volume type.
-//  - projected: A volume type.
-//  - hostPath: A volume type.
-//  - flexVolume: A volume type.
-//  - awsElasticBlockStore: A volume type.
-//  - azureDisk: A volume type.
-//  - azureFile: A volume type.
-//  - cephfs: A volume type.
-//  - cinder: A volume type.
-//  - csi: A volume type.
-//  - fc: A volume type.
-//  - flocker: A volume type.
-//  - gcePersistentDisk: A volume type.
-//  - gitRepo: A volume type.
-//  - glusterfs: A volume type.
-//  - iscsi: A volume type.
-//  - local: A volume type.
-//  - nfs: A volume type.
-//  - portworxVolume: A volume type.
-//  - quobyte: A volume type.
-//  - rbd: A volume type.
-//  - scaleIO: A volume type.
-//  - storageos: A volume type.
-//  - vsphereVolume: A volume type.
+//   - *: A volume type.
+//   - configMap: A volume type.
+//   - downwardAPI: A volume type.
+//   - emptyDir: A volume type.
+//   - persistentVolumeClaim: A volume type.
+//   - secret: A volume type.
+//   - projected: A volume type.
+//   - hostPath: A volume type.
+//   - flexVolume: A volume type.
+//   - awsElasticBlockStore: A volume type.
+//   - azureDisk: A volume type.
+//   - azureFile: A volume type.
+//   - cephfs: A volume type.
+//   - cinder: A volume type.
+//   - csi: A volume type.
+//   - fc: A volume type.
+//   - flocker: A volume type.
+//   - gcePersistentDisk: A volume type.
+//   - gitRepo: A volume type.
+//   - glusterfs: A volume type.
+//   - iscsi: A volume type.
+//   - local: A volume type.
+//   - nfs: A volume type.
+//   - portworxVolume: A volume type.
+//   - quobyte: A volume type.
+//   - rbd: A volume type.
+//   - scaleIO: A volume type.
+//   - storageos: A volume type.
+//   - vsphereVolume: A volume type.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.common.policy.spec.security.v1.custom.AllowedVolume
 type VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomAllowedVolume string
@@ -306,9 +306,9 @@ func (m *VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomRunAsUser) Unm
 
 // VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomRunAsUserRule Rule.
 //
-//  - RunAsAny: A rule type.
-//  - MustRunAsNonRoot: A rule type.
-//  - MustRunAs: A rule type.
+//   - RunAsAny: A rule type.
+//   - MustRunAsNonRoot: A rule type.
+//   - MustRunAs: A rule type.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.common.policy.spec.security.v1.custom.runAsUser.Rule
 type VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomRunAsUserRule string
@@ -379,9 +379,9 @@ func (m *VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomRunAsGroup) Un
 
 // VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomRunAsGroupRule Rule.
 //
-//  - RunAsAny: A rule type.
-//  - MayRunAs: A rule type.
-//  - MustRunAs: A rule type.
+//   - RunAsAny: A rule type.
+//   - MayRunAs: A rule type.
+//   - MustRunAs: A rule type.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.common.policy.spec.security.v1.custom.runAsGroup.Rule
 type VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomRunAsGroupRule string
@@ -452,45 +452,45 @@ func (m *VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomLinuxCapabilit
 
 // VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomLinuxCapabilitiesAllowedCapability Allowed capability.
 //
-//  - *: An allowed capability type.
-//  - AUDIT_CONTROL: An allowed capability type.
-//  - AUDIT_READ: An allowed capability type.
-//  - AUDIT_WRITE: An allowed capability type.
-//  - BLOCK_SUSPEND: An allowed capability type.
-//  - CHOWN: An allowed capability type.
-//  - DAC_OVERRIDE: An allowed capability type.
-//  - DAC_READ_SEARCH: An allowed capability type.
-//  - FOWNER: An allowed capability type.
-//  - FSETID: An allowed capability type.
-//  - IPC_LOCK: An allowed capability type.
-//  - IPC_OWNER: An allowed capability type.
-//  - KILL: An allowed capability type.
-//  - LEASE: An allowed capability type.
-//  - LINUX_IMMUTABLE: An allowed capability type.
-//  - MAC_ADMIN: An allowed capability type.
-//  - MAC_OVERRIDE: An allowed capability type.
-//  - MKNOD: An allowed capability type.
-//  - NET_ADMIN: An allowed capability type.
-//  - NET_BIND_SERVICE: An allowed capability type.
-//  - NET_BROADCAST: An allowed capability type.
-//  - NET_RAW: An allowed capability type.
-//  - SETGID: An allowed capability type.
-//  - SETFCAP: An allowed capability type.
-//  - SETPCAP: An allowed capability type.
-//  - SETUID: An allowed capability type.
-//  - SYS_ADMIN: An allowed capability type.
-//  - SYS_BOOT: An allowed capability type.
-//  - SYS_CHROOT: An allowed capability type.
-//  - SYS_MODULE: An allowed capability type.
-//  - SYS_NICE: An allowed capability type.
-//  - SYS_PACCT: An allowed capability type.
-//  - SYS_PTRACE: An allowed capability type.
-//  - SYS_RAWIO: An allowed capability type.
-//  - SYS_RESOURCE: An allowed capability type.
-//  - SYS_TIME: An allowed capability type.
-//  - SYS_TTY_CONFIG: An allowed capability type.
-//  - SYSLOG: An allowed capability type.
-//  - WAKE_ALARM: An allowed capability type.
+//   - *: An allowed capability type.
+//   - AUDIT_CONTROL: An allowed capability type.
+//   - AUDIT_READ: An allowed capability type.
+//   - AUDIT_WRITE: An allowed capability type.
+//   - BLOCK_SUSPEND: An allowed capability type.
+//   - CHOWN: An allowed capability type.
+//   - DAC_OVERRIDE: An allowed capability type.
+//   - DAC_READ_SEARCH: An allowed capability type.
+//   - FOWNER: An allowed capability type.
+//   - FSETID: An allowed capability type.
+//   - IPC_LOCK: An allowed capability type.
+//   - IPC_OWNER: An allowed capability type.
+//   - KILL: An allowed capability type.
+//   - LEASE: An allowed capability type.
+//   - LINUX_IMMUTABLE: An allowed capability type.
+//   - MAC_ADMIN: An allowed capability type.
+//   - MAC_OVERRIDE: An allowed capability type.
+//   - MKNOD: An allowed capability type.
+//   - NET_ADMIN: An allowed capability type.
+//   - NET_BIND_SERVICE: An allowed capability type.
+//   - NET_BROADCAST: An allowed capability type.
+//   - NET_RAW: An allowed capability type.
+//   - SETGID: An allowed capability type.
+//   - SETFCAP: An allowed capability type.
+//   - SETPCAP: An allowed capability type.
+//   - SETUID: An allowed capability type.
+//   - SYS_ADMIN: An allowed capability type.
+//   - SYS_BOOT: An allowed capability type.
+//   - SYS_CHROOT: An allowed capability type.
+//   - SYS_MODULE: An allowed capability type.
+//   - SYS_NICE: An allowed capability type.
+//   - SYS_PACCT: An allowed capability type.
+//   - SYS_PTRACE: An allowed capability type.
+//   - SYS_RAWIO: An allowed capability type.
+//   - SYS_RESOURCE: An allowed capability type.
+//   - SYS_TIME: An allowed capability type.
+//   - SYS_TTY_CONFIG: An allowed capability type.
+//   - SYSLOG: An allowed capability type.
+//   - WAKE_ALARM: An allowed capability type.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.common.policy.spec.security.v1.custom.linuxCapabilities.AllowedCapability
 type VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomLinuxCapabilitiesAllowedCapability string
@@ -637,45 +637,45 @@ func init() {
 
 // VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomLinuxCapabilitiesRequiredDropCapability Required drop capability.
 //
-//  - ALL: A required drop capability type.
-//  - AUDIT_CONTROL: A required drop capability type.
-//  - AUDIT_READ: A required drop capability type.
-//  - AUDIT_WRITE: A required drop capability type.
-//  - BLOCK_SUSPEND: A required drop capability type.
-//  - CHOWN: A required drop capability type.
-//  - DAC_OVERRIDE: A required drop capability type.
-//  - DAC_READ_SEARCH: A required drop capability type.
-//  - FOWNER: A required drop capability type.
-//  - FSETID: A required drop capability type.
-//  - IPC_LOCK: A required drop capability type.
-//  - IPC_OWNER: A required drop capability type.
-//  - KILL: A required drop capability type.
-//  - LEASE: A required drop capability type.
-//  - LINUX_IMMUTABLE: A required drop capability type.
-//  - MAC_ADMIN: A required drop capability type.
-//  - MAC_OVERRIDE: A required drop capability type.
-//  - MKNOD: A required drop capability type.
-//  - NET_ADMIN: A required drop capability type.
-//  - NET_BIND_SERVICE: A required drop capability type.
-//  - NET_BROADCAST: A required drop capability type.
-//  - NET_RAW: A required drop capability type.
-//  - SETGID: A required drop capability type.
-//  - SETFCAP: A required drop capability type.
-//  - SETPCAP: A required drop capability type.
-//  - SETUID: A required drop capability type.
-//  - SYS_ADMIN: A required drop capability type.
-//  - SYS_BOOT: A required drop capability type.
-//  - SYS_CHROOT: A required drop capability type.
-//  - SYS_MODULE: A required drop capability type.
-//  - SYS_NICE: A required drop capability type.
-//  - SYS_PACCT: A required drop capability type.
-//  - SYS_PTRACE: A required drop capability type.
-//  - SYS_RAWIO: A required drop capability type.
-//  - SYS_RESOURCE: A required drop capability type.
-//  - SYS_TIME: A required drop capability type.
-//  - SYS_TTY_CONFIG: A required drop capability type.
-//  - SYSLOG: A required drop capability type.
-//  - WAKE_ALARM: A required drop capability type.
+//   - ALL: A required drop capability type.
+//   - AUDIT_CONTROL: A required drop capability type.
+//   - AUDIT_READ: A required drop capability type.
+//   - AUDIT_WRITE: A required drop capability type.
+//   - BLOCK_SUSPEND: A required drop capability type.
+//   - CHOWN: A required drop capability type.
+//   - DAC_OVERRIDE: A required drop capability type.
+//   - DAC_READ_SEARCH: A required drop capability type.
+//   - FOWNER: A required drop capability type.
+//   - FSETID: A required drop capability type.
+//   - IPC_LOCK: A required drop capability type.
+//   - IPC_OWNER: A required drop capability type.
+//   - KILL: A required drop capability type.
+//   - LEASE: A required drop capability type.
+//   - LINUX_IMMUTABLE: A required drop capability type.
+//   - MAC_ADMIN: A required drop capability type.
+//   - MAC_OVERRIDE: A required drop capability type.
+//   - MKNOD: A required drop capability type.
+//   - NET_ADMIN: A required drop capability type.
+//   - NET_BIND_SERVICE: A required drop capability type.
+//   - NET_BROADCAST: A required drop capability type.
+//   - NET_RAW: A required drop capability type.
+//   - SETGID: A required drop capability type.
+//   - SETFCAP: A required drop capability type.
+//   - SETPCAP: A required drop capability type.
+//   - SETUID: A required drop capability type.
+//   - SYS_ADMIN: A required drop capability type.
+//   - SYS_BOOT: A required drop capability type.
+//   - SYS_CHROOT: A required drop capability type.
+//   - SYS_MODULE: A required drop capability type.
+//   - SYS_NICE: A required drop capability type.
+//   - SYS_PACCT: A required drop capability type.
+//   - SYS_PTRACE: A required drop capability type.
+//   - SYS_RAWIO: A required drop capability type.
+//   - SYS_RESOURCE: A required drop capability type.
+//   - SYS_TIME: A required drop capability type.
+//   - SYS_TTY_CONFIG: A required drop capability type.
+//   - SYSLOG: A required drop capability type.
+//   - WAKE_ALARM: A required drop capability type.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.common.policy.spec.security.v1.custom.linuxCapabilities.RequiredDropCapability
 type VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomLinuxCapabilitiesRequiredDropCapability string
