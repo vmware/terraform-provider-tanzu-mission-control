@@ -18,6 +18,7 @@ var Baseline = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "The input schema for security policy baseline recipe version v1",
 	Optional:    true,
+	ForceNew:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{

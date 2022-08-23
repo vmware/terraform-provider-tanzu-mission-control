@@ -56,9 +56,9 @@ provider "tanzu-mission-control" {
 
 ### Required
 
-- **endpoint** (String)
-- **vmw_cloud_api_token** (String, Sensitive)
+- `endpoint` (String)
+- `vmw_cloud_api_token` (String, Sensitive)
 
 ### Optional
 
-- **vmw_cloud_endpoint** (String)
+- `vmw_cloud_endpoint` (String)
