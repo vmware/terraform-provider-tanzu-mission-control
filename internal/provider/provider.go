@@ -12,6 +12,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/nodepools"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/iampolicy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/namespace"
 	securitypolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/type/security"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/workspace"
@@ -27,6 +28,7 @@ func Provider() *schema.Provider {
 			namespace.ResourceName:      namespace.ResourceNamespace(),
 			clustergroup.ResourceName:   clustergroup.ResourceClusterGroup(),
 			nodepools.ResourceName:      nodepools.ResourceNodePool(),
+			iampolicy.ResourceName:      iampolicy.ResourceIAMPolicy(),
 			securitypolicy.ResourceName: securitypolicy.ResourceSecurityPolicy(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{

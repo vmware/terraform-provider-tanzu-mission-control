@@ -11,9 +11,9 @@ import (
 
 // VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType Type of operation associated with the list of rolebindings.
 //
-//  - OP_TYPE_UNSPECIFIED: Unspecified operation type.
-//  - ADD: Appending rolebindings to the existing policy.
-//  - DELETE: Deleting rolebindings from the existing policy.
+//   - OP_TYPE_UNSPECIFIED: Unspecified operation type.
+//   - ADD: Appending rolebindings to the existing policy.
+//   - DELETE: Deleting rolebindings from the existing policy.
 //
 // swagger:model vmware.tanzu.core.v1alpha1.policy.BindingDelta.OpType
 type VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType string

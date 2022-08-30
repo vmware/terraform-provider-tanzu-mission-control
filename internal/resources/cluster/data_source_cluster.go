@@ -47,7 +47,7 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 				return false, nil
 			}
 
-			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey))
+			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(NameKey))
 		}
 
 		d.SetId(resp.Cluster.Meta.UID)
@@ -96,7 +96,7 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 	}
 
 	if err != nil || resp == nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey)))
+		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(NameKey)))
 	}
 
 	// always run

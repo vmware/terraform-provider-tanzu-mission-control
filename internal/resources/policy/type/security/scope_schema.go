@@ -126,7 +126,7 @@ func validateScope(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 	data, _ := value.([]interface{})
 
 	if len(data) == 0 || data[0] == nil {
-		return fmt.Errorf("scope data: %v is not valid: minimum one valid scope block is required", data)
+		return fmt.Errorf("scope data: %v is not valid: minimum one valid scope block is required among: %v", data, strings.Join(scopesAllowed[:], `, `))
 	}
 
 	scopeData := data[0].(map[string]interface{})

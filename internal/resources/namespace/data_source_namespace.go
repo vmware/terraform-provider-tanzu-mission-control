@@ -34,7 +34,7 @@ func dataSourceNamespaceRead(ctx context.Context, d *schema.ResourceData, m inte
 		err   error
 	)
 
-	namespaceName, _ := d.Get(nameKey).(string)
+	namespaceName, _ := d.Get(NameKey).(string)
 
 	resp, err = config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceGet(constructFullname(d))
 	if err != nil || resp == nil {

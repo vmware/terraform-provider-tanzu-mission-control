@@ -11,10 +11,10 @@ import (
 
 // VmwareTanzuCoreV1alpha1PolicySubjectKind Kind of subject.
 //
-//  - KIND_UNSPECIFIED: Subject is a undefined.
-//  - GROUP: Subject is a group.
-//  - SERVICEACCOUNT: Subject is a service.
-//  - USER: Subject is a user.
+//   - KIND_UNSPECIFIED: Subject is a undefined.
+//   - GROUP: Subject is a group.
+//   - SERVICEACCOUNT: Subject is a service.
+//   - USER: Subject is a user.
 //
 // swagger:model vmware.tanzu.core.v1alpha1.policy.Subject.Kind
 type VmwareTanzuCoreV1alpha1PolicySubjectKind string

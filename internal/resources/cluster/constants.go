@@ -9,7 +9,7 @@ const (
 	ManagementClusterNameKey    = "management_cluster_name"
 	ProvisionerNameKey          = "provisioner_name"
 	clusterGroupKey             = "cluster_group"
-	clusterNameKey              = "name"
+	NameKey                     = "name"
 	SpecKey                     = "spec"
 	StatusKey                   = "status"
 	clusterGroupDefaultValue    = "default"
