@@ -6,10 +6,11 @@ SPDX-License-Identifier: MPL-2.0
 package namespace
 
 const (
-	nameKey                   = "name"
-	managementClusterNameKey  = "management_cluster_name"
-	provisionerNameKey        = "provisioner_name"
-	clusterNameKey            = "cluster_name"
+	NameKey                   = "name"
+	ManagementClusterNameKey  = "management_cluster_name"
+	ProvisionerNameKey        = "provisioner_name"
+	ClusterNameKey            = "cluster_name"
+	attachedValue             = "attached"
 	specKey                   = "spec"
 	statusKey                 = "status"
 	workspaceNameKey          = "workspace_name"

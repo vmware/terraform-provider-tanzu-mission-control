@@ -28,7 +28,7 @@ func DataSourceClusterGroup() *schema.Resource {
 func dataSourceClusterGroupRead(_ context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	clusterGroupName, ok := d.Get(clusterGroupName).(string)
+	clusterGroupName, ok := d.Get(NameKey).(string)
 	if !ok {
 		return diag.Errorf("unable to read cluster group name")
 	}
