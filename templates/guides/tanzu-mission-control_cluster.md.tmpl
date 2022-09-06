@@ -3,8 +3,12 @@ Title: "Provisioning of a workload cluster"
 Description: |-
     An example of provisioning Tanzu Kubernetes Grid Service, Tanzu Kubernetes Grid vSphere and Tanzu Kubernetes Grid AWS workload clusters.
 ---
+# Cluster
 
-# Tanzu Kubernetes Grid Service Workload Cluster
+The `tanzu-mission-control_cluster` resource enables you to attach conformant Kubernetes clusters for management through Tanzu Mission Control.
+With Tanzu Kubernetes clusters, you can also provision resources to create new workload clusters.
+
+## Tanzu Kubernetes Grid Service Workload Cluster
 
 Before creating a Tanzu Kubernetes Grid Service workload cluster in vSphere with Tanzu using this Terraform provider we need the following prerequisites.
 
@@ -36,7 +40,7 @@ This example assumes that you have already registered a Tanzu Kubernetes Grid Se
 
 {{ tffile "resource_templates/cluster_tkgs.tf" }}
 
-# Tanzu Kubernetes Grid vSphere Workload Cluster
+## Tanzu Kubernetes Grid vSphere Workload Cluster
 
 Before provisioning a Tanzu Kubernetes Grid vSphere workload cluster using this Terraform provider we need the following prerequisites.
 
@@ -67,7 +71,7 @@ This example assumes that you have already registered a Tanzu Kubernetes Grid ma
 
 {{ tffile "resource_templates/cluster_tkg_vsphere.tf" }}
 
-# Tanzu Kubernetes Grid AWS Workload Cluster
+## Tanzu Kubernetes Grid AWS Workload Cluster
 
 Before provisioning a Tanzu Kubernetes Grid AWS workload cluster using this Terraform provider we need the following prerequisites.
 

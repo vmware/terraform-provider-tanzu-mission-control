@@ -1,7 +1,7 @@
 /*
- Cluster scoped IAM policy.
+ Cluster scoped Tanzu Mission Control IAM policy.
  This resource is applied on a cluster to provision the role bindings on the associated cluster.
- The scope block defined can be updated to change the access policy's scope.
+ The defined scope block can be updated to change the access policy's scope.
  */
 resource "tanzu-mission-control_iam_policy" "cluster_scoped_iam_policy" {
   scope {

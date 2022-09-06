@@ -1,7 +1,7 @@
 // Create/ Delete/ Update Tanzu Mission Control cluster group scoped strict security policy entry
 resource "tanzu-mission-control_security_policy" "cluster_group_scoped_strict_security_policy" {
   scope {
-    cluster_group{
+    cluster_group {
       cluster_group = "<cluster-group-name>" // Required
     }
   }
@@ -18,7 +18,7 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_strict_se
       match_expressions {
         key      = "<label-selector-requirement-key-1>"
         operator = "<label-selector-requirement-operator>"
-        values   = [
+        values = [
           "<label-selector-requirement-value-1>",
           "<label-selector-requirement-value-2>"
         ]
