@@ -114,7 +114,7 @@ func validateInput(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 	data, _ := value.([]interface{})
 
 	if len(data) == 0 || data[0] == nil {
-		return fmt.Errorf("spec data: %v is not valid: minimum one valid spec block is required", data)
+		return fmt.Errorf("spec data: %v is not valid: minimum one valid spec block is required among: %v", data, strings.Join(recipesAllowed[:], `, `))
 	}
 
 	specData := data[0].(map[string]interface{})

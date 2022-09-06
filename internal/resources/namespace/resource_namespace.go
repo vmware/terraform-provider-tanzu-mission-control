@@ -30,24 +30,24 @@ func ResourceNamespace() *schema.Resource {
 }
 
 var namespaceSchema = map[string]*schema.Schema{
-	nameKey: {
+	NameKey: {
 		Type:     schema.TypeString,
 		Required: true,
 		ForceNew: true,
 	},
-	managementClusterNameKey: {
+	ManagementClusterNameKey: {
 		Type:     schema.TypeString,
 		Default:  "attached",
 		Optional: true,
 		ForceNew: true,
 	},
-	provisionerNameKey: {
+	ProvisionerNameKey: {
 		Type:     schema.TypeString,
 		Default:  "attached",
 		Optional: true,
 		ForceNew: true,
 	},
-	clusterNameKey: {
+	ClusterNameKey: {
 		Type:     schema.TypeString,
 		Required: true,
 		ForceNew: true,
@@ -64,13 +64,13 @@ var namespaceSchema = map[string]*schema.Schema{
 func constructFullname(d *schema.ResourceData) (fullname *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName) {
 	fullname = &namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName{}
 
-	fullname.ClusterName, _ = d.Get(clusterNameKey).(string)
+	fullname.ClusterName, _ = d.Get(ClusterNameKey).(string)
 
-	fullname.ManagementClusterName, _ = d.Get(managementClusterNameKey).(string)
+	fullname.ManagementClusterName, _ = d.Get(ManagementClusterNameKey).(string)
 
-	fullname.Name, _ = d.Get(nameKey).(string)
+	fullname.Name, _ = d.Get(NameKey).(string)
 
-	fullname.ProvisionerName, _ = d.Get(provisionerNameKey).(string)
+	fullname.ProvisionerName, _ = d.Get(ProvisionerNameKey).(string)
 
 	return fullname
 }
@@ -152,7 +152,7 @@ func resourceNamespaceCreate(ctx context.Context, d *schema.ResourceData, m inte
 	namespaceResponse, err := config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceCreate(namespaceRequest)
 
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "unable to create Tanzu Mission Control namespace entry, name : %s", nameKey))
+		return diag.FromErr(errors.Wrapf(err, "unable to create Tanzu Mission Control namespace entry, name : %s", NameKey))
 	}
 
 	d.SetId(namespaceResponse.Namespace.Meta.UID)
@@ -163,7 +163,7 @@ func resourceNamespaceCreate(ctx context.Context, d *schema.ResourceData, m inte
 func resourceNamespaceDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	config := m.(authctx.TanzuContext)
 
-	namespaceName, _ := d.Get(nameKey).(string)
+	namespaceName, _ := d.Get(NameKey).(string)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
@@ -199,7 +199,7 @@ func resourceNamespaceInPlaceUpdate(ctx context.Context, d *schema.ResourceData,
 
 	getResp, err := config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceGet(constructFullname(d))
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "unable to get Tanzu Mission Control namespace entry, name : %s", d.Get(clusterNameKey)))
+		return diag.FromErr(errors.Wrapf(err, "unable to get Tanzu Mission Control namespace entry, name : %s", d.Get(ClusterNameKey)))
 	}
 
 	if common.HasMetaChanged(d) {
@@ -225,7 +225,7 @@ func resourceNamespaceInPlaceUpdate(ctx context.Context, d *schema.ResourceData,
 		},
 	)
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "unable to update Tanzu Mission Control namespace entry, name : %s", d.Get(clusterNameKey)))
+		return diag.FromErr(errors.Wrapf(err, "unable to update Tanzu Mission Control namespace entry, name : %s", d.Get(ClusterNameKey)))
 	}
 
 	return dataSourceNamespaceRead(ctx, d, m)
