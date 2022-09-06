@@ -1,11 +1,11 @@
 /*
- Organization scoped IAM policy.
+ Organization scoped Tanzu Mission Control IAM policy.
  This resource is applied on an organization to provision the role bindings on the associated organization.
- The scope block defined can be updated to change the access policy's scope.
+ The defined scope block can be updated to change the access policy's scope.
  */
 resource "tanzu-mission-control_iam_policy" "organization_scoped_iam_policy" {
   scope {
-    organization{
+    organization {
       org_id = "dummy-org-id"
     }
   }
