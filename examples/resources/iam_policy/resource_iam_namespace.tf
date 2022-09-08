@@ -1,13 +1,13 @@
 /*
- Namespace scoped IAM policy.
+ Namespace scoped Tanzu Mission Control IAM policy.
  This resource is applied on a namespace to provision the role bindings on the associated namespace.
- The scope block defined can be updated to change the access policy's scope.
+ The defined scope block can be updated to change the access policy's scope.
  */
 resource "tanzu-mission-control_iam_policy" "namespace_scoped_iam_policy" {
   scope {
     namespace {
-      management_cluster_name = "attached"
-      provisioner_name        = "attached"
+      management_cluster_name = "attached" # Default: attached
+      provisioner_name        = "attached" # Default: attached
       cluster_name            = "demo"
       name                    = "tf_namespace"
     }

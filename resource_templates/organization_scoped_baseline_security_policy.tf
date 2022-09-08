@@ -1,7 +1,7 @@
 // Create/ Delete/ Update Tanzu Mission Control organization scoped baseline security policy entry
 resource "tanzu-mission-control_security_policy" "organization_scoped_baseline_security_policy" {
   scope {
-    organization{
+    organization {
       organization = "<organization-id>" // Required
     }
   }
@@ -18,7 +18,7 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_baseline_s
       match_expressions {
         key      = "<label-selector-requirement-key-1>"
         operator = "<label-selector-requirement-operator>"
-        values   = [
+        values = [
           "<label-selector-requirement-value-1>",
           "<label-selector-requirement-value-2>"
         ]
