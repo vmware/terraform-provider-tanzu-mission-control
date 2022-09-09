@@ -8,7 +8,6 @@ package security
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -99,7 +98,7 @@ func flattenInput(inputRecipeData *inputRecipe) (data []interface{}) {
 	case strictRecipe:
 		flattenInputData[reciperesource.StrictKey] = reciperesource.FlattenStrict(inputRecipeData.inputStrict)
 	case unknownRecipe:
-		log.Fatalf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(recipesAllowed[:], `, `))
+		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(recipesAllowed[:], `, `))
 	}
 
 	return []interface{}{flattenInputData}
