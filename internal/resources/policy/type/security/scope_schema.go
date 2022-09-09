@@ -8,7 +8,6 @@ package security
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -111,7 +110,7 @@ func flattenScope(scopedFullname *scopedFullname) (data []interface{}, name stri
 		name = scopedFullname.fullnameOrganization.Name
 		flattenScopeData[organizationKey] = scoperesource.FlattenOrganizationPolicyFullname(scopedFullname.fullnameOrganization)
 	case unknownScope:
-		log.Fatalf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
+		fmt.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
 	}
 
 	return []interface{}{flattenScopeData}, name

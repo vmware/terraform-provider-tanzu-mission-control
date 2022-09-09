@@ -57,75 +57,184 @@ func resourceSecurityPolicyCreate(ctx context.Context, d *schema.ResourceData, m
 
 	securityPolicyName, _ := d.Get(nameKey).(string)
 
-	scopedFullname := constructScope(d, securityPolicyName)
+	scopedFullnameData := constructScope(d, securityPolicyName)
 
-	if scopedFullname != nil {
-		var UID string
-
-		switch scopedFullname.scope {
-		case clusterScope:
-			if scopedFullname.fullnameCluster != nil {
-				securityPolicyReq := &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyPolicyRequest{
-					Policy: &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyPolicy{
-						FullName: scopedFullname.fullnameCluster,
-						Meta:     common.ConstructMeta(d),
-						Spec:     constructSpec(d),
-					},
-				}
-
-				securityPolicyResponse, err := config.TMCConnection.ClusterPolicyResourceService.ManageV1alpha1ClusterPolicyResourceServiceCreate(securityPolicyReq)
-				if err != nil {
-					return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control cluster security policy entry, name : %s", securityPolicyName))
-				}
-
-				UID = securityPolicyResponse.Policy.Meta.UID
-			}
-		case clusterGroupScope:
-			if scopedFullname.fullnameClusterGroup != nil {
-				securityPolicyReq := &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyPolicyRequest{
-					Policy: &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyPolicy{
-						FullName: scopedFullname.fullnameClusterGroup,
-						Meta:     common.ConstructMeta(d),
-						Spec:     constructSpec(d),
-					},
-				}
-
-				securityPolicyResponse, err := config.TMCConnection.ClusterGroupPolicyResourceService.ManageV1alpha1ClustergroupPolicyResourceServiceCreate(securityPolicyReq)
-				if err != nil {
-					return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control cluster group security policy entry, name : %s", securityPolicyName))
-				}
-
-				UID = securityPolicyResponse.Policy.Meta.UID
-			}
-		case organizationScope:
-			if scopedFullname.fullnameOrganization != nil {
-				securityPolicyReq := &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyPolicyRequest{
-					Policy: &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyPolicy{
-						FullName: scopedFullname.fullnameOrganization,
-						Meta:     common.ConstructMeta(d),
-						Spec:     constructSpec(d),
-					},
-				}
-
-				securityPolicyResponse, err := config.TMCConnection.OrganizationPolicyResourceService.ManageV1alpha1OrganizationPolicyResourceServiceCreate(securityPolicyReq)
-				if err != nil {
-					return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control organization security policy entry, name : %s", securityPolicyName))
-				}
-
-				UID = securityPolicyResponse.Policy.Meta.UID
-			}
-		case unknownScope:
-			log.Fatalf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
-		}
-
-		// always run
-		d.SetId(UID)
+	if scopedFullnameData == nil {
+		return diag.Errorf("Unable to create Tanzu Mission Control cluster security policy entry; Scope full name is empty")
 	}
+
+	var UID string
+
+	switch scopedFullnameData.scope {
+	case clusterScope:
+		if scopedFullnameData.fullnameCluster != nil {
+			securityPolicyReq := &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyPolicyRequest{
+				Policy: &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyPolicy{
+					FullName: scopedFullnameData.fullnameCluster,
+					Meta:     common.ConstructMeta(d),
+					Spec:     constructSpec(d),
+				},
+			}
+
+			securityPolicyResponse, err := config.TMCConnection.ClusterPolicyResourceService.ManageV1alpha1ClusterPolicyResourceServiceCreate(securityPolicyReq)
+			if err != nil {
+				return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control cluster security policy entry, name : %s", securityPolicyName))
+			}
+
+			UID = securityPolicyResponse.Policy.Meta.UID
+		}
+	case clusterGroupScope:
+		if scopedFullnameData.fullnameClusterGroup != nil {
+			securityPolicyReq := &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyPolicyRequest{
+				Policy: &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyPolicy{
+					FullName: scopedFullnameData.fullnameClusterGroup,
+					Meta:     common.ConstructMeta(d),
+					Spec:     constructSpec(d),
+				},
+			}
+
+			securityPolicyResponse, err := config.TMCConnection.ClusterGroupPolicyResourceService.ManageV1alpha1ClustergroupPolicyResourceServiceCreate(securityPolicyReq)
+			if err != nil {
+				return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control cluster group security policy entry, name : %s", securityPolicyName))
+			}
+
+			UID = securityPolicyResponse.Policy.Meta.UID
+		}
+	case organizationScope:
+		if scopedFullnameData.fullnameOrganization != nil {
+			securityPolicyReq := &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyPolicyRequest{
+				Policy: &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyPolicy{
+					FullName: scopedFullnameData.fullnameOrganization,
+					Meta:     common.ConstructMeta(d),
+					Spec:     constructSpec(d),
+				},
+			}
+
+			securityPolicyResponse, err := config.TMCConnection.OrganizationPolicyResourceService.ManageV1alpha1OrganizationPolicyResourceServiceCreate(securityPolicyReq)
+			if err != nil {
+				return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control organization security policy entry, name : %s", securityPolicyName))
+			}
+
+			UID = securityPolicyResponse.Policy.Meta.UID
+		}
+	case unknownScope:
+		return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
+	}
+
+	// always run
+	d.SetId(UID)
 
 	return resourceSecurityPolicyRead(ctx, d, m)
 }
 
-// nolint: gocognit
+func retrieveSecurityPolicyUIDMetaAndSpecFromServer(config authctx.TanzuContext, scopedFullnameData *scopedFullname, d *schema.ResourceData, securityPolicyName string) (string, *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta, *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec, error) {
+	var (
+		UID  string
+		meta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta
+		spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec
+	)
+
+	switch scopedFullnameData.scope {
+	case clusterScope:
+		if scopedFullnameData.fullnameCluster != nil {
+			resp, err := config.TMCConnection.ClusterPolicyResourceService.ManageV1alpha1ClusterPolicyResourceServiceGet(scopedFullnameData.fullnameCluster)
+			if err != nil {
+				if clienterrors.IsNotFoundError(err) {
+					d.SetId("")
+					return "", nil, nil, nil
+				}
+
+				return "", nil, nil, errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster security policy entry, name : %s", securityPolicyName)
+			}
+
+			scopedFullnameData = &scopedFullname{
+				scope:           clusterScope,
+				fullnameCluster: resp.Policy.FullName,
+			}
+
+			fullName, name := flattenScope(scopedFullnameData)
+
+			if err := d.Set(nameKey, name); err != nil {
+				return "", nil, nil, err
+			}
+
+			if err := d.Set(scopeKey, fullName); err != nil {
+				return "", nil, nil, err
+			}
+
+			UID = resp.Policy.Meta.UID
+			meta = resp.Policy.Meta
+			spec = resp.Policy.Spec
+		}
+	case clusterGroupScope:
+		if scopedFullnameData.fullnameClusterGroup != nil {
+			resp, err := config.TMCConnection.ClusterGroupPolicyResourceService.ManageV1alpha1ClustergroupPolicyResourceServiceGet(scopedFullnameData.fullnameClusterGroup)
+			if err != nil {
+				if clienterrors.IsNotFoundError(err) {
+					d.SetId("")
+					return "", nil, nil, nil
+				}
+
+				return "", nil, nil, errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster group security policy entry, name : %s", securityPolicyName)
+			}
+
+			scopedFullnameData = &scopedFullname{
+				scope:                clusterGroupScope,
+				fullnameClusterGroup: resp.Policy.FullName,
+			}
+
+			fullName, name := flattenScope(scopedFullnameData)
+
+			if err := d.Set(nameKey, name); err != nil {
+				return "", nil, nil, err
+			}
+
+			if err := d.Set(scopeKey, fullName); err != nil {
+				return "", nil, nil, err
+			}
+
+			UID = resp.Policy.Meta.UID
+			meta = resp.Policy.Meta
+			spec = resp.Policy.Spec
+		}
+	case organizationScope:
+		if scopedFullnameData.fullnameOrganization != nil {
+			resp, err := config.TMCConnection.OrganizationPolicyResourceService.ManageV1alpha1OrganizationPolicyResourceServiceGet(scopedFullnameData.fullnameOrganization)
+			if err != nil {
+				if clienterrors.IsNotFoundError(err) {
+					d.SetId("")
+					return "", nil, nil, nil
+				}
+
+				return "", nil, nil, errors.Wrapf(err, "Unable to get Tanzu Mission Control organization security policy entry, name : %s", securityPolicyName)
+			}
+
+			scopedFullnameData = &scopedFullname{
+				scope:                organizationScope,
+				fullnameOrganization: resp.Policy.FullName,
+			}
+
+			fullName, name := flattenScope(scopedFullnameData)
+
+			if err := d.Set(nameKey, name); err != nil {
+				return "", nil, nil, err
+			}
+
+			if err := d.Set(scopeKey, fullName); err != nil {
+				return "", nil, nil, err
+			}
+
+			UID = resp.Policy.Meta.UID
+			meta = resp.Policy.Meta
+			spec = resp.Policy.Spec
+		}
+	case unknownScope:
+		return "", nil, nil, errors.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
+	}
+
+	return UID, meta, spec, nil
+}
+
 func resourceSecurityPolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
@@ -136,247 +245,115 @@ func resourceSecurityPolicyRead(ctx context.Context, d *schema.ResourceData, m i
 
 	scopedFullnameData := constructScope(d, securityPolicyName)
 
-	// nolint: nestif
-	if scopedFullnameData != nil {
-		var (
-			UID  string
-			meta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta
-			spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec
-		)
+	if scopedFullnameData == nil {
+		return diag.Errorf("Unable to get Tanzu Mission Control cluster security policy entry; Scope full name is empty")
+	}
 
-		switch scopedFullnameData.scope {
-		case clusterScope:
-			if scopedFullnameData.fullnameCluster != nil {
-				resp, err := config.TMCConnection.ClusterPolicyResourceService.ManageV1alpha1ClusterPolicyResourceServiceGet(scopedFullnameData.fullnameCluster)
-				if err != nil {
-					if clienterrors.IsNotFoundError(err) {
-						d.SetId("")
-						return
-					}
+	UID, meta, spec, err := retrieveSecurityPolicyUIDMetaAndSpecFromServer(config, scopedFullnameData, d, securityPolicyName)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
-					return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster security policy entry, name : %s", securityPolicyName))
-				}
+	// always run
+	d.SetId(UID)
 
-				scopedFullnameData = &scopedFullname{
-					scope:           clusterScope,
-					fullnameCluster: resp.Policy.FullName,
-				}
+	if err := d.Set(common.MetaKey, common.FlattenMeta(meta)); err != nil {
+		return diag.FromErr(err)
+	}
 
-				fullName, name := flattenScope(scopedFullnameData)
-
-				if err := d.Set(nameKey, name); err != nil {
-					return diag.FromErr(err)
-				}
-
-				if err := d.Set(scopeKey, fullName); err != nil {
-					return diag.FromErr(err)
-				}
-
-				UID = resp.Policy.Meta.UID
-				meta = resp.Policy.Meta
-				spec = resp.Policy.Spec
-			}
-		case clusterGroupScope:
-			if scopedFullnameData.fullnameClusterGroup != nil {
-				resp, err := config.TMCConnection.ClusterGroupPolicyResourceService.ManageV1alpha1ClustergroupPolicyResourceServiceGet(scopedFullnameData.fullnameClusterGroup)
-				if err != nil {
-					if clienterrors.IsNotFoundError(err) {
-						d.SetId("")
-						return
-					}
-
-					return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster group security policy entry, name : %s", securityPolicyName))
-				}
-
-				scopedFullnameData = &scopedFullname{
-					scope:                clusterGroupScope,
-					fullnameClusterGroup: resp.Policy.FullName,
-				}
-
-				fullName, name := flattenScope(scopedFullnameData)
-
-				if err := d.Set(nameKey, name); err != nil {
-					return diag.FromErr(err)
-				}
-
-				if err := d.Set(scopeKey, fullName); err != nil {
-					return diag.FromErr(err)
-				}
-
-				UID = resp.Policy.Meta.UID
-				meta = resp.Policy.Meta
-				spec = resp.Policy.Spec
-			}
-		case organizationScope:
-			if scopedFullnameData.fullnameOrganization != nil {
-				resp, err := config.TMCConnection.OrganizationPolicyResourceService.ManageV1alpha1OrganizationPolicyResourceServiceGet(scopedFullnameData.fullnameOrganization)
-				if err != nil {
-					if clienterrors.IsNotFoundError(err) {
-						d.SetId("")
-						return
-					}
-
-					return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control organization security policy entry, name : %s", securityPolicyName))
-				}
-
-				scopedFullnameData = &scopedFullname{
-					scope:                organizationScope,
-					fullnameOrganization: resp.Policy.FullName,
-				}
-
-				fullName, name := flattenScope(scopedFullnameData)
-
-				if err := d.Set(nameKey, name); err != nil {
-					return diag.FromErr(err)
-				}
-
-				if err := d.Set(scopeKey, fullName); err != nil {
-					return diag.FromErr(err)
-				}
-
-				UID = resp.Policy.Meta.UID
-				meta = resp.Policy.Meta
-				spec = resp.Policy.Spec
-			}
-		case unknownScope:
-			log.Fatalf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
-		}
-
-		// always run
-		d.SetId(UID)
-
-		if err := d.Set(common.MetaKey, common.FlattenMeta(meta)); err != nil {
-			return diag.FromErr(err)
-		}
-
-		if err := d.Set(specKey, flattenSpec(spec)); err != nil {
-			return diag.FromErr(err)
-		}
+	if err := d.Set(specKey, flattenSpec(spec)); err != nil {
+		return diag.FromErr(err)
 	}
 
 	return diags
 }
 
-// nolint: gocognit
 func resourceSecurityPolicyInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-
-	var updateAvailable bool
 
 	securityPolicyName, ok := d.Get(nameKey).(string)
 	if !ok {
 		return diag.Errorf("unable to read security policy name")
 	}
 
-	scopedFullname := constructScope(d, securityPolicyName)
+	scopedFullnameData := constructScope(d, securityPolicyName)
 
-	// nolint: nestif
-	if scopedFullname != nil {
-		var (
-			meta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta
-			spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec
-		)
-
-		switch scopedFullname.scope {
-		case clusterScope:
-			if scopedFullname.fullnameCluster != nil {
-				// Get call to initialise the security policy struct
-				getResp, err := config.TMCConnection.ClusterPolicyResourceService.ManageV1alpha1ClusterPolicyResourceServiceGet(scopedFullname.fullnameCluster)
-				if err != nil {
-					return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster security policy entry, name : %s", securityPolicyName))
-				}
-
-				meta = getResp.Policy.Meta
-				spec = getResp.Policy.Spec
-			}
-		case clusterGroupScope:
-			if scopedFullname.fullnameClusterGroup != nil {
-				// Get call to initialise the security policy struct
-				getResp, err := config.TMCConnection.ClusterGroupPolicyResourceService.ManageV1alpha1ClustergroupPolicyResourceServiceGet(scopedFullname.fullnameClusterGroup)
-				if err != nil {
-					return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster group security policy entry, name : %s", securityPolicyName))
-				}
-
-				meta = getResp.Policy.Meta
-				spec = getResp.Policy.Spec
-			}
-		case organizationScope:
-			if scopedFullname.fullnameOrganization != nil {
-				// Get call to initialise the security policy struct
-				getResp, err := config.TMCConnection.OrganizationPolicyResourceService.ManageV1alpha1OrganizationPolicyResourceServiceGet(scopedFullname.fullnameOrganization)
-				if err != nil {
-					return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control organization security policy entry, name : %s", securityPolicyName))
-				}
-
-				meta = getResp.Policy.Meta
-				spec = getResp.Policy.Spec
-			}
-		case unknownScope:
-			log.Fatalf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
-		}
-
-		if updateCheckForMeta(d, meta) {
-			updateAvailable = true
-		}
-
-		if updateCheckForSpec(d, spec) {
-			updateAvailable = true
-		}
-
-		if updateAvailable {
-			switch scopedFullname.scope {
-			case clusterScope:
-				if scopedFullname.fullnameCluster != nil {
-					securityPolicyReq := &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyPolicyRequest{
-						Policy: &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyPolicy{
-							FullName: scopedFullname.fullnameCluster,
-							Meta:     meta,
-							Spec:     spec,
-						},
-					}
-
-					_, err := config.TMCConnection.ClusterPolicyResourceService.ManageV1alpha1ClusterPolicyResourceServiceUpdate(securityPolicyReq)
-					if err != nil {
-						return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster security policy entry, name : %s", securityPolicyName))
-					}
-				}
-			case clusterGroupScope:
-				if scopedFullname.fullnameClusterGroup != nil {
-					securityPolicyReq := &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyPolicyRequest{
-						Policy: &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyPolicy{
-							FullName: scopedFullname.fullnameClusterGroup,
-							Meta:     meta,
-							Spec:     spec,
-						},
-					}
-
-					_, err := config.TMCConnection.ClusterGroupPolicyResourceService.ManageV1alpha1ClustergroupPolicyResourceServiceUpdate(securityPolicyReq)
-					if err != nil {
-						return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster group security policy entry, name : %s", securityPolicyName))
-					}
-				}
-			case organizationScope:
-				if scopedFullname.fullnameOrganization != nil {
-					securityPolicyReq := &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyPolicyRequest{
-						Policy: &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyPolicy{
-							FullName: scopedFullname.fullnameOrganization,
-							Meta:     meta,
-							Spec:     spec,
-						},
-					}
-
-					_, err := config.TMCConnection.OrganizationPolicyResourceService.ManageV1alpha1OrganizationPolicyResourceServiceUpdate(securityPolicyReq)
-					if err != nil {
-						return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control organization security policy entry, name : %s", securityPolicyName))
-					}
-				}
-			case unknownScope:
-				log.Fatalf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
-			}
-
-			log.Printf("[INFO] security policy update successful")
-		}
+	if scopedFullnameData == nil {
+		return diag.Errorf("Unable to update Tanzu Mission Control cluster security policy entry; Scope full name is empty")
 	}
+
+	_, meta, spec, err := retrieveSecurityPolicyUIDMetaAndSpecFromServer(config, scopedFullnameData, d, securityPolicyName)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	var updateAvailable bool
+
+	if updateCheckForMeta(d, meta) {
+		updateAvailable = true
+	}
+
+	if updateCheckForSpec(d, spec) {
+		updateAvailable = true
+	}
+
+	if !updateAvailable {
+		log.Printf("[INFO] security policy update is not required")
+
+		return
+	}
+
+	switch scopedFullnameData.scope {
+	case clusterScope:
+		if scopedFullnameData.fullnameCluster != nil {
+			securityPolicyReq := &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyPolicyRequest{
+				Policy: &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyPolicy{
+					FullName: scopedFullnameData.fullnameCluster,
+					Meta:     meta,
+					Spec:     spec,
+				},
+			}
+
+			_, err := config.TMCConnection.ClusterPolicyResourceService.ManageV1alpha1ClusterPolicyResourceServiceUpdate(securityPolicyReq)
+			if err != nil {
+				return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster security policy entry, name : %s", securityPolicyName))
+			}
+		}
+	case clusterGroupScope:
+		if scopedFullnameData.fullnameClusterGroup != nil {
+			securityPolicyReq := &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyPolicyRequest{
+				Policy: &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyPolicy{
+					FullName: scopedFullnameData.fullnameClusterGroup,
+					Meta:     meta,
+					Spec:     spec,
+				},
+			}
+
+			_, err := config.TMCConnection.ClusterGroupPolicyResourceService.ManageV1alpha1ClustergroupPolicyResourceServiceUpdate(securityPolicyReq)
+			if err != nil {
+				return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster group security policy entry, name : %s", securityPolicyName))
+			}
+		}
+	case organizationScope:
+		if scopedFullnameData.fullnameOrganization != nil {
+			securityPolicyReq := &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyPolicyRequest{
+				Policy: &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyPolicy{
+					FullName: scopedFullnameData.fullnameOrganization,
+					Meta:     meta,
+					Spec:     spec,
+				},
+			}
+
+			_, err := config.TMCConnection.OrganizationPolicyResourceService.ManageV1alpha1OrganizationPolicyResourceServiceUpdate(securityPolicyReq)
+			if err != nil {
+				return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control organization security policy entry, name : %s", securityPolicyName))
+			}
+		}
+	case unknownScope:
+		return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
+	}
+
+	log.Printf("[INFO] security policy update successful")
 
 	return resourceSecurityPolicyRead(ctx, d, m)
 }
@@ -422,34 +399,36 @@ func resourceSecurityPolicyDelete(ctx context.Context, d *schema.ResourceData, m
 
 	securityPolicyName, _ := d.Get(nameKey).(string)
 
-	scopedFullname := constructScope(d, securityPolicyName)
+	scopedFullnameData := constructScope(d, securityPolicyName)
 
-	if scopedFullname != nil {
-		switch scopedFullname.scope {
-		case clusterScope:
-			if scopedFullname.fullnameCluster != nil {
-				err := config.TMCConnection.ClusterPolicyResourceService.ManageV1alpha1ClusterPolicyResourceServiceDelete(scopedFullname.fullnameCluster)
-				if err != nil && !clienterrors.IsNotFoundError(err) {
-					return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control cluster security policy entry, name : %s", securityPolicyName))
-				}
+	if scopedFullnameData == nil {
+		return diag.Errorf("Unable to delete Tanzu Mission Control cluster security policy entry; Scope full name is empty")
+	}
+
+	switch scopedFullnameData.scope {
+	case clusterScope:
+		if scopedFullnameData.fullnameCluster != nil {
+			err := config.TMCConnection.ClusterPolicyResourceService.ManageV1alpha1ClusterPolicyResourceServiceDelete(scopedFullnameData.fullnameCluster)
+			if err != nil && !clienterrors.IsNotFoundError(err) {
+				return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control cluster security policy entry, name : %s", securityPolicyName))
 			}
-		case clusterGroupScope:
-			if scopedFullname.fullnameClusterGroup != nil {
-				err := config.TMCConnection.ClusterGroupPolicyResourceService.ManageV1alpha1ClustergroupPolicyResourceServiceDelete(scopedFullname.fullnameClusterGroup)
-				if err != nil && !clienterrors.IsNotFoundError(err) {
-					return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control cluster group security policy entry, name : %s", securityPolicyName))
-				}
-			}
-		case organizationScope:
-			if scopedFullname.fullnameOrganization != nil {
-				err := config.TMCConnection.OrganizationPolicyResourceService.ManageV1alpha1OrganizationPolicyResourceServiceDelete(scopedFullname.fullnameOrganization)
-				if err != nil && !clienterrors.IsNotFoundError(err) {
-					return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control organization security policy entry, name : %s", securityPolicyName))
-				}
-			}
-		case unknownScope:
-			log.Fatalf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
 		}
+	case clusterGroupScope:
+		if scopedFullnameData.fullnameClusterGroup != nil {
+			err := config.TMCConnection.ClusterGroupPolicyResourceService.ManageV1alpha1ClustergroupPolicyResourceServiceDelete(scopedFullnameData.fullnameClusterGroup)
+			if err != nil && !clienterrors.IsNotFoundError(err) {
+				return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control cluster group security policy entry, name : %s", securityPolicyName))
+			}
+		}
+	case organizationScope:
+		if scopedFullnameData.fullnameOrganization != nil {
+			err := config.TMCConnection.OrganizationPolicyResourceService.ManageV1alpha1OrganizationPolicyResourceServiceDelete(scopedFullnameData.fullnameOrganization)
+			if err != nil && !clienterrors.IsNotFoundError(err) {
+				return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control organization security policy entry, name : %s", securityPolicyName))
+			}
+		}
+	case unknownScope:
+		return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
 	}
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but
