@@ -48,9 +48,9 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
 
       topology {
         control_plane {
-          class             = "<class>"        // Required
+          class             = "<class>"         // Required
           storage_class     = "<storage-class>" // Required
-          high_availability = false            // Default: false
+          high_availability = false             // Default: false
           volumes {
             capacity          = volume-capacity
             mount_path        = "<mount-path>"

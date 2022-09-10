@@ -235,9 +235,9 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
 
 # Create Tanzu Mission Control Tanzu Kubernetes Grid AWS workload cluster entry
 resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
-  management_cluster_name = "tkgm-aws" // Default: attached
-  provisioner_name        = "default"            // Default: attached
-  name                    = "tkgm-aws-workload"  // Required
+  management_cluster_name = "tkgm-aws"          // Default: attached
+  provisioner_name        = "default"           // Default: attached
+  name                    = "tkgm-aws-workload" // Required
 
   meta {
     description = "new description"
@@ -333,6 +333,130 @@ resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
     }
   }
 }
+
+# Organization scoped Role Bindings
+resource "tanzu-mission-control_iam_policy" "organization_scoped_iam_policy" {
+  scope {
+    organization {
+      org_id = "dummy-org-id"
+    }
+  }
+
+  role_bindings {
+    role = "organization.view"
+    subjects {
+      name = "test-1"
+      kind = "USER"
+    }
+    subjects {
+      name = "test-2"
+      kind = "GROUP"
+    }
+  }
+  role_bindings {
+    role = "organization.edit"
+    subjects {
+      name = "test-3"
+      kind = "USER"
+    }
+  }
+}
+
+# Cluster group scoped Role Bindings
+resource "tanzu-mission-control_iam_policy" "cluster_group_scoped_iam_policy" {
+  scope {
+    cluster_group {
+      name = tanzu-mission-control_cluster_group.create_cluster_group.name
+    }
+  }
+
+  role_bindings {
+    role = "clustergroup.admin"
+    subjects {
+      name = "test"
+      kind = "GROUP"
+    }
+  }
+  role_bindings {
+    role = "clustergroup.edit"
+    subjects {
+      name = "test-new"
+      kind = "USER"
+    }
+  }
+}
+
+# Cluster scoped Role Bindings
+resource "tanzu-mission-control_iam_policy" "cluster_scoped_iam_policy" {
+  scope {
+    cluster {
+      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name
+      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name
+      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name
+    }
+  }
+
+  role_bindings {
+    role = "cluster.admin"
+    subjects {
+      name = "test"
+      kind = "GROUP"
+    }
+  }
+  role_bindings {
+    role = "cluster.edit"
+    subjects {
+      name = "test-1"
+      kind = "USER"
+    }
+    subjects {
+      name = "test-2"
+      kind = "USER"
+    }
+  }
+}
+
+# Workspace scoped Role Bindings
+resource "tanzu-mission-control_iam_policy" "workspace_scoped_iam_policy" {
+  scope {
+    workspace {
+      name = tanzu-mission-control_workspace.create_workspace.name
+    }
+  }
+
+  role_bindings {
+    role = "workspace.edit"
+    subjects {
+      name = "test"
+      kind = "USER"
+    }
+  }
+}
+
+# Namespace scoped Role Bindings
+resource "tanzu-mission-control_iam_policy" "namespace_scoped_iam_policy" {
+  scope {
+    namespace {
+      management_cluster_name = tanzu-mission-control_namespace.create_namespace.management_cluster_name
+      provisioner_name        = tanzu-mission-control_namespace.create_namespace.provisioner_name
+      cluster_name            = tanzu-mission-control_namespace.create_namespace.cluster_name
+      name                    = tanzu-mission-control_namespace.create_namespace.name
+    }
+  }
+
+  role_bindings {
+    role = "namespace.view"
+    subjects {
+      name = "test-1"
+      kind = "USER"
+    }
+    subjects {
+      name = "test-2"
+      kind = "GROUP"
+    }
+  }
+}
+
 
 # Organization scoped Baseline Security Policy
 resource "tanzu-mission-control_security_policy" "organization_scoped_baseline_security_policy" {

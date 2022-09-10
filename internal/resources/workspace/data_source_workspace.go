@@ -28,7 +28,7 @@ func DataSourceWorkspace() *schema.Resource {
 func dataSourceWorkspaceRead(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	workspaceName, ok := d.Get(workspacesName).(string)
+	workspaceName, ok := d.Get(NameKey).(string)
 	if !ok {
 		return diag.Errorf("unable to read workspace name")
 	}
