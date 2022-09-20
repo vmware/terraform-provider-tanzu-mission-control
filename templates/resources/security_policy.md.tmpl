@@ -28,6 +28,10 @@ In the Tanzu Mission Control resource hierarchy, there are three levels at which
 
 In addition to the direct policy defined for a given object, each object has inherited policies described in the parent objects. For example, a cluster has a direct policy and inherited policies from the cluster group and organization to which it is attached.
 
+**Note:**
+The scope parameter is mandatory in the schema and the user needs to add one of the defined scopes to the script for the provider to function.
+Only one scope per resource is allowed.
+
 ## Managing Pod Security
 
 To use the **Tanzu Mission Control provider** for creating a security policy for an object, you must be associated with the `.admin` role for that object.
