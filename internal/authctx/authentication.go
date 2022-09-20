@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -49,16 +50,17 @@ func getBearerToken(cspEndpoint, cspToken string) (string, error) {
 		err  error
 	)
 
+	data := url.Values{}
+	data.Set("refresh_token", cspToken)
+	encodedToken := strings.NewReader(data.Encode())
+
 	for i := 0; i < 10; i++ {
 		resp, err = client.Post(
-			fmt.Sprintf(
-				"https://%s/csp/gateway/am/api/auth/api-tokens/authorize?refresh_token=%s",
-				cspEndpoint,
-				cspToken,
-			),
-			"application/json",
-			nil,
+			fmt.Sprintf("https://%s/csp/gateway/am/api/auth/api-tokens/authorize", cspEndpoint),
+			"application/x-www-form-urlencoded",
+			encodedToken,
 		)
+
 		if err == nil {
 			defer resp.Body.Close()
 			break
