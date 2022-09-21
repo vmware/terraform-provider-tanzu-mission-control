@@ -15,7 +15,8 @@ import (
 var organizationFullname = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "The schema for organization iam policy full name",
-	Required:    true,
+	Optional:    true,
+	ForceNew:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
