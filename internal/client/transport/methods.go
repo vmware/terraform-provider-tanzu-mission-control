@@ -8,7 +8,7 @@ package transport
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 
@@ -75,7 +75,7 @@ func (c *Client) invokeAction(httpMethodType string, url string, request Request
 		_ = resp.Body.Close()
 	}()
 
-	respBody, err := ioutil.ReadAll(resp.Body)
+	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return errors.Wrapf(err, "read %v response", httpMethodType)
 	}
@@ -104,7 +104,7 @@ func (c *Client) Delete(url string) error {
 		_ = resp.Body.Close()
 	}()
 
-	respBody, _ := ioutil.ReadAll(resp.Body)
+	respBody, _ := io.ReadAll(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		return clienterrors.ErrorWithHTTPCode(resp.StatusCode, errors.Errorf("delete request(%s) failed with status : %v, response: %v", url, resp.Status, string(respBody)))
@@ -125,7 +125,7 @@ func (c *Client) Get(url string, response Response) error {
 		_ = resp.Body.Close()
 	}()
 
-	respBody, err := ioutil.ReadAll(resp.Body)
+	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return errors.Wrap(err, "read response")
 	}

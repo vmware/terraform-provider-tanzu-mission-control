@@ -10,7 +10,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"time"
@@ -150,13 +149,13 @@ func (c *Client) Do(request *http.Request) (*http.Response, error) {
 	var bodyReader *bytes.Reader
 
 	if request.Body != nil {
-		reqData, err := ioutil.ReadAll(request.Body)
+		reqData, err := io.ReadAll(request.Body)
 		if err != nil {
 			return nil, err
 		}
 
 		bodyReader = bytes.NewReader(reqData)
-		request.Body = ioutil.NopCloser(bodyReader) // prevents closing the body between retries
+		request.Body = io.NopCloser(bodyReader) // prevents closing the body between retries
 	}
 
 	var (
