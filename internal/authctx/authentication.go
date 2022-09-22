@@ -8,7 +8,7 @@ package authctx
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"net/url"
@@ -84,7 +84,7 @@ func getBearerToken(cspEndpoint, cspToken string) (string, error) {
 		return "", err
 	}
 
-	respJSON, err := ioutil.ReadAll(resp.Body)
+	respJSON, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
