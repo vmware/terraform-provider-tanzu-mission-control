@@ -5,17 +5,15 @@ ifeq ($(VERSION_TAG),)
 	VERSION_TAG := $(shell git describe --dirty --first-parent --always --tags)
 endif
 
+GOARCH := $(shell go env GOARCH)
+GOOS := $(shell go env GOOS)
+
 default: build
 
 build:
 	go build -o bin/terraform-provider-tanzu-mission-control_$(VERSION_TAG)
-	mkdir -p ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/$(VERSION_TAG:v%=%)/darwin_amd64/
-	cp bin/terraform-provider-tanzu-mission-control_$(VERSION_TAG) ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/$(VERSION_TAG:v%=%)/darwin_amd64/
-
-build-arm:
-	go build -o bin/terraform-provider-tanzu-mission-control_$(VERSION_TAG)
-	mkdir -p ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/$(VERSION_TAG:v%=%)/darwin_arm64/
-	cp bin/terraform-provider-tanzu-mission-control_$(VERSION_TAG) ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/$(VERSION_TAG:v%=%)/darwin_arm64/
+	mkdir -p ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/$(VERSION_TAG:v%=%)/$(GOOS)_$(GOARCH)/
+	cp bin/terraform-provider-tanzu-mission-control_$(VERSION_TAG) ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/$(VERSION_TAG:v%=%)/$(GOOS)_$(GOARCH)/
 
 clean-up:
 	rm -rf ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/*
