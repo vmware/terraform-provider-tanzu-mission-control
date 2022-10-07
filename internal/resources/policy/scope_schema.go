@@ -3,7 +3,7 @@ Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package security
+package policy
 
 import (
 	"context"
@@ -19,9 +19,9 @@ import (
 )
 
 var (
-	scopeSchema = &schema.Schema{
+	ScopeSchema = &schema.Schema{
 		Type:        schema.TypeList,
-		Description: "Scope for the security policy, having one of the valid scopes: cluster, cluster_group or organization.",
+		Description: "Scope for the security and custom policy, having one of the valid scopes: cluster, cluster_group or organization.",
 		Required:    true,
 		ForceNew:    true,
 		MaxItems:    1,
@@ -34,22 +34,22 @@ var (
 			},
 		},
 	}
-	scopesAllowed = [...]string{clusterKey, clusterGroupKey, organizationKey}
+	ScopesAllowed = [...]string{clusterKey, clusterGroupKey, organizationKey}
 )
 
 type (
-	scope int64
+	Scope int64
 	// ScopedFullname is a struct for all types of policy full names.
-	scopedFullname struct {
-		scope                scope
-		fullnameCluster      *policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyFullName
-		fullnameClusterGroup *policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyFullName
-		fullnameOrganization *policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyFullName
+	ScopedFullname struct {
+		Scope                Scope
+		FullnameCluster      *policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyFullName
+		FullnameClusterGroup *policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyFullName
+		FullnameOrganization *policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyFullName
 	}
 )
 
-func constructScope(d *schema.ResourceData, name string) (scopedFullnameData *scopedFullname) {
-	value, ok := d.GetOk(scopeKey)
+func ConstructScope(d *schema.ResourceData, name string) (scopedFullnameData *ScopedFullname) {
+	value, ok := d.GetOk(ScopeKey)
 	if !ok {
 		return scopedFullnameData
 	}
@@ -64,27 +64,27 @@ func constructScope(d *schema.ResourceData, name string) (scopedFullnameData *sc
 
 	if v, ok := scopeData[clusterKey]; ok {
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
-			scopedFullnameData = &scopedFullname{
-				scope:           clusterScope,
-				fullnameCluster: scoperesource.ConstructClusterPolicyFullname(v1, name),
+			scopedFullnameData = &ScopedFullname{
+				Scope:           ClusterScope,
+				FullnameCluster: scoperesource.ConstructClusterPolicyFullname(v1, name),
 			}
 		}
 	}
 
 	if v, ok := scopeData[clusterGroupKey]; ok {
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
-			scopedFullnameData = &scopedFullname{
-				scope:                clusterGroupScope,
-				fullnameClusterGroup: scoperesource.ConstructClusterGroupPolicyFullname(v1, name),
+			scopedFullnameData = &ScopedFullname{
+				Scope:                ClusterGroupScope,
+				FullnameClusterGroup: scoperesource.ConstructClusterGroupPolicyFullname(v1, name),
 			}
 		}
 	}
 
 	if v, ok := scopeData[organizationKey]; ok {
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
-			scopedFullnameData = &scopedFullname{
-				scope:                organizationScope,
-				fullnameOrganization: scoperesource.ConstructOrganizationPolicyFullname(v1, name),
+			scopedFullnameData = &ScopedFullname{
+				Scope:                OrganizationScope,
+				FullnameOrganization: scoperesource.ConstructOrganizationPolicyFullname(v1, name),
 			}
 		}
 	}
@@ -92,32 +92,32 @@ func constructScope(d *schema.ResourceData, name string) (scopedFullnameData *sc
 	return scopedFullnameData
 }
 
-func flattenScope(scopedFullname *scopedFullname) (data []interface{}, name string) {
+func FlattenScope(scopedFullname *ScopedFullname) (data []interface{}, name string) {
 	if scopedFullname == nil {
 		return data, name
 	}
 
 	flattenScopeData := make(map[string]interface{})
 
-	switch scopedFullname.scope {
-	case clusterScope:
-		name = scopedFullname.fullnameCluster.Name
-		flattenScopeData[clusterKey] = scoperesource.FlattenClusterPolicyFullname(scopedFullname.fullnameCluster)
-	case clusterGroupScope:
-		name = scopedFullname.fullnameClusterGroup.Name
-		flattenScopeData[clusterGroupKey] = scoperesource.FlattenClusterGroupPolicyFullname(scopedFullname.fullnameClusterGroup)
-	case organizationScope:
-		name = scopedFullname.fullnameOrganization.Name
-		flattenScopeData[organizationKey] = scoperesource.FlattenOrganizationPolicyFullname(scopedFullname.fullnameOrganization)
-	case unknownScope:
-		fmt.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed[:], `, `))
+	switch scopedFullname.Scope {
+	case ClusterScope:
+		name = scopedFullname.FullnameCluster.Name
+		flattenScopeData[clusterKey] = scoperesource.FlattenClusterPolicyFullname(scopedFullname.FullnameCluster)
+	case ClusterGroupScope:
+		name = scopedFullname.FullnameClusterGroup.Name
+		flattenScopeData[clusterGroupKey] = scoperesource.FlattenClusterGroupPolicyFullname(scopedFullname.FullnameClusterGroup)
+	case OrganizationScope:
+		name = scopedFullname.FullnameOrganization.Name
+		flattenScopeData[organizationKey] = scoperesource.FlattenOrganizationPolicyFullname(scopedFullname.FullnameOrganization)
+	case UnknownScope:
+		fmt.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(ScopesAllowed[:], `, `))
 	}
 
 	return []interface{}{flattenScopeData}, name
 }
 
-func validateScope(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
-	value, ok := diff.GetOk(scopeKey)
+func ValidateScope(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
+	value, ok := diff.GetOk(ScopeKey)
 	if !ok {
 		return fmt.Errorf("scope: %v is not valid: minimum one valid scope block is required", value)
 	}
@@ -125,7 +125,7 @@ func validateScope(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 	data, _ := value.([]interface{})
 
 	if len(data) == 0 || data[0] == nil {
-		return fmt.Errorf("scope data: %v is not valid: minimum one valid scope block is required among: %v", data, strings.Join(scopesAllowed[:], `, `))
+		return fmt.Errorf("scope data: %v is not valid: minimum one valid scope block is required among: %v", data, strings.Join(ScopesAllowed[:], `, `))
 	}
 
 	scopeData := data[0].(map[string]interface{})
@@ -150,7 +150,7 @@ func validateScope(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 	}
 
 	if len(scopesFound) == 0 {
-		return fmt.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v", strings.Join(scopesAllowed[:], `, `))
+		return fmt.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v", strings.Join(ScopesAllowed[:], `, `))
 	} else if len(scopesFound) > 1 {
 		return fmt.Errorf("found scopes: %v are not valid: maximum one valid scope type block is allowed", strings.Join(scopesFound, `, `))
 	}
