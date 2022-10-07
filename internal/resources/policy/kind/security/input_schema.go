@@ -3,7 +3,7 @@ Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package security
+package policykindsecurity
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 
 	policyrecipesecuritymodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/security"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
-	reciperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/type/security/recipe"
+	reciperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security/recipe"
 )
 
 var (
@@ -33,14 +33,14 @@ var (
 			},
 		},
 	}
-	recipesAllowed = [...]string{reciperesource.BaselineKey, reciperesource.CustomKey, reciperesource.StrictKey}
+	RecipesAllowed = [...]string{reciperesource.BaselineKey, reciperesource.CustomKey, reciperesource.StrictKey}
 )
 
 type (
-	recipe string
+	Recipe string
 	// InputRecipe is a struct for all types of security policy inputs.
 	inputRecipe struct {
-		recipe        recipe
+		recipe        Recipe
 		inputBaseline *policyrecipesecuritymodel.VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1Baseline
 		inputCustom   *policyrecipesecuritymodel.VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1Custom
 		inputStrict   *policyrecipesecuritymodel.VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1Strict
@@ -57,7 +57,7 @@ func constructInput(data []interface{}) (inputRecipeData *inputRecipe) {
 	if v, ok := inputData[reciperesource.BaselineKey]; ok {
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
 			inputRecipeData = &inputRecipe{
-				recipe:        baselineRecipe,
+				recipe:        BaselineRecipe,
 				inputBaseline: reciperesource.ConstructBaseline(v1),
 			}
 		}
@@ -66,7 +66,7 @@ func constructInput(data []interface{}) (inputRecipeData *inputRecipe) {
 	if v, ok := inputData[reciperesource.CustomKey]; ok {
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
 			inputRecipeData = &inputRecipe{
-				recipe:      customRecipe,
+				recipe:      CustomRecipe,
 				inputCustom: reciperesource.ConstructCustom(v1),
 			}
 		}
@@ -75,7 +75,7 @@ func constructInput(data []interface{}) (inputRecipeData *inputRecipe) {
 	if v, ok := inputData[reciperesource.StrictKey]; ok {
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
 			inputRecipeData = &inputRecipe{
-				recipe:      strictRecipe,
+				recipe:      StrictRecipe,
 				inputStrict: reciperesource.ConstructStrict(v1),
 			}
 		}
@@ -92,20 +92,20 @@ func flattenInput(inputRecipeData *inputRecipe) (data []interface{}) {
 	flattenInputData := make(map[string]interface{})
 
 	switch inputRecipeData.recipe {
-	case baselineRecipe:
+	case BaselineRecipe:
 		flattenInputData[reciperesource.BaselineKey] = reciperesource.FlattenBaseline(inputRecipeData.inputBaseline)
-	case customRecipe:
+	case CustomRecipe:
 		flattenInputData[reciperesource.CustomKey] = reciperesource.FlattenCustom(inputRecipeData.inputCustom)
-	case strictRecipe:
+	case StrictRecipe:
 		flattenInputData[reciperesource.StrictKey] = reciperesource.FlattenStrict(inputRecipeData.inputStrict)
-	case unknownRecipe:
-		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(recipesAllowed[:], `, `))
+	case UnknownRecipe:
+		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(RecipesAllowed[:], `, `))
 	}
 
 	return []interface{}{flattenInputData}
 }
 
-func validateInput(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
+func ValidateInput(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
 	value, ok := diff.GetOk(policy.SpecKey)
 	if !ok {
 		return fmt.Errorf("spec: %v is not valid: minimum one valid spec block is required", value)
@@ -114,7 +114,7 @@ func validateInput(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 	data, _ := value.([]interface{})
 
 	if len(data) == 0 || data[0] == nil {
-		return fmt.Errorf("spec data: %v is not valid: minimum one valid spec block is required among: %v", data, strings.Join(recipesAllowed[:], `, `))
+		return fmt.Errorf("spec data: %v is not valid: minimum one valid spec block is required among: %v", data, strings.Join(RecipesAllowed[:], `, `))
 	}
 
 	specData := data[0].(map[string]interface{})
@@ -155,7 +155,7 @@ func validateInput(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 	}
 
 	if len(recipesFound) == 0 {
-		return fmt.Errorf("no valid input recipe block found: minimum one valid input recipe block is required among: %v", strings.Join(recipesAllowed[:], `, `))
+		return fmt.Errorf("no valid input recipe block found: minimum one valid input recipe block is required among: %v", strings.Join(RecipesAllowed[:], `, `))
 	} else if len(recipesFound) > 1 {
 		return fmt.Errorf("found input recipes: %v are not valid: maximum one valid input recipe block is allowed", strings.Join(recipesFound, `, `))
 	}
