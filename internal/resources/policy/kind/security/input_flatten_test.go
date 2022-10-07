@@ -3,7 +3,7 @@ Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package security
+package policykindsecurity
 
 import (
 	"testing"
@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	policyrecipesecuritymodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/security"
-	reciperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/type/security/recipe"
+	reciperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security/recipe"
 )
 
 func TestFlattenInput(t *testing.T) {
@@ -30,7 +30,7 @@ func TestFlattenInput(t *testing.T) {
 		{
 			description: "normal scenario with complete input",
 			input: &inputRecipe{
-				recipe: baselineRecipe,
+				recipe: BaselineRecipe,
 				inputBaseline: &policyrecipesecuritymodel.VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1Baseline{
 					Audit:            true,
 					DisableNativePsp: false,

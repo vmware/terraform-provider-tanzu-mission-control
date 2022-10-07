@@ -7,6 +7,7 @@ package recipe
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	policyrecipecustomcommonmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom/common"
 )
@@ -30,7 +31,13 @@ var targetKubernetesResources = &schema.Schema{
 				Description: "Kind is the name of the object schema (resource type).",
 				Required:    true,
 				MinItems:    1,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+					ValidateFunc: validation.All(
+						validation.StringIsNotEmpty,
+						validation.StringIsNotWhiteSpace,
+					),
+				},
 			},
 		},
 	},
@@ -51,7 +58,12 @@ func expandTargetKubernetesResources(data interface{}) (kubernetesResources *pol
 	if v, ok := kubernetesResourcesData[APIGroupsKey]; ok {
 		vs, _ := v.([]interface{})
 		for _, raw := range vs {
-			kubernetesResources.APIGroups = append(kubernetesResources.APIGroups, raw.(string))
+			var value string
+			if raw != nil {
+				value = raw.(string)
+			}
+
+			kubernetesResources.APIGroups = append(kubernetesResources.APIGroups, value)
 		}
 	}
 
