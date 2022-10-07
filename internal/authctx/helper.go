@@ -20,7 +20,7 @@ func ProviderAuthSchema() map[string]*schema.Schema {
 		endpoint: {
 			Type:        schema.TypeString,
 			Required:    true,
-			DefaultFunc: schema.EnvDefaultFunc(ServerEndpointEnvVar, nil),
+			DefaultFunc: schema.EnvDefaultFunc(ServerEndpointEnvVar, ""),
 		},
 		vmwCloudEndpoint: {
 			Type:        schema.TypeString,
@@ -31,7 +31,7 @@ func ProviderAuthSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Required:    true,
 			Sensitive:   true,
-			DefaultFunc: schema.EnvDefaultFunc(VMWCloudAPITokenEnvVar, nil),
+			DefaultFunc: schema.EnvDefaultFunc(VMWCloudAPITokenEnvVar, ""),
 		},
 		insecureAllowUnverifiedSSL: {
 			Type:        schema.TypeBool,

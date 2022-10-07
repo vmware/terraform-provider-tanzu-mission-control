@@ -24,8 +24,6 @@ import (
 	policyclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/cluster"
 	policyclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/clustergroup"
 	policyorganizationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/organization"
-	clusterresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
-	clustergroupresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 	scoperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
@@ -36,38 +34,7 @@ const (
 	securityPolicyResource    = policykindsecurity.ResourceName
 	securityPolicyResourceVar = "test_security_policy"
 	securityPolicyNamePrefix  = "tf-sp-test"
-
-	// Cluster.
-	clusterResource            = clusterresource.ResourceName
-	clusterResourceVar         = "test_cluster"
-	managementClusterName      = scoperesource.AttachedValue
-	provisionerName            = scoperesource.AttachedValue
-	clusterName                = "tf-attach-test"
-	clusterGroupNameForCluster = "default"
-
-	// ClusterGroup.
-	clusterGroupResource    = clustergroupresource.ResourceName
-	clusterGroupResourceVar = "test_cluster_group"
-	clusterGroupNamePrefix  = "tf-cg-test"
 )
-
-type Cluster struct {
-	Resource              string
-	ResourceVar           string
-	ResourceName          string
-	KubeConfigPath        string
-	Name                  string
-	ClusterGroupName      string
-	ManagementClusterName string
-	ProvisionerName       string
-}
-
-type ClusterGroup struct {
-	ResourceName string
-	Resource     string
-	ResourceVar  string
-	Name         string
-}
 
 type testAcceptanceConfig struct {
 	Provider                   *schema.Provider
@@ -75,10 +42,7 @@ type testAcceptanceConfig struct {
 	SecurityPolicyResourceVar  string
 	SecurityPolicyResourceName string
 	SecurityPolicyName         string
-	Meta                       string
-	Cluster                    *Cluster
-	ClusterGroup               *ClusterGroup
-	OrgID                      string
+	ScopeHelperResources       *policy.ScopeHelperResources
 }
 
 func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
@@ -88,24 +52,7 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 		SecurityPolicyResourceVar:  securityPolicyResourceVar,
 		SecurityPolicyResourceName: fmt.Sprintf("%s.%s", securityPolicyResource, securityPolicyResourceVar),
 		SecurityPolicyName:         acctest.RandomWithPrefix(securityPolicyNamePrefix),
-		Meta:                       testhelper.MetaTemplate,
-		Cluster: &Cluster{
-			Resource:              clusterResource,
-			ResourceVar:           clusterResourceVar,
-			ResourceName:          fmt.Sprintf("%s.%s", clusterResource, clusterResourceVar),
-			KubeConfigPath:        os.Getenv("KUBECONFIG"),
-			Name:                  clusterName,
-			ClusterGroupName:      clusterGroupNameForCluster,
-			ManagementClusterName: managementClusterName,
-			ProvisionerName:       provisionerName,
-		},
-		ClusterGroup: &ClusterGroup{
-			ResourceName: fmt.Sprintf("%s.%s", clusterGroupResource, clusterGroupResourceVar),
-			Resource:     clusterGroupResource,
-			ResourceVar:  clusterGroupResourceVar,
-			Name:         acctest.RandomWithPrefix(clusterGroupNamePrefix),
-		},
-		OrgID: os.Getenv("ORG_ID"),
+		ScopeHelperResources:       policy.NewScopeHelperResources(),
 	}
 }
 
@@ -122,7 +69,7 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
-					if testConfig.Cluster.KubeConfigPath == "" {
+					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped security policy acceptance test")
 					}
 				},
@@ -135,7 +82,7 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 			},
 			{
 				PreConfig: func() {
-					if testConfig.OrgID == "" {
+					if testConfig.ScopeHelperResources.OrgID == "" {
 						t.Skip("ORG_ID env var is not set for organization scoped security policy acceptance test")
 					}
 				},
@@ -157,7 +104,7 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
-					if testConfig.Cluster.KubeConfigPath == "" {
+					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped security policy acceptance test")
 					}
 				},
@@ -170,7 +117,7 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 			},
 			{
 				PreConfig: func() {
-					if testConfig.OrgID == "" {
+					if testConfig.ScopeHelperResources.OrgID == "" {
 						t.Skip("ORG_ID env var is not set for organization scoped security policy acceptance test")
 					}
 				},
@@ -192,7 +139,7 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
-					if testConfig.Cluster.KubeConfigPath == "" {
+					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped security policy acceptance test")
 					}
 				},
@@ -205,7 +152,7 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 			},
 			{
 				PreConfig: func() {
-					if testConfig.OrgID == "" {
+					if testConfig.ScopeHelperResources.OrgID == "" {
 						t.Skip("ORG_ID env var is not set for organization scoped security policy acceptance test")
 					}
 				},
@@ -221,80 +168,43 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 }
 
 func (testConfig *testAcceptanceConfig) getTestSecurityPolicyResourceBasicConfigValue(scope policy.Scope, recipe policykindsecurity.Recipe) string {
-	helperBlock, scopeBlock, inputBlock := testConfig.getTestSecurityPolicyResourceHelperScopeAndInput(scope, recipe)
+	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope)
+	inputBlock := testConfig.getTestSecurityPolicyResourceInput(recipe)
 
 	return fmt.Sprintf(`
-%s
-
-resource "%s" "%s" {
-  name = "%s"
-
-  %s
-
-  spec {
-    %s
-
-    namespace_selector {
-      match_expressions {
-        key      = "component"
-        operator = "NotIn"
-        values   = [
-          "api-server",
-          "agent-gateway"
-        ]
-      }
-      match_expressions {
-        key      = "not-a-component"
-        operator = "DoesNotExist"
-        values   = []
-      }
-    }
-  }
+	%s
+	
+	resource "%s" "%s" {
+	 name = "%s"
+	
+	 %s
+	
+	 spec {
+	   %s
+	
+	   namespace_selector {
+	     match_expressions {
+	       key      = "component"
+	       operator = "NotIn"
+	       values   = [
+	         "api-server",
+	         "agent-gateway"
+	       ]
+	     }
+	     match_expressions {
+	       key      = "not-a-component"
+	       operator = "DoesNotExist"
+	       values   = []
+	     }
+	   }
+	 }
+	}
+	`, helperBlock, testConfig.SecurityPolicyResource, testConfig.SecurityPolicyResourceVar, testConfig.SecurityPolicyName, scopeBlock, inputBlock)
 }
-`, helperBlock, testConfig.SecurityPolicyResource, testConfig.SecurityPolicyResourceVar, testConfig.SecurityPolicyName, scopeBlock, inputBlock)
-}
 
-// getTestSecurityPolicyResourceHelperScopeAndInput builds the helper resource, scope and the input blocks for security policy resource based on a scope type and a recipe.
-func (testConfig *testAcceptanceConfig) getTestSecurityPolicyResourceHelperScopeAndInput(scope policy.Scope, recipe policykindsecurity.Recipe) (string, string, string) {
-	var (
-		helperBlock string
-		scopeBlock  string
-		inputBlock  string
-	)
-
-	switch scope {
-	case policy.ClusterScope:
-		helperBlock = testConfig.getTestResourceClusterConfigValue()
-		scopeBlock = fmt.Sprintf(`
-  scope {
-    cluster {
-      management_cluster_name = %[1]s.management_cluster_name
-	  provisioner_name        = %[1]s.provisioner_name
-	  name                    = %[1]s.name
-	}
-  }
-`, testConfig.Cluster.ResourceName)
-	case policy.ClusterGroupScope:
-		helperBlock = testConfig.getTestResourceClusterGroupConfigValue()
-		scopeBlock = fmt.Sprintf(`
-  scope {
-    cluster_group {
-      cluster_group = %s.name
-	}
-  }
-`, testConfig.ClusterGroup.ResourceName)
-	case policy.OrganizationScope:
-		helperBlock = ""
-		scopeBlock = fmt.Sprintf(`
-  scope {
-    organization {
-      organization = "%s"
-	}
-  }
-`, testConfig.OrgID)
-	case policy.UnknownScope:
-		log.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(policy.ScopesAllowed[:], `, `))
-	}
+// getTestSecurityPolicyResourceInput builds the input block for security policy resource based a recipe.
+func (testConfig *testAcceptanceConfig) getTestSecurityPolicyResourceInput(recipe policykindsecurity.Recipe) string {
+	var inputBlock string
 
 	switch recipe {
 	case policykindsecurity.BaselineRecipe:
@@ -443,39 +353,7 @@ func (testConfig *testAcceptanceConfig) getTestSecurityPolicyResourceHelperScope
 		log.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(policykindsecurity.RecipesAllowed[:], `, `))
 	}
 
-	return helperBlock, scopeBlock, inputBlock
-}
-
-func (testConfig *testAcceptanceConfig) getTestResourceClusterConfigValue() string {
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  management_cluster_name = "%s"
-  provisioner_name        = "%s"
-  name                    = "%s"
-
-  %s
-
-  attach_k8s_cluster {
-    kubeconfig_file = "%s"
-  }
- 
-  spec {
-    cluster_group = "%s"
-  }
-
-  ready_wait_timeout      = "3m"
-}
-`, testConfig.Cluster.Resource, testConfig.Cluster.ResourceVar, testConfig.Cluster.ManagementClusterName, testConfig.Cluster.ProvisionerName, testConfig.Cluster.Name, testConfig.Meta, testConfig.Cluster.KubeConfigPath, testConfig.Cluster.ClusterGroupName)
-}
-
-func (testConfig *testAcceptanceConfig) getTestResourceClusterGroupConfigValue() string {
-	return fmt.Sprintf(`
-resource "%s" "%s" {
-  name = "%s"
-
-  %s
-}
-`, testConfig.ClusterGroup.Resource, testConfig.ClusterGroup.ResourceVar, testConfig.ClusterGroup.Name, testConfig.Meta)
+	return inputBlock
 }
 
 // checkSecurityPolicyResourceAttributes checks for security policy creation along with meta attributes.
@@ -487,11 +365,11 @@ func (testConfig *testAcceptanceConfig) checkSecurityPolicyResourceAttributes(sc
 
 	switch scope {
 	case policy.ClusterScope:
-		check = append(check, resource.TestCheckResourceAttr(testConfig.SecurityPolicyResourceName, "scope.0.cluster.0.name", testConfig.Cluster.Name))
+		check = append(check, resource.TestCheckResourceAttr(testConfig.SecurityPolicyResourceName, "scope.0.cluster.0.name", testConfig.ScopeHelperResources.Cluster.Name))
 	case policy.ClusterGroupScope:
-		check = append(check, resource.TestCheckResourceAttr(testConfig.SecurityPolicyResourceName, "scope.0.cluster_group.0.cluster_group", testConfig.ClusterGroup.Name))
+		check = append(check, resource.TestCheckResourceAttr(testConfig.SecurityPolicyResourceName, "scope.0.cluster_group.0.cluster_group", testConfig.ScopeHelperResources.ClusterGroup.Name))
 	case policy.OrganizationScope:
-		check = append(check, resource.TestCheckResourceAttr(testConfig.SecurityPolicyResourceName, "scope.0.organization.0.organization", testConfig.OrgID))
+		check = append(check, resource.TestCheckResourceAttr(testConfig.SecurityPolicyResourceName, "scope.0.organization.0.organization", testConfig.ScopeHelperResources.OrgID))
 	case policy.UnknownScope:
 		log.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(policy.ScopesAllowed[:], `, `))
 	}
@@ -531,7 +409,7 @@ func (testConfig *testAcceptanceConfig) verifySecurityPolicyResourceCreation(sco
 		switch scope {
 		case policy.ClusterScope:
 			fn := &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyFullName{
-				ClusterName:           testConfig.Cluster.Name,
+				ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 				ManagementClusterName: scoperesource.AttachedValue,
 				Name:                  testConfig.SecurityPolicyName,
 				ProvisionerName:       scoperesource.AttachedValue,
@@ -547,7 +425,7 @@ func (testConfig *testAcceptanceConfig) verifySecurityPolicyResourceCreation(sco
 			}
 		case policy.ClusterGroupScope:
 			fn := &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyFullName{
-				ClusterGroupName: testConfig.ClusterGroup.Name,
+				ClusterGroupName: testConfig.ScopeHelperResources.ClusterGroup.Name,
 				Name:             testConfig.SecurityPolicyName,
 			}
 
@@ -561,7 +439,7 @@ func (testConfig *testAcceptanceConfig) verifySecurityPolicyResourceCreation(sco
 			}
 		case policy.OrganizationScope:
 			fn := &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyFullName{
-				OrgID: testConfig.OrgID,
+				OrgID: testConfig.ScopeHelperResources.OrgID,
 				Name:  testConfig.SecurityPolicyName,
 			}
 

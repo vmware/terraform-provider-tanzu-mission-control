@@ -36,14 +36,14 @@ var (
 			},
 		},
 	}
-	recipesAllowed = [...]string{reciperesource.TMCBlockNodeportServiceKey, reciperesource.TMCBlockResourcesKey, reciperesource.TMCBlockRolebindingSubjectsKey, reciperesource.TMCExternalIPSKey, reciperesource.TMCHTTPSIngressKey, reciperesource.TMCRequireLabelsKey}
+	RecipesAllowed = [...]string{reciperesource.TMCBlockNodeportServiceKey, reciperesource.TMCBlockResourcesKey, reciperesource.TMCBlockRolebindingSubjectsKey, reciperesource.TMCExternalIPSKey, reciperesource.TMCHTTPSIngressKey, reciperesource.TMCRequireLabelsKey}
 )
 
 type (
-	recipe string
+	Recipe string
 	// InputRecipe is a struct for all types of custom policy inputs.
 	inputRecipe struct {
-		recipe                           recipe
+		recipe                           Recipe
 		inputTMCBlockNodeportService     *policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCCommonRecipe
 		inputTMCBlockResources           *policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCCommonRecipe
 		inputTMCBlockRolebindingSubjects *policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjects
@@ -63,7 +63,7 @@ func constructInput(data []interface{}) (inputRecipeData *inputRecipe) {
 	if input, ok := inputData[reciperesource.TMCBlockNodeportServiceKey]; ok {
 		if recipeType, ok := input.([]interface{}); ok && len(recipeType) != 0 {
 			inputRecipeData = &inputRecipe{
-				recipe:                       tmcBlockNodeportServiceRecipe,
+				recipe:                       TMCBlockNodeportServiceRecipe,
 				inputTMCBlockNodeportService: reciperesource.ConstructTMCCommonRecipe(recipeType),
 			}
 		}
@@ -72,7 +72,7 @@ func constructInput(data []interface{}) (inputRecipeData *inputRecipe) {
 	if input, ok := inputData[reciperesource.TMCBlockResourcesKey]; ok {
 		if recipeType, ok := input.([]interface{}); ok && len(recipeType) != 0 {
 			inputRecipeData = &inputRecipe{
-				recipe:                 tmcBlockResourcesRecipe,
+				recipe:                 TMCBlockResourcesRecipe,
 				inputTMCBlockResources: reciperesource.ConstructTMCCommonRecipe(recipeType),
 			}
 		}
@@ -81,7 +81,7 @@ func constructInput(data []interface{}) (inputRecipeData *inputRecipe) {
 	if input, ok := inputData[reciperesource.TMCBlockRolebindingSubjectsKey]; ok {
 		if recipeType, ok := input.([]interface{}); ok && len(recipeType) != 0 {
 			inputRecipeData = &inputRecipe{
-				recipe:                           tmcBlockRolebindingSubjectsRecipe,
+				recipe:                           TMCBlockRolebindingSubjectsRecipe,
 				inputTMCBlockRolebindingSubjects: reciperesource.ConstructTMCBlockRolebindingSubjects(recipeType),
 			}
 		}
@@ -90,7 +90,7 @@ func constructInput(data []interface{}) (inputRecipeData *inputRecipe) {
 	if input, ok := inputData[reciperesource.TMCExternalIPSKey]; ok {
 		if recipeType, ok := input.([]interface{}); ok && len(recipeType) != 0 {
 			inputRecipeData = &inputRecipe{
-				recipe:              tmcExternalIPSRecipe,
+				recipe:              TMCExternalIPSRecipe,
 				inputTMCExternalIps: reciperesource.ConstructTMCExternalIPS(recipeType),
 			}
 		}
@@ -99,7 +99,7 @@ func constructInput(data []interface{}) (inputRecipeData *inputRecipe) {
 	if input, ok := inputData[reciperesource.TMCHTTPSIngressKey]; ok {
 		if recipeType, ok := input.([]interface{}); ok && len(recipeType) != 0 {
 			inputRecipeData = &inputRecipe{
-				recipe:               tmcHTTPSIngressRecipe,
+				recipe:               TMCHTTPSIngressRecipe,
 				inputTMCHTTPSIngress: reciperesource.ConstructTMCCommonRecipe(recipeType),
 			}
 		}
@@ -108,7 +108,7 @@ func constructInput(data []interface{}) (inputRecipeData *inputRecipe) {
 	if input, ok := inputData[reciperesource.TMCRequireLabelsKey]; ok {
 		if recipeType, ok := input.([]interface{}); ok && len(recipeType) != 0 {
 			inputRecipeData = &inputRecipe{
-				recipe:                tmcRequireLabelsRecipe,
+				recipe:                TMCRequireLabelsRecipe,
 				inputTMCRequireLabels: reciperesource.ConstructTMCRequireLabels(recipeType),
 			}
 		}
@@ -125,20 +125,21 @@ func flattenInput(inputRecipeData *inputRecipe) (data []interface{}) {
 	flattenInputData := make(map[string]interface{})
 
 	switch inputRecipeData.recipe {
-	case tmcBlockNodeportServiceRecipe:
+	case TMCBlockNodeportServiceRecipe:
 		flattenInputData[reciperesource.TMCBlockNodeportServiceKey] = reciperesource.FlattenTMCCommonRecipe(inputRecipeData.inputTMCBlockNodeportService)
-	case tmcBlockResourcesRecipe:
+	case TMCBlockResourcesRecipe:
 		flattenInputData[reciperesource.TMCBlockResourcesKey] = reciperesource.FlattenTMCCommonRecipe(inputRecipeData.inputTMCBlockResources)
-	case tmcBlockRolebindingSubjectsRecipe:
+	case TMCBlockRolebindingSubjectsRecipe:
 		flattenInputData[reciperesource.TMCBlockRolebindingSubjectsKey] = reciperesource.FlattenTMCBlockRolebindingSubjects(inputRecipeData.inputTMCBlockRolebindingSubjects)
-	case tmcExternalIPSRecipe:
+	case TMCExternalIPSRecipe:
 		flattenInputData[reciperesource.TMCExternalIPSKey] = reciperesource.FlattenTMCExternalIPS(inputRecipeData.inputTMCExternalIps)
-	case tmcHTTPSIngressRecipe:
+	case TMCHTTPSIngressRecipe:
 		flattenInputData[reciperesource.TMCHTTPSIngressKey] = reciperesource.FlattenTMCCommonRecipe(inputRecipeData.inputTMCHTTPSIngress)
-	case tmcRequireLabelsRecipe:
+	case TMCRequireLabelsRecipe:
 		flattenInputData[reciperesource.TMCRequireLabelsKey] = reciperesource.FlattenTMCRequireLabels(inputRecipeData.inputTMCRequireLabels)
-	case unknownRecipe:
-		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(recipesAllowed[:], `, `))
+
+	case UnknownRecipe:
+		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(RecipesAllowed[:], `, `))
 	}
 
 	return []interface{}{flattenInputData}
@@ -153,7 +154,7 @@ func ValidateInput(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 	data, _ := value.([]interface{})
 
 	if len(data) == 0 || data[0] == nil {
-		return fmt.Errorf("spec data: %v is not valid: minimum one valid spec block is required among: %v", data, strings.Join(recipesAllowed[:], `, `))
+		return fmt.Errorf("spec data: %v is not valid: minimum one valid spec block is required among: %v", data, strings.Join(RecipesAllowed[:], `, `))
 	}
 
 	specData := data[0].(map[string]interface{})
@@ -212,7 +213,7 @@ func ValidateInput(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 	}
 
 	if len(recipesFound) == 0 {
-		return fmt.Errorf("no valid input recipe block found: minimum one valid input recipe block is required among: %v", strings.Join(recipesAllowed[:], `, `))
+		return fmt.Errorf("no valid input recipe block found: minimum one valid input recipe block is required among: %v", strings.Join(RecipesAllowed[:], `, `))
 	} else if len(recipesFound) > 1 {
 		return fmt.Errorf("found input recipes: %v are not valid: maximum one valid input recipe block is allowed", strings.Join(recipesFound, `, `))
 	}

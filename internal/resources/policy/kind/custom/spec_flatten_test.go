@@ -52,7 +52,7 @@ func TestFlattenSpec(t *testing.T) {
 						},
 					},
 				},
-				Recipe: string(tmcHTTPSIngressRecipe),
+				Recipe: string(TMCHTTPSIngressRecipe),
 			},
 			expected: []interface{}{
 				map[string]interface{}{
