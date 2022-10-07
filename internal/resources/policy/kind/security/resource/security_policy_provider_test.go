@@ -3,7 +3,7 @@ Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package security
+package securitypolicyresource
 
 import (
 	"testing"
@@ -14,15 +14,16 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
+	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 )
 
 func initTestProvider(t *testing.T) *schema.Provider {
 	testAccProvider := &schema.Provider{
 		Schema: authctx.ProviderAuthSchema(),
 		ResourcesMap: map[string]*schema.Resource{
-			ResourceName:              ResourceSecurityPolicy(),
-			cluster.ResourceName:      cluster.ResourceTMCCluster(),
-			clustergroup.ResourceName: clustergroup.ResourceClusterGroup(),
+			policykindsecurity.ResourceName: ResourceSecurityPolicy(),
+			cluster.ResourceName:            cluster.ResourceTMCCluster(),
+			clustergroup.ResourceName:       clustergroup.ResourceClusterGroup(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
