@@ -211,8 +211,8 @@ resource "tanzu-mission-control_iam_policy" "namespace_scoped_iam_policy" {
 
 ### Required
 
-- `scope` (Block List, Min: 1, Max: 1) Scope of the resource on which the rolebinding has to be added, having one of the valid scopes: organization, cluster_group, cluster, workspace or namespace. (see [below for nested schema](#nestedblock--scope))
 - `role_bindings` (Block List, Min: 1) List of role bindings associated with the policy (see [below for nested schema](#nestedblock--role_bindings))
+- `scope` (Block List, Min: 1, Max: 1) Scope of the resource on which the rolebinding has to be added, having one of the valid scopes: organization, cluster_group, cluster, workspace or namespace. (see [below for nested schema](#nestedblock--scope))
 
 ### Optional
 
@@ -221,6 +221,24 @@ resource "tanzu-mission-control_iam_policy" "namespace_scoped_iam_policy" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--role_bindings"></a>
+### Nested Schema for `role_bindings`
+
+Required:
+
+- `role` (String) Role for this rolebinding: max length for a role is 126 characters.
+- `subjects` (Block List, Min: 1) Subject for this rolebinding. (see [below for nested schema](#nestedblock--role_bindings--subjects))
+
+<a id="nestedblock--role_bindings--subjects"></a>
+### Nested Schema for `role_bindings.subjects`
+
+Required:
+
+- `kind` (String) Subject type, having one of the subject types: USER or GROUP
+- `name` (String) Subject name: allow max characters for email - 320 characters.
+
+
 
 <a id="nestedblock--scope"></a>
 ### Nested Schema for `scope`
@@ -283,32 +301,18 @@ Required:
 
 - `name` (String) Name of the workspace
 
-<a id="nestedblock--role_bindings"></a>
-### Nested Schema for `role_bindings`
 
-Required:
-
-- `role` (String) Role for this rolebinding: max length for a role is 126 characters.
-- `subjects` (Block List, Min: 1) Subject for this rolebinding. (see [below for nested schema](#nestedblock--role_bindings--subjects))
-
-<a id="nestedblock--role_bindings--subjects"></a>
-### Nested Schema for `role_bindings.subjects`
-
-Required:
-
-- `name` (String) Subject name: allow max characters for email - 320 characters.
-- `kind` (String) Subject type, having one of the subject types: USER or GROUP
 
 <a id="nestedblock--meta"></a>
 ### Nested Schema for `meta`
 
 Optional:
 
+- `annotations` (Map of String) Annotations for the resource
 - `description` (String) Description of the resource
 - `labels` (Map of String) Labels for the resource
 
 Read-Only:
 
-- `annotations` (Map of String) Annotations for the resource
 - `resource_version` (String) Resource version of the resource
 - `uid` (String) UID of the resource

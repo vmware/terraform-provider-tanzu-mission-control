@@ -1,0 +1,146 @@
+---
+Title: "Custom Policy Resource"
+Description: |-
+    Creating the Tanzu Kubernetes custom policy resource.
+---
+
+# Custom Policy
+
+The `tanzu-mission-control_custom_policy` resource enables you to attach a custom policy with an input recipe to a particular scope for management through Tanzu Mission Control.
+Custom policies allow you to implement additional business rules, using templates that you define, to enforce policies that are not already addressed using the other built-in policy types.
+For more information, see [Creating Customized Policies][create-customized-policies] using VMware Tanzu Mission Control.
+
+[create-customized-policies]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-1FF7A1E5-8456-4EF4-A532-9CF31BE88EAA.html
+
+## Input Recipe
+
+In the Tanzu Mission Control custom policy resource, there are six system defined types of custom templates that you can use:
+- **tmc-block-nodeport-service**
+- **tmc_block_resources**
+- **tmc_block_rolebinding_subjects**
+- **tmc_external_ips**
+- **tmc_https_ingress**
+- **tmc_require_labels**
+
+## Policy Scope and Inheritance
+
+In the Tanzu Mission Control resource hierarchy, there are three levels at which you can specify custom policy resources:
+- **organization** - `organization` block under `scope` sub-resource
+- **object groups** - `cluster_group` block under `scope` sub-resource
+- **Kubernetes objects** - `cluster` block under `scope` sub-resource
+
+In addition to the direct policy defined for a given object, each object has inherited policies described in the parent objects. For example, a cluster has a direct policy and inherited policies from the cluster group and organization to which it is attached.
+
+**Note:**
+The scope parameter is mandatory in the schema and the user needs to add one of the defined scopes to the script for the provider to function.
+Only one scope per resource is allowed.
+
+## Cluster scoped TMC-block-nodeport-service Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_cluster_tmc_block_nodeport_service_custom_policy.tf" }}
+
+## Cluster scoped TMC-block-resources Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_cluster_tmc_block_resources_custom_policy.tf" }}
+
+## Cluster scoped TMC-block-rolebinding-subjects Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_cluster_tmc_block_rolebinding_subjects_custom_policy.tf" }}
+
+## Cluster scoped TMC-external-ips Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_cluster_tmc_external_ips_custom_policy.tf" }}
+
+## Cluster scoped TMC-https-ingress Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_cluster_tmc_https_ingress_custom_policy.tf" }}
+
+## Cluster scoped TMC-require-labels Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_cluster_tmc_require_labels_custom_policy.tf" }}
+
+## Cluster group scoped TMC-block-nodeport-service Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_cluster_group_tmc_block_nodeport_service_custom_policy.tf" }}
+
+## Cluster group scoped TMC-block-resources Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_cluster_group_tmc_block_resources_custom_policy.tf" }}
+
+## Cluster group scoped TMC-block-rolebinding-subjects Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_cluster_group_tmc_block_rolebinding_subjects_custom_policy.tf" }}
+
+## Cluster group scoped TMC-external-ips Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_cluster_group_tmc_external_ips_custom_policy.tf" }}
+
+## Cluster group scoped TMC-https-ingress Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_cluster_group_tmc_https_ingress_custom_policy.tf" }}
+
+## Cluster group scoped TMC-require-labels Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_cluster_group_tmc_require_labels_custom_policy.tf" }}
+
+## Organization scoped TMC-block-nodeport-service Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_organization_tmc_block_nodeport_service_custom_policy.tf" }}
+
+## Organization scoped TMC-block-resources Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_organization_tmc_block_resources_custom_policy.tf" }}
+
+## Organization scoped TMC-block-rolebinding-subjects Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_organization_tmc_block_rolebinding_subjects_custom_policy.tf" }}
+
+## Organization scoped TMC-external-ips Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_organization_tmc_external_ips_custom_policy.tf" }}
+
+## Organization scoped TMC-https-ingress Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_organization_tmc_https_ingress_custom_policy.tf" }}
+
+## Organization scoped TMC-require-labels Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_organization_tmc_require_labels_custom_policy.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}

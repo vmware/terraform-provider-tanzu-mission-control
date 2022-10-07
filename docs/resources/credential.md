@@ -239,6 +239,8 @@ Optional:
 - `arn` (String) AWS IAM role ARN
 - `ext_id` (String) An external ID used to assume an AWS IAM role
 
+
+
 <a id="nestedblock--spec--data--key_value"></a>
 ### Nested Schema for `spec.data.key_value`
 
