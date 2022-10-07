@@ -117,7 +117,7 @@ resource "tanzu-mission-control_security_policy" "cluster_scoped_custom_security
           max = 5000
         }
 
-        allowed_volumes              = [
+        allowed_volumes = [
           "configMap",
           "nfs",
           "vsphereVolume"
@@ -176,7 +176,7 @@ resource "tanzu-mission-control_security_policy" "cluster_scoped_custom_security
         }
 
         linux_capabilities {
-          allowed_capabilities       = [
+          allowed_capabilities = [
             "CHOWN",
             "IPC_LOCK"
           ]
@@ -187,15 +187,15 @@ resource "tanzu-mission-control_security_policy" "cluster_scoped_custom_security
 
         allowed_host_paths {
           path_prefix = "p1"
-          read_only  = true
+          read_only   = true
         }
         allowed_host_paths {
           path_prefix = "p2"
-          read_only  = false
+          read_only   = false
         }
         allowed_host_paths {
           path_prefix = "p3"
-          read_only  = true
+          read_only   = true
         }
 
         allowed_se_linux_options {
@@ -213,7 +213,7 @@ resource "tanzu-mission-control_security_policy" "cluster_scoped_custom_security
         }
 
         seccomp {
-          allowed_profiles        = [
+          allowed_profiles = [
             "Localhost"
           ]
           allowed_localhost_files = [
@@ -261,7 +261,7 @@ resource "tanzu-mission-control_security_policy" "cluster_scoped_strict_security
       match_expressions {
         key      = "component"
         operator = "NotIn"
-        values   = [
+        values = [
           "api-server",
           "agent-gateway"
         ]
@@ -308,7 +308,7 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_baseline_
       match_expressions {
         key      = "component"
         operator = "In"
-        values   = [
+        values = [
           "api-server",
           "agent-gateway"
         ]
@@ -359,7 +359,7 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_se
           max = 5000
         }
 
-        allowed_volumes              = [
+        allowed_volumes = [
           "configMap",
           "nfs",
           "vsphereVolume"
@@ -418,7 +418,7 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_se
         }
 
         linux_capabilities {
-          allowed_capabilities       = [
+          allowed_capabilities = [
             "CHOWN",
             "IPC_LOCK"
           ]
@@ -429,15 +429,15 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_se
 
         allowed_host_paths {
           path_prefix = "p1"
-          read_only  = true
+          read_only   = true
         }
         allowed_host_paths {
           path_prefix = "p2"
-          read_only  = false
+          read_only   = false
         }
         allowed_host_paths {
           path_prefix = "p3"
-          read_only  = true
+          read_only   = true
         }
 
         allowed_se_linux_options {
@@ -455,8 +455,8 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_se
         }
 
         seccomp {
-          allowed_profiles        = [
-          "Localhost"
+          allowed_profiles = [
+            "Localhost"
           ]
           allowed_localhost_files = [
             "profiles/audit.json",
@@ -470,7 +470,7 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_se
       match_expressions {
         key      = "component"
         operator = "In"
-        values   = [
+        values = [
           "api-server",
           "agent-gateway"
         ]
@@ -583,7 +583,7 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_custom_sec
           max = 5000
         }
 
-        allowed_volumes              = [
+        allowed_volumes = [
           "configMap",
           "nfs",
           "vsphereVolume"
@@ -642,7 +642,7 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_custom_sec
         }
 
         linux_capabilities {
-          allowed_capabilities       = [
+          allowed_capabilities = [
             "CHOWN",
             "IPC_LOCK"
           ]
@@ -653,15 +653,15 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_custom_sec
 
         allowed_host_paths {
           path_prefix = "p1"
-          read_only  = true
+          read_only   = true
         }
         allowed_host_paths {
           path_prefix = "p2"
-          read_only  = false
+          read_only   = false
         }
         allowed_host_paths {
           path_prefix = "p3"
-          read_only  = true
+          read_only   = true
         }
 
         allowed_se_linux_options {
@@ -679,7 +679,7 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_custom_sec
         }
 
         seccomp {
-          allowed_profiles        = [
+          allowed_profiles = [
             "Localhost"
           ]
           allowed_localhost_files = [
@@ -694,7 +694,7 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_custom_sec
       match_expressions {
         key      = "component"
         operator = "In"
-        values   = [
+        values = [
           "api-server",
           "agent-gateway"
         ]
@@ -741,7 +741,7 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_strict_sec
       match_expressions {
         key      = "component"
         operator = "In"
-        values   = [
+        values = [
           "api-server",
           "agent-gateway"
         ]
@@ -757,7 +757,7 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_strict_sec
 ### Required
 
 - `name` (String) Name of the security policy
-- `scope` (Block List, Min: 1, Max: 1) Scope for the security policy, having one of the valid scopes: cluster, cluster_group or organization. (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the security and custom policy, having one of the valid scopes: cluster, cluster_group or organization. (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Spec for the security policy (see [below for nested schema](#nestedblock--spec))
 
 ### Optional
@@ -1025,11 +1025,11 @@ Optional:
 
 Optional:
 
+- `annotations` (Map of String) Annotations for the resource
 - `description` (String) Description of the resource
 - `labels` (Map of String) Labels for the resource
 
 Read-Only:
 
-- `annotations` (Map of String) Annotations for the resource
 - `resource_version` (String) Resource version of the resource
 - `uid` (String) UID of the resource

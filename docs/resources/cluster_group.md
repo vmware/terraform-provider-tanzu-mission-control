@@ -41,23 +41,26 @@ resource "tanzu-mission-control_cluster_group" "create_cluster_group_min_info" {
 
 ### Required
 
-- **name** (String)
+- `name` (String)
 
 ### Optional
 
-- **id** (String) The ID of this resource.
-- **meta** (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
+- `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
+
+### Read-Only
+
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--meta"></a>
 ### Nested Schema for `meta`
 
 Optional:
 
-- **description** (String) Description of the resource
-- **labels** (Map of String) Labels for the resource
+- `annotations` (Map of String) Annotations for the resource
+- `description` (String) Description of the resource
+- `labels` (Map of String) Labels for the resource
 
 Read-Only:
 
-- **annotations** (Map of String) Annotations for the resource
-- **resource_version** (String) Resource version of the resource
-- **uid** (String) UID of the resource
+- `resource_version` (String) Resource version of the resource
+- `uid` (String) UID of the resource

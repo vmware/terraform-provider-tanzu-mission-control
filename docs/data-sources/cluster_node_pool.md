@@ -28,34 +28,34 @@ data "tanzu-mission-control_cluster_node_pool" "read_node_pool" {
 
 ### Required
 
-- **cluster_name** (String) Name of the cluster
-- **management_cluster_name** (String) Name of the management cluster
-- **name** (String) Name of this nodepool
-- **provisioner_name** (String) Provisioner of the cluster
+- `cluster_name` (String) Name of the cluster
+- `management_cluster_name` (String) Name of the management cluster
+- `name` (String) Name of this nodepool
+- `provisioner_name` (String) Provisioner of the cluster
 
 ### Optional
 
-- **id** (String) The ID of this resource.
-- **meta** (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
-- **spec** (Block List) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec))
+- `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
+- `spec` (Block List) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec))
 
 ### Read-Only
 
-- **status** (Map of String) Status of node pool resource
+- `id` (String) The ID of this resource.
+- `status` (Map of String) Status of node pool resource
 
 <a id="nestedblock--meta"></a>
 ### Nested Schema for `meta`
 
 Optional:
 
-- **description** (String) Description of the resource
-- **labels** (Map of String) Labels for the resource
+- `annotations` (Map of String) Annotations for the resource
+- `description` (String) Description of the resource
+- `labels` (Map of String) Labels for the resource
 
 Read-Only:
 
-- **annotations** (Map of String) Annotations for the resource
-- **resource_version** (String) Resource version of the resource
-- **uid** (String) UID of the resource
+- `resource_version` (String) Resource version of the resource
+- `uid` (String) UID of the resource
 
 
 <a id="nestedblock--spec"></a>
@@ -63,15 +63,43 @@ Read-Only:
 
 Optional:
 
-- **cloud_labels** (Map of String) Cloud labels
-- **node_labels** (Map of String) Node labels
-- **tkg_service_vsphere** (Block List) TKGServiceVsphereNodepool is the nodepool spec for TKG service vsphere cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))
-- **worker_node_count** (String) Count is the number of nodes
+- `cloud_labels` (Map of String) Cloud labels
+- `node_labels` (Map of String) Node labels
+- `tkg_aws` (Block List) TKGAWSNodepool is the nodepool spec for TKG AWS cluster (see [below for nested schema](#nestedblock--spec--tkg_aws))
+- `tkg_service_vsphere` (Block List) TKGServiceVsphereNodepool is the nodepool spec for TKG service vsphere cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))
+- `tkg_vsphere` (Block List) TkgVsphereNodepool is the nodepool config for the TKG vsphere cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere))
+- `worker_node_count` (String) Count is the number of nodes
+
+<a id="nestedblock--spec--tkg_aws"></a>
+### Nested Schema for `spec.tkg_aws`
+
+Optional:
+
+- `class` (String) Nodepool instance type
+- `storage_class` (String) Storage Class to be used for storage of the disks which store the root filesystem of the nodes
+
 
 <a id="nestedblock--spec--tkg_service_vsphere"></a>
 ### Nested Schema for `spec.tkg_service_vsphere`
 
 Optional:
 
-- **class** (String) Nodepool instance type
-- **storage_class** (String) Storage Class to be used for storage of the disks which store the root filesystem of the nodes
+- `class` (String) Nodepool instance type
+- `storage_class` (String) Storage Class to be used for storage of the disks which store the root filesystem of the nodes
+
+
+<a id="nestedblock--spec--tkg_vsphere"></a>
+### Nested Schema for `spec.tkg_vsphere`
+
+Required:
+
+- `vm_config` (Block List, Min: 1, Max: 1) VM specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--vm_config))
+
+<a id="nestedblock--spec--tkg_vsphere--vm_config"></a>
+### Nested Schema for `spec.tkg_vsphere.vm_config`
+
+Optional:
+
+- `cpu` (String) Number of CPUs per node
+- `disk_size` (String) Root disk size in gigabytes for the VM
+- `memory` (String) Memory associated with the node in megabytes

@@ -61,34 +61,34 @@ resource "tanzu-mission-control_namespace" "create_namespace_attached" {
 
 ### Required
 
-- **cluster_name** (String)
-- **name** (String)
+- `cluster_name` (String)
+- `name` (String)
 
 ### Optional
 
-- **id** (String) The ID of this resource.
-- **management_cluster_name** (String)
-- **meta** (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
-- **provisioner_name** (String)
-- **spec** (Block List, Max: 1) (see [below for nested schema](#nestedblock--spec))
+- `management_cluster_name` (String)
+- `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
+- `provisioner_name` (String)
+- `spec` (Block List, Max: 1) (see [below for nested schema](#nestedblock--spec))
 
 ### Read-Only
 
-- **status** (Map of String)
+- `id` (String) The ID of this resource.
+- `status` (Map of String)
 
 <a id="nestedblock--meta"></a>
 ### Nested Schema for `meta`
 
 Optional:
 
-- **description** (String) Description of the resource
-- **labels** (Map of String) Labels for the resource
+- `annotations` (Map of String) Annotations for the resource
+- `description` (String) Description of the resource
+- `labels` (Map of String) Labels for the resource
 
 Read-Only:
 
-- **annotations** (Map of String) Annotations for the resource
-- **resource_version** (String) Resource version of the resource
-- **uid** (String) UID of the resource
+- `resource_version` (String) Resource version of the resource
+- `uid` (String) UID of the resource
 
 
 <a id="nestedblock--spec"></a>
@@ -96,5 +96,5 @@ Read-Only:
 
 Optional:
 
-- **attach** (Boolean)
-- **workspace_name** (String)
+- `attach` (Boolean)
+- `workspace_name` (String)
