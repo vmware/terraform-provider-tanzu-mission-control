@@ -31,7 +31,7 @@ func TestFlattenInput(t *testing.T) {
 		{
 			description: "normal scenario with complete input",
 			input: &inputRecipe{
-				recipe: tmcHTTPSIngressRecipe,
+				recipe: TMCHTTPSIngressRecipe,
 				inputTMCHTTPSIngress: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCCommonRecipe{
 					Audit: true,
 					TargetKubernetesResources: []*policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources{

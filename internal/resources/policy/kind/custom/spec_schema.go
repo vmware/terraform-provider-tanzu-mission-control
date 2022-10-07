@@ -68,32 +68,32 @@ func ConstructSpec(d *schema.ResourceData) (spec *policymodel.VmwareTanzuManageV
 	spec.Recipe = strings.ReplaceAll(string(inputRecipeData.recipe), "_", "-")
 
 	switch inputRecipeData.recipe {
-	case tmcBlockNodeportServiceRecipe:
+	case TMCBlockNodeportServiceRecipe:
 		if inputRecipeData.inputTMCBlockNodeportService != nil {
 			spec.Input = *inputRecipeData.inputTMCBlockNodeportService
 		}
-	case tmcBlockResourcesRecipe:
+	case TMCBlockResourcesRecipe:
 		if inputRecipeData.inputTMCBlockResources != nil {
 			spec.Input = *inputRecipeData.inputTMCBlockResources
 		}
-	case tmcBlockRolebindingSubjectsRecipe:
+	case TMCBlockRolebindingSubjectsRecipe:
 		if inputRecipeData.inputTMCBlockRolebindingSubjects != nil {
 			spec.Input = *inputRecipeData.inputTMCBlockRolebindingSubjects
 		}
-	case tmcExternalIPSRecipe:
+	case TMCExternalIPSRecipe:
 		if inputRecipeData.inputTMCExternalIps != nil {
 			spec.Input = *inputRecipeData.inputTMCExternalIps
 		}
-	case tmcHTTPSIngressRecipe:
+	case TMCHTTPSIngressRecipe:
 		if inputRecipeData.inputTMCHTTPSIngress != nil {
 			spec.Input = *inputRecipeData.inputTMCHTTPSIngress
 		}
-	case tmcRequireLabelsRecipe:
+	case TMCRequireLabelsRecipe:
 		if inputRecipeData.inputTMCRequireLabels != nil {
 			spec.Input = *inputRecipeData.inputTMCRequireLabels
 		}
-	case unknownRecipe:
-		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(recipesAllowed[:], `, `))
+	case UnknownRecipe:
+		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(RecipesAllowed[:], `, `))
 	}
 
 	if namespace, ok := specData[policy.NamespaceSelectorKey]; ok {
@@ -129,7 +129,7 @@ func FlattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 	}
 
 	switch strings.ReplaceAll(spec.Recipe, "-", "_") {
-	case string(tmcBlockNodeportServiceRecipe):
+	case string(TMCBlockNodeportServiceRecipe):
 		var tmcBlockNodeportServiceRecipeInput policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCCommonRecipe
 
 		err = tmcBlockNodeportServiceRecipeInput.UnmarshalBinary(byteSlice)
@@ -138,10 +138,10 @@ func FlattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		}
 
 		inputRecipeData = &inputRecipe{
-			recipe:                       tmcBlockNodeportServiceRecipe,
+			recipe:                       TMCBlockNodeportServiceRecipe,
 			inputTMCBlockNodeportService: &tmcBlockNodeportServiceRecipeInput,
 		}
-	case string(tmcBlockResourcesRecipe):
+	case string(TMCBlockResourcesRecipe):
 		var tmcBlockResourcesRecipeInput policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCCommonRecipe
 
 		err = tmcBlockResourcesRecipeInput.UnmarshalBinary(byteSlice)
@@ -150,10 +150,10 @@ func FlattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		}
 
 		inputRecipeData = &inputRecipe{
-			recipe:                 tmcBlockResourcesRecipe,
+			recipe:                 TMCBlockResourcesRecipe,
 			inputTMCBlockResources: &tmcBlockResourcesRecipeInput,
 		}
-	case string(tmcBlockRolebindingSubjectsRecipe):
+	case string(TMCBlockRolebindingSubjectsRecipe):
 		var tmcBlockRolebindingSubjectsRecipeInput policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjects
 
 		err = tmcBlockRolebindingSubjectsRecipeInput.UnmarshalBinary(byteSlice)
@@ -162,10 +162,10 @@ func FlattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		}
 
 		inputRecipeData = &inputRecipe{
-			recipe:                           tmcBlockRolebindingSubjectsRecipe,
+			recipe:                           TMCBlockRolebindingSubjectsRecipe,
 			inputTMCBlockRolebindingSubjects: &tmcBlockRolebindingSubjectsRecipeInput,
 		}
-	case string(tmcExternalIPSRecipe):
+	case string(TMCExternalIPSRecipe):
 		var tmcExternalIPSRecipeInput policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCExternalIPS
 
 		err = tmcExternalIPSRecipeInput.UnmarshalBinary(byteSlice)
@@ -174,10 +174,10 @@ func FlattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		}
 
 		inputRecipeData = &inputRecipe{
-			recipe:              tmcExternalIPSRecipe,
+			recipe:              TMCExternalIPSRecipe,
 			inputTMCExternalIps: &tmcExternalIPSRecipeInput,
 		}
-	case string(tmcHTTPSIngressRecipe):
+	case string(TMCHTTPSIngressRecipe):
 		var tmcHTTPSIngressRecipeInput policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCCommonRecipe
 
 		err = tmcHTTPSIngressRecipeInput.UnmarshalBinary(byteSlice)
@@ -186,10 +186,10 @@ func FlattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		}
 
 		inputRecipeData = &inputRecipe{
-			recipe:               tmcHTTPSIngressRecipe,
+			recipe:               TMCHTTPSIngressRecipe,
 			inputTMCHTTPSIngress: &tmcHTTPSIngressRecipeInput,
 		}
-	case string(tmcRequireLabelsRecipe):
+	case string(TMCRequireLabelsRecipe):
 		var tmcRequireLabelsRecipeInput policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCRequireLabels
 
 		err = tmcRequireLabelsRecipeInput.UnmarshalBinary(byteSlice)
@@ -198,11 +198,11 @@ func FlattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		}
 
 		inputRecipeData = &inputRecipe{
-			recipe:                tmcRequireLabelsRecipe,
+			recipe:                TMCRequireLabelsRecipe,
 			inputTMCRequireLabels: &tmcRequireLabelsRecipeInput,
 		}
-	case string(unknownRecipe):
-		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(recipesAllowed[:], `, `))
+	case string(UnknownRecipe):
+		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(RecipesAllowed[:], `, `))
 	}
 
 	flattenSpecData[policy.InputKey] = flattenInput(inputRecipeData)
