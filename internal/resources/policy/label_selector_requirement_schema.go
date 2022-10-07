@@ -6,6 +6,10 @@ SPDX-License-Identifier: MPL-2.0
 package policy
 
 import (
+	"context"
+	"fmt"
+	"strings"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
@@ -79,4 +83,85 @@ func flattenLabelSelectorRequirement(labelSelectorRequirement *policymodel.K8sIo
 	flattenLabelSelectorRequirement[ValuesKey] = labelSelectorRequirement.Values
 
 	return flattenLabelSelectorRequirement
+}
+
+func ValidateSpecLabelSelectorRequirement(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
+	value, ok := diff.GetOk(SpecKey)
+	if !ok {
+		return fmt.Errorf("spec: %v is not valid: minimum one valid spec block is required", value)
+	}
+
+	data, _ := value.([]interface{})
+
+	if len(data) == 0 || data[0] == nil {
+		return fmt.Errorf("spec data: %v is not valid: minimum one valid spec block is required", data)
+	}
+
+	specData := data[0].(map[string]interface{})
+
+	namespaceSelector, ok := specData[NamespaceSelectorKey]
+	if !ok {
+		return fmt.Errorf("namespace_selector: %v is not valid: minimum one valid namespace_selector block is required", namespaceSelector)
+	}
+
+	namespaceData, ok := namespaceSelector.([]interface{})
+	if !ok || len(namespaceData) == 0 || namespaceData[0] == nil {
+		return fmt.Errorf("namespace_selector data: %v is not valid: minimum one valid namespace_selector block is required", namespaceData)
+	}
+
+	namespaceSelectorData, _ := namespaceData[0].(map[string]interface{})
+
+	matchExpression, ok := namespaceSelectorData[MatchExpressionsKey]
+	if !ok {
+		return fmt.Errorf("match expressions: %v is not valid: minimum one valid match expressions block is required", matchExpression)
+	}
+
+	matchData, ok := matchExpression.([]interface{})
+	if !ok {
+		return fmt.Errorf("type of match expressions block data: %v is not valid", matchData)
+	}
+
+	var errStrings []string
+
+	for _, raw := range matchData {
+		if raw == nil {
+			continue
+		}
+
+		labelSelectorRequirementData, _ := raw.(map[string]interface{})
+
+		operatorData, ok := labelSelectorRequirementData[OperatorKey]
+		if !ok {
+			errStrings = append(errStrings, fmt.Errorf("- operator: %v is not valid: minimum one valid operator attribute is required", operatorData).Error())
+		}
+
+		operator := operatorData.(string)
+		values := make([]string, 0)
+
+		valueData, ok := labelSelectorRequirementData[ValuesKey]
+		if !ok {
+			errStrings = append(errStrings, fmt.Errorf("- values: %v is not valid: minimum one valid values attribute is required", valueData).Error())
+		}
+
+		vs1, ok := valueData.([]interface{})
+		if !ok {
+			errStrings = append(errStrings, fmt.Errorf("- type of values attribute data: %v is not valid", vs1).Error())
+		}
+
+		for _, raw1 := range vs1 {
+			values = append(values, raw1.(string))
+		}
+
+		if (operator == "In" || operator == "NotIn") && len(values) == 0 {
+			errStrings = append(errStrings, fmt.Errorf("- found label selector requirement with operator: \"%v\" and values: %v; If the operator is In or NotIn, the values array must be non-empty", operator, strings.Join(values, `, `)).Error())
+		} else if (operator == "Exists" || operator == "DoesNotExist") && len(values) != 0 {
+			errStrings = append(errStrings, fmt.Errorf("- found label selector requirement with operator: \"%v\" and values: %v; If the operator is Exists or DoesNotExist, the values array must be empty", operator, strings.Join(values, `, `)).Error())
+		}
+	}
+
+	if len(errStrings) != 0 {
+		return fmt.Errorf("error(s) in label selector requirement(s): \n%s", strings.Join(errStrings, "\n"))
+	}
+
+	return nil
 }

@@ -55,7 +55,7 @@ func TestFlattenSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					inputKey: []interface{}{
+					policy.InputKey: []interface{}{
 						map[string]interface{}{
 							reciperesource.BaselineKey: []interface{}{
 								map[string]interface{}{
