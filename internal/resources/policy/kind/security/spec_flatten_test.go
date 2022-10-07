@@ -3,7 +3,7 @@ Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package security
+package policykindsecurity
 
 import (
 	"encoding/json"
@@ -14,7 +14,7 @@ import (
 	policymodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy"
 	policyrecipesecuritymodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/security"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
-	reciperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/type/security/recipe"
+	reciperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security/recipe"
 )
 
 func TestFlattenSpec(t *testing.T) {
@@ -51,7 +51,7 @@ func TestFlattenSpec(t *testing.T) {
 						},
 					},
 				},
-				Recipe: string(baselineRecipe),
+				Recipe: string(BaselineRecipe),
 			},
 			expected: []interface{}{
 				map[string]interface{}{
@@ -92,7 +92,7 @@ func TestFlattenSpec(t *testing.T) {
 	for _, each := range cases {
 		test := each
 		t.Run(test.description, func(t *testing.T) {
-			actual := flattenSpec(test.input)
+			actual := FlattenSpec(test.input)
 			require.Equal(t, test.expected, actual)
 		})
 	}

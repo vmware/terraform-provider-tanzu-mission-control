@@ -3,7 +3,7 @@ Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package security
+package policykindsecurity
 
 import (
 	"encoding/json"
@@ -17,7 +17,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 )
 
-var specSchema = &schema.Schema{
+var SpecSchema = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "Spec for the security policy",
 	Required:    true,
@@ -30,7 +30,7 @@ var specSchema = &schema.Schema{
 	},
 }
 
-func constructSpec(d *schema.ResourceData) (spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) {
+func ConstructSpec(d *schema.ResourceData) (spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) {
 	value, ok := d.GetOk(policy.SpecKey)
 	if !ok {
 		return spec
@@ -68,20 +68,20 @@ func constructSpec(d *schema.ResourceData) (spec *policymodel.VmwareTanzuManageV
 	spec.Recipe = string(inputRecipeData.recipe)
 
 	switch inputRecipeData.recipe {
-	case baselineRecipe:
+	case BaselineRecipe:
 		if inputRecipeData.inputBaseline != nil {
 			spec.Input = *inputRecipeData.inputBaseline
 		}
-	case customRecipe:
+	case CustomRecipe:
 		if inputRecipeData.inputCustom != nil {
 			spec.Input = *inputRecipeData.inputCustom
 		}
-	case strictRecipe:
+	case StrictRecipe:
 		if inputRecipeData.inputStrict != nil {
 			spec.Input = *inputRecipeData.inputStrict
 		}
-	case unknownRecipe:
-		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(recipesAllowed[:], `, `))
+	case UnknownRecipe:
+		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(RecipesAllowed[:], `, `))
 	}
 
 	if v, ok := specData[policy.NamespaceSelectorKey]; ok {
@@ -93,7 +93,7 @@ func constructSpec(d *schema.ResourceData) (spec *policymodel.VmwareTanzuManageV
 	return spec
 }
 
-func flattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (data []interface{}) {
+func FlattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (data []interface{}) {
 	if spec == nil {
 		return data
 	}
@@ -117,7 +117,7 @@ func flattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 	}
 
 	switch spec.Recipe {
-	case string(baselineRecipe):
+	case string(BaselineRecipe):
 		var baselineRecipeInput policyrecipesecuritymodel.VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1Baseline
 
 		err = baselineRecipeInput.UnmarshalBinary(byteSlice)
@@ -126,10 +126,10 @@ func flattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		}
 
 		inputRecipeData = &inputRecipe{
-			recipe:        baselineRecipe,
+			recipe:        BaselineRecipe,
 			inputBaseline: &baselineRecipeInput,
 		}
-	case string(customRecipe):
+	case string(CustomRecipe):
 		var customRecipeInput policyrecipesecuritymodel.VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1Custom
 
 		err = customRecipeInput.UnmarshalBinary(byteSlice)
@@ -138,10 +138,10 @@ func flattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		}
 
 		inputRecipeData = &inputRecipe{
-			recipe:      customRecipe,
+			recipe:      CustomRecipe,
 			inputCustom: &customRecipeInput,
 		}
-	case string(strictRecipe):
+	case string(StrictRecipe):
 		var strictRecipeInput policyrecipesecuritymodel.VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1Strict
 
 		err = strictRecipeInput.UnmarshalBinary(byteSlice)
@@ -150,11 +150,11 @@ func flattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		}
 
 		inputRecipeData = &inputRecipe{
-			recipe:      strictRecipe,
+			recipe:      StrictRecipe,
 			inputStrict: &strictRecipeInput,
 		}
-	case string(unknownRecipe):
-		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(recipesAllowed[:], `, `))
+	case string(UnknownRecipe):
+		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(RecipesAllowed[:], `, `))
 	}
 
 	flattenSpecData[policy.InputKey] = flattenInput(inputRecipeData)

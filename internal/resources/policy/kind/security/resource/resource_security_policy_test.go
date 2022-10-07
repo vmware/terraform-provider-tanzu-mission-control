@@ -3,7 +3,7 @@ Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package security
+package securitypolicyresource
 
 import (
 	"fmt"
@@ -27,12 +27,13 @@ import (
 	clusterresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 	clustergroupresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
+	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 	scoperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
 const (
-	securityPolicyResource    = ResourceName
+	securityPolicyResource    = policykindsecurity.ResourceName
 	securityPolicyResourceVar = "test_security_policy"
 	securityPolicyNamePrefix  = "tf-sp-test"
 
@@ -125,11 +126,11 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped security policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.ClusterScope, baselineRecipe),
+				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.ClusterScope, policykindsecurity.BaselineRecipe),
 				Check:  testConfig.checkSecurityPolicyResourceAttributes(policy.ClusterScope),
 			},
 			{
-				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.ClusterGroupScope, baselineRecipe),
+				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.ClusterGroupScope, policykindsecurity.BaselineRecipe),
 				Check:  testConfig.checkSecurityPolicyResourceAttributes(policy.ClusterGroupScope),
 			},
 			{
@@ -138,7 +139,7 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 						t.Skip("ORG_ID env var is not set for organization scoped security policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.OrganizationScope, baselineRecipe),
+				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.OrganizationScope, policykindsecurity.BaselineRecipe),
 				Check:  testConfig.checkSecurityPolicyResourceAttributes(policy.OrganizationScope),
 			},
 		},
@@ -160,11 +161,11 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped security policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.ClusterScope, customRecipe),
+				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.ClusterScope, policykindsecurity.CustomRecipe),
 				Check:  testConfig.checkSecurityPolicyResourceAttributes(policy.ClusterScope),
 			},
 			{
-				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.ClusterGroupScope, customRecipe),
+				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.ClusterGroupScope, policykindsecurity.CustomRecipe),
 				Check:  testConfig.checkSecurityPolicyResourceAttributes(policy.ClusterGroupScope),
 			},
 			{
@@ -173,7 +174,7 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 						t.Skip("ORG_ID env var is not set for organization scoped security policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.OrganizationScope, customRecipe),
+				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.OrganizationScope, policykindsecurity.CustomRecipe),
 				Check:  testConfig.checkSecurityPolicyResourceAttributes(policy.OrganizationScope),
 			},
 		},
@@ -195,11 +196,11 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped security policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.ClusterScope, strictRecipe),
+				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.ClusterScope, policykindsecurity.StrictRecipe),
 				Check:  testConfig.checkSecurityPolicyResourceAttributes(policy.ClusterScope),
 			},
 			{
-				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.ClusterGroupScope, strictRecipe),
+				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.ClusterGroupScope, policykindsecurity.StrictRecipe),
 				Check:  testConfig.checkSecurityPolicyResourceAttributes(policy.ClusterGroupScope),
 			},
 			{
@@ -208,7 +209,7 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 						t.Skip("ORG_ID env var is not set for organization scoped security policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.OrganizationScope, strictRecipe),
+				Config: testConfig.getTestSecurityPolicyResourceBasicConfigValue(policy.OrganizationScope, policykindsecurity.StrictRecipe),
 				Check:  testConfig.checkSecurityPolicyResourceAttributes(policy.OrganizationScope),
 			},
 		},
@@ -219,7 +220,7 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 	t.Log("all security policy resource acceptance tests complete!")
 }
 
-func (testConfig *testAcceptanceConfig) getTestSecurityPolicyResourceBasicConfigValue(scope policy.Scope, recipe recipe) string {
+func (testConfig *testAcceptanceConfig) getTestSecurityPolicyResourceBasicConfigValue(scope policy.Scope, recipe policykindsecurity.Recipe) string {
 	helperBlock, scopeBlock, inputBlock := testConfig.getTestSecurityPolicyResourceHelperScopeAndInput(scope, recipe)
 
 	return fmt.Sprintf(`
@@ -254,7 +255,7 @@ resource "%s" "%s" {
 }
 
 // getTestSecurityPolicyResourceHelperScopeAndInput builds the helper resource, scope and the input blocks for security policy resource based on a scope type and a recipe.
-func (testConfig *testAcceptanceConfig) getTestSecurityPolicyResourceHelperScopeAndInput(scope policy.Scope, recipe recipe) (string, string, string) {
+func (testConfig *testAcceptanceConfig) getTestSecurityPolicyResourceHelperScopeAndInput(scope policy.Scope, recipe policykindsecurity.Recipe) (string, string, string) {
 	var (
 		helperBlock string
 		scopeBlock  string
@@ -296,7 +297,7 @@ func (testConfig *testAcceptanceConfig) getTestSecurityPolicyResourceHelperScope
 	}
 
 	switch recipe {
-	case baselineRecipe:
+	case policykindsecurity.BaselineRecipe:
 		inputBlock = `
     input {
       baseline {
@@ -305,7 +306,7 @@ func (testConfig *testAcceptanceConfig) getTestSecurityPolicyResourceHelperScope
       }
     }
 `
-	case customRecipe:
+	case policykindsecurity.CustomRecipe:
 		inputBlock = `
     input {
       custom {
@@ -429,7 +430,7 @@ func (testConfig *testAcceptanceConfig) getTestSecurityPolicyResourceHelperScope
       }
     }
 `
-	case strictRecipe:
+	case policykindsecurity.StrictRecipe:
 		inputBlock = `
     input {
       strict {
@@ -438,8 +439,8 @@ func (testConfig *testAcceptanceConfig) getTestSecurityPolicyResourceHelperScope
       }
     }
 `
-	case unknownRecipe:
-		log.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(recipesAllowed[:], `, `))
+	case policykindsecurity.UnknownRecipe:
+		log.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(policykindsecurity.RecipesAllowed[:], `, `))
 	}
 
 	return helperBlock, scopeBlock, inputBlock
