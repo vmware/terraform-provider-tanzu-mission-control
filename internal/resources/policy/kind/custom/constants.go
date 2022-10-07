@@ -17,11 +17,11 @@ const (
 
 // Allowed input recipes.
 const (
-	unknownRecipe                     recipe = policy.UnknownRecipe
-	tmcBlockNodeportServiceRecipe     recipe = reciperesource.TMCBlockNodeportServiceKey
-	tmcBlockResourcesRecipe           recipe = reciperesource.TMCBlockResourcesKey
-	tmcBlockRolebindingSubjectsRecipe recipe = reciperesource.TMCBlockRolebindingSubjectsKey
-	tmcExternalIPSRecipe              recipe = reciperesource.TMCExternalIPSKey
-	tmcHTTPSIngressRecipe             recipe = reciperesource.TMCHTTPSIngressKey
-	tmcRequireLabelsRecipe            recipe = reciperesource.TMCRequireLabelsKey
+	UnknownRecipe                     Recipe = policy.UnknownRecipe
+	TMCBlockNodeportServiceRecipe     Recipe = reciperesource.TMCBlockNodeportServiceKey
+	TMCBlockResourcesRecipe           Recipe = reciperesource.TMCBlockResourcesKey
+	TMCBlockRolebindingSubjectsRecipe Recipe = reciperesource.TMCBlockRolebindingSubjectsKey
+	TMCExternalIPSRecipe              Recipe = reciperesource.TMCExternalIPSKey
+	TMCHTTPSIngressRecipe             Recipe = reciperesource.TMCHTTPSIngressKey
+	TMCRequireLabelsRecipe            Recipe = reciperesource.TMCRequireLabelsKey
 )
