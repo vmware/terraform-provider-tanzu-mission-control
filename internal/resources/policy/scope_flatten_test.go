@@ -3,7 +3,7 @@ Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package security
+package policy
 
 import (
 	"testing"
@@ -21,7 +21,7 @@ func TestFlattenScope(t *testing.T) {
 
 	cases := []struct {
 		description  string
-		input        *scopedFullname
+		input        *ScopedFullname
 		expectedData []interface{}
 		expectedName string
 	}{
@@ -33,9 +33,9 @@ func TestFlattenScope(t *testing.T) {
 		},
 		{
 			description: "normal scenario with complete cluster scope",
-			input: &scopedFullname{
-				scope: clusterScope,
-				fullnameCluster: &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyFullName{
+			input: &ScopedFullname{
+				Scope: ClusterScope,
+				FullnameCluster: &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyFullName{
 					Name:                  "n",
 					ClusterName:           "c",
 					ManagementClusterName: "m",
@@ -57,9 +57,9 @@ func TestFlattenScope(t *testing.T) {
 		},
 		{
 			description: "normal scenario with complete cluster group scope",
-			input: &scopedFullname{
-				scope: clusterGroupScope,
-				fullnameClusterGroup: &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyFullName{
+			input: &ScopedFullname{
+				Scope: ClusterGroupScope,
+				FullnameClusterGroup: &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyFullName{
 					Name:             "n",
 					ClusterGroupName: "c",
 				},
@@ -77,9 +77,9 @@ func TestFlattenScope(t *testing.T) {
 		},
 		{
 			description: "normal scenario with complete organization scope",
-			input: &scopedFullname{
-				scope: organizationScope,
-				fullnameOrganization: &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyFullName{
+			input: &ScopedFullname{
+				Scope: OrganizationScope,
+				FullnameOrganization: &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyFullName{
 					Name:  "n",
 					OrgID: "o",
 				},
@@ -100,7 +100,7 @@ func TestFlattenScope(t *testing.T) {
 	for _, each := range cases {
 		test := each
 		t.Run(test.description, func(t *testing.T) {
-			actualData, actualName := flattenScope(test.input)
+			actualData, actualName := FlattenScope(test.input)
 			require.Equal(t, test.expectedData, actualData)
 			require.Equal(t, test.expectedName, actualName)
 		})

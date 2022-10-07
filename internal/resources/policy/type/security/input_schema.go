@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	policyrecipesecuritymodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/security"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	reciperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/type/security/recipe"
 )
 
@@ -105,7 +106,7 @@ func flattenInput(inputRecipeData *inputRecipe) (data []interface{}) {
 }
 
 func validateInput(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
-	value, ok := diff.GetOk(specKey)
+	value, ok := diff.GetOk(policy.SpecKey)
 	if !ok {
 		return fmt.Errorf("spec: %v is not valid: minimum one valid spec block is required", value)
 	}
@@ -118,7 +119,7 @@ func validateInput(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 
 	specData := data[0].(map[string]interface{})
 
-	v, ok := specData[inputKey]
+	v, ok := specData[policy.InputKey]
 	if !ok {
 		return fmt.Errorf("input: %v is not valid: minimum one valid input block is required", v)
 	}

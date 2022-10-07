@@ -6,14 +6,12 @@ SPDX-License-Identifier: MPL-2.0
 package security
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	policymodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy"
 	policyrecipesecuritymodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/security"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
@@ -26,14 +24,14 @@ var specSchema = &schema.Schema{
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			inputKey:                    inputSchema,
+			policy.InputKey:             inputSchema,
 			policy.NamespaceSelectorKey: policy.NamespaceSelector,
 		},
 	},
 }
 
 func constructSpec(d *schema.ResourceData) (spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) {
-	value, ok := d.GetOk(specKey)
+	value, ok := d.GetOk(policy.SpecKey)
 	if !ok {
 		return spec
 	}
@@ -48,10 +46,10 @@ func constructSpec(d *schema.ResourceData) (spec *policymodel.VmwareTanzuManageV
 
 	spec = &policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec{
 		Type:          typeDefaultValue,
-		RecipeVersion: recipeVersionDefaultValue,
+		RecipeVersion: policy.RecipeVersionDefaultValue,
 	}
 
-	v, ok := specData[inputKey]
+	v, ok := specData[policy.InputKey]
 	if !ok {
 		return spec
 	}
@@ -159,103 +157,11 @@ func flattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(recipesAllowed[:], `, `))
 	}
 
-	flattenSpecData[inputKey] = flattenInput(inputRecipeData)
+	flattenSpecData[policy.InputKey] = flattenInput(inputRecipeData)
 
 	if spec.NamespaceSelector != nil {
 		flattenSpecData[policy.NamespaceSelectorKey] = policy.FlattenNamespaceSelector(spec.NamespaceSelector)
 	}
 
 	return []interface{}{flattenSpecData}
-}
-
-func validateSpecLabelSelectorRequirement(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
-	value, ok := diff.GetOk(specKey)
-	if !ok {
-		return fmt.Errorf("spec: %v is not valid: minimum one valid spec block is required", value)
-	}
-
-	data, _ := value.([]interface{})
-
-	if len(data) == 0 || data[0] == nil {
-		return fmt.Errorf("spec data: %v is not valid: minimum one valid spec block is required", data)
-	}
-
-	specData := data[0].(map[string]interface{})
-
-	v, ok := specData[policy.NamespaceSelectorKey]
-	if !ok {
-		return fmt.Errorf("namespace_selector: %v is not valid: minimum one valid namespace_selector block is required", v)
-	}
-
-	v1, ok := v.([]interface{})
-	if !ok || len(v1) == 0 || v1[0] == nil {
-		return fmt.Errorf("namespace_selector data: %v is not valid: minimum one valid namespace_selector block is required", v1)
-	}
-
-	namespaceSelectorData, _ := v1[0].(map[string]interface{})
-
-	v2, ok := namespaceSelectorData[policy.MatchExpressionsKey]
-	if !ok {
-		return fmt.Errorf("match expressions: %v is not valid: minimum one valid match expressions block is required", v2)
-	}
-
-	vs, ok := v2.([]interface{})
-	if !ok {
-		return fmt.Errorf("type of match expressions block data: %v is not valid", vs)
-	}
-
-	errStrings := make([]string, 0)
-
-	for _, raw := range vs {
-		if raw != nil {
-			labelSelectorRequirementData, _ := raw.(map[string]interface{})
-
-			v3, ok := labelSelectorRequirementData[policy.OperatorKey]
-			if !ok {
-				errStrings = append(errStrings, fmt.Errorf("- operator: %v is not valid: minimum one valid operator attribute is required", v3).Error())
-			}
-
-			operator := v3.(string)
-			values := make([]string, 0)
-
-			v4, ok := labelSelectorRequirementData[policy.ValuesKey]
-			if !ok {
-				errStrings = append(errStrings, fmt.Errorf("- values: %v is not valid: minimum one valid values attribute is required", v4).Error())
-			}
-
-			vs1, ok := v4.([]interface{})
-			if !ok {
-				errStrings = append(errStrings, fmt.Errorf("- type of values attribute data: %v is not valid", vs1).Error())
-			}
-
-			for _, raw1 := range vs1 {
-				values = append(values, raw1.(string))
-			}
-
-			if (operator == "In" || operator == "NotIn") && len(values) == 0 {
-				errStrings = append(errStrings, fmt.Errorf("- found label selector requirement with operator: \"%v\" and values: %v; If the operator is In or NotIn, the values array must be non-empty", operator, strings.Join(values, `, `)).Error())
-			} else if (operator == "Exists" || operator == "DoesNotExist") && len(values) != 0 {
-				errStrings = append(errStrings, fmt.Errorf("- found label selector requirement with operator: \"%v\" and values: %v; If the operator is Exists or DoesNotExist, the values array must be empty", operator, strings.Join(values, `, `)).Error())
-			}
-		}
-	}
-
-	if len(errStrings) != 0 {
-		return fmt.Errorf("error(s) in label selector requirement(s): \n%s", strings.Join(errStrings, "\n"))
-	}
-
-	return nil
-}
-
-func hasSpecChanged(d *schema.ResourceData) bool {
-	updateRequired := false
-
-	switch {
-	case d.HasChange(helper.GetFirstElementOf(specKey, inputKey)):
-		fallthrough
-	case d.HasChange(helper.GetFirstElementOf(specKey, policy.NamespaceSelectorKey)):
-		updateRequired = true
-	}
-
-	return updateRequired
 }
