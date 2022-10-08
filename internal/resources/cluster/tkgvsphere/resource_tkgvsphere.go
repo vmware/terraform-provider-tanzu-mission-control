@@ -6,9 +6,13 @@ SPDX-License-Identifier: MPL-2.0
 package tkgvsphere
 
 import (
+	"log"
+	"os"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	nodepoolmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 	tkgvspheremodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgvsphere"
 )
@@ -434,8 +438,16 @@ func expandTKGVsphereTopology(data []interface{}) (topology *tkgvspheremodel.Vmw
 		return topology
 	}
 
-	lookUpTopology, _ := data[0].(map[string]interface{})
 	topology = &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereTopology{}
+
+	lookUpTopology, ok := data[0].(map[string]interface{})
+	if !ok {
+		if os.Getenv(helper.TmcMode) == helper.DEV {
+			log.Fatalf("[ERROR]: Topology not set: %v", data[0])
+		}
+
+		return topology
+	}
 
 	if v, ok := lookUpTopology[controlPlaneKey]; ok {
 		if v1, ok := v.([]interface{}); ok {
@@ -444,9 +456,12 @@ func expandTKGVsphereTopology(data []interface{}) (topology *tkgvspheremodel.Vmw
 	}
 
 	if v, ok := lookUpTopology[nodePoolsKey]; ok {
-		nodepools, _ := v.([]interface{})
-		for _, np := range nodepools {
-			topology.NodePools = append(topology.NodePools, expandTKGVsphereTopologyNodePool(np))
+		if vs, ok := v.([]interface{}); ok {
+			topology.NodePools = make([]*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition, 0)
+
+			for _, np := range vs {
+				topology.NodePools = append(topology.NodePools, expandTKGVsphereTopologyNodePool(np))
+			}
 		}
 	}
 
@@ -460,15 +475,19 @@ func flattenTKGVsphereTopology(topology *tkgvspheremodel.VmwareTanzuManageV1alph
 		return nil
 	}
 
-	flattenTopology[controlPlaneKey] = flattenTKGVsphereTopologyControlPlane(topology.ControlPlane)
-
-	nps := make([]interface{}, 0)
-
-	for _, np := range topology.NodePools {
-		nps = append(nps, flattenTKGVsphereTopologyNodePool(np))
+	if topology.ControlPlane != nil {
+		flattenTopology[controlPlaneKey] = flattenTKGVsphereTopologyControlPlane(topology.ControlPlane)
 	}
 
-	flattenTopology[nodePoolsKey] = nps
+	if topology.NodePools != nil {
+		nps := make([]interface{}, 0)
+
+		for _, np := range topology.NodePools {
+			nps = append(nps, flattenTKGVsphereTopologyNodePool(np))
+		}
+
+		flattenTopology[nodePoolsKey] = nps
+	}
 
 	return []interface{}{flattenTopology}
 }
@@ -522,9 +541,13 @@ func expandTKGVsphereTopologyControlPlane(data []interface{}) (controlPlane *tkg
 		return controlPlane
 	}
 
-	lookUpControlPlane, _ := data[0].(map[string]interface{})
 	controlPlane = &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereControlPlane{
 		VMConfig: &nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGVsphereVMConfig{},
+	}
+
+	lookUpControlPlane, ok := data[0].(map[string]interface{})
+	if !ok {
+		return controlPlane
 	}
 
 	if v, ok := lookUpControlPlane[vmConfigKey]; ok {
@@ -605,7 +628,11 @@ var tkgVsphereNodePoolSpec = &schema.Schema{
 }
 
 func expandTKGVsphereTopologyNodePool(data interface{}) (nodePools *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition) {
-	lookUpNodepool := data.(map[string]interface{})
+	lookUpNodepool, ok := data.(map[string]interface{})
+	if !ok {
+		return nodePools
+	}
+
 	nodePools = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 		Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{},
 		Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{},

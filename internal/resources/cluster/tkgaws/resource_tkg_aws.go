@@ -6,8 +6,12 @@ SPDX-License-Identifier: MPL-2.0
 package tkgaws
 
 import (
+	"log"
+	"os"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	nodepoolmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 	tkgawsmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgaws"
 )
@@ -615,8 +619,16 @@ func expandTKGAWSTopology(data []interface{}) (topology *tkgawsmodel.VmwareTanzu
 		return topology
 	}
 
-	lookUpTopology, _ := data[0].(map[string]interface{})
 	topology = &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsTopology{}
+
+	lookUpTopology, ok := data[0].(map[string]interface{})
+	if !ok {
+		if os.Getenv(helper.TmcMode) == helper.DEV {
+			log.Fatalf("[ERROR]: Topology not set: %v", data[0])
+		}
+
+		return topology
+	}
 
 	if v, ok := lookUpTopology[controlPlaneKey]; ok {
 		if v1, ok := v.([]interface{}); ok {
@@ -625,9 +637,12 @@ func expandTKGAWSTopology(data []interface{}) (topology *tkgawsmodel.VmwareTanzu
 	}
 
 	if v, ok := lookUpTopology[nodePoolsKey]; ok {
-		nodepools, _ := v.([]interface{})
-		for _, np := range nodepools {
-			topology.NodePools = append(topology.NodePools, expandTKGAWSTopologyNodePool(np))
+		if vs, ok := v.([]interface{}); ok {
+			topology.NodePools = make([]*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition, 0)
+
+			for _, np := range vs {
+				topology.NodePools = append(topology.NodePools, expandTKGAWSTopologyNodePool(np))
+			}
 		}
 	}
 
@@ -641,15 +656,19 @@ func flattenTKGAWSTopology(topology *tkgawsmodel.VmwareTanzuManageV1alpha1Cluste
 		return nil
 	}
 
-	flattenTopology[controlPlaneKey] = flattenTKGAWSTopologyControlPlane(topology.ControlPlane)
-
-	nps := make([]interface{}, 0)
-
-	for _, np := range topology.NodePools {
-		nps = append(nps, flattenTKGAWSTopologyNodePool(np))
+	if topology.ControlPlane != nil {
+		flattenTopology[controlPlaneKey] = flattenTKGAWSTopologyControlPlane(topology.ControlPlane)
 	}
 
-	flattenTopology[nodePoolsKey] = nps
+	if topology.NodePools != nil {
+		nps := make([]interface{}, 0)
+
+		for _, np := range topology.NodePools {
+			nps = append(nps, flattenTKGAWSTopologyNodePool(np))
+		}
+
+		flattenTopology[nodePoolsKey] = nps
+	}
 
 	return []interface{}{flattenTopology}
 }
@@ -689,8 +708,12 @@ func expandTKGAWSTopologyControlPlane(data []interface{}) (controlPlane *tkgawsm
 		return controlPlane
 	}
 
-	lookUpControlPlane, _ := data[0].(map[string]interface{})
 	controlPlane = &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsControlPlane{}
+
+	lookUpControlPlane, ok := data[0].(map[string]interface{})
+	if !ok {
+		return controlPlane
+	}
 
 	if avzones, ok := lookUpControlPlane[availabilityZonesKey]; ok {
 		avz, _ := avzones.([]interface{})
@@ -812,7 +835,11 @@ var tkgAWSNodePoolSpec = &schema.Schema{
 }
 
 func expandTKGAWSTopologyNodePool(data interface{}) (nodePools *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition) {
-	lookUpNodepool := data.(map[string]interface{})
+	lookUpNodepool, ok := data.(map[string]interface{})
+	if !ok {
+		return nodePools
+	}
+
 	nodePools = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 		Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{},
 		Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{},
