@@ -1,4 +1,4 @@
-module github.com/vmware-tanzu/terraform-provider-tanzu-mission-control
+module github.com/vmware/terraform-provider-tanzu-mission-control
 
 go 1.18
 

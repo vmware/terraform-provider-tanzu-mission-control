@@ -8,8 +8,8 @@ package tkgaws
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	nodepoolmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
-	tkgawsmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgaws"
+	nodepoolmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
+	tkgawsmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgaws"
 )
 
 var TkgAWSClusterSpec = &schema.Schema{
@@ -643,13 +643,15 @@ func flattenTKGAWSTopology(topology *tkgawsmodel.VmwareTanzuManageV1alpha1Cluste
 
 	flattenTopology[controlPlaneKey] = flattenTKGAWSTopologyControlPlane(topology.ControlPlane)
 
-	nps := make([]interface{}, 0)
+	if topology.NodePools != nil {
+		nps := make([]interface{}, 0)
 
-	for _, np := range topology.NodePools {
-		nps = append(nps, flattenTKGAWSTopologyNodePool(np))
+		for _, np := range topology.NodePools {
+			nps = append(nps, flattenTKGAWSTopologyNodePool(np))
+		}
+
+		flattenTopology[nodePoolsKey] = nps
 	}
-
-	flattenTopology[nodePoolsKey] = nps
 
 	return []interface{}{flattenTopology}
 }
@@ -689,8 +691,12 @@ func expandTKGAWSTopologyControlPlane(data []interface{}) (controlPlane *tkgawsm
 		return controlPlane
 	}
 
-	lookUpControlPlane, _ := data[0].(map[string]interface{})
 	controlPlane = &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsControlPlane{}
+
+	lookUpControlPlane, ok := data[0].(map[string]interface{})
+	if !ok {
+		return controlPlane
+	}
 
 	if avzones, ok := lookUpControlPlane[availabilityZonesKey]; ok {
 		avz, _ := avzones.([]interface{})
@@ -812,7 +818,11 @@ var tkgAWSNodePoolSpec = &schema.Schema{
 }
 
 func expandTKGAWSTopologyNodePool(data interface{}) (nodePools *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition) {
-	lookUpNodepool := data.(map[string]interface{})
+	lookUpNodepool, ok := data.(map[string]interface{})
+	if !ok {
+		return nodePools
+	}
+
 	nodePools = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 		Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{},
 		Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{},

@@ -235,9 +235,9 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
 
 # Create Tanzu Mission Control Tanzu Kubernetes Grid AWS workload cluster entry
 resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
-  management_cluster_name = "tkgm-aws" // Default: attached
-  provisioner_name        = "default"            // Default: attached
-  name                    = "tkgm-aws-workload"  // Required
+  management_cluster_name = "tkgm-aws"          // Default: attached
+  provisioner_name        = "default"           // Default: attached
+  name                    = "tkgm-aws-workload" // Required
 
   meta {
     description = "new description"
@@ -330,6 +330,787 @@ resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
     tkg_service_vsphere {
       class         = "best-effort-xsmall"
       storage_class = "gc-storage-profile"
+    }
+  }
+}
+
+# Organization scoped Role Bindings
+resource "tanzu-mission-control_iam_policy" "organization_scoped_iam_policy" {
+  scope {
+    organization {
+      org_id = "dummy-org-id"
+    }
+  }
+
+  role_bindings {
+    role = "organization.view"
+    subjects {
+      name = "test-1"
+      kind = "USER"
+    }
+    subjects {
+      name = "test-2"
+      kind = "GROUP"
+    }
+  }
+  role_bindings {
+    role = "organization.edit"
+    subjects {
+      name = "test-3"
+      kind = "USER"
+    }
+  }
+}
+
+# Cluster group scoped Role Bindings
+resource "tanzu-mission-control_iam_policy" "cluster_group_scoped_iam_policy" {
+  scope {
+    cluster_group {
+      name = tanzu-mission-control_cluster_group.create_cluster_group.name
+    }
+  }
+
+  role_bindings {
+    role = "clustergroup.admin"
+    subjects {
+      name = "test"
+      kind = "GROUP"
+    }
+  }
+  role_bindings {
+    role = "clustergroup.edit"
+    subjects {
+      name = "test-new"
+      kind = "USER"
+    }
+  }
+}
+
+# Cluster scoped Role Bindings
+resource "tanzu-mission-control_iam_policy" "cluster_scoped_iam_policy" {
+  scope {
+    cluster {
+      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name
+      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name
+      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name
+    }
+  }
+
+  role_bindings {
+    role = "cluster.admin"
+    subjects {
+      name = "test"
+      kind = "GROUP"
+    }
+  }
+  role_bindings {
+    role = "cluster.edit"
+    subjects {
+      name = "test-1"
+      kind = "USER"
+    }
+    subjects {
+      name = "test-2"
+      kind = "USER"
+    }
+  }
+}
+
+# Workspace scoped Role Bindings
+resource "tanzu-mission-control_iam_policy" "workspace_scoped_iam_policy" {
+  scope {
+    workspace {
+      name = tanzu-mission-control_workspace.create_workspace.name
+    }
+  }
+
+  role_bindings {
+    role = "workspace.edit"
+    subjects {
+      name = "test"
+      kind = "USER"
+    }
+  }
+}
+
+# Namespace scoped Role Bindings
+resource "tanzu-mission-control_iam_policy" "namespace_scoped_iam_policy" {
+  scope {
+    namespace {
+      management_cluster_name = tanzu-mission-control_namespace.create_namespace.management_cluster_name
+      provisioner_name        = tanzu-mission-control_namespace.create_namespace.provisioner_name
+      cluster_name            = tanzu-mission-control_namespace.create_namespace.cluster_name
+      name                    = tanzu-mission-control_namespace.create_namespace.name
+    }
+  }
+
+  role_bindings {
+    role = "namespace.view"
+    subjects {
+      name = "test-1"
+      kind = "USER"
+    }
+    subjects {
+      name = "test-2"
+      kind = "GROUP"
+    }
+  }
+}
+
+
+# Organization scoped Baseline Security Policy
+resource "tanzu-mission-control_security_policy" "organization_scoped_baseline_security_policy" {
+  scope {
+    organization{
+      organization = "dummy-org-id"
+    }
+  }
+
+  spec {
+    input {
+      baseline {
+        audit              = false
+        disable_native_psp = true
+      }
+    }
+
+    namespace_selector {
+      match_expressions {
+        key      = "component"
+        operator = "In"
+        values   = [
+          "api-server",
+          "agent-gateway"
+        ]
+      }
+      match_expressions {
+        key      = "not-a-component"
+        operator = "DoesNotExist"
+        values   = []
+      }
+    }
+  }
+}
+
+# Cluster group scoped Baseline Security Policy
+resource "tanzu-mission-control_security_policy" "cluster_group_scoped_baseline_security_policy" {
+  scope {
+    cluster_group{
+      cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name
+    }
+  }
+
+  spec {
+    input {
+      baseline {
+        audit              = false
+        disable_native_psp = true
+      }
+    }
+
+    namespace_selector {
+      match_expressions {
+        key      = "component"
+        operator = "In"
+        values   = [
+          "api-server",
+          "agent-gateway"
+        ]
+      }
+      match_expressions {
+        key      = "not-a-component"
+        operator = "DoesNotExist"
+        values   = []
+      }
+    }
+  }
+}
+
+# Cluster scoped Baseline Security Policy
+resource "tanzu-mission-control_security_policy" "cluster_scoped_baseline_security_policy" {
+  scope {
+    cluster{
+      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name
+      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name
+      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name
+    }
+  }
+
+  spec {
+    input {
+      baseline {
+        audit              = false
+        disable_native_psp = true
+      }
+    }
+
+    namespace_selector {
+      match_expressions {
+        key      = "component"
+        operator = "In"
+        values   = [
+          "api-server",
+          "agent-gateway"
+        ]
+      }
+      match_expressions {
+        key      = "not-a-component"
+        operator = "DoesNotExist"
+        values   = []
+      }
+    }
+  }
+}
+
+# Organization scoped Custom Security Policy
+resource "tanzu-mission-control_security_policy" "organization_scoped_custom_security_policy" {
+  scope {
+    organization{
+      organization = "dummy-org-id"
+    }
+  }
+
+  spec {
+    input {
+      custom {
+        audit                        = true
+        disable_native_psp           = false
+        allow_privileged_containers  = true
+        allow_privilege_escalation   = true
+        allow_host_namespace_sharing = true
+        allow_host_network           = true
+        read_only_root_file_system   = true
+
+        allowed_host_port_range {
+          min = 3000
+          max = 5000
+        }
+
+        allowed_volumes              = [
+          "configMap",
+          "nfs",
+          "vsphereVolume"
+        ]
+
+        run_as_user {
+          rule = "RunAsAny"
+
+          ranges {
+            min = 3
+            max = 5
+          }
+          ranges {
+            min = 7
+            max = 12
+          }
+        }
+
+        run_as_group {
+          rule = "RunAsAny"
+
+          ranges {
+            min = 3
+            max = 5
+          }
+          ranges {
+            min = 7
+            max = 12
+          }
+        }
+
+        supplemental_groups {
+          rule = "RunAsAny"
+
+          ranges {
+            min = 3
+            max = 5
+          }
+          ranges {
+            min = 7
+            max = 12
+          }
+        }
+
+        fs_group {
+          rule = "RunAsAny"
+
+          ranges {
+            min = 3
+            max = 5
+          }
+          ranges {
+            min = 7
+            max = 12
+          }
+        }
+
+        linux_capabilities {
+          allowed_capabilities       = [
+            "CHOWN",
+            "IPC_LOCK"
+          ]
+          required_drop_capabilities = [
+            "SYS_TIME"
+          ]
+        }
+
+        allowed_host_paths {
+          path_prefix = "p1"
+          read_only  = true
+        }
+        allowed_host_paths {
+          path_prefix = "p2"
+          read_only  = false
+        }
+        allowed_host_paths {
+          path_prefix = "p3"
+          read_only  = true
+        }
+
+        allowed_se_linux_options {
+          level = "s0"
+          role  = "sysadm_r"
+          type  = "httpd_sys_content_t"
+          user  = "root"
+        }
+
+        sysctls {
+          forbidden_sysctls = [
+            "kernel.msgmax",
+            "kernel.sem"
+          ]
+        }
+
+        seccomp {
+          allowed_profiles        = [
+            "Localhost"
+          ]
+          allowed_localhost_files = [
+            "profiles/audit.json",
+            "profiles/violation.json"
+          ]
+        }
+      }
+    }
+
+    namespace_selector {
+      match_expressions {
+        key      = "component"
+        operator = "In"
+        values   = [
+          "api-server",
+          "agent-gateway"
+        ]
+      }
+      match_expressions {
+        key      = "not-a-component"
+        operator = "DoesNotExist"
+        values   = []
+      }
+    }
+  }
+}
+
+# Cluster group scoped Custom Security Policy
+resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_security_policy" {
+  scope {
+    cluster_group{
+      cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name
+    }
+  }
+
+  spec {
+    input {
+      custom {
+        audit                        = true
+        disable_native_psp           = false
+        allow_privileged_containers  = true
+        allow_privilege_escalation   = true
+        allow_host_namespace_sharing = true
+        allow_host_network           = true
+        read_only_root_file_system   = true
+
+        allowed_host_port_range {
+          min = 3000
+          max = 5000
+        }
+
+        allowed_volumes              = [
+          "configMap",
+          "nfs",
+          "vsphereVolume"
+        ]
+
+        run_as_user {
+          rule = "RunAsAny"
+
+          ranges {
+            min = 3
+            max = 5
+          }
+          ranges {
+            min = 7
+            max = 12
+          }
+        }
+
+        run_as_group {
+          rule = "RunAsAny"
+
+          ranges {
+            min = 3
+            max = 5
+          }
+          ranges {
+            min = 7
+            max = 12
+          }
+        }
+
+        supplemental_groups {
+          rule = "RunAsAny"
+
+          ranges {
+            min = 3
+            max = 5
+          }
+          ranges {
+            min = 7
+            max = 12
+          }
+        }
+
+        fs_group {
+          rule = "RunAsAny"
+
+          ranges {
+            min = 3
+            max = 5
+          }
+          ranges {
+            min = 7
+            max = 12
+          }
+        }
+
+        linux_capabilities {
+          allowed_capabilities       = [
+            "CHOWN",
+            "IPC_LOCK"
+          ]
+          required_drop_capabilities = [
+            "SYS_TIME"
+          ]
+        }
+
+        allowed_host_paths {
+          path_prefix = "p1"
+          read_only  = true
+        }
+        allowed_host_paths {
+          path_prefix = "p2"
+          read_only  = false
+        }
+        allowed_host_paths {
+          path_prefix = "p3"
+          read_only  = true
+        }
+
+        allowed_se_linux_options {
+          level = "s0"
+          role  = "sysadm_r"
+          type  = "httpd_sys_content_t"
+          user  = "root"
+        }
+
+        sysctls {
+          forbidden_sysctls = [
+            "kernel.msgmax",
+            "kernel.sem"
+          ]
+        }
+
+        seccomp {
+          allowed_profiles        = [
+            "Localhost"
+          ]
+          allowed_localhost_files = [
+            "profiles/audit.json",
+            "profiles/violation.json"
+          ]
+        }
+      }
+    }
+
+    namespace_selector {
+      match_expressions {
+        key      = "component"
+        operator = "In"
+        values   = [
+          "api-server",
+          "agent-gateway"
+        ]
+      }
+      match_expressions {
+        key      = "not-a-component"
+        operator = "DoesNotExist"
+        values   = []
+      }
+    }
+  }
+}
+
+# Cluster scoped Custom Security Policy
+resource "tanzu-mission-control_security_policy" "cluster_scoped_custom_security_policy" {
+  scope {
+    cluster{
+      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name
+      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name
+      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name
+    }
+  }
+
+  spec {
+    input {
+      custom {
+        audit                        = true
+        disable_native_psp           = false
+        allow_privileged_containers  = true
+        allow_privilege_escalation   = true
+        allow_host_namespace_sharing = true
+        allow_host_network           = true
+        read_only_root_file_system   = true
+
+        allowed_host_port_range {
+          min = 3000
+          max = 5000
+        }
+
+        allowed_volumes              = [
+          "configMap",
+          "nfs",
+          "vsphereVolume"
+        ]
+
+        run_as_user {
+          rule = "RunAsAny"
+
+          ranges {
+            min = 3
+            max = 5
+          }
+          ranges {
+            min = 7
+            max = 12
+          }
+        }
+
+        run_as_group {
+          rule = "RunAsAny"
+
+          ranges {
+            min = 3
+            max = 5
+          }
+          ranges {
+            min = 7
+            max = 12
+          }
+        }
+
+        supplemental_groups {
+          rule = "RunAsAny"
+
+          ranges {
+            min = 3
+            max = 5
+          }
+          ranges {
+            min = 7
+            max = 12
+          }
+        }
+
+        fs_group {
+          rule = "RunAsAny"
+
+          ranges {
+            min = 3
+            max = 5
+          }
+          ranges {
+            min = 7
+            max = 12
+          }
+        }
+
+        linux_capabilities {
+          allowed_capabilities       = [
+            "CHOWN",
+            "IPC_LOCK"
+          ]
+          required_drop_capabilities = [
+            "SYS_TIME"
+          ]
+        }
+
+        allowed_host_paths {
+          path_prefix = "p1"
+          read_only  = true
+        }
+        allowed_host_paths {
+          path_prefix = "p2"
+          read_only  = false
+        }
+        allowed_host_paths {
+          path_prefix = "p3"
+          read_only  = true
+        }
+
+        allowed_se_linux_options {
+          level = "s0"
+          role  = "sysadm_r"
+          type  = "httpd_sys_content_t"
+          user  = "root"
+        }
+
+        sysctls {
+          forbidden_sysctls = [
+            "kernel.msgmax",
+            "kernel.sem"
+          ]
+        }
+
+        seccomp {
+          allowed_profiles        = [
+            "Localhost"
+          ]
+          allowed_localhost_files = [
+            "profiles/audit.json",
+            "profiles/violation.json"
+          ]
+        }
+      }
+    }
+
+    namespace_selector {
+      match_expressions {
+        key      = "component"
+        operator = "In"
+        values   = [
+          "api-server",
+          "agent-gateway"
+        ]
+      }
+      match_expressions {
+        key      = "not-a-component"
+        operator = "DoesNotExist"
+        values   = []
+      }
+    }
+  }
+}
+
+# Organization scoped Strict Security Policy
+resource "tanzu-mission-control_security_policy" "organization_scoped_strict_security_policy" {
+  scope {
+    organization{
+      organization = "dummy-org-id"
+    }
+  }
+
+  spec {
+    input {
+      strict {
+        audit              = true
+        disable_native_psp = false
+      }
+    }
+
+    namespace_selector {
+      match_expressions {
+        key      = "component"
+        operator = "In"
+        values   = [
+          "api-server",
+          "agent-gateway"
+        ]
+      }
+      match_expressions {
+        key      = "not-a-component"
+        operator = "DoesNotExist"
+        values   = []
+      }
+    }
+  }
+}
+
+# Cluster group scoped Strict Security Policy
+resource "tanzu-mission-control_security_policy" "cluster_group_scoped_strict_security_policy" {
+  scope {
+    cluster_group{
+      cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name
+    }
+  }
+
+  spec {
+    input {
+      strict {
+        audit              = true
+        disable_native_psp = false
+      }
+    }
+
+    namespace_selector {
+      match_expressions {
+        key      = "component"
+        operator = "In"
+        values   = [
+          "api-server",
+          "agent-gateway"
+        ]
+      }
+      match_expressions {
+        key      = "not-a-component"
+        operator = "DoesNotExist"
+        values   = []
+      }
+    }
+  }
+}
+
+# Cluster scoped Strict Security Policy
+resource "tanzu-mission-control_security_policy" "cluster_scoped_strict_security_policy" {
+  scope {
+    cluster{
+      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name
+      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name
+      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name
+    }
+  }
+
+  spec {
+    input {
+      strict {
+        audit              = true
+        disable_native_psp = false
+      }
+    }
+
+    namespace_selector {
+      match_expressions {
+        key      = "component"
+        operator = "In"
+        values   = [
+          "api-server",
+          "agent-gateway"
+        ]
+      }
+      match_expressions {
+        key      = "not-a-component"
+        operator = "DoesNotExist"
+        values   = []
+      }
     }
   }
 }

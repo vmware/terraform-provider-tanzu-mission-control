@@ -8,13 +8,13 @@ package transport
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 
 	"github.com/pkg/errors"
 
-	clienterrors "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/errors"
+	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 )
 
 type Request interface {
@@ -31,6 +31,10 @@ func (c *Client) Create(url string, request Request, response Response) error {
 
 func (c *Client) Update(url string, request Request, response Response) error {
 	return c.invokeAction(http.MethodPut, url, request, response)
+}
+
+func (c *Client) Patch(url string, request Request, response Response) error {
+	return c.invokeAction(http.MethodPatch, url, request, response)
 }
 
 func (c *Client) invokeAction(httpMethodType string, url string, request Request, response Response) error {
@@ -58,6 +62,11 @@ func (c *Client) invokeAction(httpMethodType string, url string, request Request
 		if err != nil {
 			return errors.Wrap(err, "update")
 		}
+	case http.MethodPatch:
+		resp, err = c.patch(requestURL, bytes.NewReader(body), headers)
+		if err != nil {
+			return errors.Wrap(err, "patch")
+		}
 	default:
 		return errors.New("unsupported http method type invoked")
 	}
@@ -66,7 +75,7 @@ func (c *Client) invokeAction(httpMethodType string, url string, request Request
 		_ = resp.Body.Close()
 	}()
 
-	respBody, err := ioutil.ReadAll(resp.Body)
+	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return errors.Wrapf(err, "read %v response", httpMethodType)
 	}
@@ -95,7 +104,7 @@ func (c *Client) Delete(url string) error {
 		_ = resp.Body.Close()
 	}()
 
-	respBody, _ := ioutil.ReadAll(resp.Body)
+	respBody, _ := io.ReadAll(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		return clienterrors.ErrorWithHTTPCode(resp.StatusCode, errors.Errorf("delete request(%s) failed with status : %v, response: %v", url, resp.Status, string(respBody)))
@@ -116,7 +125,7 @@ func (c *Client) Get(url string, response Response) error {
 		_ = resp.Body.Close()
 	}()
 
-	respBody, err := ioutil.ReadAll(resp.Body)
+	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return errors.Wrap(err, "read response")
 	}

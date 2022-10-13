@@ -12,9 +12,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
-	nodepoolsmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	nodepoolsmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 func DataSourceClusterNodePool() *schema.Resource {

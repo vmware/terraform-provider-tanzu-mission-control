@@ -9,8 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
-	nodepoolmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
-	tkgvspheremodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgvsphere"
+	nodepoolmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
+	tkgvspheremodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgvsphere"
 )
 
 var TkgVsphereClusterSpec = &schema.Schema{
@@ -460,15 +460,19 @@ func flattenTKGVsphereTopology(topology *tkgvspheremodel.VmwareTanzuManageV1alph
 		return nil
 	}
 
-	flattenTopology[controlPlaneKey] = flattenTKGVsphereTopologyControlPlane(topology.ControlPlane)
-
-	nps := make([]interface{}, 0)
-
-	for _, np := range topology.NodePools {
-		nps = append(nps, flattenTKGVsphereTopologyNodePool(np))
+	if topology.ControlPlane != nil {
+		flattenTopology[controlPlaneKey] = flattenTKGVsphereTopologyControlPlane(topology.ControlPlane)
 	}
 
-	flattenTopology[nodePoolsKey] = nps
+	if topology.NodePools != nil {
+		nps := make([]interface{}, 0)
+
+		for _, np := range topology.NodePools {
+			nps = append(nps, flattenTKGVsphereTopologyNodePool(np))
+		}
+
+		flattenTopology[nodePoolsKey] = nps
+	}
 
 	return []interface{}{flattenTopology}
 }
@@ -605,7 +609,11 @@ var tkgVsphereNodePoolSpec = &schema.Schema{
 }
 
 func expandTKGVsphereTopologyNodePool(data interface{}) (nodePools *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition) {
-	lookUpNodepool := data.(map[string]interface{})
+	lookUpNodepool, ok := data.(map[string]interface{})
+	if !ok {
+		return nodePools
+	}
+
 	nodePools = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 		Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{},
 		Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{},

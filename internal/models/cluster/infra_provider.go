@@ -10,16 +10,17 @@ import (
 )
 
 // VmwareTanzuManageV1alpha1CommonClusterInfrastructureProvider InfrastructureProvider definition - indicates the cluster infrastructure provider.
-//
-//  - INFRASTRUCTURE_PROVIDER_UNSPECIFIED: Unspecified infrastructure provider (default).
-//  - INFRASTRUCTURE_PROVIDER_NONE: No cloud provider (likely bare metal).
-//  - AWS_EC2: AmazonWeb Services EC2.
-//  - GCP_GCE: Google Cloud.
-//  - AZURE_COMPUTE: Azure Compute.
-//  - VMWARE_VSPHERE: VMWare vSphere.
-//  - OPENSHIFT: OpenShift.
-//
-// swagger:model vmware.tanzu.manage.v1alpha1.common.cluster.InfrastructureProvider
+/*
+  - INFRASTRUCTURE_PROVIDER_UNSPECIFIED: Unspecified infrastructure provider (default).
+  - INFRASTRUCTURE_PROVIDER_NONE: No cloud provider (likely bare metal).
+  - AWS_EC2: AmazonWeb Services EC2.
+  - GCP_GCE: Google Cloud.
+  - AZURE_COMPUTE: Azure Compute.
+  - VMWARE_VSPHERE: VMWare vSphere.
+  - OPENSHIFT: OpenShift.
+
+ swagger:model vmware.tanzu.manage.v1alpha1.common.cluster.InfrastructureProvider
+*/
 type VmwareTanzuManageV1alpha1CommonClusterInfrastructureProvider string
 
 func NewVmwareTanzuManageV1alpha1CommonClusterInfrastructureProvider(value VmwareTanzuManageV1alpha1CommonClusterInfrastructureProvider) *VmwareTanzuManageV1alpha1CommonClusterInfrastructureProvider {

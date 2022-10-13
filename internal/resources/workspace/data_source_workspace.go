@@ -12,10 +12,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
-	clienterrors "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/errors"
-	workspacemodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/workspace"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
+	workspacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/workspace"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 func DataSourceWorkspace() *schema.Resource {
@@ -28,7 +28,7 @@ func DataSourceWorkspace() *schema.Resource {
 func dataSourceWorkspaceRead(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	workspaceName, ok := d.Get(workspacesName).(string)
+	workspaceName, ok := d.Get(NameKey).(string)
 	if !ok {
 		return diag.Errorf("unable to read workspace name")
 	}

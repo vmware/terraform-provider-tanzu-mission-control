@@ -12,15 +12,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
-	clienterrors "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/errors"
-	clustergroupmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/clustergroup"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
-)
-
-const (
-	clusterGroupName = "name"
-	ResourceName     = "tanzu-mission-control_cluster_group"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
+	clustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/clustergroup"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 func ResourceClusterGroup() *schema.Resource {
@@ -34,7 +29,7 @@ func ResourceClusterGroup() *schema.Resource {
 }
 
 var clusterGroupSchema = map[string]*schema.Schema{
-	clusterGroupName: {
+	NameKey: {
 		Type:     schema.TypeString,
 		ForceNew: true,
 		Required: true,
@@ -51,7 +46,7 @@ func resourceClusterGroupInPlaceUpdate(ctx context.Context, d *schema.ResourceDa
 		return diags
 	}
 
-	clusterGroupName, ok := d.Get(clusterGroupName).(string)
+	clusterGroupName, ok := d.Get(NameKey).(string)
 	if !ok {
 		return diag.Errorf("unable to read cluster group name")
 	}
@@ -91,7 +86,7 @@ func resourceClusterGroupInPlaceUpdate(ctx context.Context, d *schema.ResourceDa
 func resourceClusterGroupDelete(_ context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	clusterGroupName, _ := d.Get(clusterGroupName).(string)
+	clusterGroupName, _ := d.Get(NameKey).(string)
 
 	fn := &clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName{
 		Name: clusterGroupName,
@@ -110,7 +105,7 @@ func resourceClusterGroupDelete(_ context.Context, d *schema.ResourceData, m int
 func resourceClusterGroupCreate(_ context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	clusterGroupName, ok := d.Get(clusterGroupName).(string)
+	clusterGroupName, ok := d.Get(NameKey).(string)
 	if !ok {
 		return diag.Errorf("unable to read cluster group name")
 	}

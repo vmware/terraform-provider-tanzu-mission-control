@@ -16,15 +16,15 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	k8sClient "sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
-	clienterrors "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/errors"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
-	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/manifest"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgaws"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgservicevsphere"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgvsphere"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
+	clustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/manifest"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgaws"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgservicevsphere"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgvsphere"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 type (
@@ -57,7 +57,7 @@ var clusterSchema = map[string]*schema.Schema{
 		Optional:    true,
 		ForceNew:    true,
 	},
-	clusterNameKey: {
+	NameKey: {
 		Type:        schema.TypeString,
 		Description: "Name of this cluster",
 		Required:    true,
@@ -89,7 +89,7 @@ func constructFullname(d *schema.ResourceData) (fullname *clustermodel.VmwareTan
 
 	fullname.ManagementClusterName, _ = d.Get(ManagementClusterNameKey).(string)
 	fullname.ProvisionerName, _ = d.Get(ProvisionerNameKey).(string)
-	fullname.Name, _ = d.Get(clusterNameKey).(string)
+	fullname.Name, _ = d.Get(NameKey).(string)
 
 	return fullname
 }
@@ -244,7 +244,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 
 	clusterResponse, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceCreate(clusterReq)
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey)))
+		return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control cluster entry, name : %s", d.Get(NameKey)))
 	}
 
 	// always run
@@ -282,7 +282,7 @@ func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interfac
 
 	err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceDelete(constructFullname(d), "false")
 	if err != nil && !clienterrors.IsNotFoundError(err) {
-		return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey)))
+		return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control cluster entry, name : %s", d.Get(NameKey)))
 	}
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but
@@ -304,7 +304,7 @@ func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interfac
 
 	_, err = helper.Retry(getClusterResourceRetryableFn, 10*time.Second, 18)
 	if err != nil {
-		diag.FromErr(errors.Wrapf(err, "verify %s cluster resource clean up", d.Get(clusterNameKey)))
+		diag.FromErr(errors.Wrapf(err, "verify %s cluster resource clean up", d.Get(NameKey)))
 	}
 
 	return diags
@@ -382,7 +382,7 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 	// Get call to initialise the cluster struct
 	getResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey)))
+		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(NameKey)))
 	}
 
 	updates := updateCheck{withMetaUpdate, withClusterGroupUpdate, withTKGsVsphereVersionUpdate, withTKGmVsphereVersionUpdate}
@@ -400,7 +400,7 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 			},
 		)
 		if err != nil {
-			return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey)))
+			return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster entry, name : %s", d.Get(NameKey)))
 		}
 
 		log.Printf("[INFO] cluster update successful")

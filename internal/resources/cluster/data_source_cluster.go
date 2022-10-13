@@ -15,11 +15,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
-	clienterrors "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/errors"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
-	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
+	clustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 func DataSourceTMCCluster() *schema.Resource {
@@ -47,7 +47,7 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 				return false, nil
 			}
 
-			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey))
+			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(NameKey))
 		}
 
 		d.SetId(resp.Cluster.Meta.UID)
@@ -96,7 +96,7 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 	}
 
 	if err != nil || resp == nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(clusterNameKey)))
+		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(NameKey)))
 	}
 
 	// always run
@@ -129,18 +129,28 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 
 	clusterSpec := constructSpec(d)
 
-	switch {
-	case resp.Cluster.Spec.TkgAws != nil:
-		resp.Cluster.Spec.TkgAws.Topology.NodePools = clusterSpec.TkgAws.Topology.NodePools
-	case resp.Cluster.Spec.TkgServiceVsphere != nil:
-		resp.Cluster.Spec.TkgServiceVsphere.Topology.NodePools = clusterSpec.TkgServiceVsphere.Topology.NodePools
-	case resp.Cluster.Spec.TkgVsphere != nil:
-		resp.Cluster.Spec.TkgVsphere.Topology.NodePools = clusterSpec.TkgVsphere.Topology.NodePools
-	}
+	getNodepoolForCluster(resp.Cluster.Spec, clusterSpec)
 
 	if err := d.Set(SpecKey, flattenSpec(resp.Cluster.Spec)); err != nil {
 		return diag.FromErr(err)
 	}
 
 	return diags
+}
+
+func getNodepoolForCluster(respSpec, clusterSpec *clustermodel.VmwareTanzuManageV1alpha1ClusterSpec) {
+	if clusterSpec == nil {
+		return
+	}
+
+	switch {
+	case clusterSpec.TkgAws == nil && clusterSpec.TkgServiceVsphere == nil && clusterSpec.TkgVsphere == nil:
+		break
+	case respSpec.TkgAws != nil && respSpec.TkgAws.Topology != nil && clusterSpec.TkgAws != nil && clusterSpec.TkgAws.Topology != nil:
+		respSpec.TkgAws.Topology.NodePools = clusterSpec.TkgAws.Topology.NodePools
+	case respSpec.TkgServiceVsphere != nil && respSpec.TkgServiceVsphere.Topology != nil && clusterSpec.TkgServiceVsphere != nil && clusterSpec.TkgServiceVsphere.Topology != nil:
+		respSpec.TkgServiceVsphere.Topology.NodePools = clusterSpec.TkgServiceVsphere.Topology.NodePools
+	case respSpec.TkgVsphere != nil && respSpec.TkgVsphere.Topology != nil && clusterSpec.TkgVsphere != nil && clusterSpec.TkgVsphere.Topology != nil:
+		respSpec.TkgVsphere.Topology.NodePools = clusterSpec.TkgVsphere.Topology.NodePools
+	}
 }

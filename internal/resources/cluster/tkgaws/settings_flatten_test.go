@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	tkgawsmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgaws"
+	tkgawsmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgaws"
 )
 
 func TestFlattenSettings(t *testing.T) {

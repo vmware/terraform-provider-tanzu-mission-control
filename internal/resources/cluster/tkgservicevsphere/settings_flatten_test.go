@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	tkgservicevspheremodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgservicevsphere"
+	tkgservicevspheremodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgservicevsphere"
 )
 
 func TestFlattenSettings(t *testing.T) {

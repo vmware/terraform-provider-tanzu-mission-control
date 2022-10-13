@@ -73,7 +73,7 @@ linters-settings:
   gocognit:
     min-complexity: 60
   goimports:
-    local-prefixes: github.com/vmware-tanzu/terraform-provider-tanzu-mission-control
+    local-prefixes: github.com/vmware/terraform-provider-tanzu-mission-control
 
 issues:
   exclude-rules:

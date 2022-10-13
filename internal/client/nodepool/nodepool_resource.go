@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
-	nodepoolsmodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
+	nodepoolsmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 )
 
 // New creates a new cluster node pool resource service API client.

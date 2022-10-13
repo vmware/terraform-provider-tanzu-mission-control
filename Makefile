@@ -1,12 +1,22 @@
 # Copyright © 2021 VMware, Inc. All Rights Reserved.
 # SPDX-License-Identifier: MPL-2.0
 
+ifeq ($(VERSION_TAG),)
+	VERSION_TAG := $(shell git describe --dirty --first-parent --always --tags)
+endif
+
+GOARCH := $(shell go env GOARCH)
+GOOS := $(shell go env GOOS)
+
 default: build
 
 build:
-	go build -o bin/terraform-provider-tanzu-mission-control_v1.0.0
-	mkdir -p ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/1.0.0/darwin_amd64/
-	cp bin/terraform-provider-tanzu-mission-control_v1.0.0 ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/1.0.0/darwin_amd64/
+	go build -o bin/terraform-provider-tanzu-mission-control_$(VERSION_TAG)
+	mkdir -p ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/$(VERSION_TAG:v%=%)/$(GOOS)_$(GOARCH)/
+	cp bin/terraform-provider-tanzu-mission-control_$(VERSION_TAG) ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/$(VERSION_TAG:v%=%)/$(GOOS)_$(GOARCH)/
+
+clean-up:
+	rm -rf ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/*
 
 test: | gofmt vet lint
 	go mod tidy

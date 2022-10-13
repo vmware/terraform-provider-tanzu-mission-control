@@ -10,7 +10,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/provider"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/provider"
 )
 
 func main() {

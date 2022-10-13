@@ -8,7 +8,7 @@ package nodepool
 import (
 	"github.com/go-openapi/swag"
 
-	objectmetamodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
+	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 )
 
 // VmwareTanzuManageV1alpha1ClusterNodepoolDefinition Definition is the definition of nodepool for cluster

@@ -10,44 +10,36 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	namespacemodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/namespace"
+	namespacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/namespace"
 )
 
-func TestFlattenSpec(t *testing.T) {
+func TestFlattenNamespaceFullname(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
-		name     string
-		input    *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceSpec
-		expected []interface{}
+		description string
+		input       *namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName
+		expected    []interface{}
 	}{
 		{
-			name:     "check for nil data in namespace spec",
-			input:    nil,
-			expected: nil,
+			description: "check for nil namespace full name",
+			input:       nil,
+			expected:    nil,
 		},
 		{
-			name: "normal scenario with attach set to false",
-			input: &namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceSpec{
-				WorkspaceName: "default",
+			description: "normal scenario with complete namespace full name",
+			input: &namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName{
+				Name:                  "n-1",
+				ClusterName:           "dummy",
+				ManagementClusterName: "attached",
+				ProvisionerName:       "attached",
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					workspaceNameKey: "default",
-					attachKey:        false,
-				},
-			},
-		},
-		{
-			name: "normal scenario with attach set to true",
-			input: &namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceSpec{
-				WorkspaceName: "workspace_name",
-				Attach:        true,
-			},
-			expected: []interface{}{
-				map[string]interface{}{
-					workspaceNameKey: "workspace_name",
-					attachKey:        true,
+					NameKey:                  "n-1",
+					ClusterNameKey:           "dummy",
+					ManagementClusterNameKey: "attached",
+					ProvisionerNameKey:       "attached",
 				},
 			},
 		},
@@ -55,8 +47,8 @@ func TestFlattenSpec(t *testing.T) {
 
 	for _, each := range cases {
 		test := each
-		t.Run(test.name, func(t *testing.T) {
-			actual := flattenSpec(test.input)
+		t.Run(test.description, func(t *testing.T) {
+			actual := FlattenNamespaceFullname(test.input)
 			require.Equal(t, test.expected, actual)
 		})
 	}

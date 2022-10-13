@@ -11,7 +11,10 @@ import (
 	"os"
 )
 
-const DEV = "DEV"
+const (
+	DEV     = "DEV"
+	TmcMode = "TMC_MODE"
+)
 
 func GetFirstElementOf(parent string, children ...string) (key string) {
 	if len(children) == 0 {
@@ -32,7 +35,7 @@ func readFloat(input interface{}, key string) float64 {
 	if !ok {
 		fmt.Printf("[ERROR]: Unable to covert %T to float64 for attribute %s \n", input, key)
 
-		if os.Getenv("TMC_MODE") == DEV {
+		if os.Getenv(TmcMode) == DEV {
 			log.Fatalf("[ERROR]: Invalid type conversion for the %s. Please check the schema", key)
 		}
 	}
@@ -45,7 +48,7 @@ func readInt(input interface{}, key string) int {
 	if !ok {
 		fmt.Printf("[ERROR]: Unable to covert %T to int for attribute %s \n", input, key)
 
-		if os.Getenv("TMC_MODE") == DEV {
+		if os.Getenv(TmcMode) == DEV {
 			log.Fatalf("[ERROR]: Invalid type conversion for the %s. Please check the schema", key)
 		}
 	}
@@ -58,7 +61,7 @@ func readBool(input interface{}, key string) bool {
 	if !ok {
 		fmt.Printf("[ERROR]: Unable to covert %T to bool for attribute %s \n", input, key)
 
-		if os.Getenv("TMC_MODE") == DEV {
+		if os.Getenv(TmcMode) == DEV {
 			log.Fatalf("[ERROR]: Invalid type conversion for the %s. Please check the schema", key)
 		}
 	}
@@ -71,7 +74,7 @@ func readString(input interface{}, key string) string {
 	if !ok {
 		fmt.Printf("[ERROR]: Unable to covert %T to string for attribute %s \n", input, key)
 
-		if os.Getenv("TMC_MODE") == DEV {
+		if os.Getenv(TmcMode) == DEV {
 			log.Fatalf("[ERROR]: Invalid type conversion for the %s. Please check the schema", key)
 		}
 	}
@@ -113,7 +116,7 @@ func SetPrimitiveValue(input, model interface{}, key string) {
 	default:
 		fmt.Printf("[ERROR]: Internal err, invalid use of SetPrimitive function for %s", key)
 
-		if os.Getenv("TMC_MODE") == DEV {
+		if os.Getenv(TmcMode) == DEV {
 			log.Fatalf("[ERROR}: SetPrimitive works on PassByReference and only for Primitive types. Got [%T]", m)
 		}
 	}

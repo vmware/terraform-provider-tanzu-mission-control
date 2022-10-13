@@ -9,7 +9,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -26,7 +26,7 @@ import (
 	"k8s.io/client-go/kubernetes/scheme"
 	k8sClient "sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/helper"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 )
 
 type manifest struct {
@@ -171,7 +171,7 @@ func GetK8sManifest(depLink string) ([]byte, error) {
 
 	defer resp.Body.Close()
 
-	respData, err := ioutil.ReadAll(resp.Body)
+	respData, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

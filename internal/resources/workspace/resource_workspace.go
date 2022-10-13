@@ -12,15 +12,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/authctx"
-	clienterrors "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/errors"
-	workspacemodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/workspace"
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/resources/common"
-)
-
-const (
-	workspacesName = "name"
-	ResourceName   = "tanzu-mission-control_workspace"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
+	workspacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/workspace"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 func ResourceWorkspace() *schema.Resource {
@@ -34,7 +29,7 @@ func ResourceWorkspace() *schema.Resource {
 }
 
 var workspaceSchema = map[string]*schema.Schema{
-	workspacesName: {
+	NameKey: {
 		Type:     schema.TypeString,
 		Required: true,
 		ForceNew: true,
@@ -45,7 +40,7 @@ var workspaceSchema = map[string]*schema.Schema{
 func resourceWorkspaceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	workspaceName, _ := d.Get(workspacesName).(string)
+	workspaceName, _ := d.Get(NameKey).(string)
 
 	fn := &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName{
 		Name: workspaceName,
@@ -66,7 +61,7 @@ func resourceWorkspaceDelete(ctx context.Context, d *schema.ResourceData, m inte
 func resourceWorkspaceCreate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	var workspaceName, _ = d.Get(workspacesName).(string)
+	var workspaceName, _ = d.Get(NameKey).(string)
 
 	workspaceRequest := &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceRequest{
 		Workspace: &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceWorkspace{
@@ -97,7 +92,7 @@ func resourceWorkspaceInPlaceUpdate(ctx context.Context, d *schema.ResourceData,
 		return diags
 	}
 
-	workspaceName, ok := d.Get(workspacesName).(string)
+	workspaceName, ok := d.Get(NameKey).(string)
 	if !ok {
 		return diag.Errorf("unable to read workspace name")
 	}

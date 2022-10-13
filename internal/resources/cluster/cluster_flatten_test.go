@@ -10,44 +10,34 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	clustermodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/cluster"
+	clustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster"
 )
 
-func TestFlattenSpec(t *testing.T) {
+func TestFlattenClusterFullname(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
-		name     string
-		input    *clustermodel.VmwareTanzuManageV1alpha1ClusterSpec
-		expected []interface{}
+		description string
+		input       *clustermodel.VmwareTanzuManageV1alpha1ClusterFullName
+		expected    []interface{}
 	}{
 		{
-			name:     "check for nil data in cluster spec",
-			input:    nil,
-			expected: nil,
+			description: "check for nil cluster full name",
+			input:       nil,
+			expected:    nil,
 		},
 		{
-			name: "normal scenario with cluster group",
-			input: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+			description: "normal scenario with complete cluster full name",
+			input: &clustermodel.VmwareTanzuManageV1alpha1ClusterFullName{
+				Name:                  "dummy",
+				ManagementClusterName: "attached",
+				ProvisionerName:       "attached",
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					clusterGroupKey: "default",
-					proxyNameKey:    "",
-				},
-			},
-		},
-		{
-			name: "normal scenario with cluster group and proxy",
-			input: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
-				ProxyName:        "proxy",
-			},
-			expected: []interface{}{
-				map[string]interface{}{
-					clusterGroupKey: "default",
-					proxyNameKey:    "proxy",
+					NameKey:                  "dummy",
+					ManagementClusterNameKey: "attached",
+					ProvisionerNameKey:       "attached",
 				},
 			},
 		},
@@ -55,8 +45,8 @@ func TestFlattenSpec(t *testing.T) {
 
 	for _, each := range cases {
 		test := each
-		t.Run(test.name, func(t *testing.T) {
-			actual := flattenSpec(test.input)
+		t.Run(test.description, func(t *testing.T) {
+			actual := FlattenClusterFullname(test.input)
 			require.Equal(t, test.expected, actual)
 		})
 	}

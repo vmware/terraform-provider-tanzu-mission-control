@@ -16,7 +16,7 @@ It is part of a Tanzu Kubernetes Grid instance that includes the following compo
 - **provisioner** - a namespace on the management cluster that contains one or more workload clusters
 - **workload cluster** - a Tanzu Kubernetes cluster that runs your application workloads
 
-# Attach Cluster
+## Attach Cluster
 
 To use the **Tanzu Mission Control provider** to attach an existing conformant Kubernetes cluster,
 you must have `cluster.admin` permissions on the cluster and `clustergroup.edit` permissions in Tanzu Mission Control.
@@ -24,7 +24,7 @@ For more information, please refer [Attach a Cluster.][attach-cluster]
 
 [attach-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-6DF2CE3E-DD07-499B-BC5E-6B3B2E02A070.html
 
-## Example Usage
+### Example Usage
 
 ```terraform
 # Create Tanzu Mission Control attach cluster entry
@@ -47,9 +47,9 @@ resource "tanzu-mission-control_cluster" "attach_cluster_without_apply" {
 ```
 
 
-# Attach Cluster with Kubeconfig
+## Attach Cluster with Kubeconfig
 
-## Example Usage
+### Example Usage
 
 ```terraform
 # Create Tanzu Mission Control attach cluster with k8s cluster kubeconfig provided
@@ -78,9 +78,9 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
 ```
 
 
-# Attach Cluster with Proxy
+## Attach Cluster with Proxy
 
-## Example Usage
+### Example Usage
 
 ```terraform
 # Create Tanzu Mission Control attach cluster entry with proxy
@@ -104,7 +104,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_proxy" {
 ```
 
 
-# Tanzu Kubernetes Grid Service Workload Cluster
+## Tanzu Kubernetes Grid Service Workload Cluster
 
 To use the **Tanzu Mission Control provider** for creating a new cluster, you must have access to an existing Tanzu Kubernetes Grid management cluster with a provisioner namespace wherein the cluster needs to be created.
 For more information, please refer [managing the Lifecycle of Tanzu Kubernetes Clusters][create-cluster]
@@ -119,7 +119,7 @@ You must also have the appropriate permissions:
 [create-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-1F847180-1F98-4F8F-9062-46DE9AD8F79D.html
 [lifecycle-management]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-A6B0184F-269F-41D3-B7FE-5C4F96B3A099.html
 
-## Example Usage
+### Example Usage
 
 ```terraform
 # Create Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster entry
@@ -207,7 +207,7 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
 ```
 
 
-# Tanzu Kubernetes Grid Vsphere Workload Cluster
+## Tanzu Kubernetes Grid Vsphere Workload Cluster
 
 To use the **Tanzu Mission Control provider** for creating a new cluster, you must have access to an existing Tanzu Kubernetes Grid management cluster with a provisioner namespace wherein the cluster needs to be created.
 For more information, please refer [Managing the Lifecycle of Tanzu Kubernetes Clusters][create-cluster]
@@ -222,7 +222,7 @@ You must also have the appropriate permissions:
 [create-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-1F847180-1F98-4F8F-9062-46DE9AD8F79D.html
 [lifecycle-management]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-A6B0184F-269F-41D3-B7FE-5C4F96B3A099.html
 
-## Example Usage
+### Example Usage
 
 ```terraform
 # Create a Tanzu Kubernetes Grid Vsphere workload cluster entry
@@ -315,7 +315,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
 }
 ```
 
-# Tanzu Kubernetes Grid AWS Workload Cluster
+## Tanzu Kubernetes Grid AWS Workload Cluster
 
 To use the **Tanzu Mission Control provider** for creating a new cluster, you must have access to an existing Tanzu Kubernetes Grid management cluster with a provisioner namespace wherein the cluster needs to be created.
 For more information, please refer [Managing the Lifecycle of Tanzu Kubernetes Clusters][create-cluster]
@@ -330,7 +330,7 @@ You must also have the appropriate permissions:
 [create-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-1F847180-1F98-4F8F-9062-46DE9AD8F79D.html
 [lifecycle-management]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-A6B0184F-269F-41D3-B7FE-5C4F96B3A099.html
 
-## Example Usage
+### Example Usage
 
 ```terraform
 # Create a Tanzu Mission Control Tanzu Kubernetes Grid AWS workload cluster entry

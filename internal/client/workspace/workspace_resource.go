@@ -8,8 +8,8 @@ package workspaceclient
 import (
 	"fmt"
 
-	"github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/client/transport"
-	workspacemodel "github.com/vmware-tanzu/terraform-provider-tanzu-mission-control/internal/models/workspace"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
+	workspacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/workspace"
 )
 
 // New creates a new workspace resource service API client.
@@ -35,9 +35,7 @@ type ClientService interface {
 	ManageV1alpha1WorkspaceResourceServiceUpdate(fn *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceRequest) (*workspacemodel.VmwareTanzuManageV1alphaWorkspaceResponse, error)
 }
 
-/*
-  ManageV1alpha1WorkspaceResourceServiceUpdate updates a workspace.
-*/
+// ManageV1alpha1WorkspaceResourceServiceUpdate updates a workspace.
 func (c *Client) ManageV1alpha1WorkspaceResourceServiceUpdate(
 	request *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceRequest,
 ) (*workspacemodel.VmwareTanzuManageV1alphaWorkspaceResponse, error) {
@@ -48,9 +46,7 @@ func (c *Client) ManageV1alpha1WorkspaceResourceServiceUpdate(
 	return namespaceResponse, err
 }
 
-/*
-  ManageV1alpha1WorkspaceResourceServiceCreate creates a workspace.
-*/
+// ManageV1alpha1WorkspaceResourceServiceCreate creates a workspace.
 func (c *Client) ManageV1alpha1WorkspaceResourceServiceCreate(
 	request *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceRequest,
 ) (*workspacemodel.VmwareTanzuManageV1alphaWorkspaceResponse, error) {
@@ -60,9 +56,7 @@ func (c *Client) ManageV1alpha1WorkspaceResourceServiceCreate(
 	return namespaceResponse, err
 }
 
-/*
-  ManageV1alpha1WorkspaceResourceServiceGet gets a workspace.
-*/
+// ManageV1alpha1WorkspaceResourceServiceGet gets a workspace.
 func (c *Client) ManageV1alpha1WorkspaceResourceServiceGet(
 	fn *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName,
 ) (*workspacemodel.VmwareTanzuManageV1alpha1WorkspaceGetWorkspaceResponse, error) {
@@ -74,9 +68,7 @@ func (c *Client) ManageV1alpha1WorkspaceResourceServiceGet(
 	return workspaceResponse, err
 }
 
-/*
-  ManageV1alpha1WorkspaceResourceServiceDelete deletes a workspace.
-*/
+// ManageV1alpha1WorkspaceResourceServiceDelete deletes a workspace.
 func (c *Client) ManageV1alpha1WorkspaceResourceServiceDelete(
 	fn *workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName,
 ) error {
