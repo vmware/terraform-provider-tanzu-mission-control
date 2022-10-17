@@ -438,8 +438,8 @@ func expandTKGVsphereTopology(data []interface{}) (topology *tkgvspheremodel.Vmw
 	topology = &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereTopology{}
 
 	if v, ok := lookUpTopology[controlPlaneKey]; ok {
-		if v1, ok := v.([]interface{}); ok {
-			topology.ControlPlane = expandTKGVsphereTopologyControlPlane(v1)
+		if cp, ok := v.([]interface{}); ok {
+			topology.ControlPlane = expandTKGVsphereTopologyControlPlane(cp)
 		}
 	}
 
@@ -605,7 +605,11 @@ var tkgVsphereNodePoolSpec = &schema.Schema{
 }
 
 func expandTKGVsphereTopologyNodePool(data interface{}) (nodePools *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition) {
-	lookUpNodepool := data.(map[string]interface{})
+	lookUpNodepool, ok := data.(map[string]interface{})
+	if !ok {
+		return nodePools
+	}
+
 	nodePools = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 		Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{},
 		Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{},

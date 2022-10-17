@@ -619,8 +619,8 @@ func expandTKGAWSTopology(data []interface{}) (topology *tkgawsmodel.VmwareTanzu
 	topology = &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsTopology{}
 
 	if v, ok := lookUpTopology[controlPlaneKey]; ok {
-		if v1, ok := v.([]interface{}); ok {
-			topology.ControlPlane = expandTKGAWSTopologyControlPlane(v1)
+		if cp, ok := v.([]interface{}); ok {
+			topology.ControlPlane = expandTKGAWSTopologyControlPlane(cp)
 		}
 	}
 
@@ -812,7 +812,11 @@ var tkgAWSNodePoolSpec = &schema.Schema{
 }
 
 func expandTKGAWSTopologyNodePool(data interface{}) (nodePools *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition) {
-	lookUpNodepool := data.(map[string]interface{})
+	lookUpNodepool, ok := data.(map[string]interface{})
+	if !ok {
+		return nodePools
+	}
+
 	nodePools = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 		Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{},
 		Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{},
