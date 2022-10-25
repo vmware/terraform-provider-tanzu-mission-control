@@ -11,6 +11,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	workspacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/workspace"
 )
 
@@ -43,7 +44,9 @@ func TestConcurrentAccessOfInvokeAction(t *testing.T) {
 		},
 	}
 
-	c := NewClient()
+	c, err := NewClient(&helper.TLSConfig{})
+	require.NoError(t, err)
+
 	c.AddHeaders(map[string][]string{
 		"header1": {"one", "two"},
 		"header2": {"three", "four"},
