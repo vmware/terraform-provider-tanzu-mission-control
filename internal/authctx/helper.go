@@ -11,6 +11,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 )
 
 func ProviderAuthSchema() map[string]*schema.Schema {
@@ -31,15 +33,63 @@ func ProviderAuthSchema() map[string]*schema.Schema {
 			Sensitive:   true,
 			DefaultFunc: schema.EnvDefaultFunc(VMWCloudAPITokenEnvVar, nil),
 		},
+		insecureAllowUnverifiedSSL: {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			DefaultFunc: schema.EnvDefaultFunc(InsecureAllowUnverifiedSSLEnvVar, false),
+		},
+		clientAuthCertFile: {
+			Type:        schema.TypeString,
+			Optional:    true,
+			DefaultFunc: schema.EnvDefaultFunc(ClientAuthCertFileEnvVar, nil),
+		},
+		clientAuthKeyFile: {
+			Type:        schema.TypeString,
+			Optional:    true,
+			DefaultFunc: schema.EnvDefaultFunc(ClientAuthKeyFileEnvVar, nil),
+		},
+		caFile: {
+			Type:        schema.TypeString,
+			Optional:    true,
+			DefaultFunc: schema.EnvDefaultFunc(CAFileEnvVar, nil),
+		},
+		clientAuthCert: {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Sensitive:   true,
+			DefaultFunc: schema.EnvDefaultFunc(ClientAuthCertEnvVar, nil),
+		},
+		clientAuthKey: {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Sensitive:   true,
+			DefaultFunc: schema.EnvDefaultFunc(ClientAuthKeyEnvVar, nil),
+		},
+		caCert: {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Sensitive:   true,
+			DefaultFunc: schema.EnvDefaultFunc(CACertEnvVar, nil),
+		},
 	}
 }
 
 func ProviderConfigureContext(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	config := TanzuContext{}
+	config := TanzuContext{
+		TLSConfig: &proxy.TLSConfig{},
+	}
 
 	config.ServerEndpoint, _ = d.Get(endpoint).(string)
 	config.VMWCloudEndPoint, _ = d.Get(vmwCloudEndpoint).(string)
 	config.Token, _ = d.Get(vmwCloudAPIToken).(string)
+	config.TLSConfig.Insecure, _ = d.Get(insecureAllowUnverifiedSSL).(bool)
+	config.TLSConfig.ClientAuthCertFile, _ = d.Get(clientAuthCertFile).(string)
+	config.TLSConfig.ClientAuthKeyFile, _ = d.Get(clientAuthKeyFile).(string)
+	config.TLSConfig.CaFile, _ = d.Get(caFile).(string)
+	config.TLSConfig.ClientAuthCert, _ = d.Get(clientAuthCert).(string)
+	config.TLSConfig.ClientAuthKey, _ = d.Get(clientAuthKey).(string)
+	config.TLSConfig.CaCert, _ = d.Get(caCert).(string)
 
 	return setContext(config)
 }

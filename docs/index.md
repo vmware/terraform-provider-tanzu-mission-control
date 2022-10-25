@@ -61,4 +61,11 @@ provider "tanzu-mission-control" {
 
 ### Optional
 
+- `ca_cert` (String, Sensitive)
+- `ca_file` (String)
+- `client_auth_cert` (String, Sensitive)
+- `client_auth_cert_file` (String)
+- `client_auth_key` (String, Sensitive)
+- `client_auth_key_file` (String)
+- `insecure_allow_unverified_ssl` (Boolean)
 - `vmw_cloud_endpoint` (String)
