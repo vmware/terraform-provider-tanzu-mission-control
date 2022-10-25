@@ -7,7 +7,6 @@ package transport
 
 import (
 	"bytes"
-	"crypto/tls"
 	"crypto/x509"
 	"io"
 	"net"
@@ -15,6 +14,8 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 )
 
 // Client is the http client implementation.
@@ -33,7 +34,7 @@ const (
 )
 
 // NewClient returns a new instance of http Client.
-func NewClient() *Client {
+func NewClient(config *proxy.TLSConfig) (*Client, error) {
 	client := Client{
 		Config:     DefaultTransportConfig(),
 		timeout:    defaultHTTPTimeout,
@@ -41,20 +42,26 @@ func NewClient() *Client {
 		interval:   defaultIntervalDuration,
 	}
 
-	caCertPool := x509.NewCertPool()
-	caCertPool.AppendCertsFromPEM([]byte(tmcRootCA))
+	var transport *http.Transport
 
 	// Setup HTTPS client.
-	//nolint:gosec // (ignore "G402")
-	tlsConfig := &tls.Config{
-		RootCAs: caCertPool,
+	tlsConfig, err := proxy.GetConnectorTLSConfig(config)
+	if err != nil {
+		return nil, err
 	}
 
-	transport := &http.Transport{
+	if tlsConfig.RootCAs == nil {
+		tlsConfig.RootCAs = x509.NewCertPool()
+	}
+
+	tlsConfig.RootCAs.AppendCertsFromPEM([]byte(tmcRootCA))
+
+	transport = &http.Transport{
 		DialContext: (&net.Dialer{
 			Timeout:   30 * time.Second,
 			KeepAlive: 30 * time.Second,
 		}).DialContext,
+		Proxy:                 http.ProxyFromEnvironment,
 		ForceAttemptHTTP2:     true,
 		MaxIdleConns:          100,
 		IdleConnTimeout:       90 * time.Second,
@@ -68,7 +75,7 @@ func NewClient() *Client {
 		Transport: transport,
 	}
 
-	return &client
+	return &client, nil
 }
 
 // Get makes a HTTP GET request to provided URL.

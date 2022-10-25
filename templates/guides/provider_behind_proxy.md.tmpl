@@ -1,0 +1,18 @@
+---
+Title: "Using the Provider behind Proxy"
+Description: |-
+  The Tanzu Mission Control Provider can also be utilised behind any proxy configuration.
+---
+
+# Using Tanzu Mission Control Provider behind Proxies
+
+The `tanzu-mission-control` provider can be leveraged and used behind any proxy configuration.
+
+To leverage the provider behind a proxy, you need to do the following:
+
+1. The proxy can be of `HTTP` or `HTTPS` type. For this purpose, the user must define `HTTP_PROXY` or `HTTPS_PROXY` as environment variables.
+2. Then, the user must define certain configuration variables to enable proxy support shown by the following example.
+
+## Example
+
+{{tffile "examples/proxy/provider.tf"}}

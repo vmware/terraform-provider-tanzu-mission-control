@@ -17,6 +17,8 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 )
 
 type tokenResponse struct {
@@ -32,23 +34,31 @@ type AgentTokenInfo struct {
 	AccessToken string `json:"access_token"`
 }
 
-func getBearerToken(cspEndpoint, cspToken string) (string, error) {
-	transport := &http.Transport{
+func getBearerToken(cspEndpoint, cspToken string, config *proxy.TLSConfig) (string, error) {
+	var (
+		transport *http.Transport
+		resp      *http.Response
+		err       error
+	)
+
+	tlsConfig, err := proxy.GetConnectorTLSConfig(config)
+	if err != nil {
+		return "", err
+	}
+
+	transport = &http.Transport{
 		DialContext: (&net.Dialer{
 			Timeout:   30 * time.Second,
 			KeepAlive: 30 * time.Second,
 		}).DialContext,
+		Proxy:               http.ProxyFromEnvironment,
 		MaxIdleConns:        1000,
 		MaxIdleConnsPerHost: 200,
 		IdleConnTimeout:     90 * time.Second,
+		TLSClientConfig:     tlsConfig,
 	}
 
 	client := &http.Client{Transport: transport, Timeout: 60 * time.Second}
-
-	var (
-		resp *http.Response
-		err  error
-	)
 
 	data := url.Values{}
 	data.Set("refresh_token", cspToken)
@@ -106,7 +116,7 @@ func getUserAuthCtx(config *TanzuContext) (map[string]string, error) {
 	)
 
 	for i := 0; i < 3; i++ {
-		token, err = getBearerToken(config.VMWCloudEndPoint, config.Token)
+		token, err = getBearerToken(config.VMWCloudEndPoint, config.Token, config.TLSConfig)
 		if err == nil {
 			break
 		}
