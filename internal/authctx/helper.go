@@ -11,6 +11,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 )
 
 func ProviderAuthSchema() map[string]*schema.Schema {
@@ -31,15 +33,56 @@ func ProviderAuthSchema() map[string]*schema.Schema {
 			Sensitive:   true,
 			DefaultFunc: schema.EnvDefaultFunc(VMWCloudAPITokenEnvVar, nil),
 		},
+		insecureAllowUnverifiedSSL: {
+			Type:     schema.TypeBool,
+			Optional: true,
+			Default:  false,
+		},
+		clientAuthCertFile: {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		clientAuthKeyFile: {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		caFile: {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		clientAuthCert: {
+			Type:      schema.TypeString,
+			Optional:  true,
+			Sensitive: true,
+		},
+		clientAuthKey: {
+			Type:      schema.TypeString,
+			Optional:  true,
+			Sensitive: true,
+		},
+		caCert: {
+			Type:      schema.TypeString,
+			Optional:  true,
+			Sensitive: true,
+		},
 	}
 }
 
 func ProviderConfigureContext(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	config := TanzuContext{}
+	config := TanzuContext{
+		TLSConfig: &helper.TLSConfig{},
+	}
 
 	config.ServerEndpoint, _ = d.Get(endpoint).(string)
 	config.VMWCloudEndPoint, _ = d.Get(vmwCloudEndpoint).(string)
 	config.Token, _ = d.Get(vmwCloudAPIToken).(string)
+	config.TLSConfig.Insecure, _ = d.Get(insecureAllowUnverifiedSSL).(bool)
+	config.TLSConfig.ClientAuthCertFile, _ = d.Get(clientAuthCertFile).(string)
+	config.TLSConfig.ClientAuthKeyFile, _ = d.Get(clientAuthKeyFile).(string)
+	config.TLSConfig.CaFile, _ = d.Get(caFile).(string)
+	config.TLSConfig.ClientAuthCert, _ = d.Get(clientAuthCert).(string)
+	config.TLSConfig.ClientAuthKey, _ = d.Get(clientAuthKey).(string)
+	config.TLSConfig.CaCert, _ = d.Get(caCert).(string)
 
 	return setContext(config)
 }
