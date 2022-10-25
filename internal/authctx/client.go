@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 )
 
 const (
@@ -22,10 +23,14 @@ type TanzuContext struct {
 	Token            string
 	VMWCloudEndPoint string
 	TMCConnection    *client.TanzuMissionControl
+	TLSConfig        *proxy.TLSConfig
 }
 
-func (cfg *TanzuContext) Setup() error {
-	cfg.TMCConnection = client.NewHTTPClient()
+func (cfg *TanzuContext) Setup() (err error) {
+	cfg.TMCConnection, err = client.NewHTTPClient(cfg.TLSConfig)
+	if err != nil {
+		return
+	}
 
 	md, err := getUserAuthCtx(cfg)
 	if err != nil {
