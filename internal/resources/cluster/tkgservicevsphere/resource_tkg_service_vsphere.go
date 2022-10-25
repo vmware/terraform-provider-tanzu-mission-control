@@ -337,16 +337,18 @@ func expandTKGSTopology(data []interface{}) (topology *tkgservicevspheremodel.Vm
 		return topology
 	}
 
-	topology = &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereTopology{}
 	topologyData, _ := data[0].(map[string]interface{})
+	topology = &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereTopology{}
 
 	if v, ok := topologyData[controlPlaneKey]; ok {
-		topology.ControlPlane = expandTKGSTopologyControlPlane(v.([]interface{}))
+		if cp, ok := v.([]interface{}); ok {
+			topology.ControlPlane = expandTKGSTopologyControlPlane(cp)
+		}
 	}
 
 	if v, ok := topologyData[nodePoolsKey]; ok {
-		nodePools, _ := v.([]interface{})
-		for _, np := range nodePools {
+		nodepools, _ := v.([]interface{})
+		for _, np := range nodepools {
 			topology.NodePools = append(topology.NodePools, expandTKGSTopologyNodePool(np))
 		}
 	}
@@ -366,7 +368,7 @@ func flattenTKGSTopology(topology *tkgservicevspheremodel.VmwareTanzuManageV1alp
 	nodePools := make([]interface{}, 0)
 
 	for _, nodePool := range topology.NodePools {
-		nodePools = append(nodePools, FlattenTKGSTopologyNodePool(nodePool))
+		nodePools = append(nodePools, flattenTKGSTopologyNodePool(nodePool))
 	}
 
 	flattenTopology[nodePoolsKey] = nodePools
@@ -605,7 +607,11 @@ var storageClass = &schema.Schema{
 }
 
 func expandTKGSTopologyNodePool(data interface{}) (nodePools *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition) {
-	nodePoolData := data.(map[string]interface{})
+	nodePoolData, ok := data.(map[string]interface{})
+	if !ok {
+		return nodePools
+	}
+
 	nodePools = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 		Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{},
 		Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{},
@@ -682,7 +688,7 @@ func expandNodePoolTKGSServiceVsphere(data []interface{}) (tkgsServiceVsphere *n
 	return tkgsServiceVsphere
 }
 
-func FlattenTKGSTopologyNodePool(nodePool *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition) (data interface{}) {
+func flattenTKGSTopologyNodePool(nodePool *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition) (data interface{}) {
 	flattenNodePool := make(map[string]interface{})
 
 	if nodePool == nil {
