@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -33,22 +34,37 @@ type AgentTokenInfo struct {
 }
 
 func getBearerToken(cspEndpoint, cspToken string) (string, error) {
-	transport := &http.Transport{
-		DialContext: (&net.Dialer{
-			Timeout:   30 * time.Second,
-			KeepAlive: 30 * time.Second,
-		}).DialContext,
-		MaxIdleConns:        1000,
-		MaxIdleConnsPerHost: 200,
-		IdleConnTimeout:     90 * time.Second,
-	}
-
-	client := &http.Client{Transport: transport, Timeout: 60 * time.Second}
-
 	var (
-		resp *http.Response
-		err  error
+		transport *http.Transport
+		resp      *http.Response
 	)
+
+	proxy, err := url.Parse(os.Getenv("CSP_PROXY"))
+	if err == nil {
+		log.Print("csp with proxy")
+		transport = &http.Transport{
+			DialContext: (&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 30 * time.Second,
+			}).DialContext,
+			Proxy:               http.ProxyURL(proxy),
+			MaxIdleConns:        1000,
+			MaxIdleConnsPerHost: 200,
+			IdleConnTimeout:     90 * time.Second,
+		}
+	} else {
+		log.Print("csp without proxy")
+		transport = &http.Transport{
+			DialContext: (&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 30 * time.Second,
+			}).DialContext,
+			MaxIdleConns:        1000,
+			MaxIdleConnsPerHost: 200,
+			IdleConnTimeout:     90 * time.Second,
+		}
+	}
+	client := &http.Client{Transport: transport, Timeout: 60 * time.Second}
 
 	data := url.Values{}
 	data.Set("refresh_token", cspToken)
