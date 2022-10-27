@@ -65,14 +65,22 @@ func GetConnectorTLSConfig(config *TLSConfig) (*tls.Config, error) {
 		}
 
 		caCertPool := x509.NewCertPool()
-		caCertPool.AppendCertsFromPEM(caCert)
+
+		ok := caCertPool.AppendCertsFromPEM(caCert)
+		if !ok {
+			return nil, errors.New("failed to append CA certificate from file")
+		}
 
 		tlsConfig.RootCAs = caCertPool
 	}
 
 	if len(config.CaCert) > 0 {
 		caCertPool := x509.NewCertPool()
-		caCertPool.AppendCertsFromPEM([]byte(config.CaCert))
+
+		ok := caCertPool.AppendCertsFromPEM([]byte(config.CaCert))
+		if !ok {
+			return nil, errors.New("failed to append CA certificate from field")
+		}
 
 		tlsConfig.RootCAs = caCertPool
 	}

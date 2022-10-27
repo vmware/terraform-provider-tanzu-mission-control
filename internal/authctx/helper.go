@@ -33,6 +33,38 @@ func ProviderAuthSchema() map[string]*schema.Schema {
 			Sensitive:   true,
 			DefaultFunc: schema.EnvDefaultFunc(VMWCloudAPITokenEnvVar, nil),
 		},
+		insecureAllowUnverifiedSSL: {
+			Type:     schema.TypeBool,
+			Optional: true,
+			Default:  false,
+		},
+		clientAuthCertFile: {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		clientAuthKeyFile: {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		caFile: {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		clientAuthCert: {
+			Type:      schema.TypeString,
+			Optional:  true,
+			Sensitive: true,
+		},
+		clientAuthKey: {
+			Type:      schema.TypeString,
+			Optional:  true,
+			Sensitive: true,
+		},
+		caCert: {
+			Type:      schema.TypeString,
+			Optional:  true,
+			Sensitive: true,
+		},
 	}
 }
 
