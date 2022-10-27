@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -18,6 +17,8 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 )
 
 type tokenResponse struct {
@@ -33,37 +34,30 @@ type AgentTokenInfo struct {
 	AccessToken string `json:"access_token"`
 }
 
-func getBearerToken(cspEndpoint, cspToken string) (string, error) {
+func getBearerToken(cspEndpoint, cspToken string, config *helper.TLSConfig) (string, error) {
 	var (
 		transport *http.Transport
 		resp      *http.Response
+		err       error
 	)
 
-	proxy, err := url.Parse(os.Getenv("CSP_PROXY"))
-	if err == nil {
-		log.Print("csp with proxy")
-		transport = &http.Transport{
-			DialContext: (&net.Dialer{
-				Timeout:   30 * time.Second,
-				KeepAlive: 30 * time.Second,
-			}).DialContext,
-			Proxy:               http.ProxyURL(proxy),
-			MaxIdleConns:        1000,
-			MaxIdleConnsPerHost: 200,
-			IdleConnTimeout:     90 * time.Second,
-		}
-	} else {
-		log.Print("csp without proxy")
-		transport = &http.Transport{
-			DialContext: (&net.Dialer{
-				Timeout:   30 * time.Second,
-				KeepAlive: 30 * time.Second,
-			}).DialContext,
-			MaxIdleConns:        1000,
-			MaxIdleConnsPerHost: 200,
-			IdleConnTimeout:     90 * time.Second,
-		}
+	tlsConfig, err := helper.GetConnectorTLSConfig(config)
+	if err != nil {
+		return "", err
 	}
+
+	transport = &http.Transport{
+		DialContext: (&net.Dialer{
+			Timeout:   30 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).DialContext,
+		Proxy:               http.ProxyFromEnvironment,
+		MaxIdleConns:        1000,
+		MaxIdleConnsPerHost: 200,
+		IdleConnTimeout:     90 * time.Second,
+		TLSClientConfig:     tlsConfig,
+	}
+
 	client := &http.Client{Transport: transport, Timeout: 60 * time.Second}
 
 	data := url.Values{}
@@ -122,7 +116,7 @@ func getUserAuthCtx(config *TanzuContext) (map[string]string, error) {
 	)
 
 	for i := 0; i < 3; i++ {
-		token, err = getBearerToken(config.VMWCloudEndPoint, config.Token)
+		token, err = getBearerToken(config.VMWCloudEndPoint, config.Token, config.TLSConfig)
 		if err == nil {
 			break
 		}
