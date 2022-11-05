@@ -39,7 +39,7 @@ func dataSourceNamespaceRead(ctx context.Context, d *schema.ResourceData, m inte
 	resp, err = config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceGet(constructFullname(d))
 	if err != nil || resp == nil {
 		if clienterrors.IsNotFoundError(err) {
-			d.SetId("")
+			_ = schema.RemoveFromState(d, m)
 			return diags
 		}
 

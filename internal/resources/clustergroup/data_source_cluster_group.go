@@ -40,7 +40,7 @@ func dataSourceClusterGroupRead(_ context.Context, d *schema.ResourceData, m int
 	resp, err := config.TMCConnection.ClusterGroupResourceService.ManageV1alpha1ClusterGroupResourceServiceGet(fn)
 	if err != nil {
 		if clienterrors.IsNotFoundError(err) {
-			d.SetId("")
+			_ = schema.RemoveFromState(d, m)
 			return
 		}
 

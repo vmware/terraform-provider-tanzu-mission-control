@@ -43,7 +43,7 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 		resp, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
 		if err != nil {
 			if clienterrors.IsNotFoundError(err) {
-				d.SetId("")
+				_ = schema.RemoveFromState(d, m)
 				return false, nil
 			}
 

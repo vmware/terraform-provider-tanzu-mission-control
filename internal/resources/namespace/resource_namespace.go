@@ -175,7 +175,7 @@ func resourceNamespaceDelete(_ context.Context, d *schema.ResourceData, m interf
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but
 	// it is added here for explicitness.
-	d.SetId("")
+	_ = schema.RemoveFromState(d, m)
 
 	return diags
 }

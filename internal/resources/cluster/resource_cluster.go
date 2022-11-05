@@ -287,7 +287,7 @@ func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interfac
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but
 	// it is added here for explicitness.
-	d.SetId("")
+	_ = schema.RemoveFromState(d, m)
 
 	getClusterResourceRetryableFn := func() (retry bool, err error) {
 		_, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
