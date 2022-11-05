@@ -15,6 +15,7 @@ import (
 	clustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup"
 	iamclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/iam_policy"
 	policyclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/policy"
+	credentialclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/credential"
 	namespaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/namespace"
 	iamnamespaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/namespace/iam_policy"
 	nodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/nodepool"
@@ -55,6 +56,7 @@ func NewHTTPClient() *TanzuMissionControl {
 		ClusterGroupPolicyResourceService: policyclustergroupclient.New(httpClient),
 		WorkspacePolicyResourceService:    policyworkspaceclient.New(httpClient),
 		OrganizationPolicyResourceService: policyorganizationclient.New(httpClient),
+		CredentialResourceService:         credentialclient.New(httpClient),
 	}
 }
 
@@ -75,4 +77,5 @@ type TanzuMissionControl struct {
 	ClusterGroupPolicyResourceService policyclustergroupclient.ClientService
 	WorkspacePolicyResourceService    policyworkspaceclient.ClientService
 	OrganizationPolicyResourceService policyorganizationclient.ClientService
+	CredentialResourceService         credentialclient.ClientService
 }
