@@ -97,7 +97,7 @@ func resourceClusterGroupDelete(_ context.Context, d *schema.ResourceData, m int
 		return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control cluster group entry, name : %s", clusterGroupName))
 	}
 
-	d.SetId("")
+	_ = schema.RemoveFromState(d, m)
 
 	return diags
 }

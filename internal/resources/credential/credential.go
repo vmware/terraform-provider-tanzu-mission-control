@@ -116,7 +116,7 @@ func resourceCredentialDelete(_ context.Context, d *schema.ResourceData, m inter
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but
 	// it is added here for explicitness.
-	d.SetId("")
+	_ = schema.RemoveFromState(d, m)
 
 	return diags
 }

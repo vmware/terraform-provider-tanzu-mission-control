@@ -39,7 +39,7 @@ func dataSourceCredentialRead(_ context.Context, d *schema.ResourceData, m inter
 	resp, err = config.TMCConnection.CredentialResourceService.CredentialResourceServiceGet(constructFullname(d))
 	if err != nil || resp == nil {
 		if clienterrors.IsNotFoundError(err) {
-			d.SetId("")
+			_ = schema.RemoveFromState(d, m)
 			return diags
 		}
 
