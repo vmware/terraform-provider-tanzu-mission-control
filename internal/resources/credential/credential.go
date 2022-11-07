@@ -30,33 +30,38 @@ func ResourceCredential() *schema.Resource {
 
 var credentialSchema = map[string]*schema.Schema{
 	NameKey: {
-		Type:     schema.TypeString,
-		Required: true,
-		ForceNew: true,
+		Type:        schema.TypeString,
+		Description: "Name of this credential",
+		Required:    true,
+		ForceNew:    true,
 	},
 	common.MetaKey: common.Meta,
 	specKey:        credSpec,
 	statusKey: {
-		Type:     schema.TypeMap,
-		Computed: true,
-		Elem:     &schema.Schema{Type: schema.TypeString},
+		Type:        schema.TypeMap,
+		Description: "Status of credential resource",
+		Computed:    true,
+		Elem:        &schema.Schema{Type: schema.TypeString},
 	},
 }
 
 var credSpec = &schema.Schema{
-	Type:     schema.TypeList,
-	Optional: true,
-	MaxItems: 1,
+	Type:        schema.TypeList,
+	Description: "Spec of credential resource",
+	Optional:    true,
+	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			capabilityKey: {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Description: "The Tanzu capability for which the credential shall be used. Value must be in list [DATA_PROTECTION TANZU_OBSERVABILITY TANZU_SERVICE_MESH PROXY_CONFIG MANAGED_K8S_PROVIDER IMAGE_REGISTRY]",
+				Optional:    true,
 			},
 			providerKey: {
-				Type:     schema.TypeString,
-				Default:  "PROVIDER_UNSPECIFIED",
-				Optional: true,
+				Type:        schema.TypeString,
+				Description: "The Tanzu provider for which describes credential data type. Value must be in list [PROVIDER_UNSPECIFIED,AWS_EC2,GENERIC_S3,AZURE_AD,AWS_EKS,AZURE_AKS,GENERIC_KEY_VALUE]",
+				Default:     string(credentialsmodels.VmwareTanzuManageV1alpha1AccountCredentialProviderPROVIDERUNSPECIFIED),
+				Optional:    true,
 			},
 			dataKey: dataSpec,
 		},
@@ -64,14 +69,16 @@ var credSpec = &schema.Schema{
 }
 
 var dataSpec = &schema.Schema{
-	Type:     schema.TypeList,
-	Optional: true,
-	MaxItems: 1,
+	Type:        schema.TypeList,
+	Optional:    true,
+	MaxItems:    1,
+	Description: "Holds credentials sensitive data",
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			genericCredentialKey: {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Description: "Generic credential data type used to hold a blob of data represented as string",
+				Optional:    true,
 			},
 			awsCredentialKey: awsCredSpec,
 			keyValueKey:      keyValueSpec,
