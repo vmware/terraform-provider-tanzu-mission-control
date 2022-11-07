@@ -567,7 +567,7 @@ func resourceClusterNodePoolDelete(_ context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(errors.Wrapf(err, "Unable to delete tanzu cluster node pool entry"))
 	}
 
-	d.SetId("")
+	_ = schema.RemoveFromState(d, m)
 
 	return diags
 }
