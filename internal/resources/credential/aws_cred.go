@@ -8,18 +8,21 @@ package credential
 import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 var awsCredSpec = &schema.Schema{
-	Type:     schema.TypeList,
-	Optional: true,
-	MaxItems: 1,
+	Type:        schema.TypeList,
+	Optional:    true,
+	Description: "AWS credential data type",
+	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			awsAccountIDKey: {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "Account ID of the AWS credential",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			genericCredentialKey: {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "Generic credential",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			awsIAMRoleKey: iamRoleSpec,
 		},
@@ -27,18 +30,21 @@ var awsCredSpec = &schema.Schema{
 }
 
 var iamRoleSpec = &schema.Schema{
-	Type:     schema.TypeList,
-	Optional: true,
-	MaxItems: 1,
+	Type:        schema.TypeList,
+	Description: "AWS IAM role ARN and external ID",
+	Optional:    true,
+	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			iamRoleARNKey: {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "AWS IAM role ARN",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			iamRoleExtIDKey: {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "An external ID used to assume an AWS IAM role",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 		},
 	},
