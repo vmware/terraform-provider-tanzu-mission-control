@@ -24,6 +24,7 @@ func main() {
 	}
 
 	if debugMode {
+		opts.Debug = debugMode
 		opts.ProviderAddr = "vmware/dev/tanzu-mission-control"
 	}
 
