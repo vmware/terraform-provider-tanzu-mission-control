@@ -37,9 +37,12 @@ var Meta = &schema.Schema{
 				Type:        schema.TypeMap,
 				Description: "Annotations for the resource",
 				Optional:    true,
+				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					if strings.Contains(k, "tmc.cloud.vmware.com") || strings.Contains(k, "x-customer-domain") {
+					if strings.Contains(k, "tmc.cloud.vmware.com") ||
+						strings.Contains(k, "x-customer-domain") ||
+						strings.Contains(k, "GeneratedTemplateID") {
 						return true
 					}
 					return false
