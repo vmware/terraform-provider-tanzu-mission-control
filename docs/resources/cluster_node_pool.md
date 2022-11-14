@@ -42,13 +42,13 @@ resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
 
 - `cluster_name` (String) Name of the cluster
 - `management_cluster_name` (String) Name of the management cluster
-- `name` (String) Name of this node pool
+- `name` (String) Name of this nodepool
 - `provisioner_name` (String) Provisioner of the cluster
 
 ### Optional
 
 - `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
-- `spec` (Block List) Spec for the cluster node pool (see [below for nested schema](#nestedblock--spec))
+- `spec` (Block List) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec))
 
 ### Read-Only
 
@@ -77,9 +77,9 @@ Optional:
 
 - `cloud_labels` (Map of String) Cloud labels
 - `node_labels` (Map of String) Node labels
-- `tkg_aws` (Block List) TKGAWSNodepool is the node pool spec for TKG AWS cluster (see [below for nested schema](#nestedblock--spec--tkg_aws))
-- `tkg_service_vsphere` (Block List) TKGServiceVsphereNodepool is the node pool spec for TKG service vsphere cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))
-- `tkg_vsphere` (Block List) TkgVsphereNodepool is the node pool config for the TKG vsphere cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere))
+- `tkg_aws` (Block List) TKGAWSNodepool is the nodepool spec for TKG AWS cluster (see [below for nested schema](#nestedblock--spec--tkg_aws))
+- `tkg_service_vsphere` (Block List) TKGServiceVsphereNodepool is the nodepool spec for TKG service vsphere cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))
+- `tkg_vsphere` (Block List) TkgVsphereNodepool is the nodepool config for the TKG vsphere cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere))
 - `worker_node_count` (String) Count is the number of nodes
 
 <a id="nestedblock--spec--tkg_aws"></a>
@@ -87,7 +87,7 @@ Optional:
 
 Optional:
 
-- `class` (String) Node pool instance type
+- `class` (String) Nodepool instance type
 - `storage_class` (String) Storage Class to be used for storage of the disks which store the root filesystem of the nodes
 
 
@@ -96,7 +96,7 @@ Optional:
 
 Optional:
 
-- `class` (String) Node pool instance type
+- `class` (String) Nodepool instance type
 - `storage_class` (String) Storage Class to be used for storage of the disks which store the root filesystem of the nodes
 
 
