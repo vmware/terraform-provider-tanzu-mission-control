@@ -18,7 +18,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 )
 
 type tokenResponse struct {
@@ -34,14 +34,14 @@ type AgentTokenInfo struct {
 	AccessToken string `json:"access_token"`
 }
 
-func getBearerToken(cspEndpoint, cspToken string, config *helper.TLSConfig) (string, error) {
+func getBearerToken(cspEndpoint, cspToken string, config *proxy.TLSConfig) (string, error) {
 	var (
 		transport *http.Transport
 		resp      *http.Response
 		err       error
 	)
 
-	tlsConfig, err := helper.GetConnectorTLSConfig(config)
+	tlsConfig, err := proxy.GetConnectorTLSConfig(config)
 	if err != nil {
 		return "", err
 	}

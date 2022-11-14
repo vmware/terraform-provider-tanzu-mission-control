@@ -20,15 +20,15 @@ import (
 	nodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/nodepool"
 	iamorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/iam_policy"
 	policyorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/policy"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	workspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace"
 	iamworkspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace/iam_policy"
 	policyworkspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace/policy"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 )
 
 // NewHTTPClient creates a new tanzu mission control HTTP client.
-func NewHTTPClient(config *helper.TLSConfig) (*TanzuMissionControl, error) {
+func NewHTTPClient(config *proxy.TLSConfig) (*TanzuMissionControl, error) {
 	httpClient, err := transport.NewClient(config)
 	if err != nil {
 		return nil, err

@@ -15,7 +15,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 )
 
 // Client is the http client implementation.
@@ -34,7 +34,7 @@ const (
 )
 
 // NewClient returns a new instance of http Client.
-func NewClient(config *helper.TLSConfig) (*Client, error) {
+func NewClient(config *proxy.TLSConfig) (*Client, error) {
 	client := Client{
 		Config:     DefaultTransportConfig(),
 		timeout:    defaultHTTPTimeout,
@@ -45,7 +45,7 @@ func NewClient(config *helper.TLSConfig) (*Client, error) {
 	var transport *http.Transport
 
 	// Setup HTTPS client.
-	tlsConfig, err := helper.GetConnectorTLSConfig(config)
+	tlsConfig, err := proxy.GetConnectorTLSConfig(config)
 	if err != nil {
 		return nil, err
 	}

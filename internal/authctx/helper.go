@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 )
 
 func ProviderAuthSchema() map[string]*schema.Schema {
@@ -34,43 +34,50 @@ func ProviderAuthSchema() map[string]*schema.Schema {
 			DefaultFunc: schema.EnvDefaultFunc(VMWCloudAPITokenEnvVar, nil),
 		},
 		insecureAllowUnverifiedSSL: {
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			DefaultFunc: schema.EnvDefaultFunc(InsecureAllowUnverifiedSSLEnvVar, false),
 		},
 		clientAuthCertFile: {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			DefaultFunc: schema.EnvDefaultFunc(ClientAuthCertFileEnvVar, nil),
 		},
 		clientAuthKeyFile: {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			DefaultFunc: schema.EnvDefaultFunc(ClientAuthKeyFileEnvVar, nil),
 		},
 		caFile: {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			DefaultFunc: schema.EnvDefaultFunc(CAFileEnvVar, nil),
 		},
 		clientAuthCert: {
-			Type:      schema.TypeString,
-			Optional:  true,
-			Sensitive: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Sensitive:   true,
+			DefaultFunc: schema.EnvDefaultFunc(ClientAuthCertEnvVar, nil),
 		},
 		clientAuthKey: {
-			Type:      schema.TypeString,
-			Optional:  true,
-			Sensitive: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Sensitive:   true,
+			DefaultFunc: schema.EnvDefaultFunc(ClientAuthKeyEnvVar, nil),
 		},
 		caCert: {
-			Type:      schema.TypeString,
-			Optional:  true,
-			Sensitive: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Sensitive:   true,
+			DefaultFunc: schema.EnvDefaultFunc(CACertEnvVar, nil),
 		},
 	}
 }
 
 func ProviderConfigureContext(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := TanzuContext{
-		TLSConfig: &helper.TLSConfig{},
+		TLSConfig: &proxy.TLSConfig{},
 	}
 
 	config.ServerEndpoint, _ = d.Get(endpoint).(string)
