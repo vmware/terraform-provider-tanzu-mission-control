@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 ifeq ($(VERSION_TAG),)
-	VERSION_TAG := $(shell git describe --dirty --first-parent --always --tags)
+	VERSION_TAG := 1.0.0
 endif
 
 GOARCH := $(shell go env GOARCH)

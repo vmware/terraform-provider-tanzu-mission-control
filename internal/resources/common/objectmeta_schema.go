@@ -36,8 +36,17 @@ var Meta = &schema.Schema{
 			annotationsKey: {
 				Type:        schema.TypeMap,
 				Description: "Annotations for the resource",
+				Optional:    true,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					if strings.Contains(k, "tmc.cloud.vmware.com") ||
+						strings.Contains(k, "x-customer-domain") ||
+						strings.Contains(k, "GeneratedTemplateID") {
+						return true
+					}
+					return false
+				},
 			},
 			LabelsKey: {
 				Type:        schema.TypeMap,
@@ -45,10 +54,7 @@ var Meta = &schema.Schema{
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					if strings.Contains(k, "tmc.cloud.vmware.com/creator") || strings.Contains(k, "tmc.cloud.vmware.com/managed") || strings.Contains(k, "tmc.cloud.vmware.com/workspace") {
-						return true
-					}
-					return false
+					return strings.Contains(k, "tmc.cloud.vmware.com")
 				},
 			},
 			DescriptionKey: {

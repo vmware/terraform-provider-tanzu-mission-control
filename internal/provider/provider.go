@@ -12,6 +12,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/nodepools"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/credential"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/iampolicy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/namespace"
 	securitypolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/type/security"
@@ -30,6 +31,7 @@ func Provider() *schema.Provider {
 			nodepools.ResourceName:      nodepools.ResourceNodePool(),
 			iampolicy.ResourceName:      iampolicy.ResourceIAMPolicy(),
 			securitypolicy.ResourceName: securitypolicy.ResourceSecurityPolicy(),
+			credential.ResourceName:     credential.ResourceCredential(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:      cluster.DataSourceTMCCluster(),
@@ -37,6 +39,7 @@ func Provider() *schema.Provider {
 			namespace.ResourceName:    namespace.DataSourceNamespace(),
 			clustergroup.ResourceName: clustergroup.DataSourceClusterGroup(),
 			nodepools.ResourceName:    nodepools.DataSourceClusterNodePool(),
+			credential.ResourceName:   credential.DataSourceCredential(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}

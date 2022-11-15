@@ -40,7 +40,7 @@ func dataSourceWorkspaceRead(ctx context.Context, d *schema.ResourceData, m inte
 	resp, err := config.TMCConnection.WorkspaceResourceService.ManageV1alpha1WorkspaceResourceServiceGet(fn)
 	if err != nil {
 		if clienterrors.IsNotFoundError(err) {
-			d.SetId("")
+			_ = schema.RemoveFromState(d, m)
 			return
 		}
 
