@@ -21,6 +21,7 @@ import (
 	nodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/nodepool"
 	iamorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/iam_policy"
 	policyorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/policy"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	workspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace"
 	iamworkspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace/iam_policy"
@@ -28,8 +29,11 @@ import (
 )
 
 // NewHTTPClient creates a new tanzu mission control HTTP client.
-func NewHTTPClient() *TanzuMissionControl {
-	httpClient := transport.NewClient()
+func NewHTTPClient(config *proxy.TLSConfig) (*TanzuMissionControl, error) {
+	httpClient, err := transport.NewClient(config)
+	if err != nil {
+		return nil, err
+	}
 
 	headers := http.Header{}
 	headers.Set("Content-Type", "application/json")
@@ -57,7 +61,7 @@ func NewHTTPClient() *TanzuMissionControl {
 		WorkspacePolicyResourceService:    policyworkspaceclient.New(httpClient),
 		OrganizationPolicyResourceService: policyorganizationclient.New(httpClient),
 		CredentialResourceService:         credentialclient.New(httpClient),
-	}
+	}, nil
 }
 
 // TanzuMissionControl is a client for tanzu mission control.
