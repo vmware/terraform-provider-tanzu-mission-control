@@ -91,10 +91,10 @@ func ProviderConfigureContext(_ context.Context, d *schema.ResourceData) (interf
 	config.TLSConfig.ClientAuthKey, _ = d.Get(clientAuthKey).(string)
 	config.TLSConfig.CaCert, _ = d.Get(caCert).(string)
 
-	return setContext(config)
+	return setContext(&config)
 }
 
-func setContext(config TanzuContext) (TanzuContext, diag.Diagnostics) {
+func setContext(config *TanzuContext) (TanzuContext, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	if (config.ServerEndpoint == "") || (config.Token == "") {
@@ -104,7 +104,7 @@ func setContext(config TanzuContext) (TanzuContext, diag.Diagnostics) {
 			Detail:   fmt.Sprintf("Please set %s, %s & %s to authenticate to Tanzu Mission Control provider", ServerEndpointEnvVar, VMWCloudEndpointEnvVar, VMWCloudAPITokenEnvVar),
 		})
 
-		return config, diags
+		return *config, diags
 	}
 
 	err := config.Setup()
@@ -116,8 +116,8 @@ func setContext(config TanzuContext) (TanzuContext, diag.Diagnostics) {
 			Detail:   fmt.Sprintf("Detailed error message: %s", err.Error()),
 		})
 
-		return config, diags
+		return *config, diags
 	}
 
-	return config, diags
+	return *config, diags
 }
