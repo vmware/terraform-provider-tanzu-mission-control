@@ -33,9 +33,7 @@ func ResourceTMCEKSCluster() *schema.Resource {
 		Schema:        clusterSchema,
 		CreateContext: resourceClusterCreate,
 		ReadContext:   dataSourceTMCEKSClusterRead,
-		UpdateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-			panic("not implemented")
-		},
+		UpdateContext: resourceClusterInPlaceUpdate,
 		DeleteContext: resourceClusterDelete,
 		Description:   "Tanzu Mission Control EKS Cluster Resource",
 	}
@@ -216,7 +214,7 @@ var vpcSchema = &schema.Schema{
 				ForceNew:    false,
 			},
 			publicAccessCidrsKey: {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Description: "Public access cidrs",
 				Optional:    true,
 				ForceNew:    false,
@@ -225,7 +223,7 @@ var vpcSchema = &schema.Schema{
 				},
 			},
 			securityGroupsKey: {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Description: "Security groups for the cluster VMs",
 				Optional:    true,
 				ForceNew:    true,
@@ -235,7 +233,7 @@ var vpcSchema = &schema.Schema{
 				},
 			},
 			subnetIdsKey: {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Description: "Subnet ids used by the cluster",
 				Required:    true,
 				ForceNew:    true,
@@ -307,6 +305,38 @@ func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interfac
 	}
 
 	return diags
+}
+
+func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+	config := m.(authctx.TanzuContext)
+
+	// Get call to initialise the cluster struct
+	getResp, err := config.TMCConnection.EKSClusterResourceService.EksClusterResourceServiceGet(constructFullname(d))
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control EKS cluster entry, name : %s", d.Get(NameKey)))
+	}
+
+	clusterSpec := constructSpec(d)
+
+	// TODO: update nodepools seperatly
+	clusterSpec.NodePools = nil
+
+	getResp.EksCluster.Meta = common.ConstructMeta(d)
+	getResp.EksCluster.Spec = clusterSpec
+
+	_, err = config.TMCConnection.EKSClusterResourceService.EksClusterResourceServiceUpdate(
+		&eksmodel.VmwareTanzuManageV1alpha1EksclusterCreateUpdateEksClusterRequest{
+			EksCluster: getResp.EksCluster,
+		},
+	)
+
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control EKS cluster entry, name : %s", d.Get(NameKey)))
+	}
+
+	log.Printf("[INFO] cluster update successful")
+
+	return dataSourceTMCEKSClusterRead(ctx, d, m)
 }
 
 func constructFullname(d *schema.ResourceData) (fullname *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName) {
