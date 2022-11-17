@@ -17,6 +17,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 	clustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/clustergroup"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
@@ -103,6 +104,7 @@ func verifyClusterGroupResourceCreation(
 			ServerEndpoint:   os.Getenv(authctx.ServerEndpointEnvVar),
 			Token:            os.Getenv(authctx.VMWCloudAPITokenEnvVar),
 			VMWCloudEndPoint: os.Getenv(authctx.VMWCloudEndpointEnvVar),
+			TLSConfig:        &proxy.TLSConfig{},
 		}
 
 		err := config.Setup()

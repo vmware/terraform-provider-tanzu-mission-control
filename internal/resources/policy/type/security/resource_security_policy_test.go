@@ -20,6 +20,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 	policyclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/cluster"
 	policyclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/clustergroup"
 	policyorganizationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/organization"
@@ -518,6 +519,7 @@ func (testConfig *testAcceptanceConfig) verifySecurityPolicyResourceCreation(sco
 			ServerEndpoint:   os.Getenv(authctx.ServerEndpointEnvVar),
 			Token:            os.Getenv(authctx.VMWCloudAPITokenEnvVar),
 			VMWCloudEndPoint: os.Getenv(authctx.VMWCloudEndpointEnvVar),
+			TLSConfig:        &proxy.TLSConfig{},
 		}
 
 		err := config.Setup()
