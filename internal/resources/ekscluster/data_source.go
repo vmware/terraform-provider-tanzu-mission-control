@@ -33,13 +33,15 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 
 	// Warning or errors can be collected in a slice type
 	var (
-		diags diag.Diagnostics
-		resp  *eksmodel.VmwareTanzuManageV1alpha1EksclusterGetEksClusterResponse
-		err   error
+		diags  diag.Diagnostics
+		resp   *eksmodel.VmwareTanzuManageV1alpha1EksclusterGetEksClusterResponse
+		npresp *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolListNodepoolsResponse
+		err    error
 	)
 
+	clusterFn := constructFullname(d)
 	getEksClusterResourceRetryableFn := func() (retry bool, err error) {
-		resp, err = config.TMCConnection.EKSClusterResourceService.EksClusterResourceServiceGet(constructFullname(d))
+		resp, err = config.TMCConnection.EKSClusterResourceService.EksClusterResourceServiceGet(clusterFn)
 		if err != nil {
 			if clienterrors.IsNotFoundError(err) {
 				d.SetId("")
@@ -51,7 +53,18 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 
 		d.SetId(resp.EksCluster.Meta.UID)
 
-		if eksmodel.NewVmwareTanzuManageV1alpha1EksclusterPhase(eksmodel.VmwareTanzuManageV1alpha1EksclusterPhaseREADY) != resp.EksCluster.Status.Phase {
+		npresp, err = config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceList(clusterFn)
+		if err != nil {
+			if clienterrors.IsNotFoundError(err) {
+				return false, nil
+			}
+
+			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control EKS nodepools for cluster %s", d.Get(NameKey))
+		}
+
+		if ctx.Value(contextMethodKey{}) == "create" &&
+			resp.EksCluster.Status.Phase != nil &&
+			*resp.EksCluster.Status.Phase != eksmodel.VmwareTanzuManageV1alpha1EksclusterPhaseREADY {
 			log.Printf("[DEBUG] waiting for cluster(%s) to be in READY phase", constructFullname(d).ToString())
 			return true, nil
 		}
@@ -71,22 +84,22 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 	case "":
 		fallthrough
 	case "default":
-		timeoutValueData = "3m"
+		timeoutValueData = "5m"
 
 		fallthrough
 	default:
 		timeoutDuration, parseErr := time.ParseDuration(timeoutValueData)
 		if parseErr != nil {
-			log.Printf("[INFO] unable to prase the duration value for the key %s. Defaulting to 3 minutes(3m)"+
+			log.Printf("[INFO] unable to prase the duration value for the key %s. Defaulting to 5 minutes(5m)"+
 				" Please refer to 'https://pkg.go.dev/time#ParseDuration' for providing the right value", waitKey)
 
-			timeoutDuration = 3 * time.Minute
+			timeoutDuration = defaultTimeout
 		}
 
 		_, err = helper.RetryUntilTimeout(getEksClusterResourceRetryableFn, 10*time.Second, timeoutDuration)
 	}
 
-	if err != nil || resp == nil {
+	if err != nil || resp == nil || npresp == nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control EKS cluster entry, name : %s", d.Get(NameKey)))
 	}
 
@@ -109,11 +122,54 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 
 	clusterSpec := constructSpec(d)
 
-	resp.EksCluster.Spec.NodePools = clusterSpec.NodePools
+	nodepools := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition, len(clusterSpec.NodePools))
+
+	// see the explanation of this in the func doc
+	npPosMap := nodepoolPosMap(clusterSpec.NodePools)
+
+	for _, np := range npresp.Nodepools {
+		npDef := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{
+			Info: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolInfo{
+				Description: np.Meta.Description,
+				Name:        np.FullName.Name,
+			},
+			Spec: np.Spec,
+		}
+
+		if pos, ok := npPosMap[np.FullName.Name]; ok {
+			nodepools[pos] = npDef
+		} else {
+			nodepools = append(nodepools, npDef)
+		}
+	}
+
+	// check for deleted nodepools
+	for i := range nodepools {
+		if nodepools[i] == nil {
+			nodepools[i] = &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{}
+		}
+	}
+
+	resp.EksCluster.Spec.NodePools = nodepools
 
 	if err := d.Set(specKey, flattenClusterSpec(resp.EksCluster.Spec)); err != nil {
 		return diag.FromErr(err)
 	}
 
 	return diags
+}
+
+// Returns mapping of nodepool names to their positions in the array.
+// This is needed because, we need to put the nodepools we receive from the
+// API at the same location so that terraform can compute the diff properly.
+//
+// Note: setting nodepools as TypeSet won't work as it will use the passed
+// hash function to check for change. This won't render much helpful diff.
+func nodepoolPosMap(nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) map[string]int {
+	ret := map[string]int{}
+	for i, np := range nps {
+		ret[np.Info.Name] = i
+	}
+
+	return ret
 }

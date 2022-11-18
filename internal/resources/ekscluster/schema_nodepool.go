@@ -58,11 +58,13 @@ var nodepoolSpecSchema = &schema.Schema{
 				Type:        schema.TypeString,
 				Description: "AMI Type",
 				Optional:    true,
+				Computed:    true,
 			},
 			capacityTypeKey: {
 				Type:        schema.TypeString,
 				Description: "Capacity Type",
 				Optional:    true,
+				Computed:    true,
 			},
 			rootDiskSizeKey: {
 				Type:        schema.TypeInt,
