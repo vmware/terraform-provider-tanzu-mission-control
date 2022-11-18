@@ -1,3 +1,8 @@
+/*
+Copyright 2022 VMware, Inc. All Rights Reserved.
+SPDX-License-Identifier: MPL-2.0
+*/
+
 package models
 
 // VmwareTanzuManageV1alpha1EksclusterNodepoolStatusPhase Phase of the nodepool resource.
