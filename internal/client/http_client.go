@@ -17,6 +17,7 @@ import (
 	policyclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/policy"
 	credentialclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/credential"
 	eksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster"
+	eksnodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster/nodepool"
 	integrationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/integration"
 	namespaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/namespace"
 	iamnamespaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/namespace/iam_policy"
@@ -50,6 +51,7 @@ func NewHTTPClient(config *proxy.TLSConfig) (*TanzuMissionControl, error) {
 		Client:                            httpClient,
 		ClusterResourceService:            clusterclient.New(httpClient),
 		EKSClusterResourceService:         eksclusterclient.New(httpClient),
+		EKSNodePoolResourceService:        eksnodepoolclient.New(httpClient),
 		WorkspaceResourceService:          workspaceclient.New(httpClient),
 		NamespaceResourceService:          namespaceclient.New(httpClient),
 		ClusterGroupResourceService:       clustergroupclient.New(httpClient),
@@ -73,6 +75,7 @@ type TanzuMissionControl struct {
 	*transport.Client
 	ClusterResourceService            clusterclient.ClientService
 	EKSClusterResourceService         eksclusterclient.ClientService
+	EKSNodePoolResourceService        eksnodepoolclient.ClientService
 	WorkspaceResourceService          workspaceclient.ClientService
 	NamespaceResourceService          namespaceclient.ClientService
 	ClusterGroupResourceService       clustergroupclient.ClientService

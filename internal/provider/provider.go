@@ -43,6 +43,7 @@ func Provider() *schema.Provider {
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:      cluster.DataSourceTMCCluster(),
+			ekscluster.ResourceName:   ekscluster.DataSourceTMCEKSCluster(),
 			workspace.ResourceName:    workspace.DataSourceWorkspace(),
 			namespace.ResourceName:    namespace.DataSourceNamespace(),
 			clustergroup.ResourceName: clustergroup.DataSourceClusterGroup(),

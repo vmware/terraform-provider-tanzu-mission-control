@@ -7,10 +7,14 @@ package ekscluster
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"reflect"
 	"strings"
 	"time"
 
+	"github.com/go-openapi/strfmt"
+	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -19,6 +23,7 @@ import (
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	eksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/ekscluster"
+	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
@@ -27,6 +32,8 @@ type (
 )
 
 var ignoredTagsPrefix = "tmc.cloud.vmware.com/"
+
+const defaultTimeout = 30 * time.Minute
 
 func ResourceTMCEKSCluster() *schema.Resource {
 	return &schema.Resource{
@@ -77,7 +84,7 @@ var clusterSchema = map[string]*schema.Schema{
 var clusterSpecSchema = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "Spec for the cluster",
-	Required:    true,
+	Optional:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -299,7 +306,9 @@ func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interfac
 		return false, nil
 	}
 
-	_, err = helper.Retry(getClusterResourceRetryableFn, 10*time.Second, 18)
+	timeoutDuration := getRetryTimeout(d)
+
+	_, err = helper.RetryUntilTimeout(getClusterResourceRetryableFn, 10*time.Second, timeoutDuration)
 	if err != nil {
 		diag.FromErr(errors.Wrapf(err, "verify %s EKS cluster resource clean up", d.Get(NameKey)))
 	}
@@ -316,20 +325,19 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control EKS cluster entry, name : %s", d.Get(NameKey)))
 	}
 
+	opsRetryTimeout := getRetryTimeout(d)
+
 	clusterSpec := constructSpec(d)
 
 	// TODO: update nodepools seperatly
+	err = handleNodepoolDiffs(config, opsRetryTimeout, getResp.EksCluster.FullName, clusterSpec.NodePools)
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control EKS cluster's nodepools, name : %s", d.Get(NameKey)))
+	}
+
 	clusterSpec.NodePools = nil
 
-	getResp.EksCluster.Meta = common.ConstructMeta(d)
-	getResp.EksCluster.Spec = clusterSpec
-
-	_, err = config.TMCConnection.EKSClusterResourceService.EksClusterResourceServiceUpdate(
-		&eksmodel.VmwareTanzuManageV1alpha1EksclusterCreateUpdateEksClusterRequest{
-			EksCluster: getResp.EksCluster,
-		},
-	)
-
+	err = handleClusterDiff(config, getResp.EksCluster, common.ConstructMeta(d), clusterSpec)
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control EKS cluster entry, name : %s", d.Get(NameKey)))
 	}
@@ -337,6 +345,191 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 	log.Printf("[INFO] cluster update successful")
 
 	return dataSourceTMCEKSClusterRead(ctx, d, m)
+}
+
+func handleClusterDiff(config authctx.TanzuContext, tmcCluster *eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster, meta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta, clusterSpec *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) error {
+	updateCluster := false
+
+	if meta.Description != tmcCluster.Meta.Description ||
+		!reflect.DeepEqual(meta.Labels, tmcCluster.Meta.Labels) {
+		updateCluster = true
+		tmcCluster.Meta.Description = meta.Description
+		tmcCluster.Meta.Labels = meta.Labels
+	}
+
+	if !reflect.DeepEqual(clusterSpec, tmcCluster.Spec) {
+		updateCluster = true
+	}
+
+	// The TF update request was only for nodepools.
+	// No need to update Cluster, it will error out.
+	if !updateCluster {
+		return nil
+	}
+
+	// there is some translation error, which results
+	// in mismatch on the server.
+	tmcCluster.Meta.CreationTime = strfmt.DateTime{}
+
+	newCluster := &eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster{
+		FullName: tmcCluster.FullName,
+		Meta:     tmcCluster.Meta,
+		Spec:     clusterSpec,
+	}
+
+	_, err := config.TMCConnection.EKSClusterResourceService.EksClusterResourceServiceUpdate(
+		&eksmodel.VmwareTanzuManageV1alpha1EksclusterCreateUpdateEksClusterRequest{
+			EksCluster: newCluster,
+		},
+	)
+
+	if err != nil {
+		return errors.Wrapf(err, "Unable to update Tanzu Mission Control EKS cluster entry, name : %s", tmcCluster.FullName.Name)
+	}
+
+	return nil
+}
+
+func handleNodepoolDiffs(config authctx.TanzuContext, opsRetryTimeout time.Duration, clusterFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName, nodepools []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
+	npresp, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceList(clusterFn)
+	if err != nil {
+		return errors.Wrapf(err, "failed to list nodepools for cluster: %s", clusterFn)
+	}
+
+	npPosMap := nodepoolPosMap(nodepools)
+	tmcNps := map[string]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool{}
+
+	npUpdate := []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{}
+	npCreate := []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{}
+	npDelete := []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName{}
+
+	for _, tmcNp := range npresp.Nodepools {
+		tmcNps[tmcNp.FullName.Name] = tmcNp
+
+		if pos, ok := npPosMap[tmcNp.FullName.Name]; ok {
+			// np exisits in both TMC and TF
+			newNp := nodepools[pos]
+			fillTMCSetValues(tmcNp.Spec, newNp.Spec)
+
+			if checkNodepoolUpdate(tmcNp, newNp) {
+				fmt.Printf("np %s diff: %s", tmcNp.FullName.Name, cmp.Diff(tmcNp.Spec, newNp.Spec))
+				npUpdate = append(npUpdate, newNp)
+			}
+		} else {
+			// np exisits in TMC but not in TF
+			npDelete = append(npDelete, tmcNp.FullName)
+		}
+	}
+
+	for _, tfNp := range nodepools {
+		if _, ok := tmcNps[tfNp.Info.Name]; !ok {
+			npCreate = append(npCreate, tfNp)
+		}
+	}
+
+	for _, np := range npCreate {
+		err := handleNodepoolCreate(config, clusterFn, np)
+		if err != nil {
+			return errors.Wrapf(err, "failed to create nodepool(%s) that is not present in TMC", np.Info.Name)
+		}
+	}
+
+	for _, np := range npUpdate {
+		err := handleNodepoolUpdate(config, tmcNps[np.Info.Name], np)
+		if err != nil {
+			return errors.Wrapf(err, "failed to update nodepool(%s)", np.Info.Name)
+		}
+	}
+
+	for _, npFn := range npDelete {
+		err := handleNodepoolDelete(config, opsRetryTimeout, npFn)
+		if err != nil {
+			return errors.Wrapf(err, "failed to delete nodepool(%s)", npFn.Name)
+		}
+	}
+
+	return nil
+}
+
+func handleNodepoolDelete(config authctx.TanzuContext, opsRetryTimeout time.Duration, npFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName) error {
+	err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceDelete(npFn)
+	if err != nil {
+		return errors.Wrap(err, "api call failed")
+	}
+
+	getNodepoolResourceRetryableFn := func() (retry bool, err error) {
+		_, err = config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceGet(npFn)
+		if err == nil {
+			return true, errors.New("nodepool deletion in progress")
+		}
+
+		if !clienterrors.IsNotFoundError(err) {
+			return true, err
+		}
+
+		return false, nil
+	}
+
+	_, err = helper.RetryUntilTimeout(getNodepoolResourceRetryableFn, 10*time.Second, opsRetryTimeout)
+	if err != nil {
+		return errors.Wrapf(err, "verify %s EKS nodepool resource clean up", npFn.Name)
+	}
+
+	return nil
+}
+
+func handleNodepoolUpdate(config authctx.TanzuContext, tmcNp *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, np *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
+	req := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest{
+		Nodepool: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool{
+			FullName: tmcNp.FullName,
+			Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
+				Annotations:      tmcNp.Meta.Annotations,
+				Description:      np.Info.Description,
+				Labels:           tmcNp.Meta.Labels,
+				ParentReferences: tmcNp.Meta.ParentReferences,
+				ResourceVersion:  tmcNp.Meta.ResourceVersion,
+				UID:              tmcNp.Meta.UID,
+			},
+			Spec: np.Spec,
+		},
+	}
+	_, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceUpdate(req)
+
+	return err
+}
+
+func fillTMCSetValues(tmcNpSpec *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec, npSpec *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {
+	if npSpec.AmiType == "" {
+		npSpec.AmiType = tmcNpSpec.AmiType
+	}
+
+	if npSpec.CapacityType == "" {
+		npSpec.CapacityType = tmcNpSpec.CapacityType
+	}
+}
+
+func handleNodepoolCreate(config authctx.TanzuContext, clusterFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName, np *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
+	req := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest{
+		Nodepool: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool{
+			FullName: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName{CredentialName: clusterFn.CredentialName,
+				Region:         clusterFn.Region,
+				EksClusterName: clusterFn.Name,
+				Name:           np.Info.Name,
+			},
+			Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
+				Description: np.Info.Description,
+			},
+			Spec: np.Spec,
+		},
+	}
+	_, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceCreate(req)
+
+	return err
+}
+
+func checkNodepoolUpdate(oldNp *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, newNp *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) bool {
+	return oldNp.Meta.Description != newNp.Info.Description ||
+		!nodepoolSpecEqual(oldNp.Spec, newNp.Spec)
 }
 
 func constructFullname(d *schema.ResourceData) (fullname *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName) {
@@ -347,4 +540,16 @@ func constructFullname(d *schema.ResourceData) (fullname *eksmodel.VmwareTanzuMa
 	fullname.Name, _ = d.Get(NameKey).(string)
 
 	return fullname
+}
+
+func getRetryTimeout(d *schema.ResourceData) time.Duration {
+	timeoutValueData, _ := d.Get(waitKey).(string)
+	if timeoutValueData != "default" {
+		providedDuration, parseErr := time.ParseDuration(timeoutValueData)
+		if parseErr == nil {
+			return providedDuration
+		}
+	}
+
+	return defaultTimeout
 }
