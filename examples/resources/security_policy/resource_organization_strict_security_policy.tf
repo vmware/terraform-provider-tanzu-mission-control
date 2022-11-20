@@ -24,7 +24,7 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_strict_sec
       match_expressions {
         key      = "component"
         operator = "In"
-        values   = [
+        values = [
           "api-server",
           "agent-gateway"
         ]

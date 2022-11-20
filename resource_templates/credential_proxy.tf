@@ -10,21 +10,21 @@ resource "tanzu-mission-control_credential" "proxy_cred" {
   meta {
     description = "<description of the credential>"
     labels = {
-     "key" : "<value>" ,
+      "key" : "<value>",
     }
     annotations = {
-      "httpProxy"  :"<http-proxy-url>",
-      "httpsProxy" :"<https-proxy-url>",
-      "noProxyList":"<no-proxy-list>"
+      "httpProxy" : "<http-proxy-url>",
+      "httpsProxy" : "<https-proxy-url>",
+      "noProxyList" : "<no-proxy-list>"
     }
   }
 
   spec {
     capability = "<capability-type>"
-    provider = "<provider>"
+    provider   = "<provider>"
     data {
-      key_value{
-        data  = {
+      key_value {
+        data = {
           "httpUserName"  = "<username>"
           "httpPassword"  = "<password>"
           "httpsUserName" = "<username>"

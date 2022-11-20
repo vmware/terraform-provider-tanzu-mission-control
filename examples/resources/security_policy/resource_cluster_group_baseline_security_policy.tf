@@ -24,7 +24,7 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_baseline_
       match_expressions {
         key      = "component"
         operator = "In"
-        values   = [
+        values = [
           "api-server",
           "agent-gateway"
         ]
