@@ -10,16 +10,16 @@ resource "tanzu-mission-control_credential" "tmc_provisioned_aws_s3_cred" {
   meta {
     description = "<description of the credential>"
     labels = {
-     "key" : "<value>" ,
+      "key" : "<value>",
     }
   }
 
   spec {
     capability = "<capability-type>"
-    provider = "<provider>"
+    provider   = "<provider>"
     data {
       aws_credential {
-        iam_role{
+        iam_role {
           arn = "<IAM-role-ARN>"
         }
       }

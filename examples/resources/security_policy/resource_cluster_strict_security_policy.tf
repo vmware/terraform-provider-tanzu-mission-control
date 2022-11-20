@@ -26,7 +26,7 @@ resource "tanzu-mission-control_security_policy" "cluster_scoped_strict_security
       match_expressions {
         key      = "component"
         operator = "NotIn"
-        values   = [
+        values = [
           "api-server",
           "agent-gateway"
         ]

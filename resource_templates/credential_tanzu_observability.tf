@@ -10,7 +10,7 @@ resource "tanzu-mission-control_credential" "tanzu_observability_cred" {
   meta {
     description = "<description of the credential>"
     labels = {
-     "key" : "<value>" ,
+      "key" : "<value>",
     }
     annotations = {
       "wavefront.url" : "<url of wavefront instance>"
@@ -19,10 +19,10 @@ resource "tanzu-mission-control_credential" "tanzu_observability_cred" {
 
   spec {
     capability = "<capability-type>"
-    provider = "<provider>"
+    provider   = "<provider>"
     data {
-      key_value{
-        data  = {
+      key_value {
+        data = {
           "wavefront.token" = "<wavefront api token>"
         }
       }

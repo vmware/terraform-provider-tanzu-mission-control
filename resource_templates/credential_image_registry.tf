@@ -10,7 +10,7 @@ resource "tanzu-mission-control_credential" "img_reg_cred" {
   meta {
     description = "<description of the credential>"
     labels = {
-     "key" : "<value>" ,
+      "key" : "<value>",
     }
     annotations = {
       "repository-path" : "<path>"
@@ -19,12 +19,12 @@ resource "tanzu-mission-control_credential" "img_reg_cred" {
 
   spec {
     capability = "<capability-type>"
-    provider = "<provider>"
+    provider   = "<provider>"
     data {
-      key_value{
-        data  = {
+      key_value {
+        data = {
           "registry-url" = "<url>"
-          "ca-cert"  = "<ca-cert>"
+          "ca-cert"      = "<ca-cert>"
         }
       }
     }

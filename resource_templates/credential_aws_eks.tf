@@ -10,19 +10,19 @@ resource "tanzu-mission-control_credential" "aws_eks_cred" {
   meta {
     description = "<description of the credential>"
     labels = {
-     "key" : "<value>" ,
+      "key" : "<value>",
     }
   }
 
   spec {
     capability = "<capability-type>"
-    provider = "<provider>"
+    provider   = "<provider>"
     data {
       aws_credential {
         account_id = "<account-id>"
-        iam_role{
-          arn = "<IAM-role-ARN>"
-          ext_id ="external-ID"
+        iam_role {
+          arn    = "<IAM-role-ARN>"
+          ext_id = "external-ID"
         }
       }
     }

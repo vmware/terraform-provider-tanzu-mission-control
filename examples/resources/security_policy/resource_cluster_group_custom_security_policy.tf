@@ -28,7 +28,7 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_se
           max = 5000
         }
 
-        allowed_volumes              = [
+        allowed_volumes = [
           "configMap",
           "nfs",
           "vsphereVolume"
@@ -87,7 +87,7 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_se
         }
 
         linux_capabilities {
-          allowed_capabilities       = [
+          allowed_capabilities = [
             "CHOWN",
             "IPC_LOCK"
           ]
@@ -98,15 +98,15 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_se
 
         allowed_host_paths {
           path_prefix = "p1"
-          read_only  = true
+          read_only   = true
         }
         allowed_host_paths {
           path_prefix = "p2"
-          read_only  = false
+          read_only   = false
         }
         allowed_host_paths {
           path_prefix = "p3"
-          read_only  = true
+          read_only   = true
         }
 
         allowed_se_linux_options {
@@ -124,8 +124,8 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_se
         }
 
         seccomp {
-          allowed_profiles        = [
-          "Localhost"
+          allowed_profiles = [
+            "Localhost"
           ]
           allowed_localhost_files = [
             "profiles/audit.json",
@@ -139,7 +139,7 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_se
       match_expressions {
         key      = "component"
         operator = "In"
-        values   = [
+        values = [
           "api-server",
           "agent-gateway"
         ]
