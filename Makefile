@@ -5,8 +5,25 @@ ifeq ($(VERSION_TAG),)
 	VERSION_TAG := 1.0.0
 endif
 
-GOARCH := $(shell go env GOARCH)
-GOOS := $(shell go env GOOS)
+ifeq ($(GOARCH),)
+	GOARCH := $(shell go env GOARCH)
+endif
+
+ifeq ($(GOOS),)
+	GOOS := $(shell go env GOOS)
+endif
+
+ifeq ($(TEST_PKGS),)
+	TEST_PKGS := ./...
+endif
+
+ifeq ($(TEST_FLAGS),)
+	TEST_FLAGS := -cover
+endif
+
+
+.PHONY: build clean-up test gofmt vet lint acc-test website-lint website-lint-fix
+
 
 default: build
 
@@ -18,34 +35,30 @@ build:
 clean-up:
 	rm -rf ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/*
 
-test: | gofmt vet lint
+test: gofmt vet lint
 	go mod tidy
-	go test ./internal/... -cover
+	go test $(TEST_PKGS) $(TEST_FLAGS)
 
 # Run go fmt against code
 gofmt:
 	@echo Checking code is gofmted
-	go fmt ./...
+	go fmt $(TEST_PKGS)
 
 # Run go vet against code
 vet:
-	go vet ./...
+	go vet $(TEST_PKGS)
 
 # Linter
 lint: gofmt
-	GO111MODULE=on golangci-lint run -c ./.golangci.yml ./internal/... .
+	golangci-lint run -c ./.golangci.yml ./internal/... .
 
-set-tf-acc:
-	@echo Setting Acceptance test env variable
-	export TF_ACC=true;\
-	echo $$TF_ACC
-
-acc-test: set-tf-acc test
+acc-test: export TF_ACC = true
+acc-test: test
 
 website-lint:
 	@echo "==> Checking website against linters..."
 	@misspell -error -source=text website/ || (echo; \
-	    echo "Unexpected mispelling found in website files."; \
+	    echo "Unexpected misspelling found in website files."; \
 	    echo "To automatically fix the misspelling, run 'make website-lint-fix' and commit the changes."; \
 	    exit 1)
 	@terrafmt diff ./docs --check --pattern '*.markdown' --quiet || (echo; \
