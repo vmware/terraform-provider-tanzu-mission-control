@@ -30,7 +30,7 @@ resource "tanzu-mission-control_security_policy" "cluster_scoped_custom_security
           max = 5000
         }
 
-        allowed_volumes              = [
+        allowed_volumes = [
           "configMap",
           "nfs",
           "vsphereVolume"
@@ -89,7 +89,7 @@ resource "tanzu-mission-control_security_policy" "cluster_scoped_custom_security
         }
 
         linux_capabilities {
-          allowed_capabilities       = [
+          allowed_capabilities = [
             "CHOWN",
             "IPC_LOCK"
           ]
@@ -100,15 +100,15 @@ resource "tanzu-mission-control_security_policy" "cluster_scoped_custom_security
 
         allowed_host_paths {
           path_prefix = "p1"
-          read_only  = true
+          read_only   = true
         }
         allowed_host_paths {
           path_prefix = "p2"
-          read_only  = false
+          read_only   = false
         }
         allowed_host_paths {
           path_prefix = "p3"
-          read_only  = true
+          read_only   = true
         }
 
         allowed_se_linux_options {
@@ -126,7 +126,7 @@ resource "tanzu-mission-control_security_policy" "cluster_scoped_custom_security
         }
 
         seccomp {
-          allowed_profiles        = [
+          allowed_profiles = [
             "Localhost"
           ]
           allowed_localhost_files = [
