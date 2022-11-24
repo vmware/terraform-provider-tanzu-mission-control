@@ -1,0 +1,20 @@
+---
+Title: "Tanzu Service Mesh Integration Resource"
+Description: |-
+    Creating the Integration by Tanzu Service Mesh on a cluster.
+---
+
+# Tanzu Service Mesh Integration
+
+The `Tanzu Service Mesh integration` is available on the Tanzu Mission Control platform.
+When the Tanzu Service Mesh service has been enabled on your organization, your Tanzu Mission Control organization administrator can enable the integration for use on clusters that are managed through Tanzu Mission Control.
+Then, cluster administrators can add Tanzu Service Mesh to managed clusters and designate which namespaces should belong in the mesh.
+`Tanzu Mission Control` takes care of the installation of service mesh components in the cluster, provides health status, and onboards it into Tanzu Service Mesh.
+
+For leveraging this feature via the terraform provider, use the following configuration.
+
+## Example Usage
+
+{{ tffile "examples/resources/integration/resource.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
