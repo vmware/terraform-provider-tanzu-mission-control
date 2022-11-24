@@ -20,7 +20,7 @@ resource "tanzu-mission-control_custom_policy" "cluster_scoped_tmc-block-rolebin
         audit = false
         parameters {
           disallowed_subjects {
-            kind = "node"
+            kind = "Group"
             name = "subject-1"
           }
         }

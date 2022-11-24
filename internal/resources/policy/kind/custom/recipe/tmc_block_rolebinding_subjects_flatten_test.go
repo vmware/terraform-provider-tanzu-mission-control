@@ -35,7 +35,7 @@ func TestFlattenTMCBlockRolebindingSubjects(t *testing.T) {
 				Parameters: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjectsParameters{
 					DisallowedSubjects: []*policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjectsParametersDisallowedSubjects{
 						{
-							Kind: "nodes",
+							Kind: "User",
 							Name: "test",
 						},
 					},
@@ -54,7 +54,7 @@ func TestFlattenTMCBlockRolebindingSubjects(t *testing.T) {
 						map[string]interface{}{
 							disallowedSubjectsKey: []interface{}{
 								map[string]interface{}{
-									kindKey: "nodes",
+									kindKey: "User",
 									nameKey: "test",
 								},
 							},

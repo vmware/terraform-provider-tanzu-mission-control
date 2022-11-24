@@ -375,7 +375,7 @@ func (testConfig *testAcceptanceConfig) getTestCustomPolicyResourceInput(recipe 
         audit              = false
         parameters {
           disallowed_subjects {
-            kind = "node"
+            kind = "User"
             name = "subject-1"
           }
         }

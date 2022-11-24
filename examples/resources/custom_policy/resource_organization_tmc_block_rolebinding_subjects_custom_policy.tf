@@ -18,7 +18,7 @@ resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-block-ro
         audit = false
         parameters {
           disallowed_subjects {
-            kind = "node"
+            kind = "ServiceAccount"
             name = "subject-1"
           }
         }

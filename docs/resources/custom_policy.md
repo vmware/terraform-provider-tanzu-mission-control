@@ -172,7 +172,7 @@ resource "tanzu-mission-control_custom_policy" "cluster_scoped_tmc-block-rolebin
         audit = false
         parameters {
           disallowed_subjects {
-            kind = "node"
+            kind = "Group"
             name = "subject-1"
           }
         }
@@ -513,7 +513,7 @@ resource "tanzu-mission-control_custom_policy" "cluster_group_scoped_tmc-block-r
         audit = false
         parameters {
           disallowed_subjects {
-            kind = "node"
+            kind = "User"
             name = "subject-1"
           }
         }
@@ -848,7 +848,7 @@ resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-block-ro
         audit = false
         parameters {
           disallowed_subjects {
-            kind = "node"
+            kind = "ServiceAccount"
             name = "subject-1"
           }
         }

@@ -18,7 +18,7 @@ resource "tanzu-mission-control_custom_policy" "cluster_group_scoped_tmc-block-r
         audit = false
         parameters {
           disallowed_subjects {
-            kind = "node"
+            kind = "User"
             name = "subject-1"
           }
         }
