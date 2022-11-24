@@ -9,6 +9,7 @@ package recipe
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	policyrecipecustommodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom"
@@ -43,9 +44,10 @@ var TMCBlockRolebindingSubjects = &schema.Schema{
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									kindKey: {
-										Type:        schema.TypeString,
-										Description: "The kind of subject to disallow, can be User/Group/ServiceAccount.",
-										Required:    true,
+										Type:         schema.TypeString,
+										Description:  "The kind of subject to disallow, can be User/Group/ServiceAccount.",
+										Required:     true,
+										ValidateFunc: validation.StringInSlice([]string{"User", "Group", "ServiceAccount"}, false),
 									},
 									nameKey: {
 										Type:        schema.TypeString,
@@ -136,11 +138,11 @@ func expandDisallowedSubjects(data interface{}) (disallowedSubjects *policyrecip
 
 	disallowedSubjects = &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjectsParametersDisallowedSubjects{}
 
-	if v, ok := disallowedSubjectsData[labelKey]; ok {
+	if v, ok := disallowedSubjectsData[kindKey]; ok {
 		helper.SetPrimitiveValue(v, &disallowedSubjects.Kind, kindKey)
 	}
 
-	if v, ok := disallowedSubjectsData[labelValueKey]; ok {
+	if v, ok := disallowedSubjectsData[nameKey]; ok {
 		helper.SetPrimitiveValue(v, &disallowedSubjects.Name, nameKey)
 	}
 
