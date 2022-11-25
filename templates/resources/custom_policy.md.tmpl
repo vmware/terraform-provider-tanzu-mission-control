@@ -35,6 +35,34 @@ In addition to the direct policy defined for a given object, each object has inh
 The scope parameter is mandatory in the schema and the user needs to add one of the defined scopes to the script for the provider to function.
 Only one scope per resource is allowed.
 
+## Target Kubernetes Resources
+
+All the custom policy recipes contain a Kubernetes Resource spec that contains `api_groups` and `kind` as sub fields.
+These attributes are of the kind `[]string` which the policy API supports. In terraform, while declaring multiple
+`api_groups` and `kinds` under one block of `target_kubernetes_resources` is validated by the API but not reflected on the UI.
+For UI comparison with Terraform, one must add multiple blocks of `target_kubernetes_resources`, each containing a API Group and a Kind.
+
+Example:
+
+```
+target_kubernetes_resources {
+  api_groups = [
+    "apps",
+  ]
+  kinds = [
+    "Event",
+  ]
+}
+target_kubernetes_resources {
+  api_groups = [
+    "batch",
+  ]
+  kinds = [
+    "Pod",
+  ]
+}
+```
+
 ## Cluster scoped TMC-block-nodeport-service Custom Policy
 
 ### Example Usage
