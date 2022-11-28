@@ -76,29 +76,29 @@ data "tanzu-mission-control_cluster" "read_tkg_aws_cluster" {
 
 ### Required
 
-- **name** (String) Name of this cluster
+- `name` (String) Name of this cluster
 
 ### Optional
 
-- **attach_k8s_cluster** (Block List, Max: 1) (see [below for nested schema](#nestedblock--attach_k8s_cluster))
-- **id** (String) The ID of this resource.
-- **management_cluster_name** (String) Name of the management cluster
-- **meta** (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
-- **provisioner_name** (String) Provisioner of the cluster
-- **ready_wait_timeout** (String) Wait timeout duration until cluster resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero
-- **spec** (Block List, Max: 1) Spec for the cluster (see [below for nested schema](#nestedblock--spec))
+- `attach_k8s_cluster` (Block List, Max: 1) (see [below for nested schema](#nestedblock--attach_k8s_cluster))
+- `management_cluster_name` (String) Name of the management cluster
+- `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
+- `provisioner_name` (String) Provisioner of the cluster
+- `ready_wait_timeout` (String) Wait timeout duration until cluster resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero
+- `spec` (Block List, Max: 1) Spec for the cluster (see [below for nested schema](#nestedblock--spec))
 
 ### Read-Only
 
-- **status** (Map of String) Status of the cluster
+- `id` (String) The ID of this resource.
+- `status` (Map of String) Status of the cluster
 
 <a id="nestedblock--attach_k8s_cluster"></a>
 ### Nested Schema for `attach_k8s_cluster`
 
 Optional:
 
-- **description** (String) Attach cluster description
-- **kubeconfig_file** (String) Attach cluster KUBECONFIG path
+- `description` (String) Attach cluster description
+- `kubeconfig_file` (String) Attach cluster KUBECONFIG path
 
 
 <a id="nestedblock--meta"></a>
@@ -106,14 +106,14 @@ Optional:
 
 Optional:
 
-- **description** (String) Description of the resource
-- **labels** (Map of String) Labels for the resource
+- `annotations` (Map of String) Annotations for the resource
+- `description` (String) Description of the resource
+- `labels` (Map of String) Labels for the resource
 
 Read-Only:
 
-- **annotations** (Map of String) Annotations for the resource
-- **resource_version** (String) Resource version of the resource
-- **uid** (String) UID of the resource
+- `resource_version` (String) Resource version of the resource
+- `uid` (String) UID of the resource
 
 
 <a id="nestedblock--spec"></a>
@@ -121,32 +121,32 @@ Read-Only:
 
 Optional:
 
-- **cluster_group** (String) Name of the cluster group to which this cluster belongs
-- **proxy** (String) Optional proxy name is the name of the Proxy Config to be used for the cluster
-- **tkg_aws** (Block List, Max: 1) The Tanzu Kubernetes Grid (TKGm) AWS cluster spec (see [below for nested schema](#nestedblock--spec--tkg_aws))
-- **tkg_service_vsphere** (Block List, Max: 1) The Tanzu Kubernetes Grid Service (TKGs) cluster spec (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))
-- **tkg_vsphere** (Block List, Max: 1) The Tanzu Kubernetes Grid (TKGm) vSphere cluster spec (see [below for nested schema](#nestedblock--spec--tkg_vsphere))
+- `cluster_group` (String) Name of the cluster group to which this cluster belongs
+- `proxy` (String) Optional proxy name is the name of the Proxy Config to be used for the cluster
+- `tkg_aws` (Block List, Max: 1) The Tanzu Kubernetes Grid (TKGm) AWS cluster spec (see [below for nested schema](#nestedblock--spec--tkg_aws))
+- `tkg_service_vsphere` (Block List, Max: 1) The Tanzu Kubernetes Grid Service (TKGs) cluster spec (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))
+- `tkg_vsphere` (Block List, Max: 1) The Tanzu Kubernetes Grid (TKGm) vSphere cluster spec (see [below for nested schema](#nestedblock--spec--tkg_vsphere))
 
 <a id="nestedblock--spec--tkg_aws"></a>
 ### Nested Schema for `spec.tkg_aws`
 
 Required:
 
-- **distribution** (Block List, Min: 1, Max: 1) Kubernetes version distribution for the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--distribution))
-- **settings** (Block List, Min: 1, Max: 1) AWS related settings for workload cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings))
-- **topology** (Block List, Min: 1, Max: 1) Topology configuration of the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--topology))
+- `distribution` (Block List, Min: 1, Max: 1) Kubernetes version distribution for the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--distribution))
+- `settings` (Block List, Min: 1, Max: 1) AWS related settings for workload cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings))
+- `topology` (Block List, Min: 1, Max: 1) Topology configuration of the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--topology))
 
 <a id="nestedblock--spec--tkg_aws--distribution"></a>
 ### Nested Schema for `spec.tkg_aws.distribution`
 
 Required:
 
-- **region** (String) Specifies region of the cluster
-- **version** (String) Specifies version of the cluster
+- `region` (String) Specifies region of the cluster
+- `version` (String) Specifies version of the cluster
 
 Optional:
 
-- **provisioner_credential_name** (String) Specifies name of the account in which to create the cluster
+- `provisioner_credential_name` (String) Specifies name of the account in which to create the cluster
 
 
 <a id="nestedblock--spec--tkg_aws--settings"></a>
@@ -154,105 +154,110 @@ Optional:
 
 Required:
 
-- **network** (Block List, Min: 1, Max: 1) Network Settings specifies network-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--network))
-- **security** (Block List, Min: 1, Max: 1) Security Settings specifies security-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--security))
+- `network` (Block List, Min: 1, Max: 1) Network Settings specifies network-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--network))
+- `security` (Block List, Min: 1, Max: 1) Security Settings specifies security-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--security))
 
 <a id="nestedblock--spec--tkg_aws--settings--network"></a>
-### Nested Schema for `spec.tkg_aws.settings.security`
+### Nested Schema for `spec.tkg_aws.settings.network`
 
 Required:
 
-- **cluster** (Block List, Min: 1, Max: 1) Cluster network specifies kubernetes network information for the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--security--cluster))
-- **provider** (Block List, Min: 1) Provider Network specifies provider specific network information for the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--security--provider))
+- `cluster` (Block List, Min: 1, Max: 1) Cluster network specifies kubernetes network information for the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--network--cluster))
+- `provider` (Block List, Min: 1) Provider Network specifies provider specific network information for the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--network--provider))
 
-<a id="nestedblock--spec--tkg_aws--settings--security--cluster"></a>
-### Nested Schema for `spec.tkg_aws.settings.security.cluster`
+<a id="nestedblock--spec--tkg_aws--settings--network--cluster"></a>
+### Nested Schema for `spec.tkg_aws.settings.network.cluster`
 
 Required:
 
-- **pods** (Block List, Min: 1) Pod CIDR for Kubernetes pods defaults to 192.168.0.0/16 (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--security--cluster--pods))
-- **services** (Block List, Min: 1) Service CIDR for kubernetes services defaults to 10.96.0.0/12 (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--security--cluster--services))
+- `pods` (Block List, Min: 1) Pod CIDR for Kubernetes pods defaults to 192.168.0.0/16 (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--network--cluster--pods))
+- `services` (Block List, Min: 1) Service CIDR for kubernetes services defaults to 10.96.0.0/12 (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--network--cluster--services))
 
 Optional:
 
-- **api_server_port** (Number) APIServerPort specifies the port address for the cluster that defaults to 6443.
+- `api_server_port` (Number) APIServerPort specifies the port address for the cluster that defaults to 6443.
 
-<a id="nestedblock--spec--tkg_aws--settings--security--cluster--pods"></a>
-### Nested Schema for `spec.tkg_aws.settings.security.cluster.api_server_port`
-
-Required:
-
-- **cidr_blocks** (String) CIDRBlocks specifies one or more of IP address ranges
-
-
-<a id="nestedblock--spec--tkg_aws--settings--security--cluster--services"></a>
-### Nested Schema for `spec.tkg_aws.settings.security.cluster.api_server_port`
+<a id="nestedblock--spec--tkg_aws--settings--network--cluster--pods"></a>
+### Nested Schema for `spec.tkg_aws.settings.network.cluster.pods`
 
 Required:
 
-- **cidr_blocks** (String) CIDRBlocks specifies one or more of IP address ranges
+- `cidr_blocks` (String) CIDRBlocks specifies one or more of IP address ranges
 
 
-
-<a id="nestedblock--spec--tkg_aws--settings--security--provider"></a>
-### Nested Schema for `spec.tkg_aws.settings.security.provider`
+<a id="nestedblock--spec--tkg_aws--settings--network--cluster--services"></a>
+### Nested Schema for `spec.tkg_aws.settings.network.cluster.services`
 
 Required:
 
-- **vpc** (Block List, Min: 1, Max: 1) AWS VPC configuration for the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--security--provider--vpc))
+- `cidr_blocks` (String) CIDRBlocks specifies one or more of IP address ranges
+
+
+
+<a id="nestedblock--spec--tkg_aws--settings--network--provider"></a>
+### Nested Schema for `spec.tkg_aws.settings.network.provider`
+
+Required:
+
+- `vpc` (Block List, Min: 1, Max: 1) AWS VPC configuration for the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--network--provider--vpc))
 
 Optional:
 
-- **subnets** (Block List) Optional list of subnets used to place the nodes in the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--security--provider--subnets))
+- `subnets` (Block List) Optional list of subnets used to place the nodes in the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings--network--provider--subnets))
 
-<a id="nestedblock--spec--tkg_aws--settings--security--provider--vpc"></a>
-### Nested Schema for `spec.tkg_aws.settings.security.provider.subnets`
-
-Optional:
-
-- **cidr_block_vpc** (String) CIDR for AWS VPC. A valid example is 10.0.0.0/16
-- **vpc_id** (String) AWS VPC ID. The rest of the fields are ignored if this field is specified. Kindly add the VPC ID to the terraform script in case of existing VPC.
-
-
-<a id="nestedblock--spec--tkg_aws--settings--security--provider--subnets"></a>
-### Nested Schema for `spec.tkg_aws.settings.security.provider.subnets`
+<a id="nestedblock--spec--tkg_aws--settings--network--provider--vpc"></a>
+### Nested Schema for `spec.tkg_aws.settings.network.provider.vpc`
 
 Optional:
 
-- **availability_zone** (String) AWS availability zone e.g. us-west-2a
-- **cidr_block_subnet** (String) CIDR for AWS subnet which must be in the range of AWS VPC CIDR block
-- **is_public** (Boolean) Describes if it is public subnet or private subnet
-- **subnet_id** (String) This is the subnet ID of AWS. The rest of the fields are ignored if this field is specified
+- `cidr_block_vpc` (String) CIDR for AWS VPC. A valid example is 10.0.0.0/16
+- `vpc_id` (String) AWS VPC ID. The rest of the fields are ignored if this field is specified. Kindly add the VPC ID to the terraform script in case of existing VPC.
+
+
+<a id="nestedblock--spec--tkg_aws--settings--network--provider--subnets"></a>
+### Nested Schema for `spec.tkg_aws.settings.network.provider.subnets`
+
+Optional:
+
+- `availability_zone` (String) AWS availability zone e.g. us-west-2a
+- `cidr_block_subnet` (String) CIDR for AWS subnet which must be in the range of AWS VPC CIDR block
+- `is_public` (Boolean) Describes if it is public subnet or private subnet
+- `subnet_id` (String) This is the subnet ID of AWS. The rest of the fields are ignored if this field is specified
+
+
+
 
 <a id="nestedblock--spec--tkg_aws--settings--security"></a>
 ### Nested Schema for `spec.tkg_aws.settings.security`
 
 Required:
 
-- **ssh_key** (String) SSH key for provisioning and accessing the cluster VMs
+- `ssh_key` (String) SSH key for provisioning and accessing the cluster VMs
+
+
 
 <a id="nestedblock--spec--tkg_aws--topology"></a>
 ### Nested Schema for `spec.tkg_aws.topology`
 
 Required:
 
-- **control_plane** (Block List, Min: 1, Max: 1) AWS specific control plane configuration for workload cluster object (see [below for nested schema](#nestedblock--spec--tkg_aws--topology--control_plane))
+- `control_plane` (Block List, Min: 1, Max: 1) AWS specific control plane configuration for workload cluster object (see [below for nested schema](#nestedblock--spec--tkg_aws--topology--control_plane))
 
 Optional:
 
-- **node_pools** (Block List) Nodepool specific configuration (see [below for nested schema](#nestedblock--spec--tkg_aws--topology--node_pools))
+- `node_pools` (Block List) Nodepool specific configuration (see [below for nested schema](#nestedblock--spec--tkg_aws--topology--node_pools))
 
 <a id="nestedblock--spec--tkg_aws--topology--control_plane"></a>
-### Nested Schema for `spec.tkg_aws.topology.node_pools`
+### Nested Schema for `spec.tkg_aws.topology.control_plane`
 
 Required:
 
-- **availability_zones** (List of String) List of availability zones for the control plane nodes
-- **instance_type** (String) Control plane instance type
+- `availability_zones` (List of String) List of availability zones for the control plane nodes
+- `instance_type` (String) Control plane instance type
 
 Optional:
 
-- **high_availability** (Boolean) Flag which controls if the cluster needs to be highly available. HA cluster creates three controlplane machines, and non HA creates just one
+- `high_availability` (Boolean) Flag which controls if the cluster needs to be highly available. HA cluster creates three controlplane machines, and non HA creates just one
 
 
 <a id="nestedblock--spec--tkg_aws--topology--node_pools"></a>
@@ -260,22 +265,22 @@ Optional:
 
 Required:
 
-- **info** (Block List, Min: 1, Max: 1) Info is the meta information of nodepool for cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--topology--node_pools--info))
+- `info` (Block List, Min: 1, Max: 1) Info is the meta information of nodepool for cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--topology--node_pools--info))
 
 Optional:
 
-- **spec** (Block List, Max: 1) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec--tkg_aws--topology--node_pools--spec))
+- `spec` (Block List, Max: 1) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec--tkg_aws--topology--node_pools--spec))
 
 <a id="nestedblock--spec--tkg_aws--topology--node_pools--info"></a>
 ### Nested Schema for `spec.tkg_aws.topology.node_pools.info`
 
 Required:
 
-- **name** (String) Name of the nodepool
+- `name` (String) Name of the nodepool
 
 Optional:
 
-- **description** (String) Description of the nodepool
+- `description` (String) Description of the nodepool
 
 
 <a id="nestedblock--spec--tkg_aws--topology--node_pools--spec"></a>
@@ -283,48 +288,54 @@ Optional:
 
 Optional:
 
-- **tkg_aws** (Block List, Max: 1) Nodepool config for tkg aws (see [below for nested schema](#nestedblock--spec--tkg_aws--topology--node_pools--spec--tkg_aws))
-- **worker_node_count** (String) Count is the number of nodes
+- `tkg_aws` (Block List, Max: 1) Nodepool config for tkg aws (see [below for nested schema](#nestedblock--spec--tkg_aws--topology--node_pools--spec--tkg_aws))
+- `worker_node_count` (String) Count is the number of nodes
 
 <a id="nestedblock--spec--tkg_aws--topology--node_pools--spec--tkg_aws"></a>
-### Nested Schema for `spec.tkg_aws.topology.node_pools.spec.worker_node_count`
+### Nested Schema for `spec.tkg_aws.topology.node_pools.spec.tkg_aws`
 
 Required:
 
-- **instance_type** (String) Nodepool instance type whose potential values could be found using cluster:options api
-- **node_placement** (Block List, Min: 1, Max: 1) List of Availability Zones to place the AWS nodes on. Please use this field to provision a nodepool for workload cluster on an attached TKG AWS management cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--topology--node_pools--spec--worker_node_count--node_placement))
-- **version** (String) Kubernetes version of the node pool
+- `instance_type` (String) Nodepool instance type whose potential values could be found using cluster:options api
+- `node_placement` (Block List, Min: 1, Max: 1) List of Availability Zones to place the AWS nodes on. Please use this field to provision a nodepool for workload cluster on an attached TKG AWS management cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--topology--node_pools--spec--tkg_aws--node_placement))
+- `version` (String) Kubernetes version of the node pool
 
 Optional:
 
-- **availability_zone** (String) Availability zone for the nodepool that is to be used when you are creating a nodepool for cluster in TMC hosted AWS solution
+- `availability_zone` (String) Availability zone for the nodepool that is to be used when you are creating a nodepool for cluster in TMC hosted AWS solution
 
 Read-Only:
 
-- **nodepool_subnet_id** (String) Subnet ID of the private subnet in which you want the nodes to be created in
+- `nodepool_subnet_id` (String) Subnet ID of the private subnet in which you want the nodes to be created in
 
-<a id="nestedblock--spec--tkg_aws--topology--node_pools--spec--worker_node_count--node_placement"></a>
-### Nested Schema for `spec.tkg_aws.topology.node_pools.spec.worker_node_count.nodepool_subnet_id`
+<a id="nestedblock--spec--tkg_aws--topology--node_pools--spec--tkg_aws--node_placement"></a>
+### Nested Schema for `spec.tkg_aws.topology.node_pools.spec.tkg_aws.node_placement`
 
 Required:
 
-- **aws_availability_zone** (String) The Availability Zone where the AWS nodes are placed
+- `aws_availability_zone` (String) The Availability Zone where the AWS nodes are placed
+
+
+
+
+
+
 
 <a id="nestedblock--spec--tkg_service_vsphere"></a>
 ### Nested Schema for `spec.tkg_service_vsphere`
 
 Required:
 
-- **distribution** (Block List, Min: 1, Max: 1) VSphere specific distribution (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--distribution))
-- **settings** (Block List, Min: 1, Max: 1) VSphere related settings for workload cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--settings))
-- **topology** (Block List, Min: 1, Max: 1) Topology specific configuration (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology))
+- `distribution` (Block List, Min: 1, Max: 1) VSphere specific distribution (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--distribution))
+- `settings` (Block List, Min: 1, Max: 1) VSphere related settings for workload cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--settings))
+- `topology` (Block List, Min: 1, Max: 1) Topology specific configuration (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology))
 
 <a id="nestedblock--spec--tkg_service_vsphere--distribution"></a>
 ### Nested Schema for `spec.tkg_service_vsphere.distribution`
 
 Required:
 
-- **version** (String) Version of the cluster
+- `version` (String) Version of the cluster
 
 
 <a id="nestedblock--spec--tkg_service_vsphere--settings"></a>
@@ -332,26 +343,26 @@ Required:
 
 Required:
 
-- **network** (Block List, Min: 1, Max: 1) Network Settings specifies network-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--settings--network))
+- `network` (Block List, Min: 1, Max: 1) Network Settings specifies network-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--settings--network))
 
 Optional:
 
-- **storage** (Block List, Max: 1) StorageSettings specifies storage-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--settings--storage))
+- `storage` (Block List, Max: 1) StorageSettings specifies storage-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--settings--storage))
 
 <a id="nestedblock--spec--tkg_service_vsphere--settings--network"></a>
 ### Nested Schema for `spec.tkg_service_vsphere.settings.network`
 
 Required:
 
-- **pods** (Block List, Min: 1) Pod CIDR for Kubernetes pods defaults to 192.168.0.0/16 (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--settings--network--pods))
-- **services** (Block List, Min: 1) Service CIDR for kubernetes services defaults to 10.96.0.0/12 (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--settings--network--services))
+- `pods` (Block List, Min: 1) Pod CIDR for Kubernetes pods defaults to 192.168.0.0/16 (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--settings--network--pods))
+- `services` (Block List, Min: 1) Service CIDR for kubernetes services defaults to 10.96.0.0/12 (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--settings--network--services))
 
 <a id="nestedblock--spec--tkg_service_vsphere--settings--network--pods"></a>
 ### Nested Schema for `spec.tkg_service_vsphere.settings.network.pods`
 
 Required:
 
-- **cidr_blocks** (List of String) CIDRBlocks specifies one or more ranges of IP addresses
+- `cidr_blocks` (List of String) CIDRBlocks specifies one or more ranges of IP addresses
 
 
 <a id="nestedblock--spec--tkg_service_vsphere--settings--network--services"></a>
@@ -359,128 +370,141 @@ Required:
 
 Required:
 
-- **cidr_blocks** (List of String) CIDRBlocks specifies one or more ranges of IP addresses
+- `cidr_blocks` (List of String) CIDRBlocks specifies one or more ranges of IP addresses
+
+
 
 <a id="nestedblock--spec--tkg_service_vsphere--settings--storage"></a>
 ### Nested Schema for `spec.tkg_service_vsphere.settings.storage`
 
 Optional:
 
-- **classes** (List of String) Classes is a list of storage classes from the supervisor namespace to expose within a cluster. If omitted, all storage classes from the supervisor namespace will be exposed within the cluster.
-- **default_class** (String) DefaultClass is the valid storage class name which is treated as the default storage class within a cluster. If omitted, no default storage class is set.
+- `classes` (List of String) Classes is a list of storage classes from the supervisor namespace to expose within a cluster. If omitted, all storage classes from the supervisor namespace will be exposed within the cluster.
+- `default_class` (String) DefaultClass is the valid storage class name which is treated as the default storage class within a cluster. If omitted, no default storage class is set.
+
+
 
 <a id="nestedblock--spec--tkg_service_vsphere--topology"></a>
 ### Nested Schema for `spec.tkg_service_vsphere.topology`
 
 Required:
 
-- **control_plane** (Block List, Min: 1, Max: 1) Control plane specific configuration (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--control_plane))
+- `control_plane` (Block List, Min: 1, Max: 1) Control plane specific configuration (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--control_plane))
 
 Optional:
 
-- **node_pools** (Block List) Nodepool specific configuration (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools))
+- `node_pools` (Block List) Nodepool specific configuration (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools))
 
 <a id="nestedblock--spec--tkg_service_vsphere--topology--control_plane"></a>
-### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools`
+### Nested Schema for `spec.tkg_service_vsphere.topology.control_plane`
 
 Required:
 
-- **class** (String) Control plane instance type
-- **storage_class** (String) Storage Class to be used for storage of the disks which store the root filesystems of the nodes
+- `class` (String) Control plane instance type
+- `storage_class` (String) Storage Class to be used for storage of the disks which store the root filesystems of the nodes
 
 Optional:
 
-- **high_availability** (Boolean) High Availability or Non High Availability Cluster. HA cluster creates three controlplane machines, and non HA creates just one
-- **volumes** (Block List) Configurable volumes for control plane nodes (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--volumes))
+- `high_availability` (Boolean) High Availability or Non High Availability Cluster. HA cluster creates three controlplane machines, and non HA creates just one
+- `volumes` (Block List) Configurable volumes for control plane nodes (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--control_plane--volumes))
 
-<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--volumes"></a>
-### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.volumes`
+<a id="nestedblock--spec--tkg_service_vsphere--topology--control_plane--volumes"></a>
+### Nested Schema for `spec.tkg_service_vsphere.topology.control_plane.volumes`
 
 Optional:
 
-- **capacity** (Number) Volume capacity is in gib
-- **mount_path** (String) It is the directory where the volume device is to be mounted
-- **name** (String) It is the volume name
-- **pvc_storage_class** (String) This is the storage class for PVC which in case omitted, default storage class will be used for the disks
+- `capacity` (Number) Volume capacity is in gib
+- `mount_path` (String) It is the directory where the volume device is to be mounted
+- `name` (String) It is the volume name
+- `pvc_storage_class` (String) This is the storage class for PVC which in case omitted, default storage class will be used for the disks
+
+
 
 <a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools"></a>
 ### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools`
 
 Required:
 
-- **info** (Block List, Min: 1, Max: 1) Info is the meta information of nodepool for cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--info))
+- `info` (Block List, Min: 1, Max: 1) Info is the meta information of nodepool for cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--info))
 
 Optional:
 
-- **spec** (Block List, Max: 1) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec))
+- `spec` (Block List, Max: 1) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec))
 
 <a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--info"></a>
 ### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.info`
 
 Optional:
 
-- **description** (String) Description for the nodepool
-- **name** (String) Name of the nodepool
+- `description` (String) Description for the nodepool
+- `name` (String) Name of the nodepool
+
 
 <a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec"></a>
 ### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.spec`
 
 Optional:
 
-- **cloud_label** (Map of String) Cloud labels
-- **node_label** (Map of String) Node labels
-- **tkg_service_vsphere** (Block List, Max: 1) Nodepool config for tkg service vsphere (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--tkg_service_vsphere))
-- **worker_node_count** (String) Count is the number of nodes
+- `cloud_label` (Map of String) Cloud labels
+- `node_label` (Map of String) Node labels
+- `tkg_service_vsphere` (Block List, Max: 1) Nodepool config for tkg service vsphere (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--tkg_service_vsphere))
+- `worker_node_count` (String) Count is the number of nodes
 
 <a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--tkg_service_vsphere"></a>
-### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.spec.worker_node_count`
+### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.spec.tkg_service_vsphere`
 
 Required:
 
-- **class** (String) Control plane instance type
-- **storage_class** (String) Storage Class to be used for storage of the disks which store the root filesystems of the nodes
+- `class` (String) Control plane instance type
+- `storage_class` (String) Storage Class to be used for storage of the disks which store the root filesystems of the nodes
 
 Optional:
 
-- **volumes** (Block List) Configurable volumes for control plane nodes (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--worker_node_count--volumes))
+- `volumes` (Block List) Configurable volumes for control plane nodes (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--tkg_service_vsphere--volumes))
 
-<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--worker_node_count--volumes"></a>
-### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.spec.worker_node_count.volumes`
+<a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--tkg_service_vsphere--volumes"></a>
+### Nested Schema for `spec.tkg_service_vsphere.topology.node_pools.spec.tkg_service_vsphere.volumes`
 
 Optional:
 
-- **capacity** (Number) Volume capacity is in gib
-- **mount_path** (String) It is the directory where the volume device is to be mounted
-- **name** (String) It is the volume name
-- **pvc_storage_class** (String) This is the storage class for PVC which in case omitted, default storage class will be used for the disks
+- `capacity` (Number) Volume capacity is in gib
+- `mount_path` (String) It is the directory where the volume device is to be mounted
+- `name` (String) It is the volume name
+- `pvc_storage_class` (String) This is the storage class for PVC which in case omitted, default storage class will be used for the disks
+
+
+
+
+
+
 
 <a id="nestedblock--spec--tkg_vsphere"></a>
 ### Nested Schema for `spec.tkg_vsphere`
 
 Required:
 
-- **distribution** (Block List, Min: 1, Max: 1) VSphere specific distribution (see [below for nested schema](#nestedblock--spec--tkg_vsphere--distribution))
-- **settings** (Block List, Min: 1, Max: 1) VSphere related settings for workload cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings))
-- **topology** (Block List, Min: 1, Max: 1) Topology specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology))
+- `distribution` (Block List, Min: 1, Max: 1) VSphere specific distribution (see [below for nested schema](#nestedblock--spec--tkg_vsphere--distribution))
+- `settings` (Block List, Min: 1, Max: 1) VSphere related settings for workload cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings))
+- `topology` (Block List, Min: 1, Max: 1) Topology specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology))
 
 <a id="nestedblock--spec--tkg_vsphere--distribution"></a>
 ### Nested Schema for `spec.tkg_vsphere.distribution`
 
 Required:
 
-- **version** (String) Version specifies the version of the Kubernetes cluster
-- **workspace** (Block List, Min: 1, Max: 1) Workspace defines a workspace configuration for the vSphere cloud provider (see [below for nested schema](#nestedblock--spec--tkg_vsphere--distribution--workspace))
+- `version` (String) Version specifies the version of the Kubernetes cluster
+- `workspace` (Block List, Min: 1, Max: 1) Workspace defines a workspace configuration for the vSphere cloud provider (see [below for nested schema](#nestedblock--spec--tkg_vsphere--distribution--workspace))
 
 <a id="nestedblock--spec--tkg_vsphere--distribution--workspace"></a>
 ### Nested Schema for `spec.tkg_vsphere.distribution.workspace`
 
 Required:
 
-- **datacenter** (String)
-- **datastore** (String)
-- **folder** (String)
-- **resource_pool** (String)
-- **workspace_network** (String)
+- `datacenter` (String)
+- `datastore` (String)
+- `folder` (String)
+- `resource_pool` (String)
+- `workspace_network` (String)
 
 
 
@@ -489,36 +513,36 @@ Required:
 
 Required:
 
-- **network** (Block List, Min: 1, Max: 1) Network Settings specifies network-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--network))
-- **security** (Block List, Min: 1, Max: 1) Security Settings specifies security-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--security))
+- `network` (Block List, Min: 1, Max: 1) Network Settings specifies network-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--network))
+- `security` (Block List, Min: 1, Max: 1) Security Settings specifies security-related settings for the cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--security))
 
 <a id="nestedblock--spec--tkg_vsphere--settings--network"></a>
-### Nested Schema for `spec.tkg_vsphere.settings.security`
+### Nested Schema for `spec.tkg_vsphere.settings.network`
 
 Required:
 
-- **control_plane_end_point** (String) ControlPlaneEndpoint specifies the control plane virtual IP address. The value should be unique for every create request, else cluster creation shall fail
-- **pods** (Block List, Min: 1) Pod CIDR for Kubernetes pods defaults to 192.168.0.0/16 (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--security--pods))
-- **services** (Block List, Min: 1) Service CIDR for kubernetes services defaults to 10.96.0.0/12 (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--security--services))
+- `control_plane_end_point` (String) ControlPlaneEndpoint specifies the control plane virtual IP address. The value should be unique for every create request, else cluster creation shall fail
+- `pods` (Block List, Min: 1) Pod CIDR for Kubernetes pods defaults to 192.168.0.0/16 (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--network--pods))
+- `services` (Block List, Min: 1) Service CIDR for kubernetes services defaults to 10.96.0.0/12 (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--network--services))
 
 Optional:
 
-- **api_server_port** (Number) APIServerPort specifies the port address for the cluster that defaults to 6443.
+- `api_server_port` (Number) APIServerPort specifies the port address for the cluster that defaults to 6443.
 
-<a id="nestedblock--spec--tkg_vsphere--settings--security--pods"></a>
-### Nested Schema for `spec.tkg_vsphere.settings.security.pods`
-
-Required:
-
-- **cidr_blocks** (List of String) CIDRBlocks specifies one or more ranges of IP addresses
-
-
-<a id="nestedblock--spec--tkg_vsphere--settings--security--services"></a>
-### Nested Schema for `spec.tkg_vsphere.settings.security.services`
+<a id="nestedblock--spec--tkg_vsphere--settings--network--pods"></a>
+### Nested Schema for `spec.tkg_vsphere.settings.network.pods`
 
 Required:
 
-- **cidr_blocks** (List of String) CIDRBlocks specifies one or more ranges of IP addresses
+- `cidr_blocks` (List of String) CIDRBlocks specifies one or more ranges of IP addresses
+
+
+<a id="nestedblock--spec--tkg_vsphere--settings--network--services"></a>
+### Nested Schema for `spec.tkg_vsphere.settings.network.services`
+
+Required:
+
+- `cidr_blocks` (List of String) CIDRBlocks specifies one or more ranges of IP addresses
 
 
 
@@ -527,7 +551,7 @@ Required:
 
 Required:
 
-- **ssh_key** (String) SSH key for provisioning and accessing the cluster VMs
+- `ssh_key` (String) SSH key for provisioning and accessing the cluster VMs
 
 
 
@@ -536,53 +560,55 @@ Required:
 
 Required:
 
-- **control_plane** (Block List, Min: 1, Max: 1) VSphere specific control plane configuration for workload cluster object (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--control_plane))
+- `control_plane` (Block List, Min: 1, Max: 1) VSphere specific control plane configuration for workload cluster object (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--control_plane))
 
 Optional:
 
-- **node_pools** (Block List) Nodepool specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools))
+- `node_pools` (Block List) Nodepool specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools))
 
 <a id="nestedblock--spec--tkg_vsphere--topology--control_plane"></a>
-### Nested Schema for `spec.tkg_vsphere.topology.node_pools`
+### Nested Schema for `spec.tkg_vsphere.topology.control_plane`
 
 Required:
 
-- **vm_config** (Block List, Min: 1, Max: 1) VM specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--vm_config))
+- `vm_config` (Block List, Min: 1, Max: 1) VM specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--control_plane--vm_config))
 
 Optional:
 
-- **high_availability** (Boolean) High Availability or Non High Availability Cluster. HA cluster creates three controlplane machines, and non HA creates just one
+- `high_availability` (Boolean) High Availability or Non High Availability Cluster. HA cluster creates three controlplane machines, and non HA creates just one
 
-<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--vm_config"></a>
-### Nested Schema for `spec.tkg_vsphere.topology.node_pools.vm_config`
+<a id="nestedblock--spec--tkg_vsphere--topology--control_plane--vm_config"></a>
+### Nested Schema for `spec.tkg_vsphere.topology.control_plane.vm_config`
 
 Optional:
 
-- **cpu** (String) Number of CPUs per node
-- **disk_size** (String) Root disk size in gigabytes for the VM
-- **memory** (String) Memory associated with the node in megabytes
+- `cpu` (String) Number of CPUs per node
+- `disk_size` (String) Root disk size in gigabytes for the VM
+- `memory` (String) Memory associated with the node in megabytes
+
+
 
 <a id="nestedblock--spec--tkg_vsphere--topology--node_pools"></a>
 ### Nested Schema for `spec.tkg_vsphere.topology.node_pools`
 
 Required:
 
-- **info** (Block List, Min: 1, Max: 1) Info is the meta information of nodepool for cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--info))
+- `info` (Block List, Min: 1, Max: 1) Info is the meta information of nodepool for cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--info))
 
 Optional:
 
-- **spec** (Block List, Max: 1) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--spec))
+- `spec` (Block List, Max: 1) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--spec))
 
 <a id="nestedblock--spec--tkg_vsphere--topology--node_pools--info"></a>
 ### Nested Schema for `spec.tkg_vsphere.topology.node_pools.info`
 
 Required:
 
-- **name** (String) Name of the nodepool
+- `name` (String) Name of the nodepool
 
 Optional:
 
-- **description** (String) Description of the nodepool
+- `description` (String) Description of the nodepool
 
 
 <a id="nestedblock--spec--tkg_vsphere--topology--node_pools--spec"></a>
@@ -590,21 +616,21 @@ Optional:
 
 Optional:
 
-- **tkg_vsphere** (Block List, Max: 1) Nodepool config for tkgm vsphere (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--spec--tkg_vsphere))
-- **worker_node_count** (String) Count is the number of nodes
+- `tkg_vsphere` (Block List, Max: 1) Nodepool config for tkgm vsphere (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--spec--tkg_vsphere))
+- `worker_node_count` (String) Count is the number of nodes
 
 <a id="nestedblock--spec--tkg_vsphere--topology--node_pools--spec--tkg_vsphere"></a>
-### Nested Schema for `spec.tkg_vsphere.topology.node_pools.spec.worker_node_count`
+### Nested Schema for `spec.tkg_vsphere.topology.node_pools.spec.tkg_vsphere`
 
 Required:
 
-- **vm_config** (Block List, Min: 1, Max: 1) VM specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--spec--worker_node_count--vm_config))
+- `vm_config` (Block List, Min: 1, Max: 1) VM specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology--node_pools--spec--tkg_vsphere--vm_config))
 
-<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--spec--worker_node_count--vm_config"></a>
-### Nested Schema for `spec.tkg_vsphere.topology.node_pools.spec.worker_node_count.vm_config`
+<a id="nestedblock--spec--tkg_vsphere--topology--node_pools--spec--tkg_vsphere--vm_config"></a>
+### Nested Schema for `spec.tkg_vsphere.topology.node_pools.spec.tkg_vsphere.vm_config`
 
 Optional:
 
-- **cpu** (String) Number of CPUs per node
-- **disk_size** (String) Root disk size in gigabytes for the VM
-- **memory** (String) Memory associated with the node in megabytes
+- `cpu` (String) Number of CPUs per node
+- `disk_size` (String) Root disk size in gigabytes for the VM
+- `memory` (String) Memory associated with the node in megabytes

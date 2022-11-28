@@ -757,7 +757,7 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_strict_sec
 ### Required
 
 - `name` (String) Name of the security policy
-- `scope` (Block List, Min: 1, Max: 1) Scope for the security policy, having one of the valid scopes: cluster, cluster_group or organization. (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the security and custom policy, having one of the valid scopes: cluster, cluster_group or organization. (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Spec for the security policy (see [below for nested schema](#nestedblock--spec))
 
 ### Optional
@@ -1025,11 +1025,11 @@ Optional:
 
 Optional:
 
+- `annotations` (Map of String) Annotations for the resource
 - `description` (String) Description of the resource
 - `labels` (Map of String) Labels for the resource
 
 Read-Only:
 
-- `annotations` (Map of String) Annotations for the resource
 - `resource_version` (String) Resource version of the resource
 - `uid` (String) UID of the resource
