@@ -24,7 +24,7 @@ func ResourceSecurityPolicy() *schema.Resource {
 		DeleteContext: schema.DeleteContextFunc(policyoperations.ResourceOperation(policyoperations.WithResourceName(policykindsecurity.ResourceName), policyoperations.WithOperationType(policyoperations.Delete))),
 		Schema:        securityPolicySchema,
 		CustomizeDiff: customdiff.All(
-			scope.ValidateScope,
+			schema.CustomizeDiffFunc(scope.ValidateScope(policyoperations.ScopeMap[policykindsecurity.ResourceName])),
 			policykindsecurity.ValidateInput,
 			policy.ValidateSpecLabelSelectorRequirement,
 		),

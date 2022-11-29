@@ -20,7 +20,7 @@ import (
 var (
 	inputSchema = &schema.Schema{
 		Type:        schema.TypeList,
-		Description: "Input for the image registry policy, having one of the valid recipes: allowed-name-tag, custom, block-latest-tag or require-digest.",
+		Description: "Input for the image policy, having one of the valid recipes: allowed-name-tag, custom, block-latest-tag or require-digest.",
 		Required:    true,
 		MaxItems:    1,
 		MinItems:    1,
@@ -39,7 +39,7 @@ var (
 
 type (
 	Recipe string
-	// InputRecipe is a struct for all types of image registry policy inputs.
+	// InputRecipe is a struct for all types of image policy inputs.
 	inputRecipe struct {
 		recipe              Recipe
 		inputAllowedNameTag *policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1AllowedNameTag

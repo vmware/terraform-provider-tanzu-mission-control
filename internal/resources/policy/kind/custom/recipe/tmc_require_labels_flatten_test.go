@@ -29,7 +29,7 @@ func TestFlattenTMCRequireLabels(t *testing.T) {
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with with complete custom policy tmc_require_labels recipe",
+			description: "normal scenario with complete custom policy tmc_require_labels recipe",
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCRequireLabels{
 				Audit: true,
 				Parameters: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCRequireLabelsParameters{
@@ -94,7 +94,7 @@ func TestFlattenRequiredLabelsParameters(t *testing.T) {
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with with complete custom policy tmc_require_labels parameters",
+			description: "normal scenario with complete custom policy tmc_require_labels parameters",
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCRequireLabelsParameters{
 				Labels: []*policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCRequireLabelsParametersLabels{
 					{
@@ -139,7 +139,7 @@ func TestFlattenRequiredLabelsParametersLabels(t *testing.T) {
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with with complete custom policy tmc_require_labels parameters labels",
+			description: "normal scenario with complete custom policy tmc_require_labels parameters labels",
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCRequireLabelsParametersLabels{
 				Key:   "key-1",
 				Value: "value-1",

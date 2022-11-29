@@ -22,6 +22,7 @@ func TestFlattenScope(t *testing.T) {
 	cases := []struct {
 		description  string
 		input        *ScopedFullname
+		allowedScope []string
 		expectedData []interface{}
 		expectedName string
 	}{
@@ -44,7 +45,7 @@ func TestFlattenScope(t *testing.T) {
 			},
 			expectedData: []interface{}{
 				map[string]interface{}{
-					clusterKey: []interface{}{
+					ClusterKey: []interface{}{
 						map[string]interface{}{
 							ManagementClusterNameKey: "m",
 							ClusterNameKey:           "c",
@@ -66,7 +67,7 @@ func TestFlattenScope(t *testing.T) {
 			},
 			expectedData: []interface{}{
 				map[string]interface{}{
-					clusterGroupKey: []interface{}{
+					ClusterGroupKey: []interface{}{
 						map[string]interface{}{
 							ClusterGroupNameKey: "c",
 						},
@@ -86,7 +87,7 @@ func TestFlattenScope(t *testing.T) {
 			},
 			expectedData: []interface{}{
 				map[string]interface{}{
-					workspaceKey: []interface{}{
+					WorkspaceKey: []interface{}{
 						map[string]interface{}{
 							WorkspaceNameKey: "w",
 						},
@@ -106,7 +107,7 @@ func TestFlattenScope(t *testing.T) {
 			},
 			expectedData: []interface{}{
 				map[string]interface{}{
-					organizationKey: []interface{}{
+					OrganizationKey: []interface{}{
 						map[string]interface{}{
 							OrganizationIDKey: "o",
 						},
@@ -120,7 +121,7 @@ func TestFlattenScope(t *testing.T) {
 	for _, each := range cases {
 		test := each
 		t.Run(test.description, func(t *testing.T) {
-			actualData, actualName := FlattenScope(test.input)
+			actualData, actualName := FlattenScope(test.input, test.allowedScope)
 			require.Equal(t, test.expectedData, actualData)
 			require.Equal(t, test.expectedName, actualName)
 		})

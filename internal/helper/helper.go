@@ -118,3 +118,7 @@ func SetPrimitiveValue(input, model interface{}, key string) {
 		}
 	}
 }
+
+func BoolPointer(b bool) *bool {
+	return &b
+}

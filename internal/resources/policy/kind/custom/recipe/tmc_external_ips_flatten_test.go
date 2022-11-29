@@ -28,7 +28,7 @@ func TestFlattenTMCExternalIPS(t *testing.T) {
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with with complete custom policy tmc_external_ips recipe",
+			description: "normal scenario with complete custom policy tmc_external_ips recipe",
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCExternalIPS{
 				Audit: true,
 				Parameters: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCExternalIPSParameters{
@@ -83,7 +83,7 @@ func TestFlattenExternalIPSParameters(t *testing.T) {
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with with complete custom policy tmc_external_ips parameters",
+			description: "normal scenario with complete custom policy tmc_external_ips parameters",
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCExternalIPSParameters{
 				AllowedIPs: []string{"127.0.0.1"},
 			},

@@ -116,7 +116,7 @@ resource "%s" "%s" {
 }
 
 // GetTestPolicyResourceHelperAndScope builds the helper resource and scope blocks for policy resource based on a scope type.
-func (shr *ScopeHelperResources) GetTestPolicyResourceHelperAndScope(scopeType scope.Scope) (string, string) {
+func (shr *ScopeHelperResources) GetTestPolicyResourceHelperAndScope(scopeType scope.Scope, scopesAllowed []string) (string, string) {
 	var (
 		helperBlock string
 		scopeBlock  string
@@ -153,7 +153,7 @@ func (shr *ScopeHelperResources) GetTestPolicyResourceHelperAndScope(scopeType s
 	}
 	`, shr.OrgID)
 	case scope.UnknownScope:
-		log.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scope.ScopesAllowed[:], `, `))
+		log.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed, `, `))
 	}
 
 	return helperBlock, scopeBlock

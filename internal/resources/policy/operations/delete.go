@@ -58,7 +58,7 @@ func ResourcePolicyDelete(ctx context.Context, d *schema.ResourceData, m interfa
 			}
 		}
 	case scope.UnknownScope:
-		return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scope.ScopesAllowed[:], `, `))
+		return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(ScopeMap[rn], `, `))
 	}
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but

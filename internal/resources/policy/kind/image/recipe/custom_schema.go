@@ -75,7 +75,7 @@ func ConstructCustom(data []interface{}) (custom *policyrecipeimagemodel.VmwareT
 	custom = &policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1Custom{}
 
 	if v, ok := customData[AuditKey]; ok {
-		helper.SetPrimitiveValue(v, &custom.Audit, AuditKey)
+		custom.Audit = helper.BoolPointer(v.(bool))
 	}
 
 	if v, ok := customData[RulesKey]; ok {
@@ -118,7 +118,7 @@ func expandCustomRules(data interface{}) (rules *policyrecipeimagemodel.VmwareTa
 	}
 
 	if v, ok := rulesData[RequireKey]; ok {
-		helper.SetPrimitiveValue(v, &rules.RequireDigest, RequireKey)
+		rules.RequireDigest = helper.BoolPointer(v.(bool))
 	}
 
 	if v, ok := rulesData[TagKey]; ok {
@@ -137,7 +137,9 @@ func FlattenCustom(custom *policyrecipeimagemodel.VmwareTanzuManageV1alpha1Commo
 
 	flattenCustom := make(map[string]interface{})
 
-	flattenCustom[AuditKey] = custom.Audit
+	if custom.Audit != nil {
+		flattenCustom[AuditKey] = *custom.Audit
+	}
 
 	if custom.Rules != nil {
 		var rules []interface{}
@@ -162,7 +164,10 @@ func flattenCustomRules(rules *policyrecipeimagemodel.VmwareTanzuManageV1alpha1C
 	flattenRules[HostNameKey] = rules.Hostname
 	flattenRules[ImageNameKey] = rules.ImageName
 	flattenRules[PortKey] = rules.Port
-	flattenRules[RequireKey] = rules.RequireDigest
+
+	if rules.RequireDigest != nil {
+		flattenRules[RequireKey] = *rules.RequireDigest
+	}
 
 	if rules.Tag != nil {
 		flattenRules[TagKey] = flattenTag(rules.Tag)

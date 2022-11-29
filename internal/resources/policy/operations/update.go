@@ -127,7 +127,7 @@ func ResourcePolicyInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m 
 			}
 		}
 	case scope.UnknownScope:
-		return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scope.ScopesAllowed[:], `, `))
+		return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(ScopeMap[rn], `, `))
 	}
 
 	log.Printf("[INFO] %s policy update successful", rn)

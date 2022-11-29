@@ -14,7 +14,7 @@ import (
 	policyrecipecustomcommonmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom/common"
 )
 
-func TestFlattenTMCBlockNodeportService(t *testing.T) {
+func TestFlattenTMCCommonRecipe(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
@@ -23,12 +23,12 @@ func TestFlattenTMCBlockNodeportService(t *testing.T) {
 		expected    []interface{}
 	}{
 		{
-			description: "check for nil custom policy tmc_block_nodeport_service recipe",
+			description: "check for nil custom policy tmc-block-nodeport-service/ tmc-block-resources/ tmc-https-ingress recipes",
 			input:       nil,
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with with complete custom policy tmc_block_nodeport_service recipe",
+			description: "normal scenario with complete custom policy tmc-block-nodeport-service/ tmc-block-resources/ tmc-https-ingress recipes",
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCCommonRecipe{
 				Audit: true,
 				TargetKubernetesResources: []*policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources{
