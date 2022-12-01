@@ -37,16 +37,19 @@ var Custom = &schema.Schema{
 							Type:        schema.TypeString,
 							Description: "Allowed image hostnames, wildcards are supported(for example: *.mycompany.com). Empty field is equivalent to *.",
 							Optional:    true,
+							Default:     "",
 						},
 						ImageNameKey: {
 							Type:        schema.TypeString,
 							Description: "Allowed image names, wildcards are supported(for example: fooservice/*). Empty field is equivalent to *.",
 							Optional:    true,
+							Default:     "",
 						},
 						PortKey: {
 							Type:        schema.TypeString,
 							Description: "Allowed port(if presented) of the image hostname, must associate with valid hostname. Wildcards are supported.",
 							Optional:    true,
+							Default:     "",
 						},
 						RequireKey: {
 							Type:        schema.TypeBool,

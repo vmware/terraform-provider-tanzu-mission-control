@@ -13,4 +13,18 @@ const (
 	ClusterGroupNameKey      = "cluster_group"
 	WorkspaceNameKey         = "workspace"
 	OrganizationIDKey        = "organization"
+	ScopeKey                 = "scope"
+	clusterKey               = "cluster"
+	clusterGroupKey          = "cluster_group"
+	workspaceKey             = "workspace"
+	organizationKey          = "organization"
+)
+
+// Allowed scopes.
+const (
+	UnknownScope Scope = iota
+	ClusterScope
+	ClusterGroupScope
+	WorkspaceScope
+	OrganizationScope
 )

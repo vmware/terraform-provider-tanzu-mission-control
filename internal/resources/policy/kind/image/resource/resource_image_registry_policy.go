@@ -12,13 +12,14 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindimage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 )
 
 func ResourceImageRegistryPolicy() *schema.Resource {
 	return &schema.Resource{
 		Schema: imageRegistryPolicySchema,
 		CustomizeDiff: customdiff.All(
-			policy.ValidateScope,
+			scope.ValidateScope,
 			policykindimage.ValidateInput,
 			policy.ValidateSpecLabelSelectorRequirement,
 		),
@@ -32,7 +33,7 @@ var imageRegistryPolicySchema = map[string]*schema.Schema{
 		Required:    true,
 		ForceNew:    true,
 	},
-	policy.ScopeKey: policy.ScopeSchema,
-	common.MetaKey:  common.Meta,
-	policy.SpecKey:  policykindimage.SpecSchema,
+	scope.ScopeKey: scope.ScopeSchema,
+	common.MetaKey: common.Meta,
+	policy.SpecKey: policykindimage.SpecSchema,
 }

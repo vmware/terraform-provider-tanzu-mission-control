@@ -3,7 +3,7 @@ Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package policy
+package scope
 
 import (
 	"context"
@@ -15,26 +15,27 @@ import (
 	policyclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/cluster"
 	policyclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/clustergroup"
 	policyorganizationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/organization"
-	scoperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
+	policyworkspacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/workspace"
 )
 
 var (
 	ScopeSchema = &schema.Schema{
 		Type:        schema.TypeList,
-		Description: "Scope for the security and custom policy, having one of the valid scopes: cluster, cluster_group or organization.",
+		Description: "Scope for the custom, security and image policy, having one of the valid scopes for custom and security policy: cluster, cluster_group or organization and valid scopes for image registry policy: workspace or organization.",
 		Required:    true,
 		ForceNew:    true,
 		MaxItems:    1,
 		MinItems:    1,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
-				clusterKey:      scoperesource.ClusterPolicyFullname,
-				clusterGroupKey: scoperesource.ClusterGroupPolicyFullname,
-				organizationKey: scoperesource.OrganizationPolicyFullname,
+				clusterKey:      ClusterPolicyFullname,
+				clusterGroupKey: ClusterGroupPolicyFullname,
+				workspaceKey:    WorkspacePolicyFullname,
+				organizationKey: OrganizationPolicyFullname,
 			},
 		},
 	}
-	ScopesAllowed = [...]string{clusterKey, clusterGroupKey, organizationKey}
+	ScopesAllowed = [...]string{clusterKey, clusterGroupKey, workspaceKey, organizationKey}
 )
 
 type (
@@ -44,6 +45,7 @@ type (
 		Scope                Scope
 		FullnameCluster      *policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyFullName
 		FullnameClusterGroup *policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyFullName
+		FullnameWorkspace    *policyworkspacemodel.VmwareTanzuManageV1alpha1WorkspacePolicyFullName
 		FullnameOrganization *policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyFullName
 	}
 )
@@ -66,7 +68,7 @@ func ConstructScope(d *schema.ResourceData, name string) (scopedFullnameData *Sc
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
 			scopedFullnameData = &ScopedFullname{
 				Scope:           ClusterScope,
-				FullnameCluster: scoperesource.ConstructClusterPolicyFullname(v1, name),
+				FullnameCluster: ConstructClusterPolicyFullname(v1, name),
 			}
 		}
 	}
@@ -75,7 +77,16 @@ func ConstructScope(d *schema.ResourceData, name string) (scopedFullnameData *Sc
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
 			scopedFullnameData = &ScopedFullname{
 				Scope:                ClusterGroupScope,
-				FullnameClusterGroup: scoperesource.ConstructClusterGroupPolicyFullname(v1, name),
+				FullnameClusterGroup: ConstructClusterGroupPolicyFullname(v1, name),
+			}
+		}
+	}
+
+	if v, ok := scopeData[workspaceKey]; ok {
+		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
+			scopedFullnameData = &ScopedFullname{
+				Scope:             WorkspaceScope,
+				FullnameWorkspace: ConstructWorkspacePolicyFullname(v1, name),
 			}
 		}
 	}
@@ -84,7 +95,7 @@ func ConstructScope(d *schema.ResourceData, name string) (scopedFullnameData *Sc
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
 			scopedFullnameData = &ScopedFullname{
 				Scope:                OrganizationScope,
-				FullnameOrganization: scoperesource.ConstructOrganizationPolicyFullname(v1, name),
+				FullnameOrganization: ConstructOrganizationPolicyFullname(v1, name),
 			}
 		}
 	}
@@ -102,13 +113,16 @@ func FlattenScope(scopedFullname *ScopedFullname) (data []interface{}, name stri
 	switch scopedFullname.Scope {
 	case ClusterScope:
 		name = scopedFullname.FullnameCluster.Name
-		flattenScopeData[clusterKey] = scoperesource.FlattenClusterPolicyFullname(scopedFullname.FullnameCluster)
+		flattenScopeData[clusterKey] = FlattenClusterPolicyFullname(scopedFullname.FullnameCluster)
 	case ClusterGroupScope:
 		name = scopedFullname.FullnameClusterGroup.Name
-		flattenScopeData[clusterGroupKey] = scoperesource.FlattenClusterGroupPolicyFullname(scopedFullname.FullnameClusterGroup)
+		flattenScopeData[clusterGroupKey] = FlattenClusterGroupPolicyFullname(scopedFullname.FullnameClusterGroup)
+	case WorkspaceScope:
+		name = scopedFullname.FullnameWorkspace.Name
+		flattenScopeData[workspaceKey] = FlattenWorkspacePolicyFullname(scopedFullname.FullnameWorkspace)
 	case OrganizationScope:
 		name = scopedFullname.FullnameOrganization.Name
-		flattenScopeData[organizationKey] = scoperesource.FlattenOrganizationPolicyFullname(scopedFullname.FullnameOrganization)
+		flattenScopeData[organizationKey] = FlattenOrganizationPolicyFullname(scopedFullname.FullnameOrganization)
 	case UnknownScope:
 		fmt.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(ScopesAllowed[:], `, `))
 	}
@@ -140,6 +154,12 @@ func ValidateScope(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 	if v, ok := scopeData[clusterGroupKey]; ok {
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
 			scopesFound = append(scopesFound, clusterGroupKey)
+		}
+	}
+
+	if v, ok := scopeData[workspaceKey]; ok {
+		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
+			scopesFound = append(scopesFound, workspaceKey)
 		}
 	}
 

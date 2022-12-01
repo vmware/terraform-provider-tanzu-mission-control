@@ -37,6 +37,7 @@ var AllowedNameTag = &schema.Schema{
 							Type:        schema.TypeString,
 							Description: "Allowed image names, wildcards are supported(for example: fooservice/*). Empty field is equivalent to *.",
 							Optional:    true,
+							Default:     "",
 						},
 						TagKey: tag,
 					},

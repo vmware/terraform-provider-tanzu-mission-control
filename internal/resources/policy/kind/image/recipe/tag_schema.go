@@ -21,12 +21,14 @@ var tag = &schema.Schema{
 			NegateKey: {
 				Type:        schema.TypeBool,
 				Description: "The negate flag used to exclude certain tag patterns.",
-				Required:    true,
+				Optional:    true,
+				Default:     false,
 			},
 			ValueKey: {
 				Type:        schema.TypeString,
 				Description: "The value (support wildcard) is used to validate against the tag of the image.",
 				Optional:    true,
+				Default:     "",
 			},
 		},
 	},

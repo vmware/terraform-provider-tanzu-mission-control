@@ -15,7 +15,9 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindcustom "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
+	policykindimage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
 	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 )
 
 func ResourcePolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}, rn string) (diags diag.Diagnostics) {
@@ -26,7 +28,7 @@ func ResourcePolicyRead(ctx context.Context, d *schema.ResourceData, m interface
 		return diag.Errorf("unable to read %s policy name", rn)
 	}
 
-	scopedFullnameData := policy.ConstructScope(d, policyName)
+	scopedFullnameData := scope.ConstructScope(d, policyName)
 
 	if scopedFullnameData == nil {
 		return diag.Errorf("Unable to get Tanzu Mission Control %s policy entry; Scope full name is empty", rn)
@@ -51,6 +53,8 @@ func ResourcePolicyRead(ctx context.Context, d *schema.ResourceData, m interface
 		flattenedSpec = policykindcustom.FlattenSpec(spec)
 	case policykindsecurity.ResourceName:
 		flattenedSpec = policykindsecurity.FlattenSpec(spec)
+	case policykindimage.ResourceName:
+		flattenedSpec = policykindimage.FlattenSpec(spec)
 	}
 
 	if err := d.Set(policy.SpecKey, flattenedSpec); err != nil {
