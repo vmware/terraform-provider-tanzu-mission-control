@@ -18,16 +18,19 @@ import (
 	policyclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/cluster"
 	policyclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/clustergroup"
 	policyorganizationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/organization"
+	policyworkspacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/workspace"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindcustom "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
+	policykindimage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
 	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 )
 
 func ResourcePolicyCreate(ctx context.Context, d *schema.ResourceData, m interface{}, rn string) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 	policyName, _ := d.Get(policy.NameKey).(string)
-	scopedFullnameData := policy.ConstructScope(d, policyName)
+	scopedFullnameData := scope.ConstructScope(d, policyName)
 
 	if scopedFullnameData == nil {
 		return diag.Errorf("Unable to create Tanzu Mission Control cluster %s policy entry; Scope full name is empty", rn)
@@ -40,12 +43,14 @@ func ResourcePolicyCreate(ctx context.Context, d *schema.ResourceData, m interfa
 		policySpec = policykindcustom.ConstructSpec(d)
 	case policykindsecurity.ResourceName:
 		policySpec = policykindsecurity.ConstructSpec(d)
+	case policykindimage.ResourceName:
+		policySpec = policykindimage.ConstructSpec(d)
 	}
 
 	var UID string
 
 	switch scopedFullnameData.Scope {
-	case policy.ClusterScope:
+	case scope.ClusterScope:
 		if scopedFullnameData.FullnameCluster != nil {
 			policyReq := &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyPolicyRequest{
 				Policy: &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyPolicy{
@@ -62,7 +67,7 @@ func ResourcePolicyCreate(ctx context.Context, d *schema.ResourceData, m interfa
 
 			UID = policyResponse.Policy.Meta.UID
 		}
-	case policy.ClusterGroupScope:
+	case scope.ClusterGroupScope:
 		if scopedFullnameData.FullnameClusterGroup != nil {
 			policyReq := &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyPolicyRequest{
 				Policy: &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyPolicy{
@@ -79,7 +84,24 @@ func ResourcePolicyCreate(ctx context.Context, d *schema.ResourceData, m interfa
 
 			UID = policyResponse.Policy.Meta.UID
 		}
-	case policy.OrganizationScope:
+	case scope.WorkspaceScope:
+		if scopedFullnameData.FullnameWorkspace != nil {
+			policyReq := &policyworkspacemodel.VmwareTanzuManageV1alpha1WorkspacePolicyPolicyRequest{
+				Policy: &policyworkspacemodel.VmwareTanzuManageV1alpha1WorkspacePolicyPolicy{
+					FullName: scopedFullnameData.FullnameWorkspace,
+					Meta:     common.ConstructMeta(d),
+					Spec:     policySpec,
+				},
+			}
+
+			policyResponse, err := config.TMCConnection.WorkspacePolicyResourceService.ManageV1alpha1WorkspacePolicyResourceServiceCreate(policyReq)
+			if err != nil {
+				return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control workspace %s policy entry, name : %s", rn, policyName))
+			}
+
+			UID = policyResponse.Policy.Meta.UID
+		}
+	case scope.OrganizationScope:
 		if scopedFullnameData.FullnameOrganization != nil {
 			policyReq := &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyPolicyRequest{
 				Policy: &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyPolicy{
@@ -96,8 +118,8 @@ func ResourcePolicyCreate(ctx context.Context, d *schema.ResourceData, m interfa
 
 			UID = policyResponse.Policy.Meta.UID
 		}
-	case policy.UnknownScope:
-		return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(policy.ScopesAllowed[:], `, `))
+	case scope.UnknownScope:
+		return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scope.ScopesAllowed[:], `, `))
 	}
 
 	// always run

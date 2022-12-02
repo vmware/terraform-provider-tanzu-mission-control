@@ -3,7 +3,7 @@ Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package policy
+package scope
 
 import (
 	"testing"
@@ -13,7 +13,7 @@ import (
 	policyclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/cluster"
 	policyclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/clustergroup"
 	policyorganizationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/organization"
-	scoperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
+	policyworkspacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/workspace"
 )
 
 func TestFlattenScope(t *testing.T) {
@@ -46,9 +46,9 @@ func TestFlattenScope(t *testing.T) {
 				map[string]interface{}{
 					clusterKey: []interface{}{
 						map[string]interface{}{
-							scoperesource.ManagementClusterNameKey: "m",
-							scoperesource.ClusterNameKey:           "c",
-							scoperesource.ProvisionerNameKey:       "p",
+							ManagementClusterNameKey: "m",
+							ClusterNameKey:           "c",
+							ProvisionerNameKey:       "p",
 						},
 					},
 				},
@@ -68,7 +68,27 @@ func TestFlattenScope(t *testing.T) {
 				map[string]interface{}{
 					clusterGroupKey: []interface{}{
 						map[string]interface{}{
-							scoperesource.ClusterGroupNameKey: "c",
+							ClusterGroupNameKey: "c",
+						},
+					},
+				},
+			},
+			expectedName: "n",
+		},
+		{
+			description: "normal scenario with complete workspace scope",
+			input: &ScopedFullname{
+				Scope: WorkspaceScope,
+				FullnameWorkspace: &policyworkspacemodel.VmwareTanzuManageV1alpha1WorkspacePolicyFullName{
+					Name:          "n",
+					WorkspaceName: "w",
+				},
+			},
+			expectedData: []interface{}{
+				map[string]interface{}{
+					workspaceKey: []interface{}{
+						map[string]interface{}{
+							WorkspaceNameKey: "w",
 						},
 					},
 				},
@@ -88,7 +108,7 @@ func TestFlattenScope(t *testing.T) {
 				map[string]interface{}{
 					organizationKey: []interface{}{
 						map[string]interface{}{
-							scoperesource.OrganizationIDKey: "o",
+							OrganizationIDKey: "o",
 						},
 					},
 				},
