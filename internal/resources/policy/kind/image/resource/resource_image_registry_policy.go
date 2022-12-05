@@ -3,7 +3,7 @@ Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package imageregistrypolicyresource
+package imagepolicyresource
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
