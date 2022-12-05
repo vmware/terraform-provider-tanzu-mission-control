@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 )
 
@@ -94,6 +95,32 @@ func ProviderConfigureContext(_ context.Context, d *schema.ResourceData) (interf
 	return setContext(&config)
 }
 
+func ProviderConfigureContextWithDefaultTransport(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	config := TanzuContext{
+		TLSConfig: &proxy.TLSConfig{},
+	}
+
+	config.ServerEndpoint, _ = d.Get(endpoint).(string)
+	config.VMWCloudEndPoint, _ = d.Get(vmwCloudEndpoint).(string)
+	config.Token, _ = d.Get(vmwCloudAPIToken).(string)
+	config.TLSConfig.Insecure, _ = d.Get(insecureAllowUnverifiedSSL).(bool)
+	config.TLSConfig.ClientAuthCertFile, _ = d.Get(clientAuthCertFile).(string)
+	config.TLSConfig.ClientAuthKeyFile, _ = d.Get(clientAuthKeyFile).(string)
+	config.TLSConfig.CaFile, _ = d.Get(caFile).(string)
+	config.TLSConfig.ClientAuthCert, _ = d.Get(clientAuthCert).(string)
+	config.TLSConfig.ClientAuthKey, _ = d.Get(clientAuthKey).(string)
+	config.TLSConfig.CaCert, _ = d.Get(caCert).(string)
+
+	var err error
+	config.TMCConnection, err = client.NewHTTPClient(config.TLSConfig)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return setContextWithDefaultTransport(&config)
+}
+
 func setContext(config *TanzuContext) (TanzuContext, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -108,6 +135,34 @@ func setContext(config *TanzuContext) (TanzuContext, diag.Diagnostics) {
 	}
 
 	err := config.Setup()
+
+	if err != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Unable to create connection to Tanzu Mission Control",
+			Detail:   fmt.Sprintf("Detailed error message: %s", err.Error()),
+		})
+
+		return *config, diags
+	}
+
+	return *config, diags
+}
+
+func setContextWithDefaultTransport(config *TanzuContext) (TanzuContext, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	if (config.ServerEndpoint == "") || (config.Token == "") {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Tanzu Mission Control credentials environment is not set",
+			Detail:   fmt.Sprintf("Please set %s, %s & %s to authenticate to Tanzu Mission Control provider", ServerEndpointEnvVar, VMWCloudEndpointEnvVar, VMWCloudAPITokenEnvVar),
+		})
+
+		return *config, diags
+	}
+
+	err := config.SetupWithDefaultTransport()
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{

@@ -33,6 +33,13 @@ var ignoredTagsPrefix = "tmc.cloud.vmware.com/"
 
 const defaultTimeout = 3 * time.Minute
 
+var TMCGeneratedTags []string = []string{
+	"tmc.cloud.vmware.com/tmc-creator",
+	"tmc.cloud.vmware.com/tmc-credential",
+	"tmc.cloud.vmware.com/tmc-managed",
+	"tmc.cloud.vmware.com/tmc-org",
+}
+
 func ResourceTMCEKSCluster() *schema.Resource {
 	return &schema.Resource{
 		Schema:        clusterSchema,
@@ -132,6 +139,7 @@ var configSchema = &schema.Schema{
 				Description: "The metadata to apply to the cluster to assist with categorization and organization",
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
+				Computed:    true,
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return strings.Contains(k, ignoredTagsPrefix)
 				},
@@ -548,10 +556,6 @@ func handleClusterDiff(config authctx.TanzuContext, tmcCluster *eksmodel.VmwareT
 		updateCluster = true
 		tmcCluster.Meta.Description = meta.Description
 		tmcCluster.Meta.Labels = meta.Labels
-	}
-
-	if !reflect.DeepEqual(clusterSpec, tmcCluster.Spec) {
-		updateCluster = true
 	}
 
 	// The TF update request was only for nodepools.

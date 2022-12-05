@@ -38,6 +38,15 @@ func NewHTTPClient(config *proxy.TLSConfig) (*TanzuMissionControl, error) {
 		return nil, err
 	}
 
+	return newHTTPClient(httpClient), nil
+}
+
+// NewTestHTTPClientWithDefaultTransport is intended primarily for testing only, as httpmock requires a default transport object be used in order to intercept and mock traffic.
+func NewTestHTTPClientWithDefaultTransport() *TanzuMissionControl {
+	return newHTTPClient(transport.NewClientWithDefaultTransport())
+}
+
+func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 	headers := http.Header{}
 	headers.Set("Content-Type", "application/json")
 	headers.Set("Connection", "keep-alive")
@@ -67,7 +76,7 @@ func NewHTTPClient(config *proxy.TLSConfig) (*TanzuMissionControl, error) {
 		OrganizationPolicyResourceService: policyorganizationclient.New(httpClient),
 		CredentialResourceService:         credentialclient.New(httpClient),
 		IntegrationResourceService:        integrationclient.New(httpClient),
-	}, nil
+	}
 }
 
 // TanzuMissionControl is a client for tanzu mission control.

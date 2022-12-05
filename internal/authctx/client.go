@@ -36,9 +36,18 @@ type TanzuContext struct {
 func (cfg *TanzuContext) Setup() (err error) {
 	cfg.TMCConnection, err = client.NewHTTPClient(cfg.TLSConfig)
 	if err != nil {
-		return
+		return err
 	}
 
+	return setup(cfg)
+}
+
+func (cfg *TanzuContext) SetupWithDefaultTransport() (err error) {
+	cfg.TMCConnection = client.NewTestHTTPClientWithDefaultTransport()
+	return setup(cfg)
+}
+
+func setup(cfg *TanzuContext) (err error) {
 	md, err := getUserAuthCtx(cfg)
 	if err != nil {
 		return errors.Wrap(err, "unable to get user context")
