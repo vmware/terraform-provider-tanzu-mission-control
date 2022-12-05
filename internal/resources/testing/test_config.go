@@ -3,7 +3,136 @@ Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package cluster
+package testing
+
+const testDefaultCreateEksClusterGroupScript = `
+	resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
+		name = "{{.ClusterGroupName}}"
+	}
+`
+
+// TODO: Jherrild- add support for creating a cluster group during test
+const testDefaultCreateEksClusterScript = `
+	resource {{.ResourceName}} {{.ResourceNameVar}} {
+		name	= "{{.Name}}"
+		region	= "{{.Region}}"
+		credential_name = "{{.CredentialName}}"
+		
+		{{.Meta}}
+		
+		spec {
+			cluster_group = "{{.ClusterGroupName}}"
+			config {
+				kubernetes_version 	= "{{.KubernetesVersion}}"
+				role_arn 			= "arn:aws:iam::{{.AWSAccountNumber}}:role/control-plane.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
+				kubernetes_network_config {
+					service_cidr = "10.100.0.0/16" // Forces new
+				}
+				logging {
+					api_server         = false
+					audit              = true 
+					authenticator      = true
+					controller_manager =  true 
+					scheduler          = true
+				}
+				vpc { // Required
+					enable_private_access = true
+					enable_public_access  = true
+					public_access_cidrs = [
+					  "0.0.0.0/0",
+					]
+					security_groups = [ // Forces new
+					  "sg-0a6768722e9716768",
+					]
+					subnet_ids = [ // Forces new
+					  "subnet-0a184f6302af32a86",
+					  "subnet-0ed95d5c212ac62a1",
+					  "subnet-0526ecaecde5b1bf7",
+					  "subnet-06897e1063cc0cf4e",
+					]
+				}
+			}
+			nodepool {
+				// could be flattened, but keeping it same for consistency
+				info {
+					name        = "first-np"
+					description = "tf nodepool description"
+				}
+				spec {
+					// Refer to nodepool's schema
+					role_arn       = "arn:aws:iam::{{.AWSAccountNumber}}:role/worker.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
+					ami_type       = "AL2_x86_64"                                                                         // Forces New
+					capacity_type  = "ON_DEMAND"
+					root_disk_size = 40 // Default: 20GiB, forces New
+					tags           = { "testnptag" : "testnptagvalue" }
+					node_labels    = { "testnplabelkey" : "testnplabelvalue" }
+					subnet_ids = [ // Required, forces new
+						"subnet-0a184f6302af32a86",
+						"subnet-0ed95d5c212ac62a1",
+						"subnet-0526ecaecde5b1bf7",
+						"subnet-06897e1063cc0cf4e",
+					]
+					remote_access  {     // Forces new
+						ssh_key = "anshulc" // Required (for remote access)
+						security_groups = [
+							"sg-0a6768722e9716768",
+						]
+					}
+					scaling_config  {
+						desired_size = 4
+						max_size     = 8
+						min_size     = 1
+					}
+					update_config {
+						max_unavailable_nodes = "2"
+					}
+					instance_types = [ // Forces new
+						"t3.medium",
+						"m3.large"
+					]
+				}
+			  }
+			  nodepool {
+				// could be flattened, but keeping it same for consistency
+				info  {
+					name        = "second-np"
+					description = "tf nodepool 2 description"
+				}
+				spec  {
+					// Refer to nodepool's schema
+					role_arn    = "arn:aws:iam::{{.AWSAccountNumber}}:role/worker.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
+					tags        = { "testnptag" : "testnptagvalue" }
+					node_labels = { "testnplabelkey" : "testnplabelvalue" }
+					subnet_ids = [ // Required, forces new
+						"subnet-0a184f6302af32a86",
+						"subnet-0ed95d5c212ac62a1",
+						"subnet-0526ecaecde5b1bf7",
+						"subnet-06897e1063cc0cf4e",
+					]
+					launch_template  {
+						name    = "{{.LaunchTemplateName}}"
+						version = "{{.LaunchTemplateVersion}}"
+					}
+					scaling_config  {
+						desired_size = 4
+						max_size     = 8
+						min_size     = 1
+					}
+					update_config  {
+						max_unavailable_percentage = "12"
+					}
+					taints {
+						effect = "PREFER_NO_SCHEDULE"
+						key    = "randomkey"
+						value  = "randomvalue"
+					}
+				}
+			}
+		}
+		
+		ready_wait_timeout = "59m"
+	}
+`
 
 const testDefaultAttachClusterScript = `
 	resource {{.ResourceName}} {{.ResourceNameVar}} {

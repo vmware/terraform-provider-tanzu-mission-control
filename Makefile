@@ -25,7 +25,13 @@ endif
 .PHONY: build clean-up test gofmt vet lint acc-test website-lint website-lint-fix
 
 
-default: build
+default: generate build
+
+tidy:
+	go mod tidy
+
+generate:
+	go generate ./mock
 
 build:
 	go build -o bin/terraform-provider-tanzu-mission-control_$(VERSION_TAG)
