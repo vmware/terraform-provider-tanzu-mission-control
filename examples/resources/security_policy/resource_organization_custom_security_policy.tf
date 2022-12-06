@@ -8,7 +8,7 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_custom_sec
 
   scope {
     organization {
-      organization = "tf-create-test"
+      organization = "dummy-id"
     }
   }
 
