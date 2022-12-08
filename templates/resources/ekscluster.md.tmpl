@@ -1,0 +1,30 @@
+---
+Title: "EKS Cluster Resource"
+Description: |-
+    Create an AWS EKS cluster resource managed by Tanzu Mission Control.
+---
+
+# EKS Cluster
+
+The `tanzu-mission-control_ekscluster` resource enables you to provision and manage [AWS EKS](https://aws.amazon.com/eks/) through Tanzu Mission Control (TMC).
+It allows users to connect Tanzu Mission Control to their Amazon Web Services (AWS) account and create, update/upgrade, and delete EKS clusters and node groups (called node pools in Tanzu).
+
+## Provisioning a EKS Cluster
+
+To use the **Tanzu Mission Control** for creating a new cluster, you must first connect your AWS account to TMC.
+For more information, please refer [connecting an AWS account for EKS cluster lifecycle management][aws-account]
+and [create an EKS Cluster][create-cluster].
+
+You must also have the appropriate permissions in TMC:
+
+- To provision a cluster, you must have `cluster.admin` permissions.
+- You must also have `clustergroup.edit` permissions on the cluster group in which you want to put the new cluster.
+
+[aws-account]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-E4627693-7D1A-4914-A9DF-61E49F97FECC.html
+[create-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-208B2A5A-AE08-4CE1-9DC0-EB573E4BA4A8.html?hWord=N4IghgNiBcIKIGkDKIC+Q
+
+## Example Usage
+
+{{ tffile "examples/resources/ekscluster/cluster.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}

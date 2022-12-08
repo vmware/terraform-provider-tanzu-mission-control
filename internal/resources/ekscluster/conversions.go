@@ -155,18 +155,21 @@ func constructVpc(data []interface{}) *eksmodel.VmwareTanzuManageV1alpha1Eksclus
 	}
 
 	if v, ok := vpcData[publicAccessCidrsKey]; ok {
-		data, _ := v.([]interface{})
-		vpc.PublicAccessCidrs = constructStringList(data)
+		if data, ok := v.(*schema.Set); ok {
+			vpc.PublicAccessCidrs = constructStringList(data.List())
+		}
 	}
 
 	if v, ok := vpcData[securityGroupsKey]; ok {
-		data, _ := v.([]interface{})
-		vpc.SecurityGroups = constructStringList(data)
+		if data, ok := v.(*schema.Set); ok {
+			vpc.SecurityGroups = constructStringList(data.List())
+		}
 	}
 
 	if v, ok := vpcData[subnetIdsKey]; ok {
-		data, _ := v.([]interface{})
-		vpc.SubnetIds = constructStringList(data)
+		if data, ok := v.(*schema.Set); ok {
+			vpc.SubnetIds = constructStringList(data.List())
+		}
 	}
 
 	return vpc
@@ -256,8 +259,9 @@ func constructNodepoolSpec(data []interface{}) *eksmodel.VmwareTanzuManageV1alph
 	}
 
 	if v, ok := specData[subnetIdsKey]; ok {
-		data, _ := v.([]interface{})
-		spec.SubnetIds = constructStringList(data)
+		if data, ok := v.(*schema.Set); ok {
+			spec.SubnetIds = constructStringList(data.List())
+		}
 	}
 
 	if v, ok := specData[launchTemplateKey]; ok {
@@ -286,8 +290,9 @@ func constructNodepoolSpec(data []interface{}) *eksmodel.VmwareTanzuManageV1alph
 	}
 
 	if v, ok := specData[instanceTypesKey]; ok {
-		data, _ := v.([]interface{})
-		spec.InstanceTypes = constructStringList(data)
+		if data, ok := v.(*schema.Set); ok {
+			spec.InstanceTypes = constructStringList(data.List())
+		}
 	}
 
 	return spec
@@ -331,8 +336,9 @@ func constructRemoteAccess(data []interface{}) *eksmodel.VmwareTanzuManageV1alph
 	}
 
 	if v, ok := raData[securityGroupsKey]; ok {
-		data, _ := v.([]interface{})
-		ra.SecurityGroups = constructStringList(data)
+		if data, ok := v.(*schema.Set); ok {
+			ra.SecurityGroups = constructStringList(data.List())
+		}
 	}
 
 	return ra

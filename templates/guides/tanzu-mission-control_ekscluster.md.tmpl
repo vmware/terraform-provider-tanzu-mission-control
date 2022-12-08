@@ -1,0 +1,27 @@
+---
+Title: "Provisioning of a AWS EKS cluster"
+Description: |-
+    An example of provisioning AWS EKS clusters.
+---
+# EKS Cluster
+
+The `tanzu-mission-control_ekscluster` resource can directly perform cluster lifecycle management operations on EKS clusters (and associated node gourps) including create, update, upgrade, and delete through Tanzu Mission Control (TMC).
+
+## Prerequisites
+
+To manage the lifecycle of EKS clusters, you need the following prerequisites.
+
+- Onboard the AWS account onto TMC under which the EKS Clusters will be provisioned. Please refer [connecting an AWS account for EKS cluster lifecycle management][aws-account] guide for detailed steps. You can also use `tanzu-mission-control_credential` Terraform resource for this purpose. The name of the EKS AWS credential in TMC will be reffered to as `credential_name` in this guide.
+
+- Create the required VPC with subnets in the desired region. Please refer to Tanzu documentation on how to [create a VPC with Subnets for EKS cluster lifecycle management][tanzu-vpc-guide] and AWS guide for [creating a VPC for your Amazon EKS cluster][aws-vpc-guied].
+
+- Ensure the CSP token used in initialising the terraform provider has the right set of permissions to create a workload cluster.
+
+[tanzu-vpc-guide]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-5708F04E-7EA3-495D-A484-FD6DB7AA8356.html
+[aws-vpc-guide]: https://docs.aws.amazon.com/eks/latest/userguide/creating-a-vpc.html
+
+## Provisioning the cluster
+
+You can use the following template as reference to write your own `tanzu-mission-control_ekscluster` resource in the terraform scripts. 
+
+{{ tffile "resource_templates/ekscluster.tf" }}

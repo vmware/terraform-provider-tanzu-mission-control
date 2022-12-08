@@ -27,7 +27,9 @@ func flattenClusterSpec(item *models.VmwareTanzuManageV1alpha1EksclusterSpec) []
 		data[nodepoolKey] = flattenNodePools(item.NodePools)
 	}
 
-	data[proxyNameKey] = item.ProxyName
+	if item.ProxyName != "" {
+		data[proxyNameKey] = item.ProxyName
+	}
 
 	return []interface{}{data}
 }
@@ -287,8 +289,13 @@ func flattenUpdateConfig(item *models.VmwareTanzuManageV1alpha1EksclusterNodepoo
 
 	data := make(map[string]interface{})
 
-	data[maxUnavailableNodesKey] = item.MaxUnavailableNodes
-	data[maxUnavailablePercentageKey] = item.MaxUnavailablePercentage
+	if item.MaxUnavailableNodes != "" {
+		data[maxUnavailableNodesKey] = item.MaxUnavailableNodes
+	}
+
+	if item.MaxUnavailablePercentage != "" {
+		data[maxUnavailablePercentageKey] = item.MaxUnavailablePercentage
+	}
 
 	return []interface{}{data}
 }
