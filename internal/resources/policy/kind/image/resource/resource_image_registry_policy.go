@@ -12,24 +12,29 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindimage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
+	policyoperations "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/operations"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 )
 
-func ResourceImageRegistryPolicy() *schema.Resource {
+func ResourceImagePolicy() *schema.Resource {
 	return &schema.Resource{
-		Schema: imageRegistryPolicySchema,
+		CreateContext: schema.CreateContextFunc(policyoperations.ResourceOperation(policyoperations.WithResourceName(policykindimage.ResourceName), policyoperations.WithOperationType(policyoperations.Create))),
+		ReadContext:   schema.ReadContextFunc(policyoperations.ResourceOperation(policyoperations.WithResourceName(policykindimage.ResourceName), policyoperations.WithOperationType(policyoperations.Read))),
+		UpdateContext: schema.UpdateContextFunc(policyoperations.ResourceOperation(policyoperations.WithResourceName(policykindimage.ResourceName), policyoperations.WithOperationType(policyoperations.Update))),
+		DeleteContext: schema.DeleteContextFunc(policyoperations.ResourceOperation(policyoperations.WithResourceName(policykindimage.ResourceName), policyoperations.WithOperationType(policyoperations.Delete))),
+		Schema:        imagePolicySchema,
 		CustomizeDiff: customdiff.All(
-			scope.ValidateScope,
+			schema.CustomizeDiffFunc(scope.ValidateScope(policyoperations.ScopeMap[policykindimage.ResourceName])),
 			policykindimage.ValidateInput,
 			policy.ValidateSpecLabelSelectorRequirement,
 		),
 	}
 }
 
-var imageRegistryPolicySchema = map[string]*schema.Schema{
+var imagePolicySchema = map[string]*schema.Schema{
 	policy.NameKey: {
 		Type:        schema.TypeString,
-		Description: "Name of the image registry policy",
+		Description: "Name of the image policy",
 		Required:    true,
 		ForceNew:    true,
 	},

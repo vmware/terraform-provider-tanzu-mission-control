@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"golang.org/x/exp/slices"
 
 	policyclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/cluster"
 	policyclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/clustergroup"
@@ -21,21 +22,20 @@ import (
 var (
 	ScopeSchema = &schema.Schema{
 		Type:        schema.TypeList,
-		Description: "Scope for the custom, security and image policy, having one of the valid scopes for custom and security policy: cluster, cluster_group or organization and valid scopes for image registry policy: workspace or organization.",
+		Description: "Scope for the custom, security and image policy, having one of the valid scopes for custom and security policy: cluster, cluster_group or organization and valid scopes for image policy: workspace or organization.",
 		Required:    true,
 		ForceNew:    true,
 		MaxItems:    1,
 		MinItems:    1,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
-				clusterKey:      ClusterPolicyFullname,
-				clusterGroupKey: ClusterGroupPolicyFullname,
-				workspaceKey:    WorkspacePolicyFullname,
-				organizationKey: OrganizationPolicyFullname,
+				ClusterKey:      ClusterPolicyFullname,
+				ClusterGroupKey: ClusterGroupPolicyFullname,
+				WorkspaceKey:    WorkspacePolicyFullname,
+				OrganizationKey: OrganizationPolicyFullname,
 			},
 		},
 	}
-	ScopesAllowed = [...]string{clusterKey, clusterGroupKey, workspaceKey, organizationKey}
 )
 
 type (
@@ -64,7 +64,7 @@ func ConstructScope(d *schema.ResourceData, name string) (scopedFullnameData *Sc
 
 	scopeData := data[0].(map[string]interface{})
 
-	if v, ok := scopeData[clusterKey]; ok {
+	if v, ok := scopeData[ClusterKey]; ok {
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
 			scopedFullnameData = &ScopedFullname{
 				Scope:           ClusterScope,
@@ -73,7 +73,7 @@ func ConstructScope(d *schema.ResourceData, name string) (scopedFullnameData *Sc
 		}
 	}
 
-	if v, ok := scopeData[clusterGroupKey]; ok {
+	if v, ok := scopeData[ClusterGroupKey]; ok {
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
 			scopedFullnameData = &ScopedFullname{
 				Scope:                ClusterGroupScope,
@@ -82,7 +82,7 @@ func ConstructScope(d *schema.ResourceData, name string) (scopedFullnameData *Sc
 		}
 	}
 
-	if v, ok := scopeData[workspaceKey]; ok {
+	if v, ok := scopeData[WorkspaceKey]; ok {
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
 			scopedFullnameData = &ScopedFullname{
 				Scope:             WorkspaceScope,
@@ -91,7 +91,7 @@ func ConstructScope(d *schema.ResourceData, name string) (scopedFullnameData *Sc
 		}
 	}
 
-	if v, ok := scopeData[organizationKey]; ok {
+	if v, ok := scopeData[OrganizationKey]; ok {
 		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
 			scopedFullnameData = &ScopedFullname{
 				Scope:                OrganizationScope,
@@ -103,7 +103,7 @@ func ConstructScope(d *schema.ResourceData, name string) (scopedFullnameData *Sc
 	return scopedFullnameData
 }
 
-func FlattenScope(scopedFullname *ScopedFullname) (data []interface{}, name string) {
+func FlattenScope(scopedFullname *ScopedFullname, scopesAllowed []string) (data []interface{}, name string) {
 	if scopedFullname == nil {
 		return data, name
 	}
@@ -113,67 +113,75 @@ func FlattenScope(scopedFullname *ScopedFullname) (data []interface{}, name stri
 	switch scopedFullname.Scope {
 	case ClusterScope:
 		name = scopedFullname.FullnameCluster.Name
-		flattenScopeData[clusterKey] = FlattenClusterPolicyFullname(scopedFullname.FullnameCluster)
+		flattenScopeData[ClusterKey] = FlattenClusterPolicyFullname(scopedFullname.FullnameCluster)
 	case ClusterGroupScope:
 		name = scopedFullname.FullnameClusterGroup.Name
-		flattenScopeData[clusterGroupKey] = FlattenClusterGroupPolicyFullname(scopedFullname.FullnameClusterGroup)
+		flattenScopeData[ClusterGroupKey] = FlattenClusterGroupPolicyFullname(scopedFullname.FullnameClusterGroup)
 	case WorkspaceScope:
 		name = scopedFullname.FullnameWorkspace.Name
-		flattenScopeData[workspaceKey] = FlattenWorkspacePolicyFullname(scopedFullname.FullnameWorkspace)
+		flattenScopeData[WorkspaceKey] = FlattenWorkspacePolicyFullname(scopedFullname.FullnameWorkspace)
 	case OrganizationScope:
 		name = scopedFullname.FullnameOrganization.Name
-		flattenScopeData[organizationKey] = FlattenOrganizationPolicyFullname(scopedFullname.FullnameOrganization)
+		flattenScopeData[OrganizationKey] = FlattenOrganizationPolicyFullname(scopedFullname.FullnameOrganization)
 	case UnknownScope:
-		fmt.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(ScopesAllowed[:], `, `))
+		fmt.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed, `, `))
 	}
 
 	return []interface{}{flattenScopeData}, name
 }
 
-func ValidateScope(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
-	value, ok := diff.GetOk(ScopeKey)
-	if !ok {
-		return fmt.Errorf("scope: %v is not valid: minimum one valid scope block is required", value)
-	}
+type ValidateScopeType func(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error
 
-	data, _ := value.([]interface{})
-
-	if len(data) == 0 || data[0] == nil {
-		return fmt.Errorf("scope data: %v is not valid: minimum one valid scope block is required among: %v", data, strings.Join(ScopesAllowed[:], `, `))
-	}
-
-	scopeData := data[0].(map[string]interface{})
-	scopesFound := make([]string, 0)
-
-	if v, ok := scopeData[clusterKey]; ok {
-		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
-			scopesFound = append(scopesFound, clusterKey)
+func ValidateScope(scopesAllowed []string) ValidateScopeType {
+	return func(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
+		value, ok := diff.GetOk(ScopeKey)
+		if !ok {
+			return fmt.Errorf("scope: %v is not valid: minimum one valid scope block is required", value)
 		}
-	}
 
-	if v, ok := scopeData[clusterGroupKey]; ok {
-		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
-			scopesFound = append(scopesFound, clusterGroupKey)
+		data, _ := value.([]interface{})
+
+		if len(data) == 0 || data[0] == nil {
+			return fmt.Errorf("scope data: %v is not valid: minimum one valid scope block is required among: %v", data, strings.Join(scopesAllowed, `, `))
 		}
-	}
 
-	if v, ok := scopeData[workspaceKey]; ok {
-		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
-			scopesFound = append(scopesFound, workspaceKey)
+		scopeData := data[0].(map[string]interface{})
+		scopesFound := make([]string, 0)
+
+		if v, ok := scopeData[ClusterKey]; ok {
+			if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
+				scopesFound = append(scopesFound, ClusterKey)
+			}
 		}
-	}
 
-	if v, ok := scopeData[organizationKey]; ok {
-		if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
-			scopesFound = append(scopesFound, organizationKey)
+		if v, ok := scopeData[ClusterGroupKey]; ok {
+			if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
+				scopesFound = append(scopesFound, ClusterGroupKey)
+			}
 		}
-	}
 
-	if len(scopesFound) == 0 {
-		return fmt.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v", strings.Join(ScopesAllowed[:], `, `))
-	} else if len(scopesFound) > 1 {
-		return fmt.Errorf("found scopes: %v are not valid: maximum one valid scope type block is allowed", strings.Join(scopesFound, `, `))
-	}
+		if v, ok := scopeData[WorkspaceKey]; ok {
+			if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
+				scopesFound = append(scopesFound, WorkspaceKey)
+			}
+		}
 
-	return nil
+		if v, ok := scopeData[OrganizationKey]; ok {
+			if v1, ok := v.([]interface{}); ok && len(v1) != 0 {
+				scopesFound = append(scopesFound, OrganizationKey)
+			}
+		}
+
+		if len(scopesFound) == 0 {
+			return fmt.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v", strings.Join(scopesAllowed, `, `))
+		} else if len(scopesFound) > 1 {
+			return fmt.Errorf("found scopes: %v are not valid: maximum one valid scope type block is allowed", strings.Join(scopesFound, `, `))
+		}
+
+		if !slices.Contains(scopesAllowed, scopesFound[0]) {
+			return fmt.Errorf("found scope: %v is not valid: minimum one valid scope type block is required among: %v", scopesFound[0], strings.Join(scopesAllowed, `, `))
+		}
+
+		return nil
+	}
 }

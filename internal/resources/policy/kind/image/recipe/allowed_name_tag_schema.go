@@ -57,7 +57,7 @@ func ConstructAllowedNameTag(data []interface{}) (nameTag *policyrecipeimagemode
 	nameTag = &policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1AllowedNameTag{}
 
 	if v, ok := allowedNameTagData[AuditKey]; ok {
-		helper.SetPrimitiveValue(v, &nameTag.Audit, AuditKey)
+		nameTag.Audit = helper.BoolPointer(v.(bool))
 	}
 
 	if v, ok := allowedNameTagData[RulesKey]; ok {
@@ -107,7 +107,9 @@ func FlattenAllowedNameTag(nameTag *policyrecipeimagemodel.VmwareTanzuManageV1al
 
 	flattenAllowedNameTag := make(map[string]interface{})
 
-	flattenAllowedNameTag[AuditKey] = nameTag.Audit
+	if nameTag.Audit != nil {
+		flattenAllowedNameTag[AuditKey] = *nameTag.Audit
+	}
 
 	if nameTag.Rules != nil {
 		var rules []interface{}

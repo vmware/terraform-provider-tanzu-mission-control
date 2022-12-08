@@ -58,7 +58,7 @@ func ConstructCommonRecipe(data []interface{}) (common *policyrecipeimagemodel.V
 	common = &policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1CommonRecipe{}
 
 	if v, ok := commonRecipeData[AuditKey]; ok {
-		helper.SetPrimitiveValue(v, &common.Audit, AuditKey)
+		common.Audit = helper.BoolPointer(v.(bool))
 	}
 
 	return common
@@ -71,7 +71,11 @@ func FlattenCommonRecipe(common *policyrecipeimagemodel.VmwareTanzuManageV1alpha
 
 	flattenCommonRecipe := make(map[string]interface{})
 
-	flattenCommonRecipe[AuditKey] = common.Audit
+	if common.Audit == nil {
+		return data
+	}
+
+	flattenCommonRecipe[AuditKey] = *common.Audit
 
 	return []interface{}{flattenCommonRecipe}
 }

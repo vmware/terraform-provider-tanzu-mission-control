@@ -38,7 +38,7 @@ func Provider() *schema.Provider {
 			iampolicy.ResourceName:      iampolicy.ResourceIAMPolicy(),
 			custompolicy.ResourceName:   custompolicyresource.ResourceCustomPolicy(),
 			securitypolicy.ResourceName: securitypolicyresource.ResourceSecurityPolicy(),
-			imagepolicy.ResourceName:    imagepolicyresource.ResourceImageRegistryPolicy(),
+			imagepolicy.ResourceName:    imagepolicyresource.ResourceImagePolicy(),
 			credential.ResourceName:     credential.ResourceCredential(),
 			integration.ResourceName:    integration.ResourceIntegration(),
 		},

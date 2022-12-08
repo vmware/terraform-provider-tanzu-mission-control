@@ -26,6 +26,7 @@ import (
 	policyorganizationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/organization"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
+	policyoperations "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/operations"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
@@ -168,7 +169,7 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 }
 
 func (testConfig *testAcceptanceConfig) getTestSecurityPolicyResourceBasicConfigValue(scope scope.Scope, recipe policykindsecurity.Recipe) string {
-	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope)
+	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope, policyoperations.ScopeMap[testConfig.SecurityPolicyResource])
 	inputBlock := testConfig.getTestSecurityPolicyResourceInput(recipe)
 
 	return fmt.Sprintf(`
@@ -371,7 +372,7 @@ func (testConfig *testAcceptanceConfig) checkSecurityPolicyResourceAttributes(sc
 	case scope.OrganizationScope:
 		check = append(check, resource.TestCheckResourceAttr(testConfig.SecurityPolicyResourceName, "scope.0.organization.0.organization", testConfig.ScopeHelperResources.OrgID))
 	case scope.UnknownScope:
-		log.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scope.ScopesAllowed[:], `, `))
+		log.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(policyoperations.ScopeMap[testConfig.SecurityPolicyResource], `, `))
 	}
 
 	check = append(check, policy.MetaResourceAttributeCheck(testConfig.SecurityPolicyResourceName)...)
@@ -452,7 +453,7 @@ func (testConfig *testAcceptanceConfig) verifySecurityPolicyResourceCreation(sco
 				return errors.Wrapf(err, "organization scoped security policy resource is empty, resource: %s", testConfig.SecurityPolicyResourceName)
 			}
 		case scope.UnknownScope:
-			return errors.Errorf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scope.ScopesAllowed[:], `, `))
+			return errors.Errorf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(policyoperations.ScopeMap[testConfig.SecurityPolicyResource], `, `))
 		}
 
 		return nil

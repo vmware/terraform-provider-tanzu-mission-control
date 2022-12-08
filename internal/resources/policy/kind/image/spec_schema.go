@@ -19,7 +19,7 @@ import (
 
 var SpecSchema = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "Spec for the image registry policy",
+	Description: "Spec for the image policy",
 	Required:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
@@ -49,23 +49,23 @@ func ConstructSpec(d *schema.ResourceData) (spec *policymodel.VmwareTanzuManageV
 		RecipeVersion: policy.RecipeVersionDefaultValue,
 	}
 
-	v, ok := specData[policy.InputKey]
+	input, ok := specData[policy.InputKey]
 	if !ok {
 		return spec
 	}
 
-	v1, ok := v.([]interface{})
+	inputData, ok := input.([]interface{})
 	if !ok {
 		return spec
 	}
 
-	inputRecipeData := constructInput(v1)
+	inputRecipeData := constructInput(inputData)
 
 	if inputRecipeData == nil || inputRecipeData.recipe == "" {
 		return spec
 	}
 
-	spec.Recipe = string(inputRecipeData.recipe)
+	spec.Recipe = strings.ReplaceAll(string(inputRecipeData.recipe), "_", "-")
 
 	switch inputRecipeData.recipe {
 	case AllowedNameTagRecipe:
@@ -108,19 +108,19 @@ func FlattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		return data
 	}
 
-	v1, ok := spec.Input.(map[string]interface{})
+	input, ok := spec.Input.(map[string]interface{})
 	if !ok {
 		return data
 	}
 
 	var inputRecipeData *inputRecipe
 
-	byteSlice, err := json.Marshal(v1)
+	byteSlice, err := json.Marshal(input)
 	if err != nil {
 		return data
 	}
 
-	switch spec.Recipe {
+	switch strings.ReplaceAll(spec.Recipe, "-", "_") {
 	case string(AllowedNameTagRecipe):
 		var allowedNameTagRecipeInput policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1AllowedNameTag
 
@@ -166,8 +166,8 @@ func FlattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		}
 
 		inputRecipeData = &inputRecipe{
-			recipe:              RequireDigestRecipe,
-			inputBlockLatestTag: &requireDigestRecipeInput,
+			recipe:             RequireDigestRecipe,
+			inputRequireDigest: &requireDigestRecipeInput,
 		}
 	case string(UnknownRecipe):
 		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(RecipesAllowed[:], `, `))
