@@ -16,11 +16,11 @@ For more information, see [Creating Customized Policies][create-customized-polic
 
 In the Tanzu Mission Control custom policy resource, there are six system defined types of custom templates that you can use:
 - **tmc-block-nodeport-service**
-- **tmc_block_resources**
-- **tmc_block_rolebinding_subjects**
-- **tmc_external_ips**
-- **tmc_https_ingress**
-- **tmc_require_labels**
+- **tmc-block-resources**
+- **tmc-block-rolebinding-subjects**
+- **tmc-external-ips**
+- **tmc-https-ingress**
+- **tmc-require-labels**
 
 ## Policy Scope and Inheritance
 
@@ -760,7 +760,7 @@ resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-block-no
 
   scope {
     organization {
-      organization = "tf-create-test"
+      organization = "dummy-id"
     }
   }
 
@@ -813,7 +813,7 @@ resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-block-re
 
   scope {
     organization {
-      organization = "tf-create-test"
+      organization = "dummy-id"
     }
   }
 
@@ -866,7 +866,7 @@ resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-block-ro
 
   scope {
     organization {
-      organization = "tf-create-test"
+      organization = "dummy-id"
     }
   }
 
@@ -925,7 +925,7 @@ resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-external
 
   scope {
     organization {
-      organization = "tf-create-test"
+      organization = "dummy-id"
     }
   }
 
@@ -983,7 +983,7 @@ resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-https-in
 
   scope {
     organization {
-      organization = "tf-create-test"
+      organization = "dummy-id"
     }
   }
 
@@ -1036,7 +1036,7 @@ resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-require-
 
   scope {
     organization {
-      organization = "tf-create-test"
+      organization = "dummy-id"
     }
   }
 
@@ -1086,7 +1086,7 @@ resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-require-
 ### Required
 
 - `name` (String) Name of the custom policy
-- `scope` (Block List, Min: 1, Max: 1) Scope for the security and custom policy, having one of the valid scopes: cluster, cluster_group or organization. (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security and image policy, having one of the valid scopes for custom and security policy: cluster, cluster_group or organization and valid scopes for image policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Spec for the custom policy (see [below for nested schema](#nestedblock--spec))
 
 ### Optional

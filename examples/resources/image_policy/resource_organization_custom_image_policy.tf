@@ -1,10 +1,10 @@
 /*
-Organization scoped Tanzu Mission Control custom policy with tmc-block-resources input recipe.
-This policy is applied to a organization with the tmc-block-resources configuration option.
+Organization scoped Tanzu Mission Control image policy with custom input recipe.
+This policy is applied to a organization with the custom configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-block-resources_custom_policy" {
-  name = "tf-custom-test"
+resource "tanzu-mission-control_image_policy" "organization_scoped_custom_image_policy" {
+  name = "tf-image-test"
 
   scope {
     organization {
@@ -14,15 +14,17 @@ resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-block-re
 
   spec {
     input {
-      tmc_block_resources {
-        audit = false
-        target_kubernetes_resources {
-          api_groups = [
-            "apps",
-          ]
-          kinds = [
-            "Event",
-          ]
+      custom {
+        audit = true
+        rules {
+          hostname = "foo"
+          imagename = "bar"
+          port = "80"
+          requiredigest = false
+          tag {
+            negate = false
+            value = "test"
+          }
         }
       }
     }
