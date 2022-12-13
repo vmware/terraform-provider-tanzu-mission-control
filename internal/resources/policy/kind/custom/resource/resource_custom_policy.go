@@ -13,6 +13,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindcustom "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
 	policyoperations "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/operations"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 )
 
 func ResourceCustomPolicy() *schema.Resource {
@@ -23,7 +24,7 @@ func ResourceCustomPolicy() *schema.Resource {
 		DeleteContext: schema.DeleteContextFunc(policyoperations.ResourceOperation(policyoperations.WithResourceName(policykindcustom.ResourceName), policyoperations.WithOperationType(policyoperations.Delete))),
 		Schema:        customPolicySchema,
 		CustomizeDiff: customdiff.All(
-			policy.ValidateScope,
+			schema.CustomizeDiffFunc(scope.ValidateScope(policyoperations.ScopeMap[policykindcustom.ResourceName])),
 			policykindcustom.ValidateInput,
 			policy.ValidateSpecLabelSelectorRequirement,
 		),
@@ -37,7 +38,7 @@ var customPolicySchema = map[string]*schema.Schema{
 		Required:    true,
 		ForceNew:    true,
 	},
-	policy.ScopeKey: policy.ScopeSchema,
-	common.MetaKey:  common.Meta,
-	policy.SpecKey:  policykindcustom.SpecSchema,
+	scope.ScopeKey: scope.ScopeSchema,
+	common.MetaKey: common.Meta,
+	policy.SpecKey: policykindcustom.SpecSchema,
 }

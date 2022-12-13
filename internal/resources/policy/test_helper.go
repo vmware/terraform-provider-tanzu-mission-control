@@ -16,16 +16,17 @@ import (
 
 	clusterresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 	clustergroupresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
-	scoperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
+	workspaceresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/workspace"
 )
 
 const (
 	// Cluster.
 	clusterResource            = clusterresource.ResourceName
 	clusterResourceVar         = "test_cluster"
-	managementClusterName      = scoperesource.AttachedValue
-	provisionerName            = scoperesource.AttachedValue
+	managementClusterName      = scope.AttachedValue
+	provisionerName            = scope.AttachedValue
 	clusterName                = "tf-attach-test"
 	clusterGroupNameForCluster = "default"
 
@@ -33,6 +34,11 @@ const (
 	clusterGroupResource    = clustergroupresource.ResourceName
 	clusterGroupResourceVar = "test_cluster_group"
 	clusterGroupNamePrefix  = "tf-cg-test"
+
+	// Workspace.
+	workspaceResource    = workspaceresource.ResourceName
+	workspaceResourceVar = "test_workspace"
+	workspaceNamePrefix  = "tf-workspace-test"
 )
 
 type Cluster struct {
@@ -53,10 +59,18 @@ type ClusterGroup struct {
 	Name         string
 }
 
+type Workspace struct {
+	ResourceName string
+	Resource     string
+	ResourceVar  string
+	Name         string
+}
+
 type ScopeHelperResources struct {
 	Meta         string
 	Cluster      *Cluster
 	ClusterGroup *ClusterGroup
+	Workspace    *Workspace
 	OrgID        string
 }
 
@@ -78,6 +92,12 @@ func NewScopeHelperResources() *ScopeHelperResources {
 			Resource:     clusterGroupResource,
 			ResourceVar:  clusterGroupResourceVar,
 			Name:         acctest.RandomWithPrefix(clusterGroupNamePrefix),
+		},
+		Workspace: &Workspace{
+			ResourceName: fmt.Sprintf("%s.%s", workspaceResource, workspaceResourceVar),
+			Resource:     workspaceResource,
+			ResourceVar:  workspaceResourceVar,
+			Name:         acctest.RandomWithPrefix(workspaceNamePrefix),
 		},
 		OrgID: os.Getenv("ORG_ID"),
 	}
@@ -115,15 +135,25 @@ resource "%s" "%s" {
 `, shr.ClusterGroup.Resource, shr.ClusterGroup.ResourceVar, shr.ClusterGroup.Name, shr.Meta)
 }
 
+func (shr *ScopeHelperResources) getTestResourceWorkspaceConfigValue() string {
+	return fmt.Sprintf(`
+resource "%s" "%s" {
+  name = "%s"
+
+  %s
+}
+`, shr.Workspace.Resource, shr.Workspace.ResourceVar, shr.Workspace.Name, shr.Meta)
+}
+
 // GetTestPolicyResourceHelperAndScope builds the helper resource and scope blocks for policy resource based on a scope type.
-func (shr *ScopeHelperResources) GetTestPolicyResourceHelperAndScope(scope Scope) (string, string) {
+func (shr *ScopeHelperResources) GetTestPolicyResourceHelperAndScope(scopeType scope.Scope, scopesAllowed []string) (string, string) {
 	var (
 		helperBlock string
 		scopeBlock  string
 	)
 
-	switch scope {
-	case ClusterScope:
+	switch scopeType {
+	case scope.ClusterScope:
 		helperBlock = shr.getTestResourceClusterConfigValue()
 		scopeBlock = fmt.Sprintf(`
 	scope {
@@ -134,7 +164,7 @@ func (shr *ScopeHelperResources) GetTestPolicyResourceHelperAndScope(scope Scope
 		}
 	}
 	`, shr.Cluster.ResourceName)
-	case ClusterGroupScope:
+	case scope.ClusterGroupScope:
 		helperBlock = shr.getTestResourceClusterGroupConfigValue()
 		scopeBlock = fmt.Sprintf(`
 	scope {
@@ -143,7 +173,16 @@ func (shr *ScopeHelperResources) GetTestPolicyResourceHelperAndScope(scope Scope
 		}
 	}
 	`, shr.ClusterGroup.ResourceName)
-	case OrganizationScope:
+	case scope.WorkspaceScope:
+		helperBlock = shr.getTestResourceWorkspaceConfigValue()
+		scopeBlock = fmt.Sprintf(`
+	scope {
+	  workspace {
+	    workspace = %s.name
+		}
+	}
+	`, shr.Workspace.ResourceName)
+	case scope.OrganizationScope:
 		helperBlock = ""
 		scopeBlock = fmt.Sprintf(`
 	scope {
@@ -152,8 +191,8 @@ func (shr *ScopeHelperResources) GetTestPolicyResourceHelperAndScope(scope Scope
 		}
 	}
 	`, shr.OrgID)
-	case UnknownScope:
-		log.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(ScopesAllowed[:], `, `))
+	case scope.UnknownScope:
+		log.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scopesAllowed, `, `))
 	}
 
 	return helperBlock, scopeBlock

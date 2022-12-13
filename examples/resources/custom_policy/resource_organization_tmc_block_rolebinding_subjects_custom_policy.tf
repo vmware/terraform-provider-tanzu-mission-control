@@ -8,7 +8,7 @@ resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-block-ro
 
   scope {
     organization {
-      organization = "tf-create-test"
+      organization = "dummy-id"
     }
   }
 

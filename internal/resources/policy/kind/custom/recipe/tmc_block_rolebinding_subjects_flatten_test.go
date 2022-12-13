@@ -29,7 +29,7 @@ func TestFlattenTMCBlockRolebindingSubjects(t *testing.T) {
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with with complete custom policy tmc_block_rolebinding_subjects recipe",
+			description: "normal scenario with complete custom policy tmc_block_rolebinding_subjects recipe",
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjects{
 				Audit: true,
 				Parameters: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjectsParameters{
@@ -94,7 +94,7 @@ func TestFlattenBlockRoleBindingParameters(t *testing.T) {
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with with complete custom policy tmc_block_rolebinding_subjects parameters",
+			description: "normal scenario with complete custom policy tmc_block_rolebinding_subjects parameters",
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjectsParameters{
 				DisallowedSubjects: []*policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjectsParametersDisallowedSubjects{
 					{
@@ -139,7 +139,7 @@ func TestFlattenDisallowedSubjects(t *testing.T) {
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with with complete custom policy tmc_block_rolebinding_subjects parameters disallowed subjects",
+			description: "normal scenario with complete custom policy tmc_block_rolebinding_subjects parameters disallowed subjects",
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjectsParametersDisallowedSubjects{
 				Kind: "nodes",
 				Name: "test",

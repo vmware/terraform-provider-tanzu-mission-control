@@ -26,7 +26,8 @@ import (
 	policyorganizationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/organization"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindCustom "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
-	scoperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
+	policyoperations "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/operations"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
@@ -73,12 +74,12 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped custom policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.ClusterScope, policykindCustom.TMCHTTPSIngressRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.ClusterScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.ClusterScope, policykindCustom.TMCHTTPSIngressRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.ClusterScope),
 			},
 			{
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.ClusterGroupScope, policykindCustom.TMCHTTPSIngressRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.ClusterGroupScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.ClusterGroupScope, policykindCustom.TMCHTTPSIngressRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.ClusterGroupScope),
 			},
 			{
 				PreConfig: func() {
@@ -86,8 +87,8 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 						t.Skip("ORG_ID env var is not set for organization scoped custom policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.OrganizationScope, policykindCustom.TMCHTTPSIngressRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.OrganizationScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindCustom.TMCHTTPSIngressRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.OrganizationScope),
 			},
 		},
 	},
@@ -108,12 +109,12 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped custom policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.ClusterScope, policykindCustom.TMCBlockNodeportServiceRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.ClusterScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.ClusterScope, policykindCustom.TMCBlockNodeportServiceRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.ClusterScope),
 			},
 			{
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.ClusterGroupScope, policykindCustom.TMCBlockNodeportServiceRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.ClusterGroupScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.ClusterGroupScope, policykindCustom.TMCBlockNodeportServiceRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.ClusterGroupScope),
 			},
 			{
 				PreConfig: func() {
@@ -121,8 +122,8 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 						t.Skip("ORG_ID env var is not set for organization scoped custom policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.OrganizationScope, policykindCustom.TMCBlockNodeportServiceRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.OrganizationScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindCustom.TMCBlockNodeportServiceRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.OrganizationScope),
 			},
 		},
 	},
@@ -143,12 +144,12 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped custom policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.ClusterScope, policykindCustom.TMCBlockRolebindingSubjectsRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.ClusterScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.ClusterScope, policykindCustom.TMCBlockRolebindingSubjectsRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.ClusterScope),
 			},
 			{
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.ClusterGroupScope, policykindCustom.TMCBlockRolebindingSubjectsRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.ClusterGroupScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.ClusterGroupScope, policykindCustom.TMCBlockRolebindingSubjectsRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.ClusterGroupScope),
 			},
 			{
 				PreConfig: func() {
@@ -156,8 +157,8 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 						t.Skip("ORG_ID env var is not set for organization scoped custom policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.OrganizationScope, policykindCustom.TMCBlockRolebindingSubjectsRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.OrganizationScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindCustom.TMCBlockRolebindingSubjectsRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.OrganizationScope),
 			},
 		},
 	},
@@ -178,12 +179,12 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped custom policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.ClusterScope, policykindCustom.TMCBlockResourcesRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.ClusterScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.ClusterScope, policykindCustom.TMCBlockResourcesRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.ClusterScope),
 			},
 			{
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.ClusterGroupScope, policykindCustom.TMCBlockResourcesRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.ClusterGroupScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.ClusterGroupScope, policykindCustom.TMCBlockResourcesRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.ClusterGroupScope),
 			},
 			{
 				PreConfig: func() {
@@ -191,8 +192,8 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 						t.Skip("ORG_ID env var is not set for organization scoped custom policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.OrganizationScope, policykindCustom.TMCBlockResourcesRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.OrganizationScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindCustom.TMCBlockResourcesRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.OrganizationScope),
 			},
 		},
 	},
@@ -213,12 +214,12 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped custom policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.ClusterScope, policykindCustom.TMCExternalIPSRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.ClusterScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.ClusterScope, policykindCustom.TMCExternalIPSRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.ClusterScope),
 			},
 			{
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.ClusterGroupScope, policykindCustom.TMCExternalIPSRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.ClusterGroupScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.ClusterGroupScope, policykindCustom.TMCExternalIPSRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.ClusterGroupScope),
 			},
 			{
 				PreConfig: func() {
@@ -226,8 +227,8 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 						t.Skip("ORG_ID env var is not set for organization scoped custom policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.OrganizationScope, policykindCustom.TMCExternalIPSRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.OrganizationScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindCustom.TMCExternalIPSRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.OrganizationScope),
 			},
 		},
 	},
@@ -248,12 +249,12 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped custom policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.ClusterScope, policykindCustom.TMCRequireLabelsRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.ClusterScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.ClusterScope, policykindCustom.TMCRequireLabelsRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.ClusterScope),
 			},
 			{
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.ClusterGroupScope, policykindCustom.TMCRequireLabelsRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.ClusterGroupScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.ClusterGroupScope, policykindCustom.TMCRequireLabelsRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.ClusterGroupScope),
 			},
 			{
 				PreConfig: func() {
@@ -261,8 +262,8 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 						t.Skip("ORG_ID env var is not set for organization scoped custom policy acceptance test")
 					}
 				},
-				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(policy.OrganizationScope, policykindCustom.TMCRequireLabelsRecipe),
-				Check:  testConfig.checkCustomPolicyResourceAttributes(policy.OrganizationScope),
+				Config: testConfig.getTestCustomPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindCustom.TMCRequireLabelsRecipe),
+				Check:  testConfig.checkCustomPolicyResourceAttributes(scope.OrganizationScope),
 			},
 		},
 	},
@@ -272,8 +273,8 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 	t.Log("all custom policy resource acceptance tests complete!")
 }
 
-func (testConfig *testAcceptanceConfig) getTestCustomPolicyResourceBasicConfigValue(scope policy.Scope, recipe policykindCustom.Recipe) string {
-	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope)
+func (testConfig *testAcceptanceConfig) getTestCustomPolicyResourceBasicConfigValue(scope scope.Scope, recipe policykindCustom.Recipe) string {
+	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope, policyoperations.ScopeMap[testConfig.CustomPolicyResource])
 	inputBlock := testConfig.getTestCustomPolicyResourceInput(recipe)
 
 	return fmt.Sprintf(`
@@ -441,21 +442,21 @@ func (testConfig *testAcceptanceConfig) getTestCustomPolicyResourceInput(recipe 
 }
 
 // checkCustomPolicyResourceAttributes checks for custom policy creation along with meta attributes.
-func (testConfig *testAcceptanceConfig) checkCustomPolicyResourceAttributes(scope policy.Scope) resource.TestCheckFunc {
+func (testConfig *testAcceptanceConfig) checkCustomPolicyResourceAttributes(scopeType scope.Scope) resource.TestCheckFunc {
 	var check = []resource.TestCheckFunc{
-		testConfig.verifyCustomPolicyResourceCreation(scope),
+		testConfig.verifyCustomPolicyResourceCreation(scopeType),
 		resource.TestCheckResourceAttr(testConfig.CustomPolicyResourceName, "name", testConfig.CustomPolicyName),
 	}
 
-	switch scope {
-	case policy.ClusterScope:
+	switch scopeType {
+	case scope.ClusterScope:
 		check = append(check, resource.TestCheckResourceAttr(testConfig.CustomPolicyResourceName, "scope.0.cluster.0.name", testConfig.ScopeHelperResources.Cluster.Name))
-	case policy.ClusterGroupScope:
+	case scope.ClusterGroupScope:
 		check = append(check, resource.TestCheckResourceAttr(testConfig.CustomPolicyResourceName, "scope.0.cluster_group.0.cluster_group", testConfig.ScopeHelperResources.ClusterGroup.Name))
-	case policy.OrganizationScope:
+	case scope.OrganizationScope:
 		check = append(check, resource.TestCheckResourceAttr(testConfig.CustomPolicyResourceName, "scope.0.organization.0.organization", testConfig.ScopeHelperResources.OrgID))
-	case policy.UnknownScope:
-		log.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(policy.ScopesAllowed[:], `, `))
+	case scope.UnknownScope:
+		log.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(policyoperations.ScopeMap[testConfig.CustomPolicyResource], `, `))
 	}
 
 	check = append(check, policy.MetaResourceAttributeCheck(testConfig.CustomPolicyResourceName)...)
@@ -463,7 +464,7 @@ func (testConfig *testAcceptanceConfig) checkCustomPolicyResourceAttributes(scop
 	return resource.ComposeTestCheckFunc(check...)
 }
 
-func (testConfig *testAcceptanceConfig) verifyCustomPolicyResourceCreation(scope policy.Scope) resource.TestCheckFunc {
+func (testConfig *testAcceptanceConfig) verifyCustomPolicyResourceCreation(scopeType scope.Scope) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if testConfig.Provider == nil {
 			return fmt.Errorf("provider not initialised")
@@ -490,13 +491,13 @@ func (testConfig *testAcceptanceConfig) verifyCustomPolicyResourceCreation(scope
 			return errors.Wrap(err, "unable to set the context")
 		}
 
-		switch scope {
-		case policy.ClusterScope:
+		switch scopeType {
+		case scope.ClusterScope:
 			fn := &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyFullName{
 				ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-				ManagementClusterName: scoperesource.AttachedValue,
+				ManagementClusterName: scope.AttachedValue,
 				Name:                  testConfig.CustomPolicyName,
-				ProvisionerName:       scoperesource.AttachedValue,
+				ProvisionerName:       scope.AttachedValue,
 			}
 
 			resp, err := config.TMCConnection.ClusterPolicyResourceService.ManageV1alpha1ClusterPolicyResourceServiceGet(fn)
@@ -507,7 +508,7 @@ func (testConfig *testAcceptanceConfig) verifyCustomPolicyResourceCreation(scope
 			if resp == nil {
 				return errors.Wrapf(err, "cluster scoped custom policy resource is empty, resource: %s", testConfig.CustomPolicyResourceName)
 			}
-		case policy.ClusterGroupScope:
+		case scope.ClusterGroupScope:
 			fn := &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyFullName{
 				ClusterGroupName: testConfig.ScopeHelperResources.ClusterGroup.Name,
 				Name:             testConfig.CustomPolicyName,
@@ -521,7 +522,7 @@ func (testConfig *testAcceptanceConfig) verifyCustomPolicyResourceCreation(scope
 			if resp == nil {
 				return errors.Wrapf(err, "cluster group scoped custom policy resource is empty, resource: %s", testConfig.CustomPolicyResourceName)
 			}
-		case policy.OrganizationScope:
+		case scope.OrganizationScope:
 			fn := &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyFullName{
 				OrgID: testConfig.ScopeHelperResources.OrgID,
 				Name:  testConfig.CustomPolicyName,
@@ -535,8 +536,8 @@ func (testConfig *testAcceptanceConfig) verifyCustomPolicyResourceCreation(scope
 			if resp == nil {
 				return errors.Wrapf(err, "organization scoped custom policy resource is empty, resource: %s", testConfig.CustomPolicyResourceName)
 			}
-		case policy.UnknownScope:
-			return errors.Errorf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(policy.ScopesAllowed[:], `, `))
+		case scope.UnknownScope:
+			return errors.Errorf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(policyoperations.ScopeMap[testConfig.CustomPolicyResource], `, `))
 		}
 
 		return nil

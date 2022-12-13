@@ -21,10 +21,13 @@ import (
 	policyclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/cluster"
 	policyclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/clustergroup"
 	policyorganizationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/organization"
+	policyworkspacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/workspace"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindcustom "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
+	policykindimage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
 	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 )
 
 func ResourcePolicyInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}, rn string) (diags diag.Diagnostics) {
@@ -35,7 +38,7 @@ func ResourcePolicyInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m 
 		return diag.Errorf("unable to read %s policy name", rn)
 	}
 
-	scopedFullnameData := policy.ConstructScope(d, policyName)
+	scopedFullnameData := scope.ConstructScope(d, policyName)
 
 	if scopedFullnameData == nil {
 		return diag.Errorf("Unable to update Tanzu Mission Control %s policy entry; Scope full name is empty", rn)
@@ -63,7 +66,7 @@ func ResourcePolicyInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m 
 	}
 
 	switch scopedFullnameData.Scope {
-	case policy.ClusterScope:
+	case scope.ClusterScope:
 		if scopedFullnameData.FullnameCluster != nil {
 			policyReq := &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyPolicyRequest{
 				Policy: &policyclustermodel.VmwareTanzuManageV1alpha1ClusterPolicyPolicy{
@@ -78,7 +81,7 @@ func ResourcePolicyInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m 
 				return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster %s policy entry, name : %s", rn, policyName))
 			}
 		}
-	case policy.ClusterGroupScope:
+	case scope.ClusterGroupScope:
 		if scopedFullnameData.FullnameClusterGroup != nil {
 			policyReq := &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyPolicyRequest{
 				Policy: &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyPolicy{
@@ -93,7 +96,22 @@ func ResourcePolicyInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m 
 				return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster group %s policy entry, name : %s", rn, policyName))
 			}
 		}
-	case policy.OrganizationScope:
+	case scope.WorkspaceScope:
+		if scopedFullnameData.FullnameWorkspace != nil {
+			policyReq := &policyworkspacemodel.VmwareTanzuManageV1alpha1WorkspacePolicyPolicyRequest{
+				Policy: &policyworkspacemodel.VmwareTanzuManageV1alpha1WorkspacePolicyPolicy{
+					FullName: scopedFullnameData.FullnameWorkspace,
+					Meta:     meta,
+					Spec:     spec,
+				},
+			}
+
+			_, err := config.TMCConnection.WorkspacePolicyResourceService.ManageV1alpha1WorkspacePolicyResourceServiceUpdate(policyReq)
+			if err != nil {
+				return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control workspace %s policy entry, name : %s", rn, policyName))
+			}
+		}
+	case scope.OrganizationScope:
 		if scopedFullnameData.FullnameOrganization != nil {
 			policyReq := &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyPolicyRequest{
 				Policy: &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyPolicy{
@@ -108,8 +126,8 @@ func ResourcePolicyInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m 
 				return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control organization %s policy entry, name : %s", rn, policyName))
 			}
 		}
-	case policy.UnknownScope:
-		return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(policy.ScopesAllowed[:], `, `))
+	case scope.UnknownScope:
+		return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(ScopeMap[rn], `, `))
 	}
 
 	log.Printf("[INFO] %s policy update successful", rn)
@@ -148,6 +166,8 @@ func updateCheckForSpec(d *schema.ResourceData, spec *policymodel.VmwareTanzuMan
 		policySpec = policykindcustom.ConstructSpec(d)
 	case policykindsecurity.ResourceName:
 		policySpec = policykindsecurity.ConstructSpec(d)
+	case policykindimage.ResourceName:
+		policySpec = policykindimage.ConstructSpec(d)
 	}
 
 	spec.Input = policySpec.Input

@@ -18,9 +18,20 @@ import (
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 	policymodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
+	policykindcustom "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
+	policykindimage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
+	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 )
 
-func RetrievePolicyUIDMetaAndSpecFromServer(config authctx.TanzuContext, scopedFullnameData *policy.ScopedFullname, d *schema.ResourceData, policyName, rn string) (string, *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta, *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec, error) {
+var ScopeMap = map[string][]string{
+	policykindcustom.ResourceName:   {scope.ClusterKey, scope.ClusterGroupKey, scope.OrganizationKey},
+	policykindimage.ResourceName:    {scope.WorkspaceKey, scope.OrganizationKey},
+	policykindsecurity.ResourceName: {scope.ClusterKey, scope.ClusterGroupKey, scope.OrganizationKey},
+}
+
+// nolint: gocognit
+func RetrievePolicyUIDMetaAndSpecFromServer(config authctx.TanzuContext, scopedFullnameData *scope.ScopedFullname, d *schema.ResourceData, policyName, rn string) (string, *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta, *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec, error) {
 	var (
 		UID  string
 		meta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta
@@ -28,7 +39,7 @@ func RetrievePolicyUIDMetaAndSpecFromServer(config authctx.TanzuContext, scopedF
 	)
 	// nolint: dupl
 	switch scopedFullnameData.Scope {
-	case policy.ClusterScope:
+	case scope.ClusterScope:
 		if scopedFullnameData.FullnameCluster != nil {
 			resp, err := config.TMCConnection.ClusterPolicyResourceService.ManageV1alpha1ClusterPolicyResourceServiceGet(scopedFullnameData.FullnameCluster)
 			if err != nil {
@@ -40,18 +51,18 @@ func RetrievePolicyUIDMetaAndSpecFromServer(config authctx.TanzuContext, scopedF
 				return "", nil, nil, errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster %s policy entry, name : %s", rn, policyName)
 			}
 
-			scopedFullnameData = &policy.ScopedFullname{
-				Scope:           policy.ClusterScope,
+			scopedFullnameData = &scope.ScopedFullname{
+				Scope:           scope.ClusterScope,
 				FullnameCluster: resp.Policy.FullName,
 			}
 
-			fullName, name := policy.FlattenScope(scopedFullnameData)
+			fullName, name := scope.FlattenScope(scopedFullnameData, ScopeMap[rn])
 
 			if err := d.Set(policy.NameKey, name); err != nil {
 				return "", nil, nil, err
 			}
 
-			if err := d.Set(policy.ScopeKey, fullName); err != nil {
+			if err := d.Set(scope.ScopeKey, fullName); err != nil {
 				return "", nil, nil, err
 			}
 
@@ -59,7 +70,7 @@ func RetrievePolicyUIDMetaAndSpecFromServer(config authctx.TanzuContext, scopedF
 			meta = resp.Policy.Meta
 			spec = resp.Policy.Spec
 		}
-	case policy.ClusterGroupScope:
+	case scope.ClusterGroupScope:
 		if scopedFullnameData.FullnameClusterGroup != nil {
 			resp, err := config.TMCConnection.ClusterGroupPolicyResourceService.ManageV1alpha1ClustergroupPolicyResourceServiceGet(scopedFullnameData.FullnameClusterGroup)
 			if err != nil {
@@ -71,18 +82,18 @@ func RetrievePolicyUIDMetaAndSpecFromServer(config authctx.TanzuContext, scopedF
 				return "", nil, nil, errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster group %s policy entry, name : %s", rn, policyName)
 			}
 
-			scopedFullnameData = &policy.ScopedFullname{
-				Scope:                policy.ClusterGroupScope,
+			scopedFullnameData = &scope.ScopedFullname{
+				Scope:                scope.ClusterGroupScope,
 				FullnameClusterGroup: resp.Policy.FullName,
 			}
 
-			fullName, name := policy.FlattenScope(scopedFullnameData)
+			fullName, name := scope.FlattenScope(scopedFullnameData, ScopeMap[rn])
 
 			if err := d.Set(policy.NameKey, name); err != nil {
 				return "", nil, nil, err
 			}
 
-			if err := d.Set(policy.ScopeKey, fullName); err != nil {
+			if err := d.Set(scope.ScopeKey, fullName); err != nil {
 				return "", nil, nil, err
 			}
 
@@ -90,7 +101,38 @@ func RetrievePolicyUIDMetaAndSpecFromServer(config authctx.TanzuContext, scopedF
 			meta = resp.Policy.Meta
 			spec = resp.Policy.Spec
 		}
-	case policy.OrganizationScope:
+	case scope.WorkspaceScope:
+		if scopedFullnameData.FullnameWorkspace != nil {
+			resp, err := config.TMCConnection.WorkspacePolicyResourceService.ManageV1alpha1WorkspacePolicyResourceServiceGet(scopedFullnameData.FullnameWorkspace)
+			if err != nil {
+				if clienterrors.IsNotFoundError(err) {
+					d.SetId("")
+					return "", nil, nil, nil
+				}
+
+				return "", nil, nil, errors.Wrapf(err, "Unable to get Tanzu Mission Control workspace %s policy entry, name : %s", rn, policyName)
+			}
+
+			scopedFullnameData = &scope.ScopedFullname{
+				Scope:             scope.WorkspaceScope,
+				FullnameWorkspace: resp.Policy.FullName,
+			}
+
+			fullName, name := scope.FlattenScope(scopedFullnameData, ScopeMap[rn])
+
+			if err := d.Set(policy.NameKey, name); err != nil {
+				return "", nil, nil, err
+			}
+
+			if err := d.Set(scope.ScopeKey, fullName); err != nil {
+				return "", nil, nil, err
+			}
+
+			UID = resp.Policy.Meta.UID
+			meta = resp.Policy.Meta
+			spec = resp.Policy.Spec
+		}
+	case scope.OrganizationScope:
 		if scopedFullnameData.FullnameOrganization != nil {
 			resp, err := config.TMCConnection.OrganizationPolicyResourceService.ManageV1alpha1OrganizationPolicyResourceServiceGet(scopedFullnameData.FullnameOrganization)
 			if err != nil {
@@ -102,18 +144,18 @@ func RetrievePolicyUIDMetaAndSpecFromServer(config authctx.TanzuContext, scopedF
 				return "", nil, nil, errors.Wrapf(err, "Unable to get Tanzu Mission Control organization %s policy entry, name : %s", rn, policyName)
 			}
 
-			scopedFullnameData = &policy.ScopedFullname{
-				Scope:                policy.OrganizationScope,
+			scopedFullnameData = &scope.ScopedFullname{
+				Scope:                scope.OrganizationScope,
 				FullnameOrganization: resp.Policy.FullName,
 			}
 
-			fullName, name := policy.FlattenScope(scopedFullnameData)
+			fullName, name := scope.FlattenScope(scopedFullnameData, ScopeMap[rn])
 
 			if err := d.Set(policy.NameKey, name); err != nil {
 				return "", nil, nil, err
 			}
 
-			if err := d.Set(policy.ScopeKey, fullName); err != nil {
+			if err := d.Set(scope.ScopeKey, fullName); err != nil {
 				return "", nil, nil, err
 			}
 
@@ -121,8 +163,8 @@ func RetrievePolicyUIDMetaAndSpecFromServer(config authctx.TanzuContext, scopedF
 			meta = resp.Policy.Meta
 			spec = resp.Policy.Spec
 		}
-	case policy.UnknownScope:
-		return "", nil, nil, errors.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(policy.ScopesAllowed[:], `, `))
+	case scope.UnknownScope:
+		return "", nil, nil, errors.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(ScopeMap[rn], `, `))
 	}
 
 	return UID, meta, spec, nil

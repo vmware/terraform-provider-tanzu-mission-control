@@ -1,0 +1,90 @@
+---
+Title: "Image Registry Policy Resource"
+Description: |-
+    Creating the Tanzu Kubernetes image registry policy resource.
+---
+
+# Managing Access to Image Registries
+
+Define the registries from which images can be pulled for deployment in your managed namespaces.
+
+Using VMware Tanzu Mission Control, you can make the deployments to namespaces in your clusters more secure by restricting the image registries from which images can be pulled,
+as well as the images that can be pulled from a registry.
+By default, Tanzu Mission Control does not impose any such restriction,
+and allows you to manage image registry restrictions at the organizational level and at the workspace level.
+
+Each namespace and workspace can be protected by an image registry policy that defines the registries from which an image can be pulled,
+and these policies are inherited down through the organizational hierarchy.
+For more information, see [Policy-Driven Cluster Management][policy-driven-cluster-management] in VMware Tanzu Mission Control Concepts.
+
+[policy-driven-cluster-management]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-847414C9-EF54-44E5-BA62-C4895160CE1D.html
+
+## Input Recipe
+
+In the Tanzu Mission Control image policy resource, there are four system defined types of image policy recipes that you can use:
+- **allowed-name-tag** - The Name-Tag allowlist recipe allows you to create rules using an image name or tag name or both.
+- **block-latest-tag** - The Block latest tag recipe prevents the use of images that are tagged latest.
+- **custom** - The Custom recipe allows you to create rules using multiple factors.
+- **require-digest** - The Require Digest recipe prevents the use of images that do not have a digest.
+
+## Policy Scope and Inheritance
+
+In the Tanzu Mission Control resource hierarchy, there are two levels at which you can specify image policy resource:
+- **organization** - `organization` block under `scope` sub-resource
+- **object groups** - `workspace` block under `scope` sub-resource
+
+In addition to the direct policy defined for a given object, each object has inherited policies described in the parent objects. For example, a namespace has inherited policies from the workspace and organization to which it is linked.
+
+**Note:**
+The scope parameter is mandatory in the schema and the user needs to add one of the defined scopes to the script for the provider to function.
+Only one scope per resource is allowed.
+
+## Workspace scoped Allowed-name-tag Image Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/image_policy/resource_workspace_allowed-name-tag_image_policy.tf" }}
+
+## Workspace scoped Block-latest-tag Image Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/image_policy/resource_workspace_block-latest-tag_image_policy.tf" }}
+
+## Workspace scoped Custom Image Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/image_policy/resource_workspace_custom_image_policy.tf" }}
+
+## Workspace scoped Require-digest Image Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/image_policy/resource_workspace_require-digest_image_policy.tf" }}
+
+## Organization scoped Allowed-name-tag Image Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/image_policy/resource_organization_allowed-name-tag_image_policy.tf" }}
+
+## Organization scoped Block-latest-tag Image Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/image_policy/resource_organization_block-latest-tag_image_policy.tf" }}
+
+## Organization scoped Custom Image Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/image_policy/resource_organization_custom_image_policy.tf" }}
+
+## Organization scoped Require-digest Image Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/image_policy/resource_organization_require-digest_image_policy.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}

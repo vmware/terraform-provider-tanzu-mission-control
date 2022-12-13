@@ -13,6 +13,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 	policyoperations "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/operations"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 )
 
 func ResourceSecurityPolicy() *schema.Resource {
@@ -23,7 +24,7 @@ func ResourceSecurityPolicy() *schema.Resource {
 		DeleteContext: schema.DeleteContextFunc(policyoperations.ResourceOperation(policyoperations.WithResourceName(policykindsecurity.ResourceName), policyoperations.WithOperationType(policyoperations.Delete))),
 		Schema:        securityPolicySchema,
 		CustomizeDiff: customdiff.All(
-			policy.ValidateScope,
+			schema.CustomizeDiffFunc(scope.ValidateScope(policyoperations.ScopeMap[policykindsecurity.ResourceName])),
 			policykindsecurity.ValidateInput,
 			policy.ValidateSpecLabelSelectorRequirement,
 		),
@@ -37,7 +38,7 @@ var securityPolicySchema = map[string]*schema.Schema{
 		Required:    true,
 		ForceNew:    true,
 	},
-	policy.ScopeKey: policy.ScopeSchema,
-	common.MetaKey:  common.Meta,
-	policy.SpecKey:  policykindsecurity.SpecSchema,
+	scope.ScopeKey: scope.ScopeSchema,
+	common.MetaKey: common.Meta,
+	policy.SpecKey: policykindsecurity.SpecSchema,
 }

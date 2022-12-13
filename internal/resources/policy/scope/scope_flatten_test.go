@@ -3,7 +3,7 @@ Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package policy
+package scope
 
 import (
 	"testing"
@@ -13,7 +13,7 @@ import (
 	policyclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/cluster"
 	policyclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/clustergroup"
 	policyorganizationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/organization"
-	scoperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
+	policyworkspacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/workspace"
 )
 
 func TestFlattenScope(t *testing.T) {
@@ -22,6 +22,7 @@ func TestFlattenScope(t *testing.T) {
 	cases := []struct {
 		description  string
 		input        *ScopedFullname
+		allowedScope []string
 		expectedData []interface{}
 		expectedName string
 	}{
@@ -44,11 +45,11 @@ func TestFlattenScope(t *testing.T) {
 			},
 			expectedData: []interface{}{
 				map[string]interface{}{
-					clusterKey: []interface{}{
+					ClusterKey: []interface{}{
 						map[string]interface{}{
-							scoperesource.ManagementClusterNameKey: "m",
-							scoperesource.ClusterNameKey:           "c",
-							scoperesource.ProvisionerNameKey:       "p",
+							ManagementClusterNameKey: "m",
+							ClusterNameKey:           "c",
+							ProvisionerNameKey:       "p",
 						},
 					},
 				},
@@ -66,9 +67,29 @@ func TestFlattenScope(t *testing.T) {
 			},
 			expectedData: []interface{}{
 				map[string]interface{}{
-					clusterGroupKey: []interface{}{
+					ClusterGroupKey: []interface{}{
 						map[string]interface{}{
-							scoperesource.ClusterGroupNameKey: "c",
+							ClusterGroupNameKey: "c",
+						},
+					},
+				},
+			},
+			expectedName: "n",
+		},
+		{
+			description: "normal scenario with complete workspace scope",
+			input: &ScopedFullname{
+				Scope: WorkspaceScope,
+				FullnameWorkspace: &policyworkspacemodel.VmwareTanzuManageV1alpha1WorkspacePolicyFullName{
+					Name:          "n",
+					WorkspaceName: "w",
+				},
+			},
+			expectedData: []interface{}{
+				map[string]interface{}{
+					WorkspaceKey: []interface{}{
+						map[string]interface{}{
+							WorkspaceNameKey: "w",
 						},
 					},
 				},
@@ -86,9 +107,9 @@ func TestFlattenScope(t *testing.T) {
 			},
 			expectedData: []interface{}{
 				map[string]interface{}{
-					organizationKey: []interface{}{
+					OrganizationKey: []interface{}{
 						map[string]interface{}{
-							scoperesource.OrganizationIDKey: "o",
+							OrganizationIDKey: "o",
 						},
 					},
 				},
@@ -100,7 +121,7 @@ func TestFlattenScope(t *testing.T) {
 	for _, each := range cases {
 		test := each
 		t.Run(test.description, func(t *testing.T) {
-			actualData, actualName := FlattenScope(test.input)
+			actualData, actualName := FlattenScope(test.input, test.allowedScope)
 			require.Equal(t, test.expectedData, actualData)
 			require.Equal(t, test.expectedName, actualName)
 		})
