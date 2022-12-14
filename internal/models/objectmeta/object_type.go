@@ -6,9 +6,6 @@ SPDX-License-Identifier: MPL-2.0
 package objectmetamodel
 
 import (
-	"context"
-
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
@@ -25,16 +22,6 @@ type VmwareTanzuCoreV1alpha1ObjectType struct {
 
 	// Version of the type.
 	Version string `json:"version,omitempty"`
-}
-
-// Validate validates this vmware tanzu core v1alpha1 object type.
-func (m *VmwareTanzuCoreV1alpha1ObjectType) Validate(formats strfmt.Registry) error {
-	return nil
-}
-
-// ContextValidate validates this vmware tanzu core v1alpha1 object type based on context it is used.
-func (m *VmwareTanzuCoreV1alpha1ObjectType) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	return nil
 }
 
 // MarshalBinary interface implementation.

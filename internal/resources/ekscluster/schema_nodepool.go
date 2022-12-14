@@ -27,7 +27,7 @@ var nodepoolDefinitionSchema = &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					NameKey: {
 						Type:        schema.TypeString,
-						Description: "Name of the nodepool",
+						Description: "Name of the nodepool, immutable",
 						Required:    true,
 					},
 					common.DescriptionKey: {
@@ -51,12 +51,12 @@ var nodepoolSpecSchema = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			roleArnKey: {
 				Type:        schema.TypeString,
-				Description: "ARN of the IAM role that provides permissions for the Kubernetes nodepool to make calls to AWS API operations",
+				Description: "ARN of the IAM role that provides permissions for the Kubernetes nodepool to make calls to AWS API operations, immutable",
 				Required:    true,
 			},
 			amiTypeKey: {
 				Type:        schema.TypeString,
-				Description: "AMI Type",
+				Description: "AMI Type, immutable",
 				Optional:    true,
 				Computed:    true,
 			},
@@ -68,7 +68,7 @@ var nodepoolSpecSchema = &schema.Schema{
 			},
 			rootDiskSizeKey: {
 				Type:        schema.TypeInt,
-				Description: "Root disk size in GiB",
+				Description: "Root disk size in GiB, immutable",
 				Optional:    true,
 			},
 			tagsKey: {
@@ -98,7 +98,7 @@ var nodepoolSpecSchema = &schema.Schema{
 			},
 			remoteAccessKey: {
 				Type:        schema.TypeList,
-				Description: "Remote access to worker nodes",
+				Description: "Remote access to worker nodes, immutable",
 				Optional:    true,
 				MaxItems:    1,
 				Elem: &schema.Resource{
@@ -112,7 +112,6 @@ var nodepoolSpecSchema = &schema.Schema{
 							Type:        schema.TypeSet,
 							Description: "Security groups for the VMs",
 							Optional:    true,
-							ForceNew:    true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -216,7 +215,7 @@ var nodepoolSpecSchema = &schema.Schema{
 			},
 			instanceTypesKey: {
 				Type:        schema.TypeSet,
-				Description: "Nodepool instance types",
+				Description: "Nodepool instance types, immutable",
 				Optional:    true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,

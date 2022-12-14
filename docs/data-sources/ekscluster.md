@@ -6,16 +6,16 @@ Description: |-
 
 # EKS Cluster
 
-The `tanzu-mission-control_ekscluster` resource enables you to provision and manage [AWS EKS](https://aws.amazon.com/eks/) through Tanzu Mission Control (TMC).
+The `tanzu-mission-control_ekscluster` resource allows you to provision and manage [AWS EKS](https://aws.amazon.com/eks/) through Tanzu Mission Control.
 It allows users to connect Tanzu Mission Control to their Amazon Web Services (AWS) account and create, update/upgrade, and delete EKS clusters and node groups (called node pools in Tanzu).
 
 ## Provisioning an EKS Cluster
 
-To use the **Tanzu Mission Control** for creating a new cluster, you must first connect your AWS account to TMC.
+To use the **Tanzu Mission Control** for creating a new cluster, you must first connect your AWS account to Tanzu Mission Control.
 For more information, please refer [connecting an AWS account for EKS cluster lifecycle management][aws-account]
 and [create an EKS Cluster][create-cluster].
 
-You must also have the appropriate permissions in TMC:
+You must also have the appropriate permissions in Tanzu Mission Control:
 
 - To provision a cluster, you must have `cluster.admin` permissions.
 - You must also have `clustergroup.edit` permissions on the cluster group in which you want to put the new cluster.
@@ -146,7 +146,7 @@ Required:
 
 Required:
 
-- `name` (String) Name of the nodepool
+- `name` (String) Name of the nodepool, immutable
 
 Optional:
 
@@ -158,18 +158,18 @@ Optional:
 
 Required:
 
-- `role_arn` (String) ARN of the IAM role that provides permissions for the Kubernetes nodepool to make calls to AWS API operations
+- `role_arn` (String) ARN of the IAM role that provides permissions for the Kubernetes nodepool to make calls to AWS API operations, immutable
 - `subnet_ids` (Set of String) Subnets required for the nodepool
 
 Optional:
 
-- `ami_type` (String) AMI Type
+- `ami_type` (String) AMI Type, immutable
 - `capacity_type` (String) Capacity Type
-- `instance_types` (Set of String) Nodepool instance types
+- `instance_types` (Set of String) Nodepool instance types, immutable
 - `launch_template` (Block List, Max: 1) Launch template for the nodepool (see [below for nested schema](#nestedblock--spec--nodepool--spec--launch_template))
 - `node_labels` (Map of String) Kubernetes node labels
-- `remote_access` (Block List, Max: 1) Remote access to worker nodes (see [below for nested schema](#nestedblock--spec--nodepool--spec--remote_access))
-- `root_disk_size` (Number) Root disk size in GiB
+- `remote_access` (Block List, Max: 1) Remote access to worker nodes, immutable (see [below for nested schema](#nestedblock--spec--nodepool--spec--remote_access))
+- `root_disk_size` (Number) Root disk size in GiB, immutable
 - `scaling_config` (Block List, Max: 1) Nodepool scaling config (see [below for nested schema](#nestedblock--spec--nodepool--spec--scaling_config))
 - `tags` (Map of String) EKS specific tags
 - `taints` (Block List) If specified, the node's taints (see [below for nested schema](#nestedblock--spec--nodepool--spec--taints))
