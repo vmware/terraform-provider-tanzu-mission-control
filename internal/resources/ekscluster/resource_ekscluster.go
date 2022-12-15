@@ -270,7 +270,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 
 	clusterResponse, err := config.TMCConnection.EKSClusterResourceService.EksClusterResourceServiceCreate(clusterReq)
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control cluster entry, name : %s", d.Get(NameKey)))
+		return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control EKS cluster entry, name : %s", d.Get(NameKey)))
 	}
 
 	d.SetId(clusterResponse.EksCluster.Meta.UID)
@@ -432,12 +432,12 @@ func handleNodepoolDiffs(config authctx.TanzuContext, opsRetryTimeout time.Durat
 		}
 	}
 
-	err = handleNodepoolCreates(config, clusterFn, npCreate)
+	err = handleNodepoolCreates(config, opsRetryTimeout, clusterFn, npCreate)
 	if err != nil {
 		return errors.Wrap(err, "failed to create nodepools that are not present in TMC")
 	}
 
-	err = handleNodepoolUpdates(config, tmcNps, npUpdate)
+	err = handleNodepoolUpdates(config, opsRetryTimeout, tmcNps, npUpdate)
 	if err != nil {
 		return errors.Wrapf(err, "failed to update existing nodepools")
 	}
@@ -460,7 +460,9 @@ func handleNodepoolDeletes(config authctx.TanzuContext, opsRetryTimeout time.Dur
 		getNodepoolResourceRetryableFn := func() (retry bool, err error) {
 			_, err = config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceGet(npFn)
 			if err == nil {
-				return true, errors.New("nodepool deletion in progress")
+				// we don't want to fail deletion if the deletion is not
+				// completed within the expected time
+				return true, nil
 			}
 
 			if !clienterrors.IsNotFoundError(err) {
@@ -479,7 +481,7 @@ func handleNodepoolDeletes(config authctx.TanzuContext, opsRetryTimeout time.Dur
 	return nil
 }
 
-func handleNodepoolUpdates(config authctx.TanzuContext, tmcNps map[string]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
+func handleNodepoolUpdates(config authctx.TanzuContext, opsRetryTimeout time.Duration, tmcNps map[string]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
 	for _, np := range nps {
 		tmcNp := tmcNps[np.Info.Name]
 
@@ -502,6 +504,13 @@ func handleNodepoolUpdates(config authctx.TanzuContext, tmcNps map[string]*eksmo
 		if err != nil {
 			return errors.Wrapf(err, "failed to update nodepool %s", np.Info.Name)
 		}
+
+		getNodepoolResourceRetryableFn := getWaitForNodepoolReadyFn(config, tmcNp.FullName)
+
+		_, err = helper.RetryUntilTimeout(getNodepoolResourceRetryableFn, 10*time.Second, opsRetryTimeout)
+		if err != nil {
+			return errors.Wrapf(err, "failed to verify EKS nodepool resource(%s) creation", np.Info.Name)
+		}
 	}
 
 	return nil
@@ -517,15 +526,18 @@ func fillTMCSetValues(tmcNpSpec *eksmodel.VmwareTanzuManageV1alpha1EksclusterNod
 	}
 }
 
-func handleNodepoolCreates(config authctx.TanzuContext, clusterFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName, nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
+func handleNodepoolCreates(config authctx.TanzuContext, opsRetryTimeout time.Duration, clusterFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName, nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
 	for _, np := range nps {
+		npFn := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName{
+			CredentialName: clusterFn.CredentialName,
+			Region:         clusterFn.Region,
+			EksClusterName: clusterFn.Name,
+			Name:           np.Info.Name,
+		}
+
 		req := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest{
 			Nodepool: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool{
-				FullName: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName{CredentialName: clusterFn.CredentialName,
-					Region:         clusterFn.Region,
-					EksClusterName: clusterFn.Name,
-					Name:           np.Info.Name,
-				},
+				FullName: npFn,
 				Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 					Description: np.Info.Description,
 				},
@@ -537,9 +549,32 @@ func handleNodepoolCreates(config authctx.TanzuContext, clusterFn *eksmodel.Vmwa
 		if err != nil {
 			return errors.Wrapf(err, "failed to create nodepool %s", np.Info.Name)
 		}
+
+		getNodepoolResourceRetryableFn := getWaitForNodepoolReadyFn(config, npFn)
+
+		_, err = helper.RetryUntilTimeout(getNodepoolResourceRetryableFn, 10*time.Second, opsRetryTimeout)
+		if err != nil {
+			return errors.Wrapf(err, "failed to verify EKS nodepool resource(%s) creation", npFn.Name)
+		}
 	}
 
 	return nil
+}
+
+func getWaitForNodepoolReadyFn(config authctx.TanzuContext, npFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName) func() (retry bool, err error) {
+	return func() (retry bool, err error) {
+		resp, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceGet(npFn)
+		if err != nil {
+			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control EKS nodepoool entry, name : %s", npFn.Name)
+		}
+
+		if resp.Nodepool.Status.Phase != nil &&
+			*resp.Nodepool.Status.Phase != eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolStatusPhaseREADY {
+			return true, nil
+		}
+
+		return false, nil
+	}
 }
 
 func checkNodepoolUpdate(oldNp *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, newNp *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) bool {

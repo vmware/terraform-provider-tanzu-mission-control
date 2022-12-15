@@ -6,16 +6,16 @@ Description: |-
 
 # EKS Cluster
 
-The `tanzu-mission-control_ekscluster` resource enables you to provision and manage [AWS EKS](https://aws.amazon.com/eks/) through Tanzu Mission Control (TMC).
+The `tanzu-mission-control_ekscluster` resource allows you to provision and manage [AWS EKS](https://aws.amazon.com/eks/) through Tanzu Mission Control.
 It allows users to connect Tanzu Mission Control to their Amazon Web Services (AWS) account and create, update/upgrade, and delete EKS clusters and node groups (called node pools in Tanzu).
 
 ## Provisioning an EKS Cluster
 
-To use the **Tanzu Mission Control** for creating a new cluster, you must first connect your AWS account to TMC.
+To use the **Tanzu Mission Control** for creating a new cluster, you must first connect your AWS account to Tanzu Mission Control.
 For more information, please refer [connecting an AWS account for EKS cluster lifecycle management][aws-account]
 and [create an EKS Cluster][create-cluster].
 
-You must also have the appropriate permissions in TMC:
+You must also have the appropriate permissions in Tanzu Mission Control:
 
 - To provision a cluster, you must have `cluster.admin` permissions.
 - You must also have `clustergroup.edit` permissions on the cluster group in which you want to put the new cluster.
