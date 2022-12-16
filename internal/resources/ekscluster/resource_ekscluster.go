@@ -7,14 +7,12 @@ package ekscluster
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"reflect"
 	"strings"
 	"time"
 
 	"github.com/go-openapi/strfmt"
-	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -253,6 +251,196 @@ var vpcSchema = &schema.Schema{
 	},
 }
 
+func constructEksClusterSpec(d *schema.ResourceData) (spec *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+	spec = &eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec{
+		ClusterGroupName: clusterGroupDefaultValue,
+	}
+
+	value, ok := d.GetOk(specKey)
+	if !ok {
+		return spec
+	}
+
+	data, _ := value.([]interface{})
+	if len(data) == 0 || data[0] == nil {
+		return spec
+	}
+
+	specData, _ := data[0].(map[string]interface{})
+
+	if v, ok := specData[clusterGroupKey]; ok {
+		helper.SetPrimitiveValue(v, &spec.ClusterGroupName, clusterGroupKey)
+	}
+
+	if v, ok := specData[proxyNameKey]; ok {
+		helper.SetPrimitiveValue(v, &spec.ProxyName, proxyNameKey)
+	}
+
+	if v, ok := specData[configKey]; ok {
+		configData, _ := v.([]interface{})
+		spec.Config = constructConfig(configData)
+	}
+
+	if v, ok := specData[nodepoolKey]; ok {
+		nodepoolListData, _ := v.([]interface{})
+		spec.NodePools = constructNodepools(nodepoolListData)
+	}
+
+	return spec
+}
+
+func constructConfig(data []interface{}) *eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig {
+	config := &eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig{}
+
+	if len(data) == 0 || data[0] == nil {
+		return config
+	}
+
+	configData, _ := data[0].(map[string]interface{})
+
+	if v, ok := configData[roleArnKey]; ok {
+		helper.SetPrimitiveValue(v, &config.RoleArn, roleArnKey)
+	}
+
+	if v, ok := configData[kubernetesVersionKey]; ok {
+		helper.SetPrimitiveValue(v, &config.Version, kubernetesVersionKey)
+	}
+
+	if v, ok := configData[tagsKey]; ok {
+		data, _ := v.(map[string]interface{})
+		config.Tags = constructStringMap(data)
+	}
+
+	if v, ok := configData[kubernetesNetworkConfigKey]; ok {
+		data, _ := v.([]interface{})
+		config.KubernetesNetworkConfig = constructNetworkData(data)
+	}
+
+	if v, ok := configData[loggingKey]; ok {
+		data, _ := v.([]interface{})
+		config.Logging = constructLogging(data)
+	}
+
+	if v, ok := configData[vpcKey]; ok {
+		data, _ := v.([]interface{})
+		config.Vpc = constructVpc(data)
+	}
+
+	return config
+}
+
+func constructNetworkData(data []interface{}) *eksmodel.VmwareTanzuManageV1alpha1EksclusterKubernetesNetworkConfig {
+	nc := &eksmodel.VmwareTanzuManageV1alpha1EksclusterKubernetesNetworkConfig{}
+	if len(data) == 0 || data[0] == nil {
+		return nc
+	}
+
+	networkData, _ := data[0].(map[string]interface{})
+	if v, ok := networkData[serviceCidrKey]; ok {
+		helper.SetPrimitiveValue(v, &nc.ServiceCidr, serviceCidrKey)
+	}
+
+	return nc
+}
+
+func constructLogging(data []interface{}) *eksmodel.VmwareTanzuManageV1alpha1EksclusterLogging {
+	logging := &eksmodel.VmwareTanzuManageV1alpha1EksclusterLogging{}
+
+	if len(data) == 0 || data[0] == nil {
+		return logging
+	}
+
+	loggingData, _ := data[0].(map[string]interface{})
+
+	if v, ok := loggingData[apiServerKey]; ok {
+		helper.SetPrimitiveValue(v, &logging.APIServer, apiServerKey)
+	}
+
+	if v, ok := loggingData[auditKey]; ok {
+		helper.SetPrimitiveValue(v, &logging.Audit, auditKey)
+	}
+
+	if v, ok := loggingData[authenticatorKey]; ok {
+		helper.SetPrimitiveValue(v, &logging.Authenticator, authenticatorKey)
+	}
+
+	if v, ok := loggingData[controllerManagerKey]; ok {
+		helper.SetPrimitiveValue(v, &logging.ControllerManager, controllerManagerKey)
+	}
+
+	if v, ok := loggingData[schedulerKey]; ok {
+		helper.SetPrimitiveValue(v, &logging.Scheduler, schedulerKey)
+	}
+
+	return logging
+}
+
+func constructVpc(data []interface{}) *eksmodel.VmwareTanzuManageV1alpha1EksclusterVPCConfig {
+	vpc := &eksmodel.VmwareTanzuManageV1alpha1EksclusterVPCConfig{}
+
+	if len(data) == 0 || data[0] == nil {
+		return vpc
+	}
+
+	vpcData, _ := data[0].(map[string]interface{})
+
+	if v, ok := vpcData[enablePrivateAccessKey]; ok {
+		helper.SetPrimitiveValue(v, &vpc.EnablePrivateAccess, enablePrivateAccessKey)
+	}
+
+	if v, ok := vpcData[enablePublicAccessKey]; ok {
+		helper.SetPrimitiveValue(v, &vpc.EnablePublicAccess, enablePublicAccessKey)
+	}
+
+	if v, ok := vpcData[publicAccessCidrsKey]; ok {
+		if data, ok := v.(*schema.Set); ok {
+			vpc.PublicAccessCidrs = constructStringList(data.List())
+		}
+	}
+
+	if v, ok := vpcData[securityGroupsKey]; ok {
+		if data, ok := v.(*schema.Set); ok {
+			vpc.SecurityGroups = constructStringList(data.List())
+		}
+	}
+
+	if v, ok := vpcData[subnetIdsKey]; ok {
+		if data, ok := v.(*schema.Set); ok {
+			vpc.SubnetIds = constructStringList(data.List())
+		}
+	}
+
+	return vpc
+}
+
+func constructStringMap(data map[string]interface{}) map[string]string {
+	out := make(map[string]string)
+
+	for k, v := range data {
+		var value string
+
+		helper.SetPrimitiveValue(v, &value, valueKey)
+
+		out[k] = value
+	}
+
+	return out
+}
+
+func constructStringList(data []interface{}) []string {
+	out := make([]string, 0, len(data))
+
+	for _, v := range data {
+		var value string
+
+		helper.SetPrimitiveValue(v, &value, "")
+
+		out = append(out, value)
+	}
+
+	return out
+}
+
 func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	config, ok := m.(authctx.TanzuContext)
 	if !ok {
@@ -264,7 +452,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		EksCluster: &eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster{
 			FullName: constructFullname(d),
 			Meta:     common.ConstructMeta(d),
-			Spec:     constructSpec(d),
+			Spec:     constructEksClusterSpec(d),
 		},
 	}
 
@@ -327,7 +515,7 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 
 	opsRetryTimeout := getRetryTimeout(d)
 
-	clusterSpec := constructSpec(d)
+	clusterSpec := constructEksClusterSpec(d)
 
 	// EKS cluster update API on TMC side ignores nodepools passed to it.
 	// The nodepools have to be updated via separate nodepool API, hence we
@@ -395,193 +583,6 @@ func handleClusterDiff(config authctx.TanzuContext, tmcCluster *eksmodel.VmwareT
 	return nil
 }
 
-func handleNodepoolDiffs(config authctx.TanzuContext, opsRetryTimeout time.Duration, clusterFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName, nodepools []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
-	npresp, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceList(clusterFn)
-	if err != nil {
-		return errors.Wrapf(err, "failed to list nodepools for cluster: %s", clusterFn)
-	}
-
-	npPosMap := nodepoolPosMap(nodepools)
-	tmcNps := map[string]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool{}
-
-	npUpdate := []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{}
-	npCreate := []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{}
-	npDelete := []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName{}
-
-	for _, tmcNp := range npresp.Nodepools {
-		tmcNps[tmcNp.FullName.Name] = tmcNp
-
-		if pos, ok := npPosMap[tmcNp.FullName.Name]; ok {
-			// np exisits in both TMC and TF
-			newNp := nodepools[pos]
-			fillTMCSetValues(tmcNp.Spec, newNp.Spec)
-
-			if checkNodepoolUpdate(tmcNp, newNp) {
-				fmt.Printf("np %s diff: %s", tmcNp.FullName.Name, cmp.Diff(tmcNp.Spec, newNp.Spec))
-				npUpdate = append(npUpdate, newNp)
-			}
-		} else {
-			// np exisits in TMC but not in TF
-			npDelete = append(npDelete, tmcNp.FullName)
-		}
-	}
-
-	for _, tfNp := range nodepools {
-		if _, ok := tmcNps[tfNp.Info.Name]; !ok {
-			npCreate = append(npCreate, tfNp)
-		}
-	}
-
-	err = handleNodepoolCreates(config, opsRetryTimeout, clusterFn, npCreate)
-	if err != nil {
-		return errors.Wrap(err, "failed to create nodepools that are not present in TMC")
-	}
-
-	err = handleNodepoolUpdates(config, opsRetryTimeout, tmcNps, npUpdate)
-	if err != nil {
-		return errors.Wrapf(err, "failed to update existing nodepools")
-	}
-
-	err = handleNodepoolDeletes(config, opsRetryTimeout, npDelete)
-	if err != nil {
-		return errors.Wrapf(err, "failed to delete nodepools")
-	}
-
-	return nil
-}
-
-func handleNodepoolDeletes(config authctx.TanzuContext, opsRetryTimeout time.Duration, npFns []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName) error {
-	for _, npFn := range npFns {
-		err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceDelete(npFn)
-		if err != nil {
-			return errors.Wrap(err, "delete api call failed")
-		}
-
-		getNodepoolResourceRetryableFn := func() (retry bool, err error) {
-			_, err = config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceGet(npFn)
-			if err == nil {
-				// we don't want to fail deletion if the deletion is not
-				// completed within the expected time
-				return true, nil
-			}
-
-			if !clienterrors.IsNotFoundError(err) {
-				return true, err
-			}
-
-			return false, nil
-		}
-
-		_, err = helper.RetryUntilTimeout(getNodepoolResourceRetryableFn, 10*time.Second, opsRetryTimeout)
-		if err != nil {
-			return errors.Wrapf(err, "failed to verify EKS nodepool resource(%s) clean up", npFn.Name)
-		}
-	}
-
-	return nil
-}
-
-func handleNodepoolUpdates(config authctx.TanzuContext, opsRetryTimeout time.Duration, tmcNps map[string]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
-	for _, np := range nps {
-		tmcNp := tmcNps[np.Info.Name]
-
-		req := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest{
-			Nodepool: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool{
-				FullName: tmcNp.FullName,
-				Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
-					Annotations:      tmcNp.Meta.Annotations,
-					Description:      np.Info.Description,
-					Labels:           tmcNp.Meta.Labels,
-					ParentReferences: tmcNp.Meta.ParentReferences,
-					ResourceVersion:  tmcNp.Meta.ResourceVersion,
-					UID:              tmcNp.Meta.UID,
-				},
-				Spec: np.Spec,
-			},
-		}
-
-		_, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceUpdate(req)
-		if err != nil {
-			return errors.Wrapf(err, "failed to update nodepool %s", np.Info.Name)
-		}
-
-		getNodepoolResourceRetryableFn := getWaitForNodepoolReadyFn(config, tmcNp.FullName)
-
-		_, err = helper.RetryUntilTimeout(getNodepoolResourceRetryableFn, 10*time.Second, opsRetryTimeout)
-		if err != nil {
-			return errors.Wrapf(err, "failed to verify EKS nodepool resource(%s) creation", np.Info.Name)
-		}
-	}
-
-	return nil
-}
-
-func fillTMCSetValues(tmcNpSpec *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec, npSpec *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {
-	if npSpec.AmiType == "" {
-		npSpec.AmiType = tmcNpSpec.AmiType
-	}
-
-	if npSpec.CapacityType == "" {
-		npSpec.CapacityType = tmcNpSpec.CapacityType
-	}
-}
-
-func handleNodepoolCreates(config authctx.TanzuContext, opsRetryTimeout time.Duration, clusterFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName, nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
-	for _, np := range nps {
-		npFn := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName{
-			CredentialName: clusterFn.CredentialName,
-			Region:         clusterFn.Region,
-			EksClusterName: clusterFn.Name,
-			Name:           np.Info.Name,
-		}
-
-		req := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest{
-			Nodepool: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool{
-				FullName: npFn,
-				Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
-					Description: np.Info.Description,
-				},
-				Spec: np.Spec,
-			},
-		}
-
-		_, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceCreate(req)
-		if err != nil {
-			return errors.Wrapf(err, "failed to create nodepool %s", np.Info.Name)
-		}
-
-		getNodepoolResourceRetryableFn := getWaitForNodepoolReadyFn(config, npFn)
-
-		_, err = helper.RetryUntilTimeout(getNodepoolResourceRetryableFn, 10*time.Second, opsRetryTimeout)
-		if err != nil {
-			return errors.Wrapf(err, "failed to verify EKS nodepool resource(%s) creation", npFn.Name)
-		}
-	}
-
-	return nil
-}
-
-func getWaitForNodepoolReadyFn(config authctx.TanzuContext, npFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName) func() (retry bool, err error) {
-	return func() (retry bool, err error) {
-		resp, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceGet(npFn)
-		if err != nil {
-			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control EKS nodepoool entry, name : %s", npFn.Name)
-		}
-
-		if resp.Nodepool.Status.Phase != nil &&
-			*resp.Nodepool.Status.Phase != eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolStatusPhaseREADY {
-			return true, nil
-		}
-
-		return false, nil
-	}
-}
-
-func checkNodepoolUpdate(oldNp *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, newNp *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) bool {
-	return oldNp.Meta.Description != newNp.Info.Description ||
-		!nodepoolSpecEqual(oldNp.Spec, newNp.Spec)
-}
-
 func constructFullname(d *schema.ResourceData) (fullname *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName) {
 	fullname = &eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName{}
 
@@ -602,4 +603,107 @@ func getRetryTimeout(d *schema.ResourceData) time.Duration {
 	}
 
 	return defaultTimeout
+}
+
+func flattenClusterSpec(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) []interface{} {
+	if item == nil {
+		return []interface{}{}
+	}
+
+	data := make(map[string]interface{})
+
+	data[clusterGroupKey] = item.ClusterGroupName
+
+	if item.Config != nil {
+		data[configKey] = flattenConfig(item.Config)
+	}
+
+	if len(item.NodePools) > 0 {
+		data[nodepoolKey] = flattenNodePools(item.NodePools)
+	}
+
+	if item.ProxyName != "" {
+		data[proxyNameKey] = item.ProxyName
+	}
+
+	return []interface{}{data}
+}
+
+func flattenConfig(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig) []interface{} {
+	if item == nil {
+		return []interface{}{}
+	}
+
+	data := make(map[string]interface{})
+
+	if item.KubernetesNetworkConfig != nil {
+		data[kubernetesNetworkConfigKey] = flattenKubernetesNetworkConfig(item.KubernetesNetworkConfig)
+	}
+
+	if item.Logging != nil {
+		data[loggingKey] = flattenLogging(item.Logging)
+	}
+
+	data[roleArnKey] = item.RoleArn
+	data[tagsKey] = item.Tags
+	data[kubernetesVersionKey] = item.Version
+
+	if item.Vpc != nil {
+		data[vpcKey] = flattenVpc(item.Vpc)
+	}
+
+	return []interface{}{data}
+}
+
+func flattenKubernetesNetworkConfig(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterKubernetesNetworkConfig) []interface{} {
+	if item == nil {
+		return []interface{}{}
+	}
+
+	data := make(map[string]interface{})
+
+	data[serviceCidrKey] = item.ServiceCidr
+
+	return []interface{}{data}
+}
+
+func flattenLogging(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterLogging) []interface{} {
+	if item == nil {
+		return []interface{}{}
+	}
+
+	data := make(map[string]interface{})
+
+	data[apiServerKey] = item.APIServer
+	data[auditKey] = item.Audit
+	data[authenticatorKey] = item.Authenticator
+	data[controllerManagerKey] = item.ControllerManager
+	data[schedulerKey] = item.Scheduler
+
+	return []interface{}{data}
+}
+
+func flattenVpc(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterVPCConfig) []interface{} {
+	if item == nil {
+		return []interface{}{}
+	}
+
+	data := make(map[string]interface{})
+
+	data[enablePrivateAccessKey] = item.EnablePrivateAccess
+	data[enablePublicAccessKey] = item.EnablePublicAccess
+
+	if len(item.PublicAccessCidrs) > 0 {
+		data[publicAccessCidrsKey] = item.PublicAccessCidrs
+	}
+
+	if len(item.SecurityGroups) > 0 {
+		data[securityGroupsKey] = item.SecurityGroups
+	}
+
+	if len(item.SubnetIds) > 0 {
+		data[subnetIdsKey] = item.SubnetIds
+	}
+
+	return []interface{}{data}
 }

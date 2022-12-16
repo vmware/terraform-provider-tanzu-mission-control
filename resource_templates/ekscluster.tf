@@ -60,7 +60,7 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
     nodepool {
       info {
         name        = "<nodepool-name>" // Required
-        description = "description of nodepool"
+        description = "description of node pool"
       }
 
       spec {
@@ -104,7 +104,7 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
     nodepool {
       info {
         name        = "<nodepool-name>" // Required
-        description = "description of nodepool"
+        description = "description of node pool"
       }
 
       spec {

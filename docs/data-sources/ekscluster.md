@@ -12,7 +12,7 @@ It allows users to connect Tanzu Mission Control to their Amazon Web Services (A
 ## Provisioning an EKS Cluster
 
 To use the **Tanzu Mission Control** for creating a new cluster, you must first connect your AWS account to Tanzu Mission Control.
-For more information, please refer [connecting an AWS account for EKS cluster lifecycle management][aws-account]
+For more information, see [connecting an AWS account for EKS cluster lifecycle management][aws-account]
 and [create an EKS Cluster][create-cluster].
 
 You must also have the appropriate permissions in Tanzu Mission Control:

@@ -120,7 +120,7 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(err)
 	}
 
-	clusterSpec := constructSpec(d)
+	clusterSpec := constructEksClusterSpec(d)
 
 	nodepools := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition, len(clusterSpec.NodePools))
 

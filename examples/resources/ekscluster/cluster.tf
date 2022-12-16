@@ -1,6 +1,6 @@
 # Create a Tanzu Mission Control AWS EKS cluster entry
 resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
-  credential_name = "palaia-test"       // Required
+  credential_name = "eks-test"          // Required
   region          = "us-west-2"         // Required
   name            = "tf2-eks-cluster-2" // Required
 
