@@ -5,13 +5,6 @@ SPDX-License-Identifier: MPL-2.0
 
 package testing
 
-const testDefaultCreateEksClusterGroupScript = `
-	resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
-		name = "{{.ClusterGroupName}}"
-	}
-`
-
-// TODO: Jherrild- add support for creating a cluster group during test
 const testDefaultCreateEksClusterScript = `
 	resource {{.ResourceName}} {{.ResourceNameVar}} {
 		name	= "{{.Name}}"
@@ -61,7 +54,7 @@ const testDefaultCreateEksClusterScript = `
 				spec {
 					// Refer to nodepool's schema
 					role_arn       = "arn:aws:iam::{{.AWSAccountNumber}}:role/worker.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
-					ami_type       = "AL2_x86_64"                                                                         // Forces New
+					ami_type       = "AL2_x86_64" // Forces New
 					capacity_type  = "ON_DEMAND"
 					root_disk_size = 40 // Default: 20GiB, forces New
 					tags           = { "testnptag" : "testnptagvalue" }

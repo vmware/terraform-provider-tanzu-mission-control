@@ -6,7 +6,6 @@ require (
 	github.com/go-openapi/strfmt v0.19.3
 	github.com/go-openapi/swag v0.19.5
 	github.com/go-test/deep v1.0.3
-	github.com/google/go-cmp v0.5.8
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.12.0
 	github.com/pkg/errors v0.9.1
@@ -16,6 +15,7 @@ require (
 	k8s.io/client-go v0.22.0
 	sigs.k8s.io/controller-runtime v0.6.0
 )
+
 
 require (
 	cloud.google.com/go v0.61.0 // indirect
@@ -40,6 +40,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
+	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/googleapis/gnostic v0.5.5 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-checkpoint v0.5.0 // indirect

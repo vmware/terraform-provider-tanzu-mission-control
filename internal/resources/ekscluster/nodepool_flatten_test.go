@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+
 	eksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/ekscluster"
 )
 

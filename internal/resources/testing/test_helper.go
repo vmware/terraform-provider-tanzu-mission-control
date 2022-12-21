@@ -29,7 +29,7 @@ const (
 	ClusterDataSourceVar = "test_data_attach_cluster"
 )
 
-// EKS Constants
+// EKS Constants.
 const (
 	EksClusterResource    = "tanzu-mission-control_ekscluster"
 	EksClusterGroup       = "tanzu-mission-control_cluster_group"
@@ -109,43 +109,44 @@ func WithTKGmVsphereCluster() TestAcceptanceOption {
 	}
 }
 
-func WithClusterGroup(name string) TestAcceptanceOption {
-	return func(config *TestAcceptanceConfig) {
-		config.TemplateData = testDefaultCreateEksClusterGroupScript
-		config.ClusterGroupName = name
-	}
-}
-
 func WithEKSCluster() TestAcceptanceOption {
 	return func(config *TestAcceptanceConfig) {
 		// Only read environment variables into config if the test is configured to run against a real environment without mocks
 		if _, found := os.LookupEnv("ENABLE_EKS_ENV_TEST"); found {
-			if val, exists := os.LookupEnv("EKS_KUBERNETES_VERSION"); exists {
-				config.KubernetesVersion = val
-			}
-			if val, exists := os.LookupEnv("EKS_AWS_REGION"); exists {
-				config.Region = val
-			}
-			if val, exists := os.LookupEnv("EKS_CREDENTIAL_NAME"); exists {
-				config.CredentialName = val
-			}
-			if val, exists := os.LookupEnv("EKS_CLOUD_FORMATION_TEMPLATE_ID"); exists {
-				config.CloudFormationTemplateID = val
-			}
-			if val, exists := os.LookupEnv("EKS_AWS_ACCOUNT_NUMBER"); exists {
-				config.AWSAccountNumber = val
-			}
-			if val, exists := os.LookupEnv("EKS_LAUNCH_TEMPLATE_NAME"); exists {
-				config.LaunchTemplateName = val
-			}
-			if val, exists := os.LookupEnv("EKS_LAUNCH_TEMPLATE_VERSION"); exists {
-				config.LaunchTemplateVersion = val
-			}
 			if val, exists := os.LookupEnv("EKS_ORG_ID"); exists {
 				config.OrgID = val
 			}
+
+			if val, exists := os.LookupEnv("EKS_AWS_ACCOUNT_NUMBER"); exists {
+				config.AWSAccountNumber = val
+			}
+
+			if val, exists := os.LookupEnv("EKS_AWS_REGION"); exists {
+				config.Region = val
+			}
+
 			if val, exists := os.LookupEnv("EKS_CLUSTER_GROUP_NAME"); exists {
 				config.ClusterGroupName = val
+			}
+
+			if val, exists := os.LookupEnv("EKS_KUBERNETES_VERSION"); exists {
+				config.KubernetesVersion = val
+			}
+
+			if val, exists := os.LookupEnv("EKS_LAUNCH_TEMPLATE_NAME"); exists {
+				config.LaunchTemplateName = val
+			}
+
+			if val, exists := os.LookupEnv("EKS_LAUNCH_TEMPLATE_VERSION"); exists {
+				config.LaunchTemplateVersion = val
+			}
+
+			if val, exists := os.LookupEnv("EKS_CREDENTIAL_NAME"); exists {
+				config.CredentialName = val
+			}
+
+			if val, exists := os.LookupEnv("EKS_CLOUD_FORMATION_TEMPLATE_ID"); exists {
+				config.CloudFormationTemplateID = val
 			}
 		}
 
@@ -193,10 +194,10 @@ func TestGetDefaultEksAcceptanceConfig() *TestAcceptanceConfig {
 		Region:                   "us-west-2",
 		ClusterGroupName:         "default",
 		KubernetesVersion:        "1.23",
-		LaunchTemplateName:       "vivek",
-		LaunchTemplateVersion:    "7",
-		CredentialName:           "TEST_CREDENTIAL",
-		CloudFormationTemplateID: "TEST_CLOUD_FORMATION_TEMPLATE_ID",
+		LaunchTemplateName:       "PLACE_HOLDER",
+		LaunchTemplateVersion:    "PLACE_HOLDER",
+		CredentialName:           "PLACE_HOLDER",
+		CloudFormationTemplateID: "PLACE_HOLDER",
 	}
 }
 

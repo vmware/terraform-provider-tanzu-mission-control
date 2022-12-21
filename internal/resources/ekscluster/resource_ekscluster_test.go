@@ -34,9 +34,11 @@ import (
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
-func setupHttpMocks(t *testing.T, clusterName string) {
+// Function to set up HTTP mocks for the specific eks cluster/nodepool requests anticipated by this test, when not being run against a real TMC stack.
+func setupHTTPMocks(t *testing.T, clusterName string) {
 	httpmock.Activate()
 	t.Cleanup(httpmock.Deactivate)
+
 	config := testhelper.TestGetDefaultEksAcceptanceConfig()
 	endpoint := os.Getenv("TMC_ENDPOINT")
 
@@ -131,6 +133,7 @@ func setupHttpMocks(t *testing.T, clusterName string) {
 	// GET Nodepools mock setup
 	nodepools := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, 0)
 	nodepoolReadyPhase := eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolStatusPhaseREADY
+
 	for count, nodepool := range getModel.Spec.NodePools {
 		var nodepoolDescription string
 		if count == 0 {
@@ -159,6 +162,7 @@ func setupHttpMocks(t *testing.T, clusterName string) {
 			},
 		})
 	}
+
 	getNodepoolsResponse := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolListNodepoolsResponse{
 		Nodepools: nodepools,
 	}
@@ -225,7 +229,7 @@ func getSetupConfig(config *authctx.TanzuContext) error {
 }
 
 func TestAcceptanceForMkpClusterResource(t *testing.T) {
-	clusterName := "terraform-eks-test-02"
+	clusterName := "terraform-eks-test"
 	clusterConfig := map[string][]testhelper.TestAcceptanceOption{
 		"CreateEksCluster": {
 			testhelper.WithClusterName(clusterName),
@@ -233,15 +237,18 @@ func TestAcceptanceForMkpClusterResource(t *testing.T) {
 	}
 
 	// If the flag to execute EKS tests is not found, run this as a unit test by setting up an http intercept for each endpoint
-	//os.Setenv("ENABLE_EKS_ENV_TEST", "true")
 	if _, found := os.LookupEnv("ENABLE_EKS_ENV_TEST"); !found {
-		setupHttpMocks(t, clusterName)
+		setupHTTPMocks(t, clusterName)
 	} else {
 		// Environment variables with non default values required for a successful call to MKP
 		requiredVars := []string{
 			"VMW_CLOUD_ENDPOINT",
 			"TMC_ENDPOINT",
 			"VMW_CLOUD_API_TOKEN",
+			"EKS_ORG_ID",
+			"EKS_AWS_ACCOUNT_NUMBER",
+			"EKS_LAUNCH_TEMPLATE_NAME",
+			"EKS_LAUNCH_TEMPLATE_VERSION",
 			"EKS_CREDENTIAL_NAME",
 			"EKS_CLOUD_FORMATION_TEMPLATE_ID",
 		}
@@ -255,6 +262,7 @@ func TestAcceptanceForMkpClusterResource(t *testing.T) {
 	}
 
 	var provider = initTestProvider(t)
+
 	resource.Test(t, resource.TestCase{
 		IsUnitTest:        true,
 		PreCheck:          testhelper.TestPreCheck(t),
@@ -282,6 +290,8 @@ func testGetResourceClusterDefinition(t *testing.T, opts ...testhelper.TestAccep
 		if templateConfig.KubernetesVersion == "" {
 			t.Skip("KUBERNETES_VERSION env var is not set for TKGs acceptance test")
 		}
+	default:
+		t.Skip("unknown test type")
 	}
 
 	definition, err := testhelper.Parse(templateConfig, templateConfig.TemplateData)
@@ -463,8 +473,8 @@ func getMockEksClusterSpec(accountID string, templateID string) eksmodel.VmwareT
 						"subnet-06897e1063cc0cf4e",
 					},
 					LaunchTemplate: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolLaunchTemplate{
-						Name:    "vivek",
-						Version: "7",
+						Name:    "PLACE_HOLDER",
+						Version: "PLACE_HOLDER",
 					},
 					ScalingConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolScalingConfig{
 						DesiredSize: 4,
@@ -495,89 +505,96 @@ func bodyInspectingResponder(t *testing.T, expectedContent interface{}, successR
 			return httpmock.NewJsonResponse(successResponse, successResponseBody)
 		}
 
-		if expectedContent != nil {
-			expectedBytes, err := json.Marshal(expectedContent)
+		if expectedContent == nil {
+			return successFunc()
+		}
+
+		// Compare to expected content.
+		expectedBytes, err := json.Marshal(expectedContent)
+		if err != nil {
+			t.Fail()
+			return nil, err
+		}
+
+		if r.Body == nil {
+			t.Fail()
+			return nil, fmt.Errorf("expected body on request")
+		}
+
+		bodyBytes, err := io.ReadAll(r.Body)
+		if err != nil {
+			t.Fail()
+			return nil, err
+		}
+
+		// Map of map of strings for comparing subnet equality
+		subnetMap := make(map[string]map[string][]string, 0)
+
+		var bodyInterface map[string]interface{}
+		if err = json.Unmarshal(bodyBytes, &bodyInterface); err == nil {
+			var expectedInterface map[string]interface{}
+
+			err = json.Unmarshal(expectedBytes, &expectedInterface)
 			if err != nil {
-				t.Fail()
 				return nil, err
 			}
 
-			if r.Body == nil {
-				t.Fail()
-				return nil, fmt.Errorf("expected body on request")
-			}
+			diff := deep.Equal(bodyInterface, expectedInterface)
+			if diff == nil {
+				return successFunc()
+			} else {
+				// special check for subnets
+				// First, populate all the diffs pertaining to subnets into maps
+				for _, diffItem := range diff {
+					isSubnetKey := strings.Contains(diffItem, "map[subnetIds]") && strings.Contains(diffItem, ".slice")
+					isExpectedTag := strings.Contains(diffItem, "map[tags]") && strings.Contains(diffItem, "tmc.cloud.vmware.com")
 
-			bodyBytes, err := io.ReadAll(r.Body)
-			if err != nil {
-				t.Fail()
-				return nil, err
-			}
+					if isSubnetKey {
+						segments := strings.Split(diffItem, ":")
+						key := strings.Split(segments[0], ".slice")[0]
 
-			if len(bodyBytes) > 0 {
-				// Map of map of strings for comparing subnet equality
-				subnetMap := make(map[string]map[string][]string, 0)
-
-				var bodyInterface map[string]interface{}
-				if err = json.Unmarshal(bodyBytes, &bodyInterface); err == nil {
-					var expectedInterface map[string]interface{}
-					err = json.Unmarshal(expectedBytes, &expectedInterface)
-
-					diff := deep.Equal(bodyInterface, expectedInterface)
-					if diff == nil {
-						return successFunc()
-					} else {
-						// special check for subnets
-						// First, populate all the diffs pertaining to subnets into maps
-						for _, diffItem := range diff {
-							if strings.Contains(diffItem, "map[subnetIds]") && strings.Contains(diffItem, ".slice") {
-								segments := strings.Split(diffItem, ":")
-								key := strings.Split(segments[0], ".slice")[0]
-
-								// Create map if not present
-								if subnetMap[key] == nil {
-									subnetMap[key] = make(map[string][]string, 0)
-								}
-
-								// Add vals to map
-								vals := strings.Split(segments[1], "!=")
-								subnetMap[key]["left"] = append(subnetMap[key]["left"], strings.TrimSpace(vals[0]))
-								subnetMap[key]["right"] = append(subnetMap[key]["right"], strings.TrimSpace(vals[1]))
-							} else if strings.Contains(diffItem, "map[tags]") && strings.Contains(diffItem, "tmc.cloud.vmware.com") {
-
-							} else {
-								t.Fail()
-								return nil, errors.New("diff identified outside of subnet order and additional VMware tags")
-							}
+						// Create map if not present
+						if subnetMap[key] == nil {
+							subnetMap[key] = make(map[string][]string, 0)
 						}
 
-						// Then, sort slices and compare
-						for _, set := range subnetMap {
-							left := set["left"]
-							right := set["right"]
+						// Add vals to map
+						vals := strings.Split(segments[1], "!=")
+						subnetMap[key]["left"] = append(subnetMap[key]["left"], strings.TrimSpace(vals[0]))
+						subnetMap[key]["right"] = append(subnetMap[key]["right"], strings.TrimSpace(vals[1]))
+					}
 
-							// sort
-							sort.Strings(left)
-							sort.Strings(right)
-
-							subnetDiff := deep.Equal(left, right)
-							if subnetDiff != nil {
-								t.Fail()
-								return nil, errors.New("subnets did not match")
-							}
-						}
+					if !(isSubnetKey || isExpectedTag) {
+						t.Fail()
+						return nil, errors.New("diff identified outside of subnet order and additional VMware tags")
 					}
 				}
-			} else {
-				t.Fail()
-				return nil, errors.New("request content did not match the expected request")
+
+				// Then, sort slices and compare
+				for _, set := range subnetMap {
+					left := set["left"]
+					right := set["right"]
+
+					// sort
+					sort.Strings(left)
+					sort.Strings(right)
+
+					subnetDiff := deep.Equal(left, right)
+					if subnetDiff != nil {
+						t.Fail()
+						return nil, errors.New("subnets did not match")
+					}
+				}
 			}
+		} else {
+			return nil, err
 		}
 
 		return successFunc()
 	}
 }
 
-// Register a new responder when the given call is made
+// Register a new responder when the given call is made.
 func changeStateResponder(registerFunc func(), successResponse int, successResponseBody interface{}) httpmock.Responder {
 	return func(r *http.Request) (*http.Response, error) {
 		registerFunc()

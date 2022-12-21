@@ -120,6 +120,7 @@ func (c *Client) Get(url string, response Response) error {
 	if err != nil {
 		return errors.Wrap(err, "get request")
 	}
+
 	defer func() {
 		_ = resp.Body.Close()
 	}()

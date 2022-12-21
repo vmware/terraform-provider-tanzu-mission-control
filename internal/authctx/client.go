@@ -43,7 +43,7 @@ func (cfg *TanzuContext) Setup() (err error) {
 }
 
 func (cfg *TanzuContext) SetupWithDefaultTransport() (err error) {
-	cfg.TMCConnection = client.NewHTTPClientWithDefaultTransport()
+	cfg.TMCConnection = client.NewTestHTTPClientWithDefaultTransport()
 	return setup(cfg)
 }
 
