@@ -86,3 +86,6 @@ issues:
       linters:
         - gosec
         - nestif
+    - path: flatten_test.go
+      linters:
+        - dupl

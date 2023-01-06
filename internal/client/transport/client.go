@@ -35,15 +35,6 @@ const (
 
 // NewClient returns a new instance of http Client.
 func NewClient(config *proxy.TLSConfig) (*Client, error) {
-	client := Client{
-		Config:     DefaultTransportConfig(),
-		timeout:    defaultHTTPTimeout,
-		retryCount: defaultRetryCount,
-		interval:   defaultIntervalDuration,
-	}
-
-	var transport *http.Transport
-
 	// Setup HTTPS client.
 	tlsConfig, err := proxy.GetConnectorTLSConfig(config)
 	if err != nil {
@@ -56,7 +47,7 @@ func NewClient(config *proxy.TLSConfig) (*Client, error) {
 
 	tlsConfig.RootCAs.AppendCertsFromPEM([]byte(tmcRootCA))
 
-	transport = &http.Transport{
+	transport := &http.Transport{
 		DialContext: (&net.Dialer{
 			Timeout:   30 * time.Second,
 			KeepAlive: 30 * time.Second,
@@ -70,12 +61,30 @@ func NewClient(config *proxy.TLSConfig) (*Client, error) {
 		TLSClientConfig:       tlsConfig,
 	}
 
-	client.client = &http.Client{
-		Timeout:   defaultHTTPTimeout,
-		Transport: transport,
+	return newHTTPClient(transport), nil
+}
+
+// NewClientWithDefaultTransport is intended primarily for testing, as httpmock requires a default transport object be used.
+func NewClientWithDefaultTransport() *Client {
+	return newHTTPClient(nil)
+}
+
+func newHTTPClient(transport *http.Transport) *Client {
+	client := Client{
+		Config:     DefaultTransportConfig(),
+		timeout:    defaultHTTPTimeout,
+		retryCount: defaultRetryCount,
+		interval:   defaultIntervalDuration,
+		client: &http.Client{
+			Timeout: defaultHTTPTimeout,
+		},
 	}
 
-	return &client, nil
+	if transport != nil {
+		client.client.Transport = transport
+	}
+
+	return &client
 }
 
 // Get makes a HTTP GET request to provided URL.

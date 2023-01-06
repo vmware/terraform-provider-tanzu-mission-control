@@ -14,6 +14,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/nodepools"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/credential"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/ekscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/iampolicy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/namespace"
 	custompolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
@@ -31,6 +32,7 @@ func Provider() *schema.Provider {
 		Schema: authctx.ProviderAuthSchema(),
 		ResourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:        cluster.ResourceTMCCluster(),
+			ekscluster.ResourceName:     ekscluster.ResourceTMCEKSCluster(),
 			workspace.ResourceName:      workspace.ResourceWorkspace(),
 			namespace.ResourceName:      namespace.ResourceNamespace(),
 			clustergroup.ResourceName:   clustergroup.ResourceClusterGroup(),
@@ -44,6 +46,7 @@ func Provider() *schema.Provider {
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:      cluster.DataSourceTMCCluster(),
+			ekscluster.ResourceName:   ekscluster.DataSourceTMCEKSCluster(),
 			workspace.ResourceName:    workspace.DataSourceWorkspace(),
 			namespace.ResourceName:    namespace.DataSourceNamespace(),
 			clustergroup.ResourceName: clustergroup.DataSourceClusterGroup(),

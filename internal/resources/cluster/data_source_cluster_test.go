@@ -24,7 +24,7 @@ func TestAcceptanceForAttachClusterDataSource(t *testing.T) {
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
-				Config: testGetResourceClusterDefinition(t, withClusterName("tf-attach-test-ds"), withDataSourceScript()),
+				Config: testGetResourceClusterDefinition(t, testhelper.WithClusterName("tf-attach-test-ds"), testhelper.WithDataSourceScript()),
 				Check: resource.ComposeTestCheckFunc(
 					checkDataSourceAttributes(),
 				),
@@ -36,12 +36,12 @@ func TestAcceptanceForAttachClusterDataSource(t *testing.T) {
 
 func checkDataSourceAttributes() resource.TestCheckFunc {
 	var check = []resource.TestCheckFunc{
-		verifyClusterDataSource(dataSourceName),
-		resource.TestCheckResourceAttrPair(dataSourceName, "name", resourceName, "name"),
-		resource.TestCheckResourceAttrSet(dataSourceName, "id"),
+		verifyClusterDataSource(testhelper.ClusterDataSourceName),
+		resource.TestCheckResourceAttrPair(testhelper.ClusterDataSourceName, "name", testhelper.ClusterResourceName, "name"),
+		resource.TestCheckResourceAttrSet(testhelper.ClusterDataSourceName, "id"),
 	}
 
-	check = append(check, testhelper.MetaDataSourceAttributeCheck(dataSourceName, resourceName)...)
+	check = append(check, testhelper.MetaDataSourceAttributeCheck(testhelper.ClusterDataSourceName, testhelper.ClusterResourceName)...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }

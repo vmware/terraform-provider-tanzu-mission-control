@@ -6,7 +6,6 @@ SPDX-License-Identifier: MPL-2.0
 package cluster
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -22,26 +21,15 @@ import (
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
-const (
-	clusterResource      = "tanzu-mission-control_cluster"
-	clusterResourceVar   = "test_attach_cluster"
-	clusterDataSourceVar = "test_data_attach_cluster"
-)
-
-var (
-	resourceName   = fmt.Sprintf("%s.%s", clusterResource, clusterResourceVar)
-	dataSourceName = fmt.Sprintf("data.%s.%s", clusterResource, clusterDataSourceVar)
-)
-
 func TestAcceptanceForAttachClusterResource(t *testing.T) {
 	var provider = initTestProvider(t)
 
-	clusterConfig := map[string][]testAcceptanceOption{
-		"attach":               {withClusterName("tf-attach-test")},
-		"attachWithKubeConfig": {withKubeConfig(), withClusterName("tf-attach-kf-test")},
-		"tkgAWS":               {withClusterName("tf-tkgm-aws-test"), withTKGmAWSCluster()},
-		"tkgs":                 {withClusterName("tf-tkgs-test"), withTKGsCluster()},
-		"tkgVsphere":           {withClusterName("tf-tkgm-vsphere-test"), withTKGmVsphereCluster()},
+	clusterConfig := map[string][]testhelper.TestAcceptanceOption{
+		"attach":               {testhelper.WithClusterName("tf-attach-test")},
+		"attachWithKubeConfig": {testhelper.WithKubeConfig(), testhelper.WithClusterName("tf-attach-kf-test")},
+		"tkgAWS":               {testhelper.WithClusterName("tf-tkgm-aws-test"), testhelper.WithTKGmAWSCluster()},
+		"tkgs":                 {testhelper.WithClusterName("tf-tkgs-test"), testhelper.WithTKGsCluster()},
+		"tkgVsphere":           {testhelper.WithClusterName("tf-tkgm-vsphere-test"), testhelper.WithTKGmVsphereCluster()},
 	}
 
 	resource.Test(t, resource.TestCase{
@@ -84,35 +72,35 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 	t.Log("cluster resource acceptance test complete!")
 }
 
-func testGetResourceClusterDefinition(t *testing.T, opts ...testAcceptanceOption) string {
-	templateConfig := testGetDefaultAcceptanceConfig()
+func testGetResourceClusterDefinition(t *testing.T, opts ...testhelper.TestAcceptanceOption) string {
+	templateConfig := testhelper.TestGetDefaultAcceptanceConfig()
 	for _, option := range opts {
 		option(templateConfig)
 	}
 
-	switch templateConfig.accTestType {
-	case attachClusterTypeWithKubeConfig:
+	switch templateConfig.AccTestType {
+	case testhelper.AttachClusterTypeWithKubeConfig:
 		if templateConfig.KubeConfigPath == "" {
 			t.Skipf("KUBECONFIG env var is not set: %s", templateConfig.KubeConfigPath)
 		}
 
-	case tkgAWSCluster:
+	case testhelper.TkgAWSCluster:
 		if templateConfig.ManagementClusterName == "" || templateConfig.ProvisionerName == "" {
 			t.Skip("MANAGEMENT CLUSTER or PROVISIONER env var is not set for TKGm AWS acceptance test")
 		}
 
-	case tkgVsphereCluster:
+	case testhelper.TkgVsphereCluster:
 		if templateConfig.ManagementClusterName == "" || templateConfig.ProvisionerName == "" || templateConfig.ControlPlaneEndPoint == "" {
 			t.Skip("MANAGEMENT CLUSTER, PROVISIONER or CONTROL PLANE ENDPOINT env var is not set for TKGm Vsphere acceptance test")
 		}
 
-	case tkgsCluster:
+	case testhelper.TkgsCluster:
 		if templateConfig.ManagementClusterName == "" || templateConfig.ProvisionerName == "" || templateConfig.Version == "" || templateConfig.StorageClass == "" {
 			t.Skip("MANAGEMENT CLUSTER, PROVISIONER, VERSION or STORAGE CLASS env var is not set for TKGs acceptance test")
 		}
 	}
 
-	definition, err := parse(templateConfig, templateConfig.templateData)
+	definition, err := testhelper.Parse(templateConfig, templateConfig.TemplateData)
 	if err != nil {
 		t.Skipf("unable to parse cluster script: %s", err)
 	}
@@ -120,20 +108,20 @@ func testGetResourceClusterDefinition(t *testing.T, opts ...testAcceptanceOption
 	return definition
 }
 
-func checkResourceAttributes(provider *schema.Provider, opts ...testAcceptanceOption) resource.TestCheckFunc {
-	testConfig := testGetDefaultAcceptanceConfig()
+func checkResourceAttributes(provider *schema.Provider, opts ...testhelper.TestAcceptanceOption) resource.TestCheckFunc {
+	testConfig := testhelper.TestGetDefaultAcceptanceConfig()
 	for _, option := range opts {
 		option(testConfig)
 	}
 
 	var check = []resource.TestCheckFunc{
-		verifyClusterResourceCreation(provider, resourceName, testConfig),
-		resource.TestCheckResourceAttr(resourceName, "name", testConfig.Name),
-		resource.TestCheckResourceAttr(resourceName, helper.GetFirstElementOf("spec", "cluster_group"), "default"),
+		verifyClusterResourceCreation(provider, testhelper.ClusterResourceName, testConfig),
+		resource.TestCheckResourceAttr(testhelper.ClusterResourceName, "name", testConfig.Name),
+		resource.TestCheckResourceAttr(testhelper.ClusterResourceName, helper.GetFirstElementOf("spec", "cluster_group"), "default"),
 	}
 
-	if testConfig.accTestType == attachClusterType || testConfig.accTestType == attachClusterTypeWithKubeConfig {
-		check = append(check, testhelper.MetaResourceAttributeCheck(resourceName)...)
+	if testConfig.AccTestType == testhelper.AttachClusterType || testConfig.AccTestType == testhelper.AttachClusterTypeWithKubeConfig {
+		check = append(check, testhelper.MetaResourceAttributeCheck(testhelper.ClusterResourceName)...)
 	}
 
 	return resource.ComposeTestCheckFunc(check...)
@@ -142,7 +130,7 @@ func checkResourceAttributes(provider *schema.Provider, opts ...testAcceptanceOp
 func verifyClusterResourceCreation(
 	provider *schema.Provider,
 	resourceName string,
-	testConfig *testAcceptanceConfig,
+	testConfig *testhelper.TestAcceptanceConfig,
 ) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if provider == nil {

@@ -36,9 +36,20 @@ type TanzuContext struct {
 func (cfg *TanzuContext) Setup() (err error) {
 	cfg.TMCConnection, err = client.NewHTTPClient(cfg.TLSConfig)
 	if err != nil {
-		return
+		return err
 	}
 
+	return setup(cfg)
+}
+
+// The default transport is needed for mocking. The http mocking library used in testing
+// can only intercept calls if they're made with the default transport.
+func (cfg *TanzuContext) SetupWithDefaultTransportForTesting() (err error) {
+	cfg.TMCConnection = client.NewTestHTTPClientWithDefaultTransport()
+	return setup(cfg)
+}
+
+func setup(cfg *TanzuContext) (err error) {
 	md, err := getUserAuthCtx(cfg)
 	if err != nil {
 		return errors.Wrap(err, "unable to get user context")
