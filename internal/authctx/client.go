@@ -42,7 +42,9 @@ func (cfg *TanzuContext) Setup() (err error) {
 	return setup(cfg)
 }
 
-func (cfg *TanzuContext) SetupWithDefaultTransport() (err error) {
+// The default transport is needed for mocking. The http mocking library used in testing
+// can only intercept calls if they're made with the default transport.
+func (cfg *TanzuContext) SetupWithDefaultTransportForTesting() (err error) {
 	cfg.TMCConnection = client.NewTestHTTPClientWithDefaultTransport()
 	return setup(cfg)
 }

@@ -214,7 +214,7 @@ func initTestProvider(t *testing.T) *schema.Provider {
 
 func getConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	if _, found := os.LookupEnv("ENABLE_EKS_ENV_TEST"); !found {
-		return authctx.ProviderConfigureContextWithDefaultTransport
+		return authctx.ProviderConfigureContextWithDefaultTransportForTesting
 	}
 
 	return authctx.ProviderConfigureContext
@@ -222,7 +222,7 @@ func getConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (
 
 func getSetupConfig(config *authctx.TanzuContext) error {
 	if _, found := os.LookupEnv("ENABLE_EKS_ENV_TEST"); !found {
-		return config.SetupWithDefaultTransport()
+		return config.SetupWithDefaultTransportForTesting()
 	}
 
 	return config.Setup()

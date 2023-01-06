@@ -95,7 +95,9 @@ func ProviderConfigureContext(_ context.Context, d *schema.ResourceData) (interf
 	return setContext(&config)
 }
 
-func ProviderConfigureContextWithDefaultTransport(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+// The default transport is needed for mocking. The http mocking library used in testing
+// can only intercept calls if they're made with the default transport.
+func ProviderConfigureContextWithDefaultTransportForTesting(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := TanzuContext{
 		TLSConfig: &proxy.TLSConfig{},
 	}
@@ -162,7 +164,7 @@ func setContextWithDefaultTransport(config *TanzuContext) (TanzuContext, diag.Di
 		return *config, diags
 	}
 
-	err := config.SetupWithDefaultTransport()
+	err := config.SetupWithDefaultTransportForTesting()
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
