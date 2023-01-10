@@ -7,12 +7,17 @@ package tkgvspheremodel
 
 import (
 	"github.com/go-openapi/swag"
+
+	clustercommon "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/common"
 )
 
 // VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereSpec The tkg vsphere cluster spec.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.cluster.infrastructure.tkgvsphere.Spec
 type VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereSpec struct {
+
+	// Advanced configurations for vSphere cluster.
+	AdvancedConfigs []*clustercommon.VmwareTanzuManageV1alpha1CommonClusterAdvancedConfig `json:"advancedConfigs"`
 
 	// VSphere specific distribution.
 	Distribution *VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereDistribution `json:"distribution,omitempty"`

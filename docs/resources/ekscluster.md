@@ -23,7 +23,7 @@ You must also have the appropriate permissions in Tanzu Mission Control:
 [aws-account]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-E4627693-7D1A-4914-A9DF-61E49F97FECC.html
 [create-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-208B2A5A-AE08-4CE1-9DC0-EB573E4BA4A8.html?hWord=N4IghgNiBcIKIGkDKIC+Q
 
-__Note__: Fields under the [nested Schema for `spec.nodepool`](#nestedblock--spec--nodepool) which are markes as "immutable" can't be changed. To update those fields, you need to create a new nodepool or rename the nodepool (which will have the same effect).
+__Note__: Fields under the [nested Schema for `spec.nodepool`](#nestedblock--spec--nodepool) which are markes as "immutable" can't be changed. To update those fields, you need to create a new node pool or rename the node pool (which will have the same effect).
 
 ## Example Usage
 

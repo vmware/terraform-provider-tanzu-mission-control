@@ -345,6 +345,10 @@ const testTKGmVsphereClusterScript = `
 		spec {
 			cluster_group = "default"
 			tkg_vsphere {
+			advanced_configs {
+				key = "key-1"
+				value = "val-1"
+			}
 			settings {
 				network {
 					pods {
@@ -366,6 +370,9 @@ const testTKGmVsphereClusterScript = `
 			}
 			
 				distribution {
+					os_arch = "amd"
+ 					os_name = "photon"
+ 					os_version = "3"
 					version = "v1.20.5+vmware.2-tkg.1"
 					workspace {
 					  datacenter        = "/dc0" 

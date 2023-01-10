@@ -29,7 +29,10 @@ func TestFlattenDistribution(t *testing.T) {
 		{
 			name: "normal scenario with all fields of distribution data",
 			input: &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereDistribution{
-				Version: "v1.20",
+				Version:   "v1.20",
+				OsVersion: "3",
+				OsName:    "photon",
+				OsArch:    "amd",
 				Workspace: &tkgvspheremodel.VmwareTanzuManageV1alpha1CommonClusterTKGVsphereWorkspace{
 					Datacenter:   "/dc0",
 					Datastore:    "/dc0/datastore/local-0",
@@ -40,7 +43,10 @@ func TestFlattenDistribution(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					versionKey: "v1.20",
+					versionKey:   "v1.20",
+					osVersionKey: "3",
+					osNameKey:    "photon",
+					osArchKey:    "amd",
 					workspaceKey: []interface{}{
 						map[string]interface{}{
 							datacenterKey:       "/dc0",

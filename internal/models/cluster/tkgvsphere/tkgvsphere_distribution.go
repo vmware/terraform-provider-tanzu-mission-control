@@ -14,6 +14,15 @@ import (
 // swagger:model vmware.tanzu.manage.v1alpha1.cluster.infrastructure.tkgvsphere.Distribution
 type VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereDistribution struct {
 
+	// Arch of the OS used for the cluster.
+	OsArch string `json:"osArch,omitempty"`
+
+	// Name of the OS used for the cluster.
+	OsName string `json:"osName,omitempty"`
+
+	// Version of the OS used for the cluster.
+	OsVersion string `json:"osVersion,omitempty"`
+
 	// Version specifies the version of the Kubernetes cluster.
 	Version string `json:"version,omitempty"`
 
