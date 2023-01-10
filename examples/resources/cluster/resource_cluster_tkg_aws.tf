@@ -12,6 +12,10 @@ resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
   spec {
     cluster_group = "default" // Default: default
     tkg_aws {
+      advanced_configs {
+        key = "AWS_SECURITY_GROUP_BASTION"
+        value = "sg-01376425482384"
+      }
       settings {
         network {
           cluster {
@@ -46,6 +50,9 @@ resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
       }
 
       distribution {
+        os_arch = "amd64"
+        os_name = "photon"
+        os_version = "3"
         region  = "us-west-2"              // Required
         version = "v1.21.2+vmware.1-tkg.2" // Required
       }

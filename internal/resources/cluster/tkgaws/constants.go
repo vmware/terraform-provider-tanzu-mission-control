@@ -6,6 +6,7 @@ SPDX-License-Identifier: MPL-2.0
 package tkgaws
 
 const (
+	advancedConfigsKey          = "advanced_configs"
 	settingsKey                 = "settings"
 	distributionKey             = "distribution"
 	topologyKey                 = "topology"
@@ -27,6 +28,9 @@ const (
 	isPublicKey                 = "is_public"
 	vpcCIDRBlockKey             = "cidr_block_vpc"
 	vpcIDKey                    = "vpc_id"
+	osArchKey                   = "os_arch"
+	osNameKey                   = "os_name"
+	osVersionKey                = "os_version"
 	regionKey                   = "region"
 	versionKey                  = "version"
 	provisionerCredentialKey    = "provisioner_credential_name"

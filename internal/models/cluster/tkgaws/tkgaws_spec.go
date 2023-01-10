@@ -7,12 +7,16 @@ package tkgawsmodel
 
 import (
 	"github.com/go-openapi/swag"
+	clustercommon "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/common"
 )
 
 // VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSpec TKG AWS cluster spec.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.cluster.infrastructure.tkgaws.Spec
 type VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSpec struct {
+
+	// Advanced configurations for AWS cluster.
+	AdvancedConfigs []*clustercommon.VmwareTanzuManageV1alpha1CommonClusterAdvancedConfig `json:"advancedConfigs"`
 
 	// Kubernetes version distribution for the cluster.
 	Distribution *VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsDistribution `json:"distribution,omitempty"`

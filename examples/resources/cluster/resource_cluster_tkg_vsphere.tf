@@ -13,8 +13,8 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
     cluster_group = "default" # Default: default
     tkg_vsphere {
       advanced_configs {
-        key = "key-1"
-        value = "val-1"
+        key = "AVI_LABELS"
+        value = "test"
       }
       settings {
         network {
