@@ -29,11 +29,17 @@ func TestFlattenDistribution(t *testing.T) {
 		{
 			name: "normal scenario with all fields of distribution data",
 			input: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereDistribution{
-				Version: "v1.20",
+				Version:   "v1.20",
+				OsArch:    "amd64",
+				OsName:    "photon",
+				OsVersion: "3",
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					versionKey: "v1.20",
+					versionKey:   "v1.20",
+					osArchKey:    "amd64",
+					osNameKey:    "photon",
+					osVersionKey: "3",
 				},
 			},
 		},

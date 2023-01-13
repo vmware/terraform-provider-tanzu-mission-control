@@ -62,6 +62,7 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
             tkg_service_vsphere {
               class         = "best-effort-xsmall"
               storage_class = "gc-storage-profile"
+              failure_domain = "domain-c50"
               # storage class is either `wcpglobal-storage-profile` or `gc-storage-profile`
               volumes {
                 capacity          = 4

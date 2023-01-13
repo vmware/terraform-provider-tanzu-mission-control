@@ -12,6 +12,15 @@ import "github.com/go-openapi/swag"
 // swagger:model vmware.tanzu.manage.v1alpha1.cluster.infrastructure.tkgservicevsphere.Distribution
 type VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereDistribution struct {
 
+	// Arch of the OS used for the cluster.
+	OsArch string `json:"osArch,omitempty"`
+
+	// Name of the OS used for the cluster.
+	OsName string `json:"osName,omitempty"`
+
+	// Version of the OS used for the cluster.
+	OsVersion string `json:"osVersion,omitempty"`
+
 	// Version of the cluster.
 	Version string `json:"version,omitempty"`
 }
