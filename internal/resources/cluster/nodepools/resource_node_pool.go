@@ -79,8 +79,7 @@ var nodePoolSpec = &schema.Schema{
 			workerNodeCountKey: {
 				Type:        schema.TypeString,
 				Description: "Count is the number of nodes",
-				Default:     "1",
-				Optional:    true,
+				Required:    true,
 			},
 			cloudLabelsKey: {
 				Type:        schema.TypeMap,
@@ -110,12 +109,12 @@ var NodePoolTkgServiceVsphere = &schema.Schema{
 			classKey: {
 				Type:        schema.TypeString,
 				Description: "Nodepool instance type",
-				Optional:    true,
+				Required:    true,
 			},
 			storageClassKey: {
 				Type:        schema.TypeString,
 				Description: "Storage Class to be used for storage of the disks which store the root filesystem of the nodes",
-				Optional:    true,
+				Required:    true,
 			},
 		},
 	},

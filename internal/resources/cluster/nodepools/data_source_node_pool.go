@@ -24,17 +24,10 @@ func DataSourceClusterNodePool() *schema.Resource {
 	}
 }
 
-func dataSourceClusterNodePoolRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceClusterNodePoolRead(_ context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	// Warning or errors can be collected in a slice type
-	var (
-		diags diag.Diagnostics
-		resp  *nodepoolsmodel.VmwareTanzuManageV1alpha1ClusterNodepoolCreateNodepoolResponse
-		err   error
-	)
-
-	resp, err = config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceGet(constructFullName(d))
+	resp, err := config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceGet(constructFullName(d))
 
 	if err != nil || resp == nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to get tanzu cluster node pool entry"))

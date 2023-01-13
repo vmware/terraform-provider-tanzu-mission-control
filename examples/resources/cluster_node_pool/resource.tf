@@ -8,6 +8,12 @@ resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
 
   spec {
     worker_node_count = "3"
+    cloud_labels = {
+      "key1" : "val1"
+    }
+    node_labels = {
+      "key2" : "val2"
+    }
 
     tkg_service_vsphere  {
       class = "best-effort-xsmall"
