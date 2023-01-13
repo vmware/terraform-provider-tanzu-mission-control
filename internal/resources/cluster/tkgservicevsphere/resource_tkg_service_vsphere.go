@@ -667,11 +667,11 @@ func expandTKGSTopologyNodePool(data interface{}) (nodePools *nodepoolmodel.Vmwa
 			}
 
 			if v1, k1 := spec[nodeLabelKey]; k1 {
-				nodePools.Spec.NodeLabels = common.GetTypeMapData(v1.(map[string]interface{}))
+				nodePools.Spec.NodeLabels = common.GetTypeStringMapData(v1.(map[string]interface{}))
 			}
 
 			if v1, k1 := spec[cloudLabelKey]; k1 {
-				nodePools.Spec.CloudLabels = common.GetTypeMapData(v1.(map[string]interface{}))
+				nodePools.Spec.CloudLabels = common.GetTypeStringMapData(v1.(map[string]interface{}))
 			}
 
 			if v1, k1 := spec[tkgServiceVsphereKey]; k1 {

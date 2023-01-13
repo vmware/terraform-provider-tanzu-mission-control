@@ -20,6 +20,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindcustom "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
 	policykindimage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
+	policykindquota "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/quota"
 	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 )
@@ -27,6 +28,7 @@ import (
 var ScopeMap = map[string][]string{
 	policykindcustom.ResourceName:   {scope.ClusterKey, scope.ClusterGroupKey, scope.OrganizationKey},
 	policykindimage.ResourceName:    {scope.WorkspaceKey, scope.OrganizationKey},
+	policykindquota.ResourceName:    {scope.ClusterKey, scope.ClusterGroupKey, scope.OrganizationKey},
 	policykindsecurity.ResourceName: {scope.ClusterKey, scope.ClusterGroupKey, scope.OrganizationKey},
 }
 

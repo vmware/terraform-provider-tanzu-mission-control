@@ -226,13 +226,13 @@ func constructNodePoolSpec(d *schema.ResourceData) (spec *nodepoolmodel.VmwareTa
 
 	if v, ok := specData[cloudLabelsKey]; ok {
 		if v1, ok := v.(map[string]interface{}); ok {
-			spec.CloudLabels = common.GetTypeMapData(v1)
+			spec.CloudLabels = common.GetTypeStringMapData(v1)
 		}
 	}
 
 	if v, ok := specData[nodeLabelsKey]; ok {
 		if v1, ok := v.(map[string]interface{}); ok {
-			spec.NodeLabels = common.GetTypeMapData(v1)
+			spec.NodeLabels = common.GetTypeStringMapData(v1)
 		}
 	}
 

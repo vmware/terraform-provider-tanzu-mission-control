@@ -1,9 +1,9 @@
 /*
-Copyright © 2022 VMware, Inc. All Rights Reserved.
+Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package policykindimage
+package policykindquota
 
 import (
 	"encoding/json"
@@ -13,13 +13,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	policymodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy"
-	policyrecipeimagemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/image"
+	policyrecipequotamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/quota"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 )
 
 var SpecSchema = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "Spec for the image policy",
+	Description: "Spec for the namespace quota policy",
 	Required:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
@@ -65,24 +65,12 @@ func ConstructSpec(d *schema.ResourceData) (spec *policymodel.VmwareTanzuManageV
 		return spec
 	}
 
-	spec.Recipe = strings.ReplaceAll(string(inputRecipeData.recipe), "_", "-")
+	spec.Recipe = string(inputRecipeData.recipe)
 
 	switch inputRecipeData.recipe {
-	case AllowedNameTagRecipe:
-		if inputRecipeData.inputAllowedNameTag != nil {
-			spec.Input = *inputRecipeData.inputAllowedNameTag
-		}
 	case CustomRecipe:
-		if inputRecipeData.inputCustom != nil {
-			spec.Input = *inputRecipeData.inputCustom
-		}
-	case BlockLatestTagRecipe:
-		if inputRecipeData.inputBlockLatestTag != nil {
-			spec.Input = *inputRecipeData.inputBlockLatestTag
-		}
-	case RequireDigestRecipe:
-		if inputRecipeData.inputRequireDigest != nil {
-			spec.Input = *inputRecipeData.inputRequireDigest
+		if inputRecipeData.input != nil {
+			spec.Input = *inputRecipeData.input
 		}
 	case UnknownRecipe:
 		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(RecipesAllowed[:], `, `))
@@ -120,21 +108,9 @@ func FlattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		return data
 	}
 
-	switch strings.ReplaceAll(spec.Recipe, "-", "_") {
-	case string(AllowedNameTagRecipe):
-		var allowedNameTagRecipeInput policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1AllowedNameTag
-
-		err = allowedNameTagRecipeInput.UnmarshalBinary(byteSlice)
-		if err != nil {
-			return data
-		}
-
-		inputRecipeData = &inputRecipe{
-			recipe:              AllowedNameTagRecipe,
-			inputAllowedNameTag: &allowedNameTagRecipeInput,
-		}
+	switch spec.Recipe {
 	case string(CustomRecipe):
-		var customRecipeInput policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1Custom
+		var customRecipeInput policyrecipequotamodel.VmwareTanzuManageV1alpha1CommonPolicySpecQuotaV1Custom
 
 		err = customRecipeInput.UnmarshalBinary(byteSlice)
 		if err != nil {
@@ -142,32 +118,20 @@ func FlattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		}
 
 		inputRecipeData = &inputRecipe{
-			recipe:      CustomRecipe,
-			inputCustom: &customRecipeInput,
+			recipe: CustomRecipe,
+			input:  &customRecipeInput,
 		}
-	case string(BlockLatestTagRecipe):
-		var blockLatestTagRecipeInput policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1CommonRecipe
-
-		err = blockLatestTagRecipeInput.UnmarshalBinary(byteSlice)
-		if err != nil {
-			return data
-		}
-
+	case string(SmallRecipe):
 		inputRecipeData = &inputRecipe{
-			recipe:              BlockLatestTagRecipe,
-			inputBlockLatestTag: &blockLatestTagRecipeInput,
+			recipe: SmallRecipe,
 		}
-	case string(RequireDigestRecipe):
-		var requireDigestRecipeInput policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1CommonRecipe
-
-		err = requireDigestRecipeInput.UnmarshalBinary(byteSlice)
-		if err != nil {
-			return data
-		}
-
+	case string(MediumRecipe):
 		inputRecipeData = &inputRecipe{
-			recipe:             RequireDigestRecipe,
-			inputRequireDigest: &requireDigestRecipeInput,
+			recipe: MediumRecipe,
+		}
+	case string(LargeRecipe):
+		inputRecipeData = &inputRecipe{
+			recipe: LargeRecipe,
 		}
 	case string(UnknownRecipe):
 		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(RecipesAllowed[:], `, `))

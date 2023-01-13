@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	ResourceName     = "tanzu-mission-control_image_policy"
-	typeDefaultValue = "image-policy"
+	ResourceName = "tanzu-mission-control_image_policy"
+	typePolicy   = "image-policy" // Type of Policy as defined in API
 )
 
 // Allowed input recipes.

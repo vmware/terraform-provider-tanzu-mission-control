@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	ResourceName     = "tanzu-mission-control_custom_policy"
-	typeDefaultValue = "custom-policy"
+	ResourceName = "tanzu-mission-control_custom_policy"
+	typePolicy   = "custom-policy" // Type of Policy as defined in API
 )
 
 // Allowed input recipes.
