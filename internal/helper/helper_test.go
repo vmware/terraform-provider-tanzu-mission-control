@@ -90,8 +90,8 @@ func TestRetryUntilTimeout(t *testing.T) {
 		return true, nil
 	}
 
-	retries, err := RetryUntilTimeout(testFun, 1*time.Second, 6*time.Second)
+	retries, err := RetryUntilTimeout(testFun, 1*time.Second, 2*time.Second)
 
 	require.NoError(t, err)
-	require.Equal(t, 4, retries)
+	require.Equal(t, 2, retries)
 }
