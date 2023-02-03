@@ -26,7 +26,7 @@ type VmwareTanzuManageV1alpha1CommonPolicySpecQuotaV1Custom struct {
 	Persistentvolumeclaims int64 `json:"persistentvolumeclaims,omitempty"`
 
 	// Across all persistent volume claims associated with each storage class, the total number of persistent volume claims that can exist in the namespace.
-	PersistentvolumeclaimsPerClass interface{} `json:"persistentvolumeclaimsPerClass,omitempty"`
+	PersistentvolumeclaimsPerClass map[string]int `json:"persistentvolumeclaimsPerClass,omitempty"`
 
 	// The sum of CPU requests across all pods in a non-terminal state cannot exceed this value.
 	RequestsCPU string `json:"requestsCpu,omitempty"`
@@ -40,10 +40,10 @@ type VmwareTanzuManageV1alpha1CommonPolicySpecQuotaV1Custom struct {
 	RequestsStorage string `json:"requestsStorage,omitempty"`
 
 	// Across all persistent volume claims associated with each storage class, the sum of storage requests cannot exceed this value.
-	RequestsStoragePerClass interface{} `json:"requestsStoragePerClass,omitempty"`
+	RequestsStoragePerClass map[string]string `json:"requestsStoragePerClass,omitempty"`
 
 	// The total number of Services of the given type that can exist in a namespace.
-	ResourceCounts interface{} `json:"resourceCounts,omitempty"`
+	ResourceCounts map[string]int `json:"resourceCounts,omitempty"`
 }
 
 // MarshalBinary interface implementation.

@@ -21,49 +21,49 @@ var Custom = &schema.Schema{
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			limitsCPUKey: {
+			LimitsCPUKey: {
 				Type:        schema.TypeString,
 				Description: "The sum of CPU limits across all pods in a non-terminal state cannot exceed this value",
 				Optional:    true,
 			},
-			limitsMemoryKey: {
+			LimitsMemoryKey: {
 				Type:        schema.TypeString,
 				Description: "The sum of memory limits across all pods in a non-terminal state cannot exceed this value",
 				Optional:    true,
 			},
-			persistentVolumeClaimsKey: {
+			PersistentVolumeClaimsKey: {
 				Type:        schema.TypeInt,
 				Description: "The total number of PersistentVolumeClaims that can exist in a namespace",
 				Optional:    true,
 			},
-			persistentVolumeClaimsPerClassKey: {
+			PersistentVolumeClaimsPerClassKey: {
 				Type:        schema.TypeMap,
 				Description: "Across all persistent volume claims associated with each storage class, the total number of persistent volume claims that can exist in the namespace",
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeInt},
 			},
-			requestsCPUKey: {
+			RequestsCPUKey: {
 				Type:        schema.TypeString,
 				Description: "The sum of CPU requests across all pods in a non-terminal state cannot exceed this value",
 				Optional:    true,
 			},
-			requestsMemoryKey: {
+			RequestsMemoryKey: {
 				Type:        schema.TypeString,
 				Description: "The sum of memory requests across all pods in a non-terminal state cannot exceed this value",
 				Optional:    true,
 			},
-			requestsStorageKey: {
+			RequestsStorageKey: {
 				Type:        schema.TypeString,
 				Description: "The sum of storage requests across all persistent volume claims cannot exceed this value",
 				Optional:    true,
 			},
-			requestsStoragePerClassKey: {
+			RequestsStoragePerClassKey: {
 				Type:        schema.TypeMap,
 				Description: "Across all persistent volume claims associated with each storage class, the sum of storage requests cannot exceed this value",
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			resourceCountsKey: {
+			ResourceCountsKey: {
 				Type:        schema.TypeMap,
 				Description: "The total number of Services of the given type that can exist in a namespace",
 				Optional:    true,
@@ -82,39 +82,39 @@ func ConstructCustom(data []interface{}) (custom *policyrecipequotamodel.VmwareT
 
 	custom = &policyrecipequotamodel.VmwareTanzuManageV1alpha1CommonPolicySpecQuotaV1Custom{}
 
-	if v, ok := customData[limitsCPUKey]; ok {
-		helper.SetPrimitiveValue(v, &custom.LimitsCPU, limitsCPUKey)
+	if v, ok := customData[LimitsCPUKey]; ok {
+		helper.SetPrimitiveValue(v, &custom.LimitsCPU, LimitsCPUKey)
 	}
 
-	if v, ok := customData[limitsMemoryKey]; ok {
-		helper.SetPrimitiveValue(v, &custom.LimitsMemory, limitsMemoryKey)
+	if v, ok := customData[LimitsMemoryKey]; ok {
+		helper.SetPrimitiveValue(v, &custom.LimitsMemory, LimitsMemoryKey)
 	}
 
-	if v, ok := customData[persistentVolumeClaimsKey]; ok {
-		helper.SetPrimitiveValue(v, &custom.Persistentvolumeclaims, persistentVolumeClaimsKey)
+	if v, ok := customData[PersistentVolumeClaimsKey]; ok {
+		helper.SetPrimitiveValue(v, &custom.Persistentvolumeclaims, PersistentVolumeClaimsKey)
 	}
 
-	if v, ok := customData[persistentVolumeClaimsPerClassKey]; ok {
+	if v, ok := customData[PersistentVolumeClaimsPerClassKey]; ok {
 		custom.PersistentvolumeclaimsPerClass = common.GetTypeIntMapData(v.(map[string]interface{}))
 	}
 
-	if v, ok := customData[requestsCPUKey]; ok {
-		helper.SetPrimitiveValue(v, &custom.RequestsCPU, requestsCPUKey)
+	if v, ok := customData[RequestsCPUKey]; ok {
+		helper.SetPrimitiveValue(v, &custom.RequestsCPU, RequestsCPUKey)
 	}
 
-	if v, ok := customData[requestsMemoryKey]; ok {
-		helper.SetPrimitiveValue(v, &custom.RequestsMemory, requestsMemoryKey)
+	if v, ok := customData[RequestsMemoryKey]; ok {
+		helper.SetPrimitiveValue(v, &custom.RequestsMemory, RequestsMemoryKey)
 	}
 
-	if v, ok := customData[requestsStorageKey]; ok {
-		helper.SetPrimitiveValue(v, &custom.RequestsStorage, requestsStorageKey)
+	if v, ok := customData[RequestsStorageKey]; ok {
+		helper.SetPrimitiveValue(v, &custom.RequestsStorage, RequestsStorageKey)
 	}
 
-	if v, ok := customData[requestsStoragePerClassKey]; ok {
+	if v, ok := customData[RequestsStoragePerClassKey]; ok {
 		custom.RequestsStoragePerClass = common.GetTypeStringMapData(v.(map[string]interface{}))
 	}
 
-	if v, ok := customData[resourceCountsKey]; ok {
+	if v, ok := customData[ResourceCountsKey]; ok {
 		custom.ResourceCounts = common.GetTypeIntMapData(v.(map[string]interface{}))
 	}
 
@@ -128,15 +128,15 @@ func FlattenCustom(custom *policyrecipequotamodel.VmwareTanzuManageV1alpha1Commo
 
 	flattenCustom := make(map[string]interface{})
 
-	flattenCustom[limitsCPUKey] = custom.LimitsCPU
-	flattenCustom[limitsMemoryKey] = custom.LimitsMemory
-	flattenCustom[persistentVolumeClaimsKey] = custom.Persistentvolumeclaims
-	flattenCustom[persistentVolumeClaimsPerClassKey] = custom.PersistentvolumeclaimsPerClass
-	flattenCustom[requestsCPUKey] = custom.RequestsCPU
-	flattenCustom[requestsMemoryKey] = custom.RequestsMemory
-	flattenCustom[requestsStorageKey] = custom.RequestsStorage
-	flattenCustom[requestsStoragePerClassKey] = custom.RequestsStoragePerClass
-	flattenCustom[resourceCountsKey] = custom.ResourceCounts
+	flattenCustom[LimitsCPUKey] = custom.LimitsCPU
+	flattenCustom[LimitsMemoryKey] = custom.LimitsMemory
+	flattenCustom[PersistentVolumeClaimsKey] = custom.Persistentvolumeclaims
+	flattenCustom[PersistentVolumeClaimsPerClassKey] = custom.PersistentvolumeclaimsPerClass
+	flattenCustom[RequestsCPUKey] = custom.RequestsCPU
+	flattenCustom[RequestsMemoryKey] = custom.RequestsMemory
+	flattenCustom[RequestsStorageKey] = custom.RequestsStorage
+	flattenCustom[RequestsStoragePerClassKey] = custom.RequestsStoragePerClass
+	flattenCustom[ResourceCountsKey] = custom.ResourceCounts
 
 	return []interface{}{flattenCustom}
 }
