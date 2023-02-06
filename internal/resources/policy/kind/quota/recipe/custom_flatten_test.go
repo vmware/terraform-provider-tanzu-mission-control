@@ -22,12 +22,12 @@ func TestFlattenCustomRecipe(t *testing.T) {
 		expected    []interface{}
 	}{
 		{
-			description: "check for nil quota policy custom recipe",
+			description: "check for nil namespace quota policy custom recipe",
 			input:       nil,
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with complete quota policy custom recipe",
+			description: "normal scenario with complete namespace quota policy custom recipe",
 			input: &policyrecipequotamodel.VmwareTanzuManageV1alpha1CommonPolicySpecQuotaV1Custom{
 				LimitsCPU:                      "4",
 				LimitsMemory:                   "8Mi",

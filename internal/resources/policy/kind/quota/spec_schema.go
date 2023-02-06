@@ -19,7 +19,7 @@ import (
 
 var SpecSchema = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "Spec for the namespace quota policy",
+	Description: "Spec for the namespace namespace quota policy",
 	Required:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{

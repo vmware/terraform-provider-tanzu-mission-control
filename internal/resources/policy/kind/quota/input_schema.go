@@ -20,7 +20,7 @@ import (
 var (
 	inputSchema = &schema.Schema{
 		Type:        schema.TypeList,
-		Description: "Input for the quota policy, having one of the valid recipes: small, medium, large or custom.",
+		Description: "Input for the namespace quota policy, having one of the valid recipes: small, medium, large or custom.",
 		Required:    true,
 		MaxItems:    1,
 		MinItems:    1,

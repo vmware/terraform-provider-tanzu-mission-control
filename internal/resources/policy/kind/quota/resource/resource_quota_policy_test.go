@@ -33,8 +33,8 @@ import (
 
 const (
 	quotaPolicyResource    = policykindquota.ResourceName
-	quotaPolicyResourceVar = "test_quota_policy"
-	quotaPolicyNamePrefix  = "tf-qt-test"
+	quotaPolicyResourceVar = "test_namespace_quota_policy"
+	quotaPolicyNamePrefix  = "tf-ns-qt-test"
 )
 
 type testAcceptanceConfig struct {
@@ -60,9 +60,9 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 	testConfig := testGetDefaultAcceptanceConfig(t)
 
-	t.Log("start quota policy resource acceptance tests!")
+	t.Log("start namespace quota policy resource acceptance tests!")
 
-	// Test case for quota policy resource with custom recipe.
+	// Test case for namespace quota policy resource with custom recipe.
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
 		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
@@ -71,7 +71,7 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" {
-						t.Skip("KUBECONFIG env var is not set for cluster scoped quota policy acceptance test")
+						t.Skip("KUBECONFIG env var is not set for cluster scoped namespace quota policy acceptance test")
 					}
 				},
 				Config: testConfig.getTestQuotaPolicyResourceBasicConfigValue(scope.ClusterScope, policykindquota.CustomRecipe),
@@ -84,7 +84,7 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					if testConfig.ScopeHelperResources.OrgID == "" {
-						t.Skip("ORG_ID env var is not set for organization scoped quota policy acceptance test")
+						t.Skip("ORG_ID env var is not set for organization scoped namespace quota policy acceptance test")
 					}
 				},
 				Config: testConfig.getTestQuotaPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindquota.CustomRecipe),
@@ -94,10 +94,10 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 	},
 	)
 
-	t.Log("quota policy resource acceptance test complete for custom recipe!")
+	t.Log("namespace quota policy resource acceptance test complete for custom recipe!")
 	time.Sleep(2 * time.Minute)
 
-	// Test case for quota policy resource with small recipe.
+	// Test case for namespace quota policy resource with small recipe.
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
 		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
@@ -106,7 +106,7 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" {
-						t.Skip("KUBECONFIG env var is not set for cluster scoped quota policy acceptance test")
+						t.Skip("KUBECONFIG env var is not set for cluster scoped namespace quota policy acceptance test")
 					}
 				},
 				Config: testConfig.getTestQuotaPolicyResourceBasicConfigValue(scope.ClusterScope, policykindquota.SmallRecipe),
@@ -119,7 +119,7 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					if testConfig.ScopeHelperResources.OrgID == "" {
-						t.Skip("ORG_ID env var is not set for organization scoped quota policy acceptance test")
+						t.Skip("ORG_ID env var is not set for organization scoped namespace quota policy acceptance test")
 					}
 				},
 				Config: testConfig.getTestQuotaPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindquota.SmallRecipe),
@@ -129,10 +129,10 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 	},
 	)
 
-	t.Log("quota policy resource acceptance test complete for small recipe!")
+	t.Log("namespace quota policy resource acceptance test complete for small recipe!")
 	time.Sleep(2 * time.Minute)
 
-	// Test case for quota policy resource with medium recipe.
+	// Test case for namespace quota policy resource with medium recipe.
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
 		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
@@ -141,7 +141,7 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" {
-						t.Skip("KUBECONFIG env var is not set for cluster scoped quota policy acceptance test")
+						t.Skip("KUBECONFIG env var is not set for cluster scoped namespace quota policy acceptance test")
 					}
 				},
 				Config: testConfig.getTestQuotaPolicyResourceBasicConfigValue(scope.ClusterScope, policykindquota.MediumRecipe),
@@ -154,7 +154,7 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					if testConfig.ScopeHelperResources.OrgID == "" {
-						t.Skip("ORG_ID env var is not set for organization scoped quota policy acceptance test")
+						t.Skip("ORG_ID env var is not set for organization scoped namespace quota policy acceptance test")
 					}
 				},
 				Config: testConfig.getTestQuotaPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindquota.MediumRecipe),
@@ -164,10 +164,10 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 	},
 	)
 
-	t.Log("quota policy resource acceptance test complete for medium recipe!")
+	t.Log("namespace quota policy resource acceptance test complete for medium recipe!")
 	time.Sleep(2 * time.Minute)
 
-	// Test case for quota policy resource with large recipe.
+	// Test case for namespace quota policy resource with large recipe.
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
 		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
@@ -176,7 +176,7 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" {
-						t.Skip("KUBECONFIG env var is not set for cluster scoped quota policy acceptance test")
+						t.Skip("KUBECONFIG env var is not set for cluster scoped namespace quota policy acceptance test")
 					}
 				},
 				Config: testConfig.getTestQuotaPolicyResourceBasicConfigValue(scope.ClusterScope, policykindquota.LargeRecipe),
@@ -189,7 +189,7 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					if testConfig.ScopeHelperResources.OrgID == "" {
-						t.Skip("ORG_ID env var is not set for organization scoped quota policy acceptance test")
+						t.Skip("ORG_ID env var is not set for organization scoped namespace quota policy acceptance test")
 					}
 				},
 				Config: testConfig.getTestQuotaPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindquota.LargeRecipe),
@@ -199,8 +199,8 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 	},
 	)
 
-	t.Log("quota policy resource acceptance test complete for large recipe!")
-	t.Log("all quota policy resource acceptance tests complete!")
+	t.Log("namespace quota policy resource acceptance test complete for large recipe!")
+	t.Log("all namespace quota policy resource acceptance tests complete!")
 }
 
 func (testConfig *testAcceptanceConfig) getTestQuotaPolicyResourceBasicConfigValue(scope scope.Scope, recipe policykindquota.Recipe) string {
@@ -238,7 +238,7 @@ func (testConfig *testAcceptanceConfig) getTestQuotaPolicyResourceBasicConfigVal
 	`, helperBlock, testConfig.QuotaPolicyResource, testConfig.QuotaPolicyResourceVar, testConfig.QuotaPolicyName, scopeBlock, inputBlock)
 }
 
-// getTestQuotaPolicyResourceInput builds the input block for quota policy resource based on recipe.
+// getTestQuotaPolicyResourceInput builds the input block for namespace quota policy resource based on recipe.
 func (testConfig *testAcceptanceConfig) getTestQuotaPolicyResourceInput(recipe policykindquota.Recipe) string {
 	var inputBlock string
 
@@ -292,7 +292,7 @@ func (testConfig *testAcceptanceConfig) getTestQuotaPolicyResourceInput(recipe p
 	return inputBlock
 }
 
-// checkQuotaPolicyResourceAttributes checks for quota policy creation along with meta attributes.
+// checkQuotaPolicyResourceAttributes checks for namespace quota policy creation along with meta attributes.
 func (testConfig *testAcceptanceConfig) checkQuotaPolicyResourceAttributes(scopeType scope.Scope) resource.TestCheckFunc {
 	var check = []resource.TestCheckFunc{
 		testConfig.verifyQuotaPolicyResourceCreation(scopeType),
@@ -353,11 +353,11 @@ func (testConfig *testAcceptanceConfig) verifyQuotaPolicyResourceCreation(scopeT
 
 			resp, err := config.TMCConnection.ClusterPolicyResourceService.ManageV1alpha1ClusterPolicyResourceServiceGet(fn)
 			if err != nil {
-				return errors.Wrap(err, "cluster scoped quota policy resource not found")
+				return errors.Wrap(err, "cluster scoped namespace quota policy resource not found")
 			}
 
 			if resp == nil {
-				return errors.Wrapf(err, "cluster scoped quota policy resource is empty, resource: %s", testConfig.QuotaPolicyResourceName)
+				return errors.Wrapf(err, "cluster scoped namespace quota policy resource is empty, resource: %s", testConfig.QuotaPolicyResourceName)
 			}
 		case scope.ClusterGroupScope:
 			fn := &policyclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupPolicyFullName{
@@ -367,11 +367,11 @@ func (testConfig *testAcceptanceConfig) verifyQuotaPolicyResourceCreation(scopeT
 
 			resp, err := config.TMCConnection.ClusterGroupPolicyResourceService.ManageV1alpha1ClustergroupPolicyResourceServiceGet(fn)
 			if err != nil {
-				return errors.Wrap(err, "cluster group scoped quota policy resource not found")
+				return errors.Wrap(err, "cluster group scoped namespace quota policy resource not found")
 			}
 
 			if resp == nil {
-				return errors.Wrapf(err, "cluster group scoped quota policy resource is empty, resource: %s", testConfig.QuotaPolicyResourceName)
+				return errors.Wrapf(err, "cluster group scoped namespace quota policy resource is empty, resource: %s", testConfig.QuotaPolicyResourceName)
 			}
 		case scope.OrganizationScope:
 			fn := &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyFullName{
@@ -381,11 +381,11 @@ func (testConfig *testAcceptanceConfig) verifyQuotaPolicyResourceCreation(scopeT
 
 			resp, err := config.TMCConnection.OrganizationPolicyResourceService.ManageV1alpha1OrganizationPolicyResourceServiceGet(fn)
 			if err != nil {
-				return errors.Wrap(err, "organization scoped quota policy resource not found")
+				return errors.Wrap(err, "organization scoped namespace quota policy resource not found")
 			}
 
 			if resp == nil {
-				return errors.Wrapf(err, "organization scoped quota policy resource is empty, resource: %s", testConfig.QuotaPolicyResourceName)
+				return errors.Wrapf(err, "organization scoped namespace quota policy resource is empty, resource: %s", testConfig.QuotaPolicyResourceName)
 			}
 		case scope.UnknownScope:
 			return errors.Errorf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(policyoperations.ScopeMap[testConfig.QuotaPolicyResource], `, `))

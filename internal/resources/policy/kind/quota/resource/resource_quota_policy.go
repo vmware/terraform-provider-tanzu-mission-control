@@ -34,7 +34,7 @@ func ResourceQuotaPolicy() *schema.Resource {
 var quotaPolicySchema = map[string]*schema.Schema{
 	policy.NameKey: {
 		Type:        schema.TypeString,
-		Description: "Name of the quota policy",
+		Description: "Name of the namespace quota policy",
 		Required:    true,
 		ForceNew:    true,
 	},

@@ -1,6 +1,6 @@
-// Create/ Delete/ Update Tanzu Mission Control organization scoped custom image policy entry
-resource "tanzu-mission-control_image_policy" "organization_scoped_custom_image_policy" {
-  name = "<image-policy-name>"
+// Create/ Delete/ Update Tanzu Mission Control organization scoped large namespace quota policy entry
+resource "tanzu-mission-control_namespace_quota_policy" "organization_scoped_large_quota_policy" {
+  name = "<namespace-quota-policy-name>"
 
   scope {
     organization {
@@ -10,19 +10,7 @@ resource "tanzu-mission-control_image_policy" "organization_scoped_custom_image_
 
   spec {
     input {
-      custom {
-        audit = false // Default: false
-        rules {
-          hostname      = "<host-name>"
-          imagename     = "<image-name>"
-          port          = "<port-name>"
-          requiredigest = false // Default: false
-          tag {
-            negate = false // Default: false
-            value  = "<tag-value>"
-          }
-        }
-      }
+      large {}
     }
 
     namespace_selector {

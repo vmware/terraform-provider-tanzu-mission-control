@@ -1,0 +1,115 @@
+---
+Title: "Namespace Quota Policy Resource"
+Description: |-
+    Creating the Tanzu Kubernetes namespace quota policy resource.
+---
+
+# Namespace Quota Policy
+
+The `tanzu-mission-control_namespace_quota_policy` resource enables you to attach a namespace quota policy with an input recipe to a particular scope for management through Tanzu Mission Control.
+
+Namespace quota policies allow you to constrain the resources used in your clusters, as aggregate quantities across specified namespaces, using preconfigured and custom templates.
+For more information, see [Managing Resource Consumption in Your Clusters][managing-resource-consumption] in using VMware Tanzu Mission Control.
+
+[managing-resource-consumption]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-1905352C-856F-4D06-BB86-426F90486C32.html
+
+## Input Recipe
+
+In the Tanzu Mission Control namespace quota policy resource, there are four set of recipe templates that you can use:
+- **small** - The small template is a preconfigured set of resource limits with constraints as CPU requests = 0.5 vCPU, Memory requests = 512 MB, CPU limits = 1 vCPU, Memory limits = 2 GB.
+- **medium** - The medium template is a preconfigured set of resource limits with constraints as CPU requests = 1 vCPU, Memory requests = 1 GB, CPU limits = 2 vCPU, Memory limits = 4 GB.
+- **large** - The large template is a preconfigured set of resource limits with constraints as CPU requests = 2 vCPU, Memory requests = 2 GB, CPU limits = 4 vCPU, Memory limits = 8 GB.
+- **custom** - The custom template allows you to specify the quantity limits of various resource types.
+
+## Policy Scope and Inheritance
+
+In the Tanzu Mission Control resource hierarchy, there are three levels at which you can specify quota policy resources:
+- **organization** - `organization` block under `scope` sub-resource
+- **object groups** - `cluster_group` block under `scope` sub-resource
+- **Kubernetes objects** - `cluster` block under `scope` sub-resource
+
+In addition to the direct policy defined for a given object, each object has inherited policies described in the parent objects. For example, a cluster has a direct policy and inherited policies from the cluster group and organization to which it is attached.
+
+**Note:**
+The scope parameter is mandatory in the schema and the user needs to add one of the defined scopes to the script for the provider to function.
+Only one scope per resource is allowed.
+
+## Cluster scoped Small Namespace Quota Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/quota_policy/resource_cluster_small_quota_policy.tf" }}
+
+
+## Cluster scoped Medium Namespace Quota Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/quota_policy/resource_cluster_medium_quota_policy.tf" }}
+
+
+## Cluster scoped Large Namespace Quota Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/quota_policy/resource_cluster_large_quota_policy.tf" }}
+
+## Cluster scoped Custom Namespace Quota Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/quota_policy/resource_cluster_custom_quota_policy.tf" }}
+
+
+## Cluster group scoped Small Namespace Quota Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/quota_policy/resource_cluster_group_small_quota_policy.tf" }}
+
+## Cluster group scoped Medium Namespace Quota Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/quota_policy/resource_cluster_group_medium_quota_policy.tf" }}
+
+## Cluster group scoped Large Namespace Quota Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/quota_policy/resource_cluster_group_large_quota_policy.tf" }}
+
+
+## Cluster group scoped Custom Namespace Quota Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/quota_policy/resource_cluster_group_custom_quota_policy.tf" }}
+
+
+## Organization scoped Small Namespace Quota Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/quota_policy/resource_organization_small_quota_policy.tf" }}
+
+
+## Organization scoped Medium Namespace Quota Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/quota_policy/resource_organization_medium_quota_policy.tf" }}
+
+## Organization scoped Large Namespace Quota Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/quota_policy/resource_organization_large_quota_policy.tf" }}
+
+## Organization scoped Custom Namespace Quota Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/quota_policy/resource_organization_custom_quota_policy.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}

@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ResourceName = "tanzu-mission-control_quota_policy"
+	ResourceName = "tanzu-mission-control_namespace_quota_policy"
 	typePolicy   = "namespace-quota-policy" // Type of Policy as defined in API
 )
 
