@@ -73,6 +73,7 @@ var dataSpec = &schema.Schema{
 	Optional:    true,
 	MaxItems:    1,
 	Description: "Holds credentials sensitive data",
+	Sensitive:   true,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			genericCredentialKey: {
