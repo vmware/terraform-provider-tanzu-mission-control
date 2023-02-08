@@ -42,19 +42,18 @@ func RetryUntilTimeout(f Retryable, interval time.Duration, timeout time.Duratio
 
 	timeElapsedInSeconds := 0
 
-	retries := 1
+	retries := 0
 
 	for timeElapsedInSeconds < int(timeout.Seconds()) {
+		retries++
 		retry, err = f()
 		if !retry {
 			break
 		}
 
-		presentBackOffInterval := (retries * int(interval.Seconds()))
-		time.Sleep(time.Duration(presentBackOffInterval) * time.Second)
+		time.Sleep(interval)
 
-		timeElapsedInSeconds += presentBackOffInterval
-		retries++
+		timeElapsedInSeconds += int(interval.Seconds())
 	}
 
 	return retries, err

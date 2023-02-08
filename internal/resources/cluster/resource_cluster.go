@@ -302,9 +302,25 @@ func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interfac
 		return false, nil
 	}
 
-	_, err = helper.Retry(getClusterResourceRetryableFn, 10*time.Second, 18)
+	_, err = helper.Retry(getClusterResourceRetryableFn, 10*time.Second, 25)
+	if err == nil {
+		return diags
+	}
+
+	// if the cluster is still not removed then invoke force delete of the cluster.
+	_, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
+	if err == nil {
+		_ = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceDelete(constructFullname(d), "true")
+
+		log.Printf("[INFO] Cluster deletion in progress. Initiating force detach of the cluster entry as k8s cluster might not be responsive %s", constructFullname(d).ToString())
+
+		diags = diag.FromErr(errors.Wrapf(err, "Initiating force detach for %s cluster."+
+			"Ideally clean up of tmc agents and vmware-system-tmc namespace should have happened if not please remove them manually following "+
+			"https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-3061A796-CA3D-4354-A0B7-19F50F2617CE.html", d.Get(NameKey)))
+	}
+
 	if err != nil {
-		diag.FromErr(errors.Wrapf(err, "verify %s cluster resource clean up", d.Get(NameKey)))
+		diags = diag.FromErr(errors.Wrapf(err, "verify %s cluster resource clean up", d.Get(NameKey)))
 	}
 
 	return diags
