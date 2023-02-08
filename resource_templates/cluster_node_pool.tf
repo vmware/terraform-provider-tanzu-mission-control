@@ -18,7 +18,13 @@ resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
   name                    = "<node_pool-name>"     // Required
 
   spec {
-    worker_node_count = "3"
+    worker_node_count = "<worker-nodes>"
+    cloud_labels = {
+      "<key>" : "<val>"
+    }
+    node_labels = {
+      "<key>" : "<val>"
+    }
 
     tkg_service_vsphere {
       class         = "<class>"        // Required

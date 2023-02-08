@@ -61,10 +61,10 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
         node_pools {
           spec {
             worker_node_count = "<worker-node-count>" // Required
-            cloud_label = {
+            cloud_labels = {
               "<key>" : "<val>"
             }
-            node_label = {
+            node_labels = {
               "<key>" : "<val>"
             }
             tkg_service_vsphere {

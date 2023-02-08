@@ -176,10 +176,10 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
         node_pools {
           spec {
             worker_node_count = "1"
-            cloud_label = {
+            cloud_labels = {
               "key1" : "val1"
             }
-            node_label = {
+            node_labels = {
               "key2" : "val2"
             }
 

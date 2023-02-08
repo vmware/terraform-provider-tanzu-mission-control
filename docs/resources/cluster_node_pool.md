@@ -24,6 +24,12 @@ resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
 
   spec {
     worker_node_count = "3"
+    cloud_labels = {
+      "key1" : "val1"
+    }
+    node_labels = {
+      "key2" : "val2"
+    }
 
     tkg_service_vsphere  {
       class = "best-effort-xsmall"
@@ -73,6 +79,10 @@ Read-Only:
 <a id="nestedblock--spec"></a>
 ### Nested Schema for `spec`
 
+Required:
+
+- `worker_node_count` (String) Count is the number of nodes
+
 Optional:
 
 - `cloud_labels` (Map of String) Cloud labels
@@ -80,7 +90,6 @@ Optional:
 - `tkg_aws` (Block List) TKGAWSNodepool is the nodepool spec for TKG AWS cluster (see [below for nested schema](#nestedblock--spec--tkg_aws))
 - `tkg_service_vsphere` (Block List) TKGServiceVsphereNodepool is the nodepool spec for TKG service vsphere cluster (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))
 - `tkg_vsphere` (Block List) TkgVsphereNodepool is the nodepool config for the TKG vsphere cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere))
-- `worker_node_count` (String) Count is the number of nodes
 
 <a id="nestedblock--spec--tkg_aws"></a>
 ### Nested Schema for `spec.tkg_aws`
@@ -94,7 +103,7 @@ Optional:
 <a id="nestedblock--spec--tkg_service_vsphere"></a>
 ### Nested Schema for `spec.tkg_service_vsphere`
 
-Optional:
+Required:
 
 - `class` (String) Nodepool instance type
 - `storage_class` (String) Storage Class to be used for storage of the disks which store the root filesystem of the nodes
