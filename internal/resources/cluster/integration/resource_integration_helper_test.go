@@ -198,7 +198,7 @@ func decode(in string) string {
 
 const (
 	integrationResourceManifestTemplate = `{{ with . }}{{ $fn := .FullName -}}
-resource "tanzu-mission-control_integration" "default" {
+resource "tanzu_mission_control_integration" "default" {
   {{- with $fn }}{{ with .Name }}
   integration_name        = "{{ . }}"{{ end }}{{ with .ClusterName }}
   cluster_name            = "{{ . }}"{{ end }}{{ with .ProvisionerName }}

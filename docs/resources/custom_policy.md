@@ -6,7 +6,7 @@ Description: |-
 
 # Custom Policy
 
-The `tanzu-mission-control_custom_policy` resource enables you to attach a custom policy with an input recipe to a particular scope for management through Tanzu Mission Control.
+The `tanzu_mission_control_custom_policy` resource enables you to attach a custom policy with an input recipe to a particular scope for management through Tanzu Mission Control.
 Custom policies allow you to implement additional business rules, using templates that you define, to enforce policies that are not already addressed using the other built-in policy types.
 For more information, see [Creating Customized Policies][create-customized-policies] using VMware Tanzu Mission Control.
 
@@ -73,7 +73,7 @@ Cluster scoped Tanzu Mission Control custom policy with tmc-block-nodeport-servi
 This policy is applied to a cluster with the tmc-block-nodeport-service configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "cluster_scoped_tmc-block-nodeport-service_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_scoped_tmc-block-nodeport-service_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -128,7 +128,7 @@ Cluster scoped Tanzu Mission Control custom policy with tmc-block-resources inpu
 This policy is applied to a cluster with the tmc-block-resources configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "cluster_scoped_tmc-block-resources_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_scoped_tmc-block-resources_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -183,7 +183,7 @@ Cluster scoped Tanzu Mission Control custom policy with tmc-block-rolebinding-su
 This policy is applied to a cluster with the tmc-block-rolebinding-subjects configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "cluster_scoped_tmc-block-rolebinding-subjects_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_scoped_tmc-block-rolebinding-subjects_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -244,7 +244,7 @@ Cluster scoped Tanzu Mission Control custom policy with tmc-external-ips input r
 This policy is applied to a cluster with the tmc-external-ips configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "cluster_scoped_tmc-external-ips_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_scoped_tmc-external-ips_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -304,7 +304,7 @@ Cluster scoped Tanzu Mission Control custom policy with tmc-https-ingress input 
 This policy is applied to a cluster with the tmc-https-ingress configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "cluster_scoped_tmc-https-ingress_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_scoped_tmc-https-ingress_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -359,7 +359,7 @@ Cluster scoped Tanzu Mission Control custom policy with tmc-require-labels input
 This policy is applied to a cluster with the tmc-require-labels configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "cluster_scoped_tmc-require-labels_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_scoped_tmc-require-labels_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -420,7 +420,7 @@ Cluster group scoped Tanzu Mission Control custom policy with tmc-block-nodeport
 This policy is applied to a cluster group with the tmc-block-nodeport-service configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "cluster_group_scoped_tmc-block-nodeport-service_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_group_scoped_tmc-block-nodeport-service_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -473,7 +473,7 @@ Cluster group scoped Tanzu Mission Control custom policy with tmc-block-resource
 This policy is applied to a cluster group with the tmc-block-resources configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "cluster_group_scoped_tmc-block-resources_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_group_scoped_tmc-block-resources_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -526,7 +526,7 @@ Cluster group scoped Tanzu Mission Control custom policy with tmc-block-rolebind
 This policy is applied to a cluster group with the tmc-block-rolebinding-subjects configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "cluster_group_scoped_tmc-block-rolebinding-subjects_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_group_scoped_tmc-block-rolebinding-subjects_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -585,7 +585,7 @@ Cluster group scoped Tanzu Mission Control custom policy with tmc-external-ips i
 This policy is applied to a cluster group with the tmc-external-ips configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "cluster_group_scoped_tmc-external-ips_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_group_scoped_tmc-external-ips_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -643,7 +643,7 @@ Cluster group scoped Tanzu Mission Control custom policy with tmc-https-ingress 
 This policy is applied to a cluster group with the tmc-https-ingress configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "cluster_group_scoped_tmc-https-ingress_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_group_scoped_tmc-https-ingress_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -696,7 +696,7 @@ Cluster group scoped Tanzu Mission Control custom policy with tmc-require-labels
 This policy is applied to a cluster group with the tmc-require-labels configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "cluster_group_scoped_tmc-require-labels_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_group_scoped_tmc-require-labels_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -755,7 +755,7 @@ Organization scoped Tanzu Mission Control custom policy with tmc-block-nodeport-
 This policy is applied to a organization with the tmc-block-nodeport-service configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-block-nodeport-service_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "organization_scoped_tmc-block-nodeport-service_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -808,7 +808,7 @@ Organization scoped Tanzu Mission Control custom policy with tmc-block-resources
 This policy is applied to a organization with the tmc-block-resources configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-block-resources_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "organization_scoped_tmc-block-resources_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -861,7 +861,7 @@ Organization scoped Tanzu Mission Control custom policy with tmc-block-rolebindi
 This policy is applied to a organization with the tmc-block-rolebinding-subjects configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-block-rolebinding-subjects_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "organization_scoped_tmc-block-rolebinding-subjects_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -920,7 +920,7 @@ Organization scoped Tanzu Mission Control custom policy with tmc-external-ips in
 This policy is applied to a organization with the tmc-external-ips configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-external-ips_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "organization_scoped_tmc-external-ips_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -978,7 +978,7 @@ Organization scoped Tanzu Mission Control custom policy with tmc-https-ingress i
 This policy is applied to a organization with the tmc-https-ingress configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-https-ingress_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "organization_scoped_tmc-https-ingress_custom_policy" {
   name = "tf-custom-test"
 
   scope {
@@ -1031,7 +1031,7 @@ Organization scoped Tanzu Mission Control custom policy with tmc-require-labels 
 This policy is applied to a organization with the tmc-require-labels configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-require-labels_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "organization_scoped_tmc-require-labels_custom_policy" {
   name = "tf-custom-test"
 
   scope {

@@ -2,14 +2,14 @@
 // Operations supported : Read, Create, Update & Delete
 
 // Read Tanzu Mission Control AWS EKS cluster : fetch cluster details
-data "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
+data "tanzu_mission_control_ekscluster" "tf_eks_cluster" {
   credential_name = "<aws-credential-name>" // Required
   region          = "<aws-region>"          // Required
   name            = "<cluster-name>"        // Required
 }
 
 // Create Tanzu Mission Control AWS EKS cluster entry
-resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
+resource "tanzu_mission_control_ekscluster" "tf_eks_cluster" {
   credential_name = "<aws-credential-name>" // Required
   region          = "<aws-region>"          // Required
   name            = "<cluster-name>"        // Required

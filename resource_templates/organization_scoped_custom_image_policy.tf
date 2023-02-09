@@ -1,5 +1,5 @@
 // Create/ Delete/ Update Tanzu Mission Control organization scoped custom image policy entry
-resource "tanzu-mission-control_image_policy" "organization_scoped_custom_image_policy" {
+resource "tanzu_mission_control_image_policy" "organization_scoped_custom_image_policy" {
   name = "<image-policy-name>"
 
   scope {

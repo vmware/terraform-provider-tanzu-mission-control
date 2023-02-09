@@ -2,7 +2,7 @@
 // Operations supported : Read, Create, Update & Delete
 
 # Read Tanzu Mission Control cluster nodepool : fetch cluster nodepool details
-data "tanzu-mission-control_cluster_node_pool" "read_node_pool" {
+data "tanzu_mission_control_cluster_node_pool" "read_node_pool" {
   management_cluster_name = "<management-cluster>" // Default: attached
   provisioner_name        = "<prov-name>"          // Default: attached
   cluster_name            = "<cluster_name>"       // Required
@@ -10,7 +10,7 @@ data "tanzu-mission-control_cluster_node_pool" "read_node_pool" {
 }
 
 # Create Tanzu Mission Control cluster nodepool entry
-resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
+resource "tanzu_mission_control_cluster_node_pool" "create_node_pool" {
 
   management_cluster_name = "<management-cluster>" // Default: attached
   provisioner_name        = "<prov-name>"          // Default: attached

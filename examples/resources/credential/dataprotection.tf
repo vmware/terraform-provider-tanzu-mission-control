@@ -1,5 +1,5 @@
 # Create credential for TMC provisioned AWS S3 storage used for data-protection
-resource "tanzu-mission-control_credential" "tmc_provisioned_aws_s3_cred" {
+resource "tanzu_mission_control_credential" "tmc_provisioned_aws_s3_cred" {
   name = "aws_s3_cred"
 
   meta {

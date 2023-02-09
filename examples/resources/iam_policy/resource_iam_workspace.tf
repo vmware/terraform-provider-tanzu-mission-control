@@ -3,7 +3,7 @@
  This resource is applied on a workspace to provision the role bindings on the associated workspace.
  The defined scope block can be updated to change the access policy's scope.
  */
-resource "tanzu-mission-control_iam_policy" "workspace_scoped_iam_policy" {
+resource "tanzu_mission_control_iam_policy" "workspace_scoped_iam_policy" {
   scope {
     workspace {
       name = "tf-workspace"

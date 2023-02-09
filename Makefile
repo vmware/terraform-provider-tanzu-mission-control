@@ -28,7 +28,7 @@ endif
 default: build
 
 build:
-	go build -o bin/terraform-provider-tanzu-mission-control_$(VERSION_TAG)
+	go build -o bin/terraform-provider-tanzu-mission-control-$(VERSION_TAG)
 	mkdir -p ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/$(VERSION_TAG:v%=%)/$(GOOS)_$(GOARCH)/
 	cp bin/terraform-provider-tanzu-mission-control_$(VERSION_TAG) ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/$(VERSION_TAG:v%=%)/$(GOOS)_$(GOARCH)/
 

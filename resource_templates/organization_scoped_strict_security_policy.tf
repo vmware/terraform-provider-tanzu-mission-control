@@ -1,5 +1,5 @@
 // Create/ Delete/ Update Tanzu Mission Control organization scoped strict security policy entry
-resource "tanzu-mission-control_security_policy" "organization_scoped_strict_security_policy" {
+resource "tanzu_mission_control_security_policy" "organization_scoped_strict_security_policy" {
   name = "<security-policy-name>"
 
   scope {

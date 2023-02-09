@@ -6,6 +6,6 @@ SPDX-License-Identifier: MPL-2.0
 package clustergroup
 
 const (
-	ResourceName = "tanzu-mission-control_cluster_group"
+	ResourceName = "tanzu_mission_control_cluster_group"
 	NameKey      = "name"
 )

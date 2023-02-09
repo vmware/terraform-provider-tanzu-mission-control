@@ -1,5 +1,5 @@
 # Create Tanzu Mission Control cluster group
-resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
+resource "tanzu_mission_control_cluster_group" "create_cluster_group" {
   name = "tf-cluster-group"
   meta {
     description = "Create cluster group through terraform"
@@ -11,6 +11,6 @@ resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
 }
 
 # Create cluster group with minimal information
-resource "tanzu-mission-control_cluster_group" "create_cluster_group_min_info" {
+resource "tanzu_mission_control_cluster_group" "create_cluster_group_min_info" {
   name = "tf-cluster-group-min-info"
 }

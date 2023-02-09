@@ -5,13 +5,13 @@ Description: |-
 ---
 # EKS Cluster
 
-The `tanzu-mission-control_ekscluster` resource can directly perform cluster lifecycle management operations on EKS clusters (and associated node gourps) including create, update, upgrade, and delete through Tanzu Mission Control.
+The `tanzu_mission_control_ekscluster` resource can directly perform cluster lifecycle management operations on EKS clusters (and associated node gourps) including create, update, upgrade, and delete through Tanzu Mission Control.
 
 ## Prerequisites
 
 To manage the lifecycle of EKS clusters, you need the following prerequisites.
 
-- Onboard the AWS account onto Tanzu Mission Control under which the EKS Clusters will be provisioned. Please refer [connecting an AWS account for EKS cluster lifecycle management][aws-account] guide for detailed steps. You can also use `tanzu-mission-control_credential` Terraform resource for this purpose. The name of the EKS AWS credential in Tanzu Mission Control will be reffered to as `credential_name` in this guide.
+- Onboard the AWS account onto Tanzu Mission Control under which the EKS Clusters will be provisioned. Please refer [connecting an AWS account for EKS cluster lifecycle management][aws-account] guide for detailed steps. You can also use `tanzu_mission_control_credential` Terraform resource for this purpose. The name of the EKS AWS credential in Tanzu Mission Control will be reffered to as `credential_name` in this guide.
 
 - Create the required VPC with subnets in the desired region. Please refer to Tanzu documentation on how to [create a VPC with Subnets for EKS cluster lifecycle management][tanzu-vpc-guide] and AWS guide for [creating a VPC for your Amazon EKS cluster][aws-vpc-guied].
 
@@ -22,21 +22,21 @@ To manage the lifecycle of EKS clusters, you need the following prerequisites.
 
 ## Provisioning the cluster
 
-You can use the following template as reference to write your own `tanzu-mission-control_ekscluster` resource in the terraform scripts. 
+You can use the following template as reference to write your own `tanzu_mission_control_ekscluster` resource in the terraform scripts. 
 
 ```terraform
 // Tanzu Mission Control EKS Cluster Type: AWS EKS clusters.
 // Operations supported : Read, Create, Update & Delete
 
 // Read Tanzu Mission Control AWS EKS cluster : fetch cluster details
-data "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
+data "tanzu_mission_control_ekscluster" "tf_eks_cluster" {
   credential_name = "<aws-credential-name>" // Required
   region          = "<aws-region>"          // Required
   name            = "<cluster-name>"        // Required
 }
 
 // Create Tanzu Mission Control AWS EKS cluster entry
-resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
+resource "tanzu_mission_control_ekscluster" "tf_eks_cluster" {
   credential_name = "<aws-credential-name>" // Required
   region          = "<aws-region>"          // Required
   name            = "<cluster-name>"        // Required

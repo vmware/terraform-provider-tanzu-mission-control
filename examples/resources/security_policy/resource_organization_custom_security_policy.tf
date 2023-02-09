@@ -3,7 +3,7 @@ Organization scoped Tanzu Mission Control security policy with a custom input re
 This policy is applied to an organization with the custom configuration option and is inherited by the cluster groups and clusters.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_security_policy" "organization_scoped_custom_security_policy" {
+resource "tanzu_mission_control_security_policy" "organization_scoped_custom_security_policy" {
   name = "tf-sp-test"
 
   scope {

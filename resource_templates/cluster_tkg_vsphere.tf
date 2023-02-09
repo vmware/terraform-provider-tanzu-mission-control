@@ -2,14 +2,14 @@
 // Operations supported : Read, Create, Update & Delete (except nodepools)
 
 // Read Tanzu Mission Control Tanzu Kubernetes Grid vSphere workload cluster : fetch cluster details
-data "tanzu-mission-control_cluster" "ready_only_cluster_view" {
+data "tanzu_mission_control_cluster" "ready_only_cluster_view" {
   management_cluster_name = "<management-cluster>" // Required
   provisioner_name        = "<prov-name>"          // Required
   name                    = "<cluster-name>"       // Required
 }
 
 // Create Tanzu Mission Control Tanzu Kubernetes Grid vSphere workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
+resource "tanzu_mission_control_cluster" "create_tkg_vsphere_cluster" {
   management_cluster_name = "<management-cluster>" // Default: attached
   provisioner_name        = "<prov-name>"          // Default: attached
   name                    = "<cluster-name>"       // Required

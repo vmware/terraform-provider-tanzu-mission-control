@@ -1,5 +1,5 @@
 // Create/ Delete/ Update Tanzu Mission Control organization scoped iam policy entry
-resource "tanzu-mission-control_iam_policy" "organization_scoped_iam_policy" {
+resource "tanzu_mission_control_iam_policy" "organization_scoped_iam_policy" {
   scope {
     organization {
       org_id = "<organization-id>" // Required

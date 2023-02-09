@@ -6,7 +6,7 @@ Description: |-
 
 # Security Policy
 
-The `tanzu-mission-control_security_policy` resource enables you to attach a security policy with an input recipe to a particular scope for management through Tanzu Mission Control.
+The `tanzu_mission_control_security_policy` resource enables you to attach a security policy with an input recipe to a particular scope for management through Tanzu Mission Control.
 
 Security policies allow you to manage the security context in which deployed pods operate in your clusters by imposing constraints that define what pods can do and which resources they can access. For more information, see [Pod Security Management.][pod-security-management]
 
@@ -49,7 +49,7 @@ Cluster scoped Tanzu Mission Control security policy with baseline input recipe.
 This policy is applied to a cluster with the baseline configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_security_policy" "cluster_scoped_baseline_security_policy" {
+resource "tanzu_mission_control_security_policy" "cluster_scoped_baseline_security_policy" {
   name = "tf-sp-test"
 
   scope {
@@ -90,7 +90,7 @@ Cluster scoped Tanzu Mission Control security policy with custom input recipe.
 This policy is applied on a cluster with the custom configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_security_policy" "cluster_scoped_custom_security_policy" {
+resource "tanzu_mission_control_security_policy" "cluster_scoped_custom_security_policy" {
   name = "tf-sp-test"
 
   scope {
@@ -238,7 +238,7 @@ Cluster scoped Tanzu Mission Control security policy with strict input recipe.
 This policy is applied to a cluster with the strict configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_security_policy" "cluster_scoped_strict_security_policy" {
+resource "tanzu_mission_control_security_policy" "cluster_scoped_strict_security_policy" {
   name = "tf-sp-test"
 
   scope {
@@ -287,7 +287,7 @@ Cluster group scoped Tanzu Mission Control security policy with baseline input r
 This policy is applied to a cluster group with the baseline configuration option and is inherited by the clusters.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_security_policy" "cluster_group_scoped_baseline_security_policy" {
+resource "tanzu_mission_control_security_policy" "cluster_group_scoped_baseline_security_policy" {
   name = "tf-sp-test"
 
   scope {
@@ -334,7 +334,7 @@ Cluster group scoped Tanzu Mission Control security policy with a custom input r
 This policy is applied to a cluster group with the custom configuration option and is inherited by the clusters.
 The defined scope and input blocks can be updated to change the policy's scope and recipe.
 */
-resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_security_policy" {
+resource "tanzu_mission_control_security_policy" "cluster_group_scoped_custom_security_policy" {
   name = "tf-sp-test"
 
   scope {
@@ -496,7 +496,7 @@ Cluster group scoped Tanzu Mission Control security policy with a strict input r
 This policy is applied to a cluster group with the strict configuration option and is inherited by the clusters.
 The defined scope and input blocks can be updated to change the policy's scope and recipe.
 */
-resource "tanzu-mission-control_security_policy" "cluster_group_scoped_strict_security_policy" {
+resource "tanzu_mission_control_security_policy" "cluster_group_scoped_strict_security_policy" {
   name = "tf-sp-test"
 
   scope {
@@ -527,7 +527,7 @@ Organization scoped Tanzu Mission Control security policy with baseline input re
 This policy is applied to an organization with the baseline configuration option and is inherited by the cluster groups and clusters.
 The defined scope and input blocks can be updated to change the policy's scope and recipe.
 */
-resource "tanzu-mission-control_security_policy" "organization_scoped_baseline_security_policy" {
+resource "tanzu_mission_control_security_policy" "organization_scoped_baseline_security_policy" {
   name = "tf-sp-test"
 
   scope {
@@ -558,7 +558,7 @@ Organization scoped Tanzu Mission Control security policy with a custom input re
 This policy is applied to an organization with the custom configuration option and is inherited by the cluster groups and clusters.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_security_policy" "organization_scoped_custom_security_policy" {
+resource "tanzu_mission_control_security_policy" "organization_scoped_custom_security_policy" {
   name = "tf-sp-test"
 
   scope {
@@ -720,7 +720,7 @@ Organization scoped Tanzu Mission Control security policy with a strict input re
 This policy is applied to an organization with the strict configuration option and is inherited by the cluster groups and clusters.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_security_policy" "organization_scoped_strict_security_policy" {
+resource "tanzu_mission_control_security_policy" "organization_scoped_strict_security_policy" {
   name = "tf-sp-test"
 
   scope {

@@ -69,7 +69,7 @@ resource "%s" "%s" {
 
 resource "%s" "%s" {
   name = "%s"
-  cluster_name = tanzu-mission-control_cluster.tmc_cluster_test.name
+  cluster_name = tanzu_mission_control_cluster.tmc_cluster_test.name
   provisioner_name        = "attached"
   management_cluster_name = "attached"
 

@@ -1,5 +1,5 @@
 // Create/ Delete/ Update Tanzu Mission Control organization scoped tmc-external-ips custom policy entry
-resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-external-ips_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "organization_scoped_tmc-external-ips_custom_policy" {
   name = "<custom-policy-name>"
 
   scope {

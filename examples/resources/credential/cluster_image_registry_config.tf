@@ -1,5 +1,5 @@
 # Create IMAGE_REGISTRY credential
-resource "tanzu-mission-control_credential" "img_reg_cred" {
+resource "tanzu_mission_control_credential" "img_reg_cred" {
   name = "test-cred-name"
 
   meta {

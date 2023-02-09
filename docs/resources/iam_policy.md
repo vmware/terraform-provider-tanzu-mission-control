@@ -6,7 +6,7 @@ Description: |-
 
 # IAM Policy
 
-The `tanzu-mission-control_iam_policy` resource allows you to add, update, and delete role bindings to a particular scope for identity and access management through Tanzu Mission Control.
+The `tanzu_mission_control_iam_policy` resource allows you to add, update, and delete role bindings to a particular scope for identity and access management through Tanzu Mission Control.
 
 IAM policy (also known as Access Management) allows you to implement role-based access control (RBAC) in Tanzu Mission Control. For more information, see [Access Control.][access-control]
 
@@ -43,7 +43,7 @@ For more information, see [Managing Access to Resources.][managing-access]
  This resource is applied on an organization to provision the role bindings on the associated organization.
  The defined scope block can be updated to change the access policy's scope.
  */
-resource "tanzu-mission-control_iam_policy" "organization_scoped_iam_policy" {
+resource "tanzu_mission_control_iam_policy" "organization_scoped_iam_policy" {
   scope {
     organization {
       org_id = "dummy-org-id"
@@ -81,7 +81,7 @@ resource "tanzu-mission-control_iam_policy" "organization_scoped_iam_policy" {
  This resource is applied on a cluster group to provision the role bindings on the associated cluster group.
  The defined scope block can be updated to change the access policy's scope.
  */
-resource "tanzu-mission-control_iam_policy" "cluster_group_scoped_iam_policy" {
+resource "tanzu_mission_control_iam_policy" "cluster_group_scoped_iam_policy" {
   scope {
     cluster_group {
       name = "default"
@@ -115,7 +115,7 @@ resource "tanzu-mission-control_iam_policy" "cluster_group_scoped_iam_policy" {
  This resource is applied on a cluster to provision the role bindings on the associated cluster.
  The defined scope block can be updated to change the access policy's scope.
  */
-resource "tanzu-mission-control_iam_policy" "cluster_scoped_iam_policy" {
+resource "tanzu_mission_control_iam_policy" "cluster_scoped_iam_policy" {
   scope {
     cluster {
       management_cluster_name = "attached" # Default: attached
@@ -155,7 +155,7 @@ resource "tanzu-mission-control_iam_policy" "cluster_scoped_iam_policy" {
  This resource is applied on a workspace to provision the role bindings on the associated workspace.
  The defined scope block can be updated to change the access policy's scope.
  */
-resource "tanzu-mission-control_iam_policy" "workspace_scoped_iam_policy" {
+resource "tanzu_mission_control_iam_policy" "workspace_scoped_iam_policy" {
   scope {
     workspace {
       name = "tf-workspace"
@@ -182,7 +182,7 @@ resource "tanzu-mission-control_iam_policy" "workspace_scoped_iam_policy" {
  This resource is applied on a namespace to provision the role bindings on the associated namespace.
  The defined scope block can be updated to change the access policy's scope.
  */
-resource "tanzu-mission-control_iam_policy" "namespace_scoped_iam_policy" {
+resource "tanzu_mission_control_iam_policy" "namespace_scoped_iam_policy" {
   scope {
     namespace {
       management_cluster_name = "attached" # Default: attached

@@ -17,7 +17,7 @@ For leveraging this feature via the terraform provider, use the following config
 
 ```terraform
 # Create Tanzu Mission Control TSM Integration resource
-resource "tanzu-mission-control_integration" "create_tsm-integration" {
+resource "tanzu_mission_control_integration" "create_tsm-integration" {
   management_cluster_name = "attached"
   provisioner_name        = "attached"
   cluster_name            = "test-cluster"

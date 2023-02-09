@@ -1,10 +1,10 @@
 // Read Tanzu Mission Control Image Registry credential: fetch details
-data "tanzu-mission-control_credential" "test_cred" {
+data "tanzu_mission_control_credential" "test_cred" {
   name = "<credential-name>"
 }
 
 // Create/ Delete Tanzu Mission Control Image Registry credential
-resource "tanzu-mission-control_credential" "img_reg_cred" {
+resource "tanzu_mission_control_credential" "img_reg_cred" {
   name = "<credential-name>"
 
   meta {

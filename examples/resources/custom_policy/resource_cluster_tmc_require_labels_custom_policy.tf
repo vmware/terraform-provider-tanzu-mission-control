@@ -3,7 +3,7 @@ Cluster scoped Tanzu Mission Control custom policy with tmc-require-labels input
 This policy is applied to a cluster with the tmc-require-labels configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "cluster_scoped_tmc-require-labels_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_scoped_tmc-require-labels_custom_policy" {
   name = "tf-custom-test"
 
   scope {

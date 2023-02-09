@@ -1,5 +1,5 @@
 // Create/ Delete/ Update Tanzu Mission Control cluster scoped custom security policy entry
-resource "tanzu-mission-control_security_policy" "cluster_scoped_custom_security_policy" {
+resource "tanzu_mission_control_security_policy" "cluster_scoped_custom_security_policy" {
   name = "<security-policy-name>"
 
   scope {

@@ -6,7 +6,7 @@ Description: |-
 
 # Cluster
 
-The `tanzu-mission-control_cluster` resource enables you to attach conformant Kubernetes clusters for management through Tanzu Mission Control.
+The `tanzu_mission_control_cluster` resource enables you to attach conformant Kubernetes clusters for management through Tanzu Mission Control.
 With Tanzu Kubernetes clusters, you can also provision resources to create new workload clusters.
 
 A Tanzu Kubernetes cluster is an opinionated installation of Kubernetes open-source software that is built and supported by VMware.
@@ -28,7 +28,7 @@ For more information, please refer [Attach a Cluster.][attach-cluster]
 
 ```terraform
 # Create Tanzu Mission Control attach cluster entry
-resource "tanzu-mission-control_cluster" "attach_cluster_without_apply" {
+resource "tanzu_mission_control_cluster" "attach_cluster_without_apply" {
   management_cluster_name = "attached"         # Default: attached
   provisioner_name        = "attached"         # Default: attached
   name                    = "terraform-attach" # Required
@@ -54,7 +54,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_without_apply" {
 ```terraform
 # Create Tanzu Mission Control attach cluster with k8s cluster kubeconfig provided
 # The provider would create the cluster entry and apply the deployment link manifests on to the k8s kubeconfig provided.
-resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
+resource "tanzu_mission_control_cluster" "attach_cluster_with_kubeconfig" {
   management_cluster_name = "attached"     # Default: attached
   provisioner_name        = "attached"     # Default: attached
   name                    = "demo-cluster" # Required
@@ -84,7 +84,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
 
 ```terraform
 # Create Tanzu Mission Control attach cluster entry with proxy
-resource "tanzu-mission-control_cluster" "attach_cluster_with_proxy" {
+resource "tanzu_mission_control_cluster" "attach_cluster_with_proxy" {
   management_cluster_name = "attached"               # Default: attached
   provisioner_name        = "attached"               # Default: attached
   name                    = "terraform-attach-proxy" # Required
@@ -123,7 +123,7 @@ You must also have the appropriate permissions:
 
 ```terraform
 # Create Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
+resource "tanzu_mission_control_cluster" "create_tkgs_workload" {
   management_cluster_name = "tkgs-terraform"
   provisioner_name        = "test-gc-e2e-demo-ns"
   name                    = "tkgs-workload"
@@ -226,7 +226,7 @@ You must also have the appropriate permissions:
 
 ```terraform
 # Create a Tanzu Kubernetes Grid Vsphere workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
+resource "tanzu_mission_control_cluster" "create_tkg_vsphere_cluster" {
   management_cluster_name = "tkgm-terraform"
   provisioner_name        = "default"
   name                    = "tkgm-workload"
@@ -334,7 +334,7 @@ You must also have the appropriate permissions:
 
 ```terraform
 # Create a Tanzu Mission Control Tanzu Kubernetes Grid AWS workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
+resource "tanzu_mission_control_cluster" "create_tkg_aws_cluster" {
   management_cluster_name = "tkgm-aws-terraform" // Default: attached
   provisioner_name        = "default"            // Default: attached
   name                    = "tkgm-aws-workload"  // Required

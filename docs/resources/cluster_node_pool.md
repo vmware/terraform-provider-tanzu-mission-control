@@ -15,7 +15,7 @@ because Tanzu Mission Control cannot provision additional resources in a cluster
 
 ```terraform
 # Create Tanzu Mission Control nodepool entry
-resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
+resource "tanzu_mission_control_cluster_node_pool" "create_node_pool" {
 
   management_cluster_name = "tkgs-terraform"
   provisioner_name = "test-gc-e2e-demo-ns"

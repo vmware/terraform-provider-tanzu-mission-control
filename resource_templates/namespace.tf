@@ -2,7 +2,7 @@
 // Operations supported : Read, Create, Update & Delete
 
 // Read Tanzu Mission Control namespace : fetch namespace details
-data "tanzu-mission-control_namespace" "read_namespace" {
+data "tanzu_mission_control_namespace" "read_namespace" {
   name                    = "<namespace-name>"     // Required
   cluster_name            = "<cluster-name>"       // Required
   management_cluster_name = "<management-cluster>" // Default: attached
@@ -10,7 +10,7 @@ data "tanzu-mission-control_namespace" "read_namespace" {
 }
 
 // Create Tanzu Mission Control namespace entry
-resource "tanzu-mission-control_namespace" "create_namespace" {
+resource "tanzu_mission_control_namespace" "create_namespace" {
   name                    = "<namespace-name>"     // Required
   cluster_name            = "<cluster_name>"       // Required
   provisioner_name        = "<prov-name>"          // Default: attached
@@ -28,7 +28,7 @@ resource "tanzu-mission-control_namespace" "create_namespace" {
 }
 
 // Create Tanzu Mission Control namespace entry with minimal information
-resource "tanzu-mission-control_namespace" "create_namespace_min_info" {
+resource "tanzu_mission_control_namespace" "create_namespace_min_info" {
   name         = "<namespace-name>" // Required
   cluster_name = "<cluster_name>"   // Required
 }

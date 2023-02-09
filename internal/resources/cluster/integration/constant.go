@@ -6,7 +6,7 @@ SPDX-License-Identifier: MPL-2.0
 package integration
 
 const (
-	ResourceName = "tanzu-mission-control_integration"
+	ResourceName = "tanzu_mission_control_integration"
 
 	attachedValue               = "attached"
 	clusterNameKey              = "cluster_name"

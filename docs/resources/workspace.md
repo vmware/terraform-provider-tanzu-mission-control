@@ -20,7 +20,7 @@ For more information, please refer [create a Workspace.][workspace]
 
 ```terraform
 # Create Tanzu Mission Control workspace
-resource "tanzu-mission-control_workspace" "create_workspace" {
+resource "tanzu_mission_control_workspace" "create_workspace" {
   name = "tf-workspace-test"
 
   meta {

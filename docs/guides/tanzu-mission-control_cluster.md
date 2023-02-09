@@ -5,7 +5,7 @@ Description: |-
 ---
 # Cluster
 
-The `tanzu-mission-control_cluster` resource enables you to attach conformant Kubernetes clusters for management through Tanzu Mission Control.
+The `tanzu_mission_control_cluster` resource enables you to attach conformant Kubernetes clusters for management through Tanzu Mission Control.
 With Tanzu Kubernetes clusters, you can also provision resources to create new workload clusters.
 
 ## Tanzu Kubernetes Grid Service Workload Cluster
@@ -43,14 +43,14 @@ This example assumes that you have already registered a Tanzu Kubernetes Grid Se
 // Operations supported : Read, Create, Update & Delete (except nodepools)
 
 // Read Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster : fetch cluster details
-data "tanzu-mission-control_cluster" "ready_only_cluster_view" {
+data "tanzu_mission_control_cluster" "ready_only_cluster_view" {
   management_cluster_name = "<management-cluster>" // Required
   provisioner_name        = "<prov-name>"          // Required
   name                    = "<cluster-name>"       // Required
 }
 
 # Create Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
+resource "tanzu_mission_control_cluster" "create_tkgs_workload" {
   management_cluster_name = "<management-cluster>"
   provisioner_name        = "<prov-name>"
   name                    = "<cluster-name>"
@@ -163,14 +163,14 @@ This example assumes that you have already registered a Tanzu Kubernetes Grid ma
 // Operations supported : Read, Create, Update & Delete (except nodepools)
 
 // Read Tanzu Mission Control Tanzu Kubernetes Grid vSphere workload cluster : fetch cluster details
-data "tanzu-mission-control_cluster" "ready_only_cluster_view" {
+data "tanzu_mission_control_cluster" "ready_only_cluster_view" {
   management_cluster_name = "<management-cluster>" // Required
   provisioner_name        = "<prov-name>"          // Required
   name                    = "<cluster-name>"       // Required
 }
 
 // Create Tanzu Mission Control Tanzu Kubernetes Grid vSphere workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
+resource "tanzu_mission_control_cluster" "create_tkg_vsphere_cluster" {
   management_cluster_name = "<management-cluster>" // Default: attached
   provisioner_name        = "<prov-name>"          // Default: attached
   name                    = "<cluster-name>"       // Required
@@ -293,14 +293,14 @@ This example assumes that you have already registered a Tanzu Kubernetes Grid ma
 // Operations supported : Read, Create, Update & Delete (except nodepools)
 
 // Read Tanzu Mission Control Tanzu Kubernetes Grid AWS workload cluster : fetch cluster details
-data "tanzu-mission-control_cluster" "ready_only_cluster_view" {
+data "tanzu_mission_control_cluster" "ready_only_cluster_view" {
   management_cluster_name = "<management-cluster>" // Required
   provisioner_name        = "<prov-name>"          // Required
   name                    = "<cluster-name>"       // Required
 }
 
 // Create Tanzu Mission Control Tanzu Kubernetes Grid AWS workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
+resource "tanzu_mission_control_cluster" "create_tkg_aws_cluster" {
   management_cluster_name = "<management-cluster>" // Default: attached
   provisioner_name        = "<prov-name>"          // Default: attached
   name                    = "<cluster-name>"       // Required

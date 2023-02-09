@@ -1,5 +1,5 @@
 # Create credential for Tanzu Observability
-resource "tanzu-mission-control_credential" "tanzu_observability_cred" {
+resource "tanzu_mission_control_credential" "tanzu_observability_cred" {
   name = "tanzu_observability_cred"
 
   meta {

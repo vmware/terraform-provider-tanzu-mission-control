@@ -3,7 +3,7 @@ Cluster scoped Tanzu Mission Control security policy with baseline input recipe.
 This policy is applied to a cluster with the baseline configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_security_policy" "cluster_scoped_baseline_security_policy" {
+resource "tanzu_mission_control_security_policy" "cluster_scoped_baseline_security_policy" {
   name = "tf-sp-test"
 
   scope {

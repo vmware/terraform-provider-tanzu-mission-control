@@ -6,7 +6,7 @@ SPDX-License-Identifier: MPL-2.0
 package iampolicy
 
 const (
-	ResourceName      = "tanzu-mission-control_iam_policy"
+	ResourceName      = "tanzu_mission_control_iam_policy"
 	scopeKey          = "scope"
 	clusterKey        = "cluster"
 	clusterGroupKey   = "cluster_group"

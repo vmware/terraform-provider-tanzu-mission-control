@@ -12,7 +12,7 @@ terraform {
 }
 
 # Create workspace
-resource "tanzu-mission-control_workspace" "create_workspace" {
+resource "tanzu_mission_control_workspace" "create_workspace" {
   name = "demo-workspace"
 
   meta {
@@ -24,13 +24,13 @@ resource "tanzu-mission-control_workspace" "create_workspace" {
 }
 
 # Create cluster group
-resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
+resource "tanzu_mission_control_cluster_group" "create_cluster_group" {
   name = "demo-cluster-group"
 }
 
 # Attach a Tanzu Mission Control cluster with k8s cluster kubeconfig provided
 # The provider would create the cluster entry and apply the deployment link manifests on to the k8s kubeconfig provided.
-resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
+resource "tanzu_mission_control_cluster" "attach_cluster_with_kubeconfig" {
   management_cluster_name = "attached"     // Default: attached
   provisioner_name        = "attached"     // Default: attached
   name                    = "demo-cluster" // Required
@@ -46,7 +46,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
   }
 
   spec {
-    cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name // Default: default
+    cluster_group = tanzu_mission_control_cluster_group.create_cluster_group.name // Default: default
   }
 
   ready_wait_timeout = "15m" # Default: waits until 3 min for the cluster to become ready
@@ -54,9 +54,9 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
 }
 
 # Create namespace with attached set as 'true' (need a running cluster)
-resource "tanzu-mission-control_namespace" "create_namespace" {
+resource "tanzu_mission_control_namespace" "create_namespace" {
   name                    = "demo-namespace"                                                  // Required
-  cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name // Required
+  cluster_name            = tanzu_mission_control_cluster.attach_cluster_with_kubeconfig.name // Required
   provisioner_name        = "attached"                                                        // Default: attached
   management_cluster_name = "attached"                                                        // Default: attached
 
@@ -66,13 +66,13 @@ resource "tanzu-mission-control_namespace" "create_namespace" {
   }
 
   spec {
-    workspace_name = tanzu-mission-control_workspace.create_workspace.name // Default: default
+    workspace_name = tanzu_mission_control_workspace.create_workspace.name // Default: default
     attach         = true
   }
 }
 
 # Create Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkgs_workload_cluster" {
+resource "tanzu_mission_control_cluster" "create_tkgs_workload_cluster" {
   management_cluster_name = "tkgs-terraform"
   provisioner_name        = "test-gc-e2e-demo-ns"
   name                    = "tkgs-workload"
@@ -151,7 +151,7 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload_cluster" {
 }
 
 # Create a Tanzu Kubernetes Grid vSphere workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
+resource "tanzu_mission_control_cluster" "create_tkg_vsphere_cluster" {
   management_cluster_name = "tkgm-terraform"
   provisioner_name        = "default"
   name                    = "tkgm-workload"
@@ -234,7 +234,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
 }
 
 # Create Tanzu Mission Control Tanzu Kubernetes Grid AWS workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
+resource "tanzu_mission_control_cluster" "create_tkg_aws_cluster" {
   management_cluster_name = "tkgm-aws"          // Default: attached
   provisioner_name        = "default"           // Default: attached
   name                    = "tkgm-aws-workload" // Required
@@ -317,7 +317,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
 }
 
 # Create Tanzu Mission Control nodepool entry
-resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
+resource "tanzu_mission_control_cluster_node_pool" "create_node_pool" {
 
   management_cluster_name = "tkgs-terraform"
   provisioner_name        = "test-gc-e2e-demo-ns"
@@ -335,7 +335,7 @@ resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
 }
 
 # Organization scoped Role Bindings
-resource "tanzu-mission-control_iam_policy" "organization_scoped_iam_policy" {
+resource "tanzu_mission_control_iam_policy" "organization_scoped_iam_policy" {
   scope {
     organization {
       org_id = "dummy-org-id"
@@ -363,10 +363,10 @@ resource "tanzu-mission-control_iam_policy" "organization_scoped_iam_policy" {
 }
 
 # Cluster group scoped Role Bindings
-resource "tanzu-mission-control_iam_policy" "cluster_group_scoped_iam_policy" {
+resource "tanzu_mission_control_iam_policy" "cluster_group_scoped_iam_policy" {
   scope {
     cluster_group {
-      name = tanzu-mission-control_cluster_group.create_cluster_group.name
+      name = tanzu_mission_control_cluster_group.create_cluster_group.name
     }
   }
 
@@ -387,12 +387,12 @@ resource "tanzu-mission-control_iam_policy" "cluster_group_scoped_iam_policy" {
 }
 
 # Cluster scoped Role Bindings
-resource "tanzu-mission-control_iam_policy" "cluster_scoped_iam_policy" {
+resource "tanzu_mission_control_iam_policy" "cluster_scoped_iam_policy" {
   scope {
     cluster {
-      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name
-      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name
-      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name
+      management_cluster_name = tanzu_mission_control_cluster.attach_cluster_with_kubeconfig.management_cluster_name
+      provisioner_name        = tanzu_mission_control_cluster.attach_cluster_with_kubeconfig.provisioner_name
+      name                    = tanzu_mission_control_cluster.attach_cluster_with_kubeconfig.name
     }
   }
 
@@ -417,10 +417,10 @@ resource "tanzu-mission-control_iam_policy" "cluster_scoped_iam_policy" {
 }
 
 # Workspace scoped Role Bindings
-resource "tanzu-mission-control_iam_policy" "workspace_scoped_iam_policy" {
+resource "tanzu_mission_control_iam_policy" "workspace_scoped_iam_policy" {
   scope {
     workspace {
-      name = tanzu-mission-control_workspace.create_workspace.name
+      name = tanzu_mission_control_workspace.create_workspace.name
     }
   }
 
@@ -434,13 +434,13 @@ resource "tanzu-mission-control_iam_policy" "workspace_scoped_iam_policy" {
 }
 
 # Namespace scoped Role Bindings
-resource "tanzu-mission-control_iam_policy" "namespace_scoped_iam_policy" {
+resource "tanzu_mission_control_iam_policy" "namespace_scoped_iam_policy" {
   scope {
     namespace {
-      management_cluster_name = tanzu-mission-control_namespace.create_namespace.management_cluster_name
-      provisioner_name        = tanzu-mission-control_namespace.create_namespace.provisioner_name
-      cluster_name            = tanzu-mission-control_namespace.create_namespace.cluster_name
-      name                    = tanzu-mission-control_namespace.create_namespace.name
+      management_cluster_name = tanzu_mission_control_namespace.create_namespace.management_cluster_name
+      provisioner_name        = tanzu_mission_control_namespace.create_namespace.provisioner_name
+      cluster_name            = tanzu_mission_control_namespace.create_namespace.cluster_name
+      name                    = tanzu_mission_control_namespace.create_namespace.name
     }
   }
 
@@ -459,7 +459,7 @@ resource "tanzu-mission-control_iam_policy" "namespace_scoped_iam_policy" {
 
 
 # Organization scoped Baseline Security Policy
-resource "tanzu-mission-control_security_policy" "organization_scoped_baseline_security_policy" {
+resource "tanzu_mission_control_security_policy" "organization_scoped_baseline_security_policy" {
   scope {
     organization{
       organization = "dummy-org-id"
@@ -493,10 +493,10 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_baseline_s
 }
 
 # Cluster group scoped Baseline Security Policy
-resource "tanzu-mission-control_security_policy" "cluster_group_scoped_baseline_security_policy" {
+resource "tanzu_mission_control_security_policy" "cluster_group_scoped_baseline_security_policy" {
   scope {
     cluster_group{
-      cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name
+      cluster_group = tanzu_mission_control_cluster_group.create_cluster_group.name
     }
   }
 
@@ -527,12 +527,12 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_baseline_
 }
 
 # Cluster scoped Baseline Security Policy
-resource "tanzu-mission-control_security_policy" "cluster_scoped_baseline_security_policy" {
+resource "tanzu_mission_control_security_policy" "cluster_scoped_baseline_security_policy" {
   scope {
     cluster{
-      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name
-      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name
-      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name
+      management_cluster_name = tanzu_mission_control_cluster.attach_cluster_with_kubeconfig.management_cluster_name
+      provisioner_name        = tanzu_mission_control_cluster.attach_cluster_with_kubeconfig.provisioner_name
+      name                    = tanzu_mission_control_cluster.attach_cluster_with_kubeconfig.name
     }
   }
 
@@ -563,7 +563,7 @@ resource "tanzu-mission-control_security_policy" "cluster_scoped_baseline_securi
 }
 
 # Organization scoped Custom Security Policy
-resource "tanzu-mission-control_security_policy" "organization_scoped_custom_security_policy" {
+resource "tanzu_mission_control_security_policy" "organization_scoped_custom_security_policy" {
   scope {
     organization{
       organization = "dummy-org-id"
@@ -712,10 +712,10 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_custom_sec
 }
 
 # Cluster group scoped Custom Security Policy
-resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_security_policy" {
+resource "tanzu_mission_control_security_policy" "cluster_group_scoped_custom_security_policy" {
   scope {
     cluster_group{
-      cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name
+      cluster_group = tanzu_mission_control_cluster_group.create_cluster_group.name
     }
   }
 
@@ -861,12 +861,12 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_custom_se
 }
 
 # Cluster scoped Custom Security Policy
-resource "tanzu-mission-control_security_policy" "cluster_scoped_custom_security_policy" {
+resource "tanzu_mission_control_security_policy" "cluster_scoped_custom_security_policy" {
   scope {
     cluster{
-      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name
-      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name
-      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name
+      management_cluster_name = tanzu_mission_control_cluster.attach_cluster_with_kubeconfig.management_cluster_name
+      provisioner_name        = tanzu_mission_control_cluster.attach_cluster_with_kubeconfig.provisioner_name
+      name                    = tanzu_mission_control_cluster.attach_cluster_with_kubeconfig.name
     }
   }
 
@@ -1012,7 +1012,7 @@ resource "tanzu-mission-control_security_policy" "cluster_scoped_custom_security
 }
 
 # Organization scoped Strict Security Policy
-resource "tanzu-mission-control_security_policy" "organization_scoped_strict_security_policy" {
+resource "tanzu_mission_control_security_policy" "organization_scoped_strict_security_policy" {
   scope {
     organization{
       organization = "dummy-org-id"
@@ -1046,10 +1046,10 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_strict_sec
 }
 
 # Cluster group scoped Strict Security Policy
-resource "tanzu-mission-control_security_policy" "cluster_group_scoped_strict_security_policy" {
+resource "tanzu_mission_control_security_policy" "cluster_group_scoped_strict_security_policy" {
   scope {
     cluster_group{
-      cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name
+      cluster_group = tanzu_mission_control_cluster_group.create_cluster_group.name
     }
   }
 
@@ -1080,12 +1080,12 @@ resource "tanzu-mission-control_security_policy" "cluster_group_scoped_strict_se
 }
 
 # Cluster scoped Strict Security Policy
-resource "tanzu-mission-control_security_policy" "cluster_scoped_strict_security_policy" {
+resource "tanzu_mission_control_security_policy" "cluster_scoped_strict_security_policy" {
   scope {
     cluster{
-      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name
-      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name
-      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name
+      management_cluster_name = tanzu_mission_control_cluster.attach_cluster_with_kubeconfig.management_cluster_name
+      provisioner_name        = tanzu_mission_control_cluster.attach_cluster_with_kubeconfig.provisioner_name
+      name                    = tanzu_mission_control_cluster.attach_cluster_with_kubeconfig.name
     }
   }
 

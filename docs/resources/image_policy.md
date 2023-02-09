@@ -49,7 +49,7 @@ Workspace scoped Tanzu Mission Control image policy with allowed-name-tag input 
 This policy is applied to a workspace with the allowed-name-tag configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_image_policy" "workspace_scoped_allowed-name-tag_image_policy" {
+resource "tanzu_mission_control_image_policy" "workspace_scoped_allowed-name-tag_image_policy" {
   name = "tf-image-test"
 
   scope {
@@ -101,7 +101,7 @@ Workspace scoped Tanzu Mission Control image policy with block-latest-tag input 
 This policy is applied to a workspace with the block-latest-tag configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_image_policy" "workspace_scoped_block-latest-tag_image_policy" {
+resource "tanzu_mission_control_image_policy" "workspace_scoped_block-latest-tag_image_policy" {
   name = "tf-image-test"
 
   scope {
@@ -146,7 +146,7 @@ Workspace scoped Tanzu Mission Control image policy with custom input recipe.
 This policy is applied to a workspace with the custom configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_image_policy" "workspace_scoped_custom_image_policy" {
+resource "tanzu_mission_control_image_policy" "workspace_scoped_custom_image_policy" {
   name = "tf-image-test"
 
   scope {
@@ -201,7 +201,7 @@ Workspace scoped Tanzu Mission Control image policy with require-digest input re
 This policy is applied to a workspace with the require-digest configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_image_policy" "workspace_scoped_require-digest_image_policy" {
+resource "tanzu_mission_control_image_policy" "workspace_scoped_require-digest_image_policy" {
   name = "tf-image-test"
 
   scope {
@@ -246,7 +246,7 @@ Organization scoped Tanzu Mission Control image policy with allowed-name-tag inp
 This policy is applied to a organization with the allowed-name-tag configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_image_policy" "organization_scoped_allowed-name-tag_image_policy" {
+resource "tanzu_mission_control_image_policy" "organization_scoped_allowed-name-tag_image_policy" {
   name = "tf-image-test"
 
   scope {
@@ -298,7 +298,7 @@ Organization scoped Tanzu Mission Control image policy with block-latest-tag inp
 This policy is applied to a organization with the block-latest-tag configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_image_policy" "organization_scoped_block-latest-tag_image_policy" {
+resource "tanzu_mission_control_image_policy" "organization_scoped_block-latest-tag_image_policy" {
   name = "tf-image-test"
 
   scope {
@@ -343,7 +343,7 @@ Organization scoped Tanzu Mission Control image policy with custom input recipe.
 This policy is applied to a organization with the custom configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_image_policy" "organization_scoped_custom_image_policy" {
+resource "tanzu_mission_control_image_policy" "organization_scoped_custom_image_policy" {
   name = "tf-image-test"
 
   scope {
@@ -398,7 +398,7 @@ Organization scoped Tanzu Mission Control image policy with require-digest input
 This policy is applied to a organization with the require-digest configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_image_policy" "organization_scoped_require-digest_image_policy" {
+resource "tanzu_mission_control_image_policy" "organization_scoped_require-digest_image_policy" {
   name = "tf-image-test"
 
   scope {

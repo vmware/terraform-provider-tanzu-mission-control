@@ -3,7 +3,7 @@ Organization scoped Tanzu Mission Control custom policy with tmc-block-rolebindi
 This policy is applied to a organization with the tmc-block-rolebinding-subjects configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-block-rolebinding-subjects_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "organization_scoped_tmc-block-rolebinding-subjects_custom_policy" {
   name = "tf-custom-test"
 
   scope {

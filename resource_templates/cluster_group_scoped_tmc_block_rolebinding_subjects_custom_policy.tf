@@ -1,5 +1,5 @@
 // Create/ Delete/ Update Tanzu Mission Control cluster group scoped tmc-block-rolebinding-subjects custom policy entry
-resource "tanzu-mission-control_custom_policy" "cluster_group_scoped_tmc-block-rolebinding-subjects_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_group_scoped_tmc-block-rolebinding-subjects_custom_policy" {
   name = "<custom-policy-name>"
 
   scope {

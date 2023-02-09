@@ -1,10 +1,10 @@
 // Read Tanzu Mission Control AWS_EKS credential: fetch details
-data "tanzu-mission-control_credential" "test_cred" {
+data "tanzu_mission_control_credential" "test_cred" {
   name = "<credential-name>"
 }
 
 // Create/ Delete Tanzu Mission Control AWS_EKS credential
-resource "tanzu-mission-control_credential" "aws_eks_cred" {
+resource "tanzu_mission_control_credential" "aws_eks_cred" {
   name = "<credential-name>"
 
   meta {

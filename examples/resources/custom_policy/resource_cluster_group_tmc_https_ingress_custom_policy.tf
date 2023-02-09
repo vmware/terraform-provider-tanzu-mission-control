@@ -3,7 +3,7 @@ Cluster group scoped Tanzu Mission Control custom policy with tmc-https-ingress 
 This policy is applied to a cluster group with the tmc-https-ingress configuration option.
 The defined scope and input blocks can be updated to change the policy's scope and recipe, respectively.
 */
-resource "tanzu-mission-control_custom_policy" "cluster_group_scoped_tmc-https-ingress_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_group_scoped_tmc-https-ingress_custom_policy" {
   name = "tf-custom-test"
 
   scope {

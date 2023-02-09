@@ -18,11 +18,11 @@ import (
 )
 
 const (
-	namespaceResource      = "tanzu-mission-control_namespace"
+	namespaceResource      = "tanzu_mission_control_namespace"
 	namespaceResourceVar   = "test_namespace"
 	namespaceDataSourceVar = "test_data_namespace"
 
-	clusterResource    = "tanzu-mission-control_cluster"
+	clusterResource    = "tanzu_mission_control_cluster"
 	clusterResourceVar = "tmc_cluster_test"
 )
 
@@ -75,7 +75,7 @@ resource "%s" "%s" {
 
 resource "%s" "%s" {
   name = "%s"
-  cluster_name = tanzu-mission-control_cluster.tmc_cluster_test.name
+  cluster_name = tanzu_mission_control_cluster.tmc_cluster_test.name
   
   spec {
     workspace_name = "default"
@@ -84,8 +84,8 @@ resource "%s" "%s" {
 }
 
 data "%s" "%s" {
-  name = tanzu-mission-control_namespace.test_namespace.name
-  cluster_name = tanzu-mission-control_namespace.test_namespace.cluster_name
+  name = tanzu_mission_control_namespace.test_namespace.name
+  cluster_name = tanzu_mission_control_namespace.test_namespace.cluster_name
 }
 `, clusterResource, clusterResourceVar, clusterName, kubeconfigPath, meta, namespaceResource,
 		namespaceResourceVar, namespaceName, namespaceResource, namespaceDataSourceVar)

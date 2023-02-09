@@ -3,7 +3,7 @@
  This resource is applied on an organization to provision the role bindings on the associated organization.
  The defined scope block can be updated to change the access policy's scope.
  */
-resource "tanzu-mission-control_iam_policy" "organization_scoped_iam_policy" {
+resource "tanzu_mission_control_iam_policy" "organization_scoped_iam_policy" {
   scope {
     organization {
       org_id = "dummy-org-id"

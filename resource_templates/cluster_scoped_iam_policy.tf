@@ -1,5 +1,5 @@
 // Create/ Delete/ Update Tanzu Mission Control cluster scoped iam policy entry
-resource "tanzu-mission-control_iam_policy" "cluster_scoped_iam_policy" {
+resource "tanzu_mission_control_iam_policy" "cluster_scoped_iam_policy" {
   scope {
     cluster {
       management_cluster_name = "<management-cluster>" // Default: attached

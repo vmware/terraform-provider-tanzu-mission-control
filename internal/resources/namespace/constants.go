@@ -16,5 +16,5 @@ const (
 	workspaceNameKey          = "workspace_name"
 	workspaceNameDefaultValue = "default"
 	attachKey                 = "attach"
-	ResourceName              = "tanzu-mission-control_namespace"
+	ResourceName              = "tanzu_mission_control_namespace"
 )

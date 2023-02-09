@@ -1,5 +1,5 @@
 // Create/ Delete/ Update Tanzu Mission Control cluster scoped tmc-block-nodeport-service custom policy entry
-resource "tanzu-mission-control_custom_policy" "cluster_scoped_tmc-block-nodeport-service_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "cluster_scoped_tmc-block-nodeport-service_custom_policy" {
   name = "<custom-policy-name>"
 
   scope {

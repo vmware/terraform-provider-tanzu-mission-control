@@ -1,10 +1,10 @@
 // Read credential for Tanzu Observability: fetch details
-data "tanzu-mission-control_credential" "test_cred" {
+data "tanzu_mission_control_credential" "test_cred" {
   name = "<credential-name>"
 }
 
 // Create/ Delete credential for Tanzu Observability
-resource "tanzu-mission-control_credential" "tanzu_observability_cred" {
+resource "tanzu_mission_control_credential" "tanzu_observability_cred" {
   name = "<credential-name>"
 
   meta {

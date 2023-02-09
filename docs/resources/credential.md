@@ -10,7 +10,7 @@ Description: |-
 
 ```terraform
 # Create AWS_EKS credential
-resource "tanzu-mission-control_credential" "aws_eks_cred" {
+resource "tanzu_mission_control_credential" "aws_eks_cred" {
   name = "test-cred-name"
 
   meta {
@@ -42,7 +42,7 @@ resource "tanzu-mission-control_credential" "aws_eks_cred" {
 
 ```terraform
 # Create IMAGE_REGISTRY credential
-resource "tanzu-mission-control_credential" "img_reg_cred" {
+resource "tanzu_mission_control_credential" "img_reg_cred" {
   name = "test-cred-name"
 
   meta {
@@ -76,7 +76,7 @@ resource "tanzu-mission-control_credential" "img_reg_cred" {
 
 ```terraform
 # Create cluster proxy credential
-resource "tanzu-mission-control_credential" "proxy_cred" {
+resource "tanzu_mission_control_credential" "proxy_cred" {
   name = "proxy_cred"
 
   meta {
@@ -115,7 +115,7 @@ resource "tanzu-mission-control_credential" "proxy_cred" {
 
 ```terraform
 # Create credential for TMC provisioned AWS S3 storage used for data-protection
-resource "tanzu-mission-control_credential" "tmc_provisioned_aws_s3_cred" {
+resource "tanzu_mission_control_credential" "tmc_provisioned_aws_s3_cred" {
   name = "aws_s3_cred"
 
   meta {
@@ -145,7 +145,7 @@ resource "tanzu-mission-control_credential" "tmc_provisioned_aws_s3_cred" {
 
 ```terraform
 # Create credential for Tanzu Observability
-resource "tanzu-mission-control_credential" "tanzu_observability_cred" {
+resource "tanzu_mission_control_credential" "tanzu_observability_cred" {
   name = "tanzu_observability_cred"
 
   meta {

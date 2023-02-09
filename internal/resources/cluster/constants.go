@@ -17,7 +17,7 @@ const (
 	attachClusterKey            = "attach_k8s_cluster"
 	attachClusterDescriptionKey = "description"
 	waitKey                     = "ready_wait_timeout"
-	ResourceName                = "tanzu-mission-control_cluster"
+	ResourceName                = "tanzu_mission_control_cluster"
 	tkgAWSClusterKey            = "tkg_aws"
 	tkgServiceVsphereKey        = "tkg_service_vsphere"
 	tkgVsphereClusterKey        = "tkg_vsphere"

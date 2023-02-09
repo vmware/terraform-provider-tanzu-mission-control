@@ -2,14 +2,14 @@
 // Operations supported : Read, Create, Update & Delete
 
 // Read Tanzu Mission Control cluster : fetch cluster details
-data "tanzu-mission-control_cluster" "ready_only_cluster_view" {
+data "tanzu_mission_control_cluster" "ready_only_cluster_view" {
   management_cluster_name = "<management-cluster>" // Default: attached
   provisioner_name        = "<prov-name>"          // Default: attached
   name                    = "<cluster-name>"       // Required
 }
 
 // Create Tanzu Mission Control attach cluster entry
-resource "tanzu-mission-control_cluster" "attach_cluster" {
+resource "tanzu_mission_control_cluster" "attach_cluster" {
   management_cluster_name = "<management-cluster>" // Default: attached
   provisioner_name        = "<prov-name>"          // Default: attached
   name                    = "<cluster-name>"       // Required
@@ -30,7 +30,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster" {
 
 // Create Tanzu Mission Control attach cluster with k8s cluster kubeconfig provided
 // The provider would create the cluster entry and apply the deployment link manifests on to the k8s kubeconfig provided.
-resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
+resource "tanzu_mission_control_cluster" "attach_cluster_with_kubeconfig" {
   management_cluster_name = "<management-cluster>" // Default: attached
   provisioner_name        = "<prov-name>"          // Default: attached
   name                    = "<cluster-name>"       // Required
@@ -53,6 +53,6 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
 }
 
 // Create Tanzu Mission Control attach cluster entry with minimal information
-resource "tanzu-mission-control_cluster" "attach_cluster_minimal" {
+resource "tanzu_mission_control_cluster" "attach_cluster_minimal" {
   name = "<cluster-name>" // Required
 }

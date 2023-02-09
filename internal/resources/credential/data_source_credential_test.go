@@ -64,7 +64,7 @@ spec {
 }
 
 data "%s" "%s" {
-  name = tanzu-mission-control_credential.test_credential.name
+  name = tanzu_mission_control_credential.test_credential.name
 }
 `, credentialResource, credentialResourceVar, credName, meta, credentialResource, credentialDataSourceVar)
 }

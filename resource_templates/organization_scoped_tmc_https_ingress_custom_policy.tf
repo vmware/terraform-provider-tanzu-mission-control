@@ -1,5 +1,5 @@
 // Create/ Delete/ Update Tanzu Mission Control organization scoped tmc-https-ingress custom policy entry
-resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-https-ingress_custom_policy" {
+resource "tanzu_mission_control_custom_policy" "organization_scoped_tmc-https-ingress_custom_policy" {
   name = "<custom-policy-name>"
 
   scope {

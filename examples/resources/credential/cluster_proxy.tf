@@ -1,5 +1,5 @@
 # Create cluster proxy credential
-resource "tanzu-mission-control_credential" "proxy_cred" {
+resource "tanzu_mission_control_credential" "proxy_cred" {
   name = "proxy_cred"
 
   meta {

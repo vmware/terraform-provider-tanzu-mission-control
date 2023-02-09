@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	ResourceName = "tanzu-mission-control_cluster_node_pool"
+	ResourceName = "tanzu_mission_control_cluster_node_pool"
 )
 
 func ResourceNodePool() *schema.Resource {

@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ResourceName     = "tanzu-mission-control_image_policy"
+	ResourceName     = "tanzu_mission_control_image_policy"
 	typeDefaultValue = "image-policy"
 )
 

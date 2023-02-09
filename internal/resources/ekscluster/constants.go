@@ -6,7 +6,7 @@ SPDX-License-Identifier: MPL-2.0
 package ekscluster
 
 const (
-	ResourceName = "tanzu-mission-control_ekscluster"
+	ResourceName = "tanzu_mission_control_ekscluster"
 
 	CredentialNameKey          = "credential_name" //nolint:gosec
 	RegionKey                  = "region"

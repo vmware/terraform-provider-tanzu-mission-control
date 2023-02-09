@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ResourceName     = "tanzu-mission-control_security_policy"
+	ResourceName     = "tanzu_mission_control_security_policy"
 	typeDefaultValue = "security-policy"
 )
 

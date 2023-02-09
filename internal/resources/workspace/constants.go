@@ -6,6 +6,6 @@ SPDX-License-Identifier: MPL-2.0
 package workspace
 
 const (
-	ResourceName = "tanzu-mission-control_workspace"
+	ResourceName = "tanzu_mission_control_workspace"
 	NameKey      = "name"
 )

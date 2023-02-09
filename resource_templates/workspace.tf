@@ -2,7 +2,7 @@
 // Operations supported : Read, Create, Update & Delete
 
 // Create Tanzu Mission Control workspace entry
-resource "tanzu-mission-control_workspace" "create_workspace" {
+resource "tanzu_mission_control_workspace" "create_workspace" {
   name = "<workspace-name>" // Required
   meta {                    // Optional
     description = "description of the workspace"
@@ -11,11 +11,11 @@ resource "tanzu-mission-control_workspace" "create_workspace" {
 }
 
 // Create Tanzu Mission Control workspace entry with minimal information
-resource "tanzu-mission-control_workspace" "create_workspace_min_info" {
+resource "tanzu_mission_control_workspace" "create_workspace_min_info" {
   name = "<workspace-name>" // Required
 }
 
 // Read Tanzu Mission Control workspace entry : fetch workspace details
-data "tanzu-mission-control_workspace" "workspace_read" {
+data "tanzu_mission_control_workspace" "workspace_read" {
   name = "<workspace-name>"
 }

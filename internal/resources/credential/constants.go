@@ -21,5 +21,5 @@ const (
 	iamRoleARNKey    = "arn"
 	iamRoleExtIDKey  = "ext_id"
 	typeKey          = "type"
-	ResourceName     = "tanzu-mission-control_credential"
+	ResourceName     = "tanzu_mission_control_credential"
 )

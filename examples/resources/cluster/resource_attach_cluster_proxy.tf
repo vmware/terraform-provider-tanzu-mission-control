@@ -1,5 +1,5 @@
 # Create Tanzu Mission Control attach cluster entry with proxy
-resource "tanzu-mission-control_cluster" "attach_cluster_with_proxy" {
+resource "tanzu_mission_control_cluster" "attach_cluster_with_proxy" {
   management_cluster_name = "attached"               # Default: attached
   provisioner_name        = "attached"               # Default: attached
   name                    = "terraform-attach-proxy" # Required
