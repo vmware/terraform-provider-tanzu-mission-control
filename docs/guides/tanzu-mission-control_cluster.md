@@ -184,6 +184,10 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
   spec {
     cluster_group = "<cluster-group>" // Default: default
     tkg_vsphere {
+      advanced_configs {
+        key = "<key>"
+        value = "<value>"
+      }
       settings {
         network {
           pods {
@@ -208,6 +212,9 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
       }
 
       distribution {
+        os_arch = "<os-arch>"
+        os_name = "<os-name>"
+        os_version = "<os-version>"
         version = "<version>" // Required
 
         workspace {

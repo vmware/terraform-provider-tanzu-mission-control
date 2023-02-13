@@ -12,6 +12,10 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
   spec {
     cluster_group = "default" # Default: default
     tkg_vsphere {
+      advanced_configs {
+        key = "key-1"
+        value = "val-1"
+      }
       settings {
         network {
           pods {
@@ -36,6 +40,9 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
       }
 
       distribution {
+        os_arch = "amd64"
+        os_name = "photon"
+        os_version = "3"
         version = "v1.20.5+vmware.2-tkg.1"
 
         workspace {

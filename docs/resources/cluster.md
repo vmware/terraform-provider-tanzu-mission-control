@@ -240,6 +240,10 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
   spec {
     cluster_group = "default" # Default: default
     tkg_vsphere {
+      advanced_configs {
+        key = "key-1"
+        value = "val-1"
+      }
       settings {
         network {
           pods {
@@ -264,6 +268,9 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
       }
 
       distribution {
+        os_arch = "amd64"
+        os_name = "photon"
+        os_version = "3"
         version = "v1.20.5+vmware.2-tkg.1"
 
         workspace {
@@ -841,6 +848,10 @@ Required:
 - `settings` (Block List, Min: 1, Max: 1) VSphere related settings for workload cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings))
 - `topology` (Block List, Min: 1, Max: 1) Topology specific configuration (see [below for nested schema](#nestedblock--spec--tkg_vsphere--topology))
 
+Optional:
+
+- `advanced_configs` (Block List) Advanced configuration for TKGm cluster (see [below for nested schema](#nestedblock--spec--tkg_vsphere--advanced_configs))
+
 <a id="nestedblock--spec--tkg_vsphere--distribution"></a>
 ### Nested Schema for `spec.tkg_vsphere.distribution`
 
@@ -848,6 +859,12 @@ Required:
 
 - `version` (String) Version specifies the version of the Kubernetes cluster
 - `workspace` (Block List, Min: 1, Max: 1) Workspace defines a workspace configuration for the vSphere cloud provider (see [below for nested schema](#nestedblock--spec--tkg_vsphere--distribution--workspace))
+
+Optional:
+
+- `os_arch` (String) Arch of the OS used for the cluster
+- `os_name` (String) Name of the OS used for the cluster
+- `os_version` (String) Version of the OS used for the cluster
 
 <a id="nestedblock--spec--tkg_vsphere--distribution--workspace"></a>
 ### Nested Schema for `spec.tkg_vsphere.distribution.workspace`
@@ -988,3 +1005,11 @@ Optional:
 - `cpu` (String) Number of CPUs per node
 - `disk_size` (String) Root disk size in gigabytes for the VM
 - `memory` (String) Memory associated with the node in megabytes
+
+<a id="nestedblock--spec--tkg_vsphere--advanced_configs"></a>
+### Nested Schema for `spec.tkg_vsphere.advanced_configs`
+
+Required:
+
+- `key` (String) The key of the advanced configuration parameters
+- `value` (String) The value of the advanced configuration parameters

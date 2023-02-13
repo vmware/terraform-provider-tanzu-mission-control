@@ -11,6 +11,7 @@ import (
 
 	nodepoolmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 	tkgvspheremodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgvsphere"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/common"
 )
 
 var TkgVsphereClusterSpec = &schema.Schema{
@@ -20,9 +21,10 @@ var TkgVsphereClusterSpec = &schema.Schema{
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			settingsKey:     tkgVsphereSettings,
-			distributionKey: tkgVsphereDistribution,
-			topologyKey:     tkgVsphereTopology,
+			advancedConfigsKey: common.AdvancedConfigs,
+			settingsKey:        tkgVsphereSettings,
+			distributionKey:    tkgVsphereDistribution,
+			topologyKey:        tkgVsphereTopology,
 		},
 	},
 }
@@ -34,6 +36,13 @@ func ConstructTKGVsphereClusterSpec(data []interface{}) (spec *tkgvspheremodel.V
 
 	specData, _ := data[0].(map[string]interface{})
 	spec = &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereSpec{}
+
+	if v, ok := specData[advancedConfigsKey]; ok {
+		advancedConfigs, _ := v.([]interface{})
+		for _, ac := range advancedConfigs {
+			spec.AdvancedConfigs = append(spec.AdvancedConfigs, common.ExpandAdvancedConfig(ac))
+		}
+	}
 
 	if v, ok := specData[settingsKey]; ok {
 		if v1, ok := v.([]interface{}); ok {
@@ -59,6 +68,13 @@ func ConstructTKGVsphereClusterSpec(data []interface{}) (spec *tkgvspheremodel.V
 func FlattenTKGVsphereClusterSpec(spec *tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereSpec) (data []interface{}) {
 	flattenSpecData := make(map[string]interface{})
 
+	acs := make([]interface{}, 0)
+
+	for _, ac := range spec.AdvancedConfigs {
+		acs = append(acs, common.FlattenAdvancedConfig(ac))
+	}
+
+	flattenSpecData[advancedConfigsKey] = acs
 	flattenSpecData[settingsKey] = flattenTKGVsphereSettings(spec.Settings)
 	flattenSpecData[distributionKey] = flattenTKGVsphereDistribution(spec.Distribution)
 	flattenSpecData[topologyKey] = flattenTKGVsphereTopology(spec.Topology)
@@ -298,6 +314,27 @@ var tkgVsphereDistribution = &schema.Schema{
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			osArchKey: {
+				Type:        schema.TypeString,
+				Description: "Arch of the OS used for the cluster",
+				Optional:    true,
+				Computed:    true,
+				Default:     "",
+			},
+			osNameKey: {
+				Type:        schema.TypeString,
+				Description: "Name of the OS used for the cluster",
+				Optional:    true,
+				Computed:    true,
+				Default:     "",
+			},
+			osVersionKey: {
+				Type:        schema.TypeString,
+				Description: "Version of the OS used for the cluster",
+				Optional:    true,
+				Computed:    true,
+				Default:     "",
+			},
 			versionKey: {
 				Type:        schema.TypeString,
 				Description: "Version specifies the version of the Kubernetes cluster",
@@ -345,6 +382,18 @@ func expandTKGVsphereDistribution(data []interface{}) (distribution *tkgvspherem
 	lookUpDistribution, _ := data[0].(map[string]interface{})
 	distribution = &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereDistribution{}
 
+	if v, ok := lookUpDistribution[osArchKey]; ok {
+		distribution.OsArch = v.(string)
+	}
+
+	if v, ok := lookUpDistribution[osNameKey]; ok {
+		distribution.OsName = v.(string)
+	}
+
+	if v, ok := lookUpDistribution[osVersionKey]; ok {
+		distribution.OsVersion = v.(string)
+	}
+
 	if v, ok := lookUpDistribution[versionKey]; ok {
 		distribution.Version, _ = v.(string)
 	}
@@ -389,6 +438,9 @@ func flattenTKGVsphereDistribution(distribution *tkgvspheremodel.VmwareTanzuMana
 		return nil
 	}
 
+	flattenDistribution[osArchKey] = distribution.OsArch
+	flattenDistribution[osNameKey] = distribution.OsName
+	flattenDistribution[osVersionKey] = distribution.OsVersion
 	flattenDistribution[versionKey] = distribution.Version
 
 	if distribution.Workspace != nil {

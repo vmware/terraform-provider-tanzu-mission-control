@@ -6,6 +6,7 @@ SPDX-License-Identifier: MPL-2.0
 package tkgvsphere
 
 const (
+	advancedConfigsKey               = "advanced_configs"
 	settingsKey                      = "settings"
 	distributionKey                  = "distribution"
 	topologyKey                      = "topology"
@@ -19,6 +20,9 @@ const (
 	servicesKey                      = "services"
 	cidrBlockKey                     = "cidr_blocks"
 	sshKey                           = "ssh_key"
+	osArchKey                        = "os_arch"
+	osNameKey                        = "os_name"
+	osVersionKey                     = "os_version"
 	versionKey                       = "version"
 	workspaceKey                     = "workspace"
 	datacenterKey                    = "datacenter"
