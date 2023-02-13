@@ -111,6 +111,7 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
             tkg_service_vsphere {
               class         = "<class>"         // Required
               storage_class = "<storage-class>" // Required
+              failure_domain = "<failure-domain>"
               volumes {
                 capacity          = volume-capacity
                 mount_path        = "<mount-path>"

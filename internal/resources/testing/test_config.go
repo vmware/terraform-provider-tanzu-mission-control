@@ -318,6 +318,7 @@ const testTKGsClusterScript = `
 							tkg_service_vsphere {
 								class = "best-effort-2xlarge"
 								storage_class = "{{.StorageClass}}"
+								failure_domain = ""
 								volumes {
 									capacity          = 4
 									mount_path        = "/var/lib/etcd"

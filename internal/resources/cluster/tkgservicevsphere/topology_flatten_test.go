@@ -95,8 +95,9 @@ func TestFlattenTopology(t *testing.T) {
 							NodeLabels:      map[string]string{"node-key": "node-value"},
 							WorkerNodeCount: "1",
 							TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
-								Class:        "test-class-spec",
-								StorageClass: "test-storage-spec",
+								Class:         "test-class-spec",
+								StorageClass:  "test-storage-spec",
+								FailureDomain: "",
 								Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
 									{
 										Capacity:     4,
@@ -128,8 +129,9 @@ func TestFlattenTopology(t *testing.T) {
 									workerNodeCountKey: "1",
 									tkgServiceVsphereKey: []interface{}{
 										map[string]interface{}{
-											classKey:        "test-class-spec",
-											storageClassKey: "test-storage-spec",
+											classKey:         "test-class-spec",
+											storageClassKey:  "test-storage-spec",
+											failureDomainKey: "",
 											volumesKey: []interface{}{
 												map[string]interface{}{
 													capacityKey:        float32(4),
@@ -174,8 +176,9 @@ func TestFlattenTopology(t *testing.T) {
 							NodeLabels:      map[string]string{"node-key": "node-value"},
 							WorkerNodeCount: "1",
 							TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
-								Class:        "test-class-spec",
-								StorageClass: "test-storage-spec",
+								Class:         "test-class-spec",
+								StorageClass:  "test-storage-spec",
+								FailureDomain: "domain-x50",
 								Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
 									{
 										Capacity:     4,
@@ -221,8 +224,9 @@ func TestFlattenTopology(t *testing.T) {
 									workerNodeCountKey: "1",
 									tkgServiceVsphereKey: []interface{}{
 										map[string]interface{}{
-											classKey:        "test-class-spec",
-											storageClassKey: "test-storage-spec",
+											classKey:         "test-class-spec",
+											storageClassKey:  "test-storage-spec",
+											failureDomainKey: "domain-x50",
 											volumesKey: []interface{}{
 												map[string]interface{}{
 													capacityKey:        float32(4),

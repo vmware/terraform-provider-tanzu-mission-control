@@ -17,6 +17,11 @@ type VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool struct {
 	// The potential values could be found using cluster:options api.
 	Class string `json:"class,omitempty"`
 
+	// Configure the failure domain of nodepool.
+	// The potential values could be found using cluster:options api.
+	// This parameter will be ignored by the backend if the TKG service vsphere cluster doesn't support.
+	FailureDomain string `json:"failureDomain,omitempty"`
+
 	// Storage Class to be used for storage of the disks which store the root filesystem of the nodes.
 	// The potential values could be found using cluster:options api.
 	StorageClass string `json:"storageClass,omitempty"`

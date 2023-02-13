@@ -273,6 +273,24 @@ var distribution = &schema.Schema{
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			osArchKey: {
+				Type:        schema.TypeString,
+				Description: "Arch of the OS used for the cluster",
+				Optional:    true,
+				Computed:    true,
+			},
+			osNameKey: {
+				Type:        schema.TypeString,
+				Description: "Name of the OS used for the cluster",
+				Optional:    true,
+				Computed:    true,
+			},
+			osVersionKey: {
+				Type:        schema.TypeString,
+				Description: "Version of the OS used for the cluster",
+				Optional:    true,
+				Computed:    true,
+			},
 			versionKey: {
 				Type:        schema.TypeString,
 				Description: "Version of the cluster",
@@ -290,6 +308,18 @@ func expandTKGSDistribution(data []interface{}) (distribution *tkgservicevsphere
 	distribution = &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereDistribution{}
 	distributionData, _ := data[0].(map[string]interface{})
 
+	if v, ok := distributionData[osArchKey]; ok {
+		distribution.OsArch = v.(string)
+	}
+
+	if v, ok := distributionData[osNameKey]; ok {
+		distribution.OsName = v.(string)
+	}
+
+	if v, ok := distributionData[osVersionKey]; ok {
+		distribution.OsVersion = v.(string)
+	}
+
 	if v, ok := distributionData[versionKey]; ok {
 		distribution.Version = v.(string)
 	}
@@ -304,6 +334,9 @@ func flattenTKGSDistribution(distribution *tkgservicevspheremodel.VmwareTanzuMan
 		return nil
 	}
 
+	flattenDistribution[osArchKey] = distribution.OsArch
+	flattenDistribution[osNameKey] = distribution.OsName
+	flattenDistribution[osVersionKey] = distribution.OsVersion
 	flattenDistribution[versionKey] = distribution.Version
 
 	return []interface{}{flattenDistribution}
@@ -562,7 +595,13 @@ var nodePoolSpec = &schema.Schema{
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						classKey:        class,
+						classKey: class,
+						failureDomainKey: {
+							Type:        schema.TypeString,
+							Description: "Configure the failure domain of node pool. The potential values could be found using cluster:options api.",
+							Optional:    true,
+							Default:     "",
+						},
 						storageClassKey: storageClass,
 						volumesKey:      tkgServiceVolumes,
 					},
@@ -674,6 +713,10 @@ func expandNodePoolTKGSServiceVsphere(data []interface{}) (tkgsServiceVsphere *n
 		tkgsServiceVsphere.Class, _ = v.(string)
 	}
 
+	if v, ok := tkgsServiceVsphereData[failureDomainKey]; ok {
+		tkgsServiceVsphere.FailureDomain, _ = v.(string)
+	}
+
 	if v, ok := tkgsServiceVsphereData[storageClassKey]; ok {
 		tkgsServiceVsphere.StorageClass, _ = v.(string)
 	}
@@ -723,6 +766,7 @@ func flattenTKGSTopologyNodePool(nodePool *nodepoolmodel.VmwareTanzuManageV1alph
 			flattenNodePoolSpecTKGS[volumesKey] = vls
 
 			flattenNodePoolSpecTKGS[classKey] = nodePool.Spec.TkgServiceVsphere.Class
+			flattenNodePoolSpecTKGS[failureDomainKey] = nodePool.Spec.TkgServiceVsphere.FailureDomain
 			flattenNodePoolSpecTKGS[storageClassKey] = nodePool.Spec.TkgServiceVsphere.StorageClass
 
 			flattenNodePoolSpec[tkgServiceVsphereKey] = []interface{}{flattenNodePoolSpecTKGS}

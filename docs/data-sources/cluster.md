@@ -337,6 +337,12 @@ Required:
 
 - `version` (String) Version of the cluster
 
+Optional:
+
+- `os_arch` (String) Arch of the OS used for the cluster
+- `os_name` (String) Name of the OS used for the cluster
+- `os_version` (String) Version of the OS used for the cluster
+
 
 <a id="nestedblock--spec--tkg_service_vsphere--settings"></a>
 ### Nested Schema for `spec.tkg_service_vsphere.settings`
@@ -460,6 +466,7 @@ Required:
 
 Optional:
 
+- `failure_domain` (String) Configure the failure domain of node pool. The potential values could be found using cluster:options api.
 - `volumes` (Block List) Configurable volumes for control plane nodes (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--tkg_service_vsphere--volumes))
 
 <a id="nestedblock--spec--tkg_service_vsphere--topology--node_pools--spec--tkg_service_vsphere--volumes"></a>
