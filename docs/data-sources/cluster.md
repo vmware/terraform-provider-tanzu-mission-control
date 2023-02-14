@@ -136,6 +136,10 @@ Required:
 - `settings` (Block List, Min: 1, Max: 1) AWS related settings for workload cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings))
 - `topology` (Block List, Min: 1, Max: 1) Topology configuration of the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--topology))
 
+Optional:
+
+- `advanced_configs` (Block List) Advanced configuration for TKGm cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--advanced_configs))
+
 <a id="nestedblock--spec--tkg_aws--distribution"></a>
 ### Nested Schema for `spec.tkg_aws.distribution`
 
@@ -146,6 +150,9 @@ Required:
 
 Optional:
 
+- `os_arch` (String) Arch of the OS used for the cluster
+- `os_name` (String) Name of the OS used for the cluster
+- `os_version` (String) Version of the OS used for the cluster
 - `provisioner_credential_name` (String) Specifies name of the account in which to create the cluster
 
 
@@ -315,9 +322,13 @@ Required:
 
 - `aws_availability_zone` (String) The Availability Zone where the AWS nodes are placed
 
+<a id="nestedblock--spec--tkg_aws--advanced_configs"></a>
+### Nested Schema for `spec.tkg_aws.advanced_configs`
 
+Required:
 
-
+- `key` (String) The key of the advanced configuration parameters
+- `value` (String) The value of the advanced configuration parameters
 
 
 
@@ -651,11 +662,6 @@ Optional:
 - `cpu` (String) Number of CPUs per node
 - `disk_size` (String) Root disk size in gigabytes for the VM
 - `memory` (String) Memory associated with the node in megabytes
-
-
-
-
-
 
 <a id="nestedblock--spec--tkg_vsphere--advanced_configs"></a>
 ### Nested Schema for `spec.tkg_vsphere.advanced_configs`

@@ -14,6 +14,15 @@ import (
 // swagger:model vmware.tanzu.manage.v1alpha1.cluster.infrastructure.tkgaws.Distribution
 type VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsDistribution struct {
 
+	// Arch of the OS used for the cluster.
+	OsArch string `json:"osArch,omitempty"`
+
+	// Name of the OS used for the cluster.
+	OsName string `json:"osName,omitempty"`
+
+	// Version of the OS used for the cluster.
+	OsVersion string `json:"osVersion,omitempty"`
+
 	// Name of the account (provisioner credential) in which to create the cluster.
 	ProvisionerCredentialName string `json:"provisionerCredentialName,omitempty"`
 

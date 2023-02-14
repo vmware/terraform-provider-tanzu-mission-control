@@ -319,21 +319,18 @@ var tkgVsphereDistribution = &schema.Schema{
 				Description: "Arch of the OS used for the cluster",
 				Optional:    true,
 				Computed:    true,
-				Default:     "",
 			},
 			osNameKey: {
 				Type:        schema.TypeString,
 				Description: "Name of the OS used for the cluster",
 				Optional:    true,
 				Computed:    true,
-				Default:     "",
 			},
 			osVersionKey: {
 				Type:        schema.TypeString,
 				Description: "Version of the OS used for the cluster",
 				Optional:    true,
 				Computed:    true,
-				Default:     "",
 			},
 			versionKey: {
 				Type:        schema.TypeString,

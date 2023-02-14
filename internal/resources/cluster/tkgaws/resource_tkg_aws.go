@@ -10,6 +10,7 @@ import (
 
 	nodepoolmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 	tkgawsmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgaws"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/common"
 )
 
 var TkgAWSClusterSpec = &schema.Schema{
@@ -19,9 +20,10 @@ var TkgAWSClusterSpec = &schema.Schema{
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			settingsKey:     tkgAWSSettings,
-			distributionKey: tkgAWSDistribution,
-			topologyKey:     tkgAWSTopology,
+			advancedConfigsKey: common.AdvancedConfigs,
+			settingsKey:        tkgAWSSettings,
+			distributionKey:    tkgAWSDistribution,
+			topologyKey:        tkgAWSTopology,
 		},
 	},
 }
@@ -33,6 +35,13 @@ func ConstructTKGAWSClusterSpec(data []interface{}) (spec *tkgawsmodel.VmwareTan
 
 	specData, _ := data[0].(map[string]interface{})
 	spec = &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSpec{}
+
+	if v, ok := specData[advancedConfigsKey]; ok {
+		advancedConfigs, _ := v.([]interface{})
+		for _, ac := range advancedConfigs {
+			spec.AdvancedConfigs = append(spec.AdvancedConfigs, common.ExpandAdvancedConfig(ac))
+		}
+	}
 
 	if v, ok := specData[settingsKey]; ok {
 		if v1, ok := v.([]interface{}); ok {
@@ -58,6 +67,13 @@ func ConstructTKGAWSClusterSpec(data []interface{}) (spec *tkgawsmodel.VmwareTan
 func FlattenTKGAWSClusterSpec(spec *tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSpec) (data []interface{}) {
 	flattenSpecData := make(map[string]interface{})
 
+	acs := make([]interface{}, 0)
+
+	for _, ac := range spec.AdvancedConfigs {
+		acs = append(acs, common.FlattenAdvancedConfig(ac))
+	}
+
+	flattenSpecData[advancedConfigsKey] = acs
 	flattenSpecData[settingsKey] = flattenTKGAWSSettings(spec.Settings)
 	flattenSpecData[distributionKey] = flattenTKGAWSDistribution(spec.Distribution)
 	flattenSpecData[topologyKey] = flattenTKGAWSTopology(spec.Topology)
@@ -531,6 +547,24 @@ var tkgAWSDistribution = &schema.Schema{
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			osArchKey: {
+				Type:        schema.TypeString,
+				Description: "Arch of the OS used for the cluster",
+				Computed:    true,
+				Optional:    true,
+			},
+			osNameKey: {
+				Type:        schema.TypeString,
+				Description: "Name of the OS used for the cluster",
+				Computed:    true,
+				Optional:    true,
+			},
+			osVersionKey: {
+				Type:        schema.TypeString,
+				Description: "Version of the OS used for the cluster",
+				Computed:    true,
+				Optional:    true,
+			},
 			regionKey: {
 				Type:        schema.TypeString,
 				Description: "Specifies region of the cluster",
@@ -558,6 +592,18 @@ func expandTKGAWSDistribution(data []interface{}) (distribution *tkgawsmodel.Vmw
 	lookUpDistribution, _ := data[0].(map[string]interface{})
 	distribution = &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsDistribution{}
 
+	if v, ok := lookUpDistribution[osArchKey]; ok {
+		distribution.OsArch = v.(string)
+	}
+
+	if v, ok := lookUpDistribution[osNameKey]; ok {
+		distribution.OsName = v.(string)
+	}
+
+	if v, ok := lookUpDistribution[osVersionKey]; ok {
+		distribution.OsVersion = v.(string)
+	}
+
 	if v, ok := lookUpDistribution[regionKey]; ok {
 		distribution.Region, _ = v.(string)
 	}
@@ -580,6 +626,9 @@ func flattenTKGAWSDistribution(distribution *tkgawsmodel.VmwareTanzuManageV1alph
 		return nil
 	}
 
+	flattenDistribution[osArchKey] = distribution.OsArch
+	flattenDistribution[osNameKey] = distribution.OsName
+	flattenDistribution[osVersionKey] = distribution.OsVersion
 	flattenDistribution[regionKey] = distribution.Region
 	flattenDistribution[versionKey] = distribution.Version
 	flattenDistribution[provisionerCredentialKey] = distribution.ProvisionerCredentialName

@@ -241,8 +241,8 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
     cluster_group = "default" # Default: default
     tkg_vsphere {
       advanced_configs {
-        key = "key-1"
-        value = "val-1"
+        key = "AVI_LABELS"
+        value = "test"
       }
       settings {
         network {
@@ -355,6 +355,10 @@ resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
   spec {
     cluster_group = "default" // Default: default
     tkg_aws {
+      advanced_configs {
+        key = "AWS_SECURITY_GROUP_BASTION"
+        value = "sg-01376425482384"
+      }
       settings {
         network {
           cluster {
@@ -389,6 +393,9 @@ resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
       }
 
       distribution {
+        os_arch = "amd64"
+        os_name = "photon"
+        os_version = "3"
         region  = "us-west-2"              // Required
         version = "v1.21.2+vmware.1-tkg.2" // Required
       }
@@ -490,6 +497,10 @@ Required:
 - `settings` (Block List, Min: 1, Max: 1) AWS related settings for workload cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--settings))
 - `topology` (Block List, Min: 1, Max: 1) Topology configuration of the cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--topology))
 
+Optional:
+
+- `advanced_configs` (Block List) Advanced configuration for TKGm cluster (see [below for nested schema](#nestedblock--spec--tkg_aws--advanced_configs))
+
 <a id="nestedblock--spec--tkg_aws--distribution"></a>
 ### Nested Schema for `spec.tkg_aws.distribution`
 
@@ -500,6 +511,9 @@ Required:
 
 Optional:
 
+- `os_arch` (String) Arch of the OS used for the cluster
+- `os_name` (String) Name of the OS used for the cluster
+- `os_version` (String) Version of the OS used for the cluster
 - `provisioner_credential_name` (String) Specifies name of the account in which to create the cluster
 
 
@@ -672,6 +686,15 @@ Required:
 
 
 
+
+
+<a id="nestedblock--spec--tkg_aws--advanced_configs"></a>
+### Nested Schema for `spec.tkg_aws.advanced_configs`
+
+Required:
+
+- `key` (String) The key of the advanced configuration parameters
+- `value` (String) The value of the advanced configuration parameters
 
 
 
