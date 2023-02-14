@@ -7,6 +7,7 @@ package tkgawsmodel
 
 import (
 	"github.com/go-openapi/swag"
+
 	clustercommon "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/common"
 )
 
