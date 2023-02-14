@@ -109,11 +109,11 @@ func ConstructMeta(d *schema.ResourceData) (objectMeta *objectmetamodel.VmwareTa
 	objectMetaData := data[0].(map[string]interface{})
 
 	if v, ok := objectMetaData[annotationsKey]; ok {
-		objectMeta.Annotations = GetTypeMapData(v.(map[string]interface{}))
+		objectMeta.Annotations = GetTypeStringMapData(v.(map[string]interface{}))
 	}
 
 	if v, ok := objectMetaData[LabelsKey]; ok {
-		objectMeta.Labels = GetTypeMapData(v.(map[string]interface{}))
+		objectMeta.Labels = GetTypeStringMapData(v.(map[string]interface{}))
 	}
 
 	if v, ok := objectMetaData[DescriptionKey]; ok {
@@ -147,11 +147,22 @@ func FlattenMeta(objectMeta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta) 
 	return []interface{}{flattenMetaData}
 }
 
-func GetTypeMapData(data map[string]interface{}) map[string]string {
+func GetTypeStringMapData(data map[string]interface{}) map[string]string {
 	convertedMapData := make(map[string]string)
 
 	for key, value := range data {
 		value := fmt.Sprintf("%v", value)
+		convertedMapData[key] = value
+	}
+
+	return convertedMapData
+}
+
+func GetTypeIntMapData(data map[string]interface{}) map[string]int {
+	convertedMapData := make(map[string]int)
+
+	for key, value := range data {
+		value, _ := value.(int)
 		convertedMapData[key] = value
 	}
 

@@ -21,6 +21,8 @@ import (
 	custompolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom/resource"
 	imagepolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
 	imagepolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image/resource"
+	quotapolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/quota"
+	quotapolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/quota/resource"
 	securitypolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 	securitypolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security/resource"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/workspace"
@@ -41,6 +43,7 @@ func Provider() *schema.Provider {
 			custompolicy.ResourceName:   custompolicyresource.ResourceCustomPolicy(),
 			securitypolicy.ResourceName: securitypolicyresource.ResourceSecurityPolicy(),
 			imagepolicy.ResourceName:    imagepolicyresource.ResourceImagePolicy(),
+			quotapolicy.ResourceName:    quotapolicyresource.ResourceQuotaPolicy(),
 			credential.ResourceName:     credential.ResourceCredential(),
 			integration.ResourceName:    integration.ResourceIntegration(),
 		},

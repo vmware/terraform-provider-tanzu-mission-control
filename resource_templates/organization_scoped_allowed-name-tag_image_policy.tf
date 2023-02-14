@@ -16,7 +16,7 @@ resource "tanzu-mission-control_image_policy" "organization_scoped_allowed-name-
           imagename = "<image-name>"
           tag {
             negate = false // Default: false
-            value = "<tag-value>"
+            value  = "<tag-value>"
           }
         }
       }

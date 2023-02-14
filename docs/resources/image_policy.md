@@ -439,7 +439,7 @@ resource "tanzu-mission-control_image_policy" "organization_scoped_require-diges
 ### Required
 
 - `name` (String) Name of the image policy
-- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security and image policy, having one of the valid scopes for custom and security policy: cluster, cluster_group or organization and valid scopes for image policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image and quota policy, having one of the valid scopes for custom, security and quota policy: cluster, cluster_group or organization and valid scopes for image policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Spec for the image policy (see [below for nested schema](#nestedblock--spec))
 
 ### Optional
@@ -514,7 +514,7 @@ Optional:
 Optional:
 
 - `imagename` (String) Allowed image names, wildcards are supported(for example: fooservice/*). Empty field is equivalent to *.
-- `tag` (Block List) Allowed image tag, wildcards are supported (for example: v1.*). No validation is performed on tag if the field is empty. (see [below for nested schema](#nestedblock--spec--input--allowed_name_tag--rules--tag))
+- `tag` (Block List, Max: 1) Allowed image tag, wildcards are supported (for example: v1.*). No validation is performed on tag if the field is empty. (see [below for nested schema](#nestedblock--spec--input--allowed_name_tag--rules--tag))
 
 <a id="nestedblock--spec--input--allowed_name_tag--rules--tag"></a>
 ### Nested Schema for `spec.input.allowed_name_tag.rules.tag`
@@ -555,7 +555,7 @@ Optional:
 - `imagename` (String) Allowed image names, wildcards are supported(for example: fooservice/*). Empty field is equivalent to *.
 - `port` (String) Allowed port(if presented) of the image hostname, must associate with valid hostname. Wildcards are supported.
 - `requiredigest` (Boolean) The flag used to enforce digest to appear in container images.
-- `tag` (Block List) Allowed image tag, wildcards are supported (for example: v1.*). No validation is performed on tag if the field is empty. (see [below for nested schema](#nestedblock--spec--input--custom--rules--tag))
+- `tag` (Block List, Max: 1) Allowed image tag, wildcards are supported (for example: v1.*). No validation is performed on tag if the field is empty. (see [below for nested schema](#nestedblock--spec--input--custom--rules--tag))
 
 <a id="nestedblock--spec--input--custom--rules--tag"></a>
 ### Nested Schema for `spec.input.custom.rules.tag`

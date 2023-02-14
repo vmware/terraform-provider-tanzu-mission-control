@@ -45,7 +45,7 @@ func ConstructSpec(d *schema.ResourceData) (spec *policymodel.VmwareTanzuManageV
 	specData := data[0].(map[string]interface{})
 
 	spec = &policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec{
-		Type:          typeDefaultValue,
+		Type:          typePolicy,
 		RecipeVersion: policy.RecipeVersionDefaultValue,
 	}
 

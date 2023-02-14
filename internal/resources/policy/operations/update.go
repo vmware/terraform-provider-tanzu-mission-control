@@ -26,6 +26,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindcustom "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
 	policykindimage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
+	policykindquota "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/quota"
 	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 )
@@ -168,6 +169,8 @@ func updateCheckForSpec(d *schema.ResourceData, spec *policymodel.VmwareTanzuMan
 		policySpec = policykindsecurity.ConstructSpec(d)
 	case policykindimage.ResourceName:
 		policySpec = policykindimage.ConstructSpec(d)
+	case policykindquota.ResourceName:
+		policySpec = policykindquota.ConstructSpec(d)
 	}
 
 	spec.Input = policySpec.Input
