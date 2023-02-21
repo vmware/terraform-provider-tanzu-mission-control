@@ -31,6 +31,8 @@ import (
 	eksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster"
 	eksnodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster/nodepool"
 	integrationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/integration"
+	secretclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubernetessecret"
+	secretexportclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubernetessecret/secretexport"
 	namespaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/namespace"
 	iamnamespaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/namespace/iam_policy"
 	nodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/nodepool"
@@ -102,6 +104,8 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterGroupKustomizationResourceService:      kustomizationclustergroupclient.New(httpClient),
 		ClusterSourcesecretResourceService:            sourcesecretclusterclient.New(httpClient),
 		ClusterGroupSourcesecretResourceService:       sourcesecretclustergroupclient.New(httpClient),
+		SecretResourceService:                         secretclient.New(httpClient),
+		SecretExportResourceService:                   secretexportclient.New(httpClient),
 		ManifestResourceService:                       manifestclient.New(httpClient),
 		ClusterPackageRepositoryService:               pkgrepositoryclusterclient.New(httpClient),
 		ClusterPackageRepositoryAvailabilityService:   pkgrepoavailabilityclusterclient.New(httpClient),
@@ -142,6 +146,8 @@ type TanzuMissionControl struct {
 	ClusterGroupKustomizationResourceService      kustomizationclustergroupclient.ClientService
 	ClusterSourcesecretResourceService            sourcesecretclusterclient.ClientService
 	ClusterGroupSourcesecretResourceService       sourcesecretclustergroupclient.ClientService
+	SecretResourceService                         secretclient.ClientService
+	SecretExportResourceService                   secretexportclient.ClientService
 	ManifestResourceService                       manifestclient.ClientService
 	ClusterPackageRepositoryService               pkgrepositoryclusterclient.ClientService
 	ClusterPackageRepositoryAvailabilityService   pkgrepoavailabilityclusterclient.ClientService
