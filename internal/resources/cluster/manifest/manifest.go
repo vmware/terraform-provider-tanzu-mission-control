@@ -18,7 +18,7 @@ import (
 )
 
 func Create(
-	k8sclient k8sClient.Client,
+	k8sclient *k8sClient.Client,
 	k8sManifest []byte,
 	forceClean bool,
 ) error {

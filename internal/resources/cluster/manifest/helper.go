@@ -108,12 +108,16 @@ func getManifests(manifestsBlob string) (manifests []manifest, err error) {
 	return manifests, nil
 }
 
-func objectsToBeCleaned(k8sclient k8sClient.Client, manifests []manifest, clean bool) (tobeCleaned []string, err error) {
+func objectsToBeCleaned(k8sclient *k8sClient.Client, manifests []manifest, clean bool) (tobeCleaned []string, err error) {
+	if k8sclient == nil {
+		return tobeCleaned, fmt.Errorf("failed to get kube client")
+	}
+
 	for _, manifest := range manifests {
 		unstruct := &unstructured.Unstructured{}
 		unstruct.SetGroupVersionKind(*manifest.gvk)
 
-		err := k8sclient.Get(context.Background(), manifest.namespacedName, unstruct)
+		err := (*k8sclient).Get(context.Background(), manifest.namespacedName, unstruct)
 		if err == nil {
 			if clean {
 				err := ensureObjectDeleted(k8sclient, unstruct)
@@ -129,9 +133,9 @@ func objectsToBeCleaned(k8sclient k8sClient.Client, manifests []manifest, clean 
 	return
 }
 
-func createObjects(k8sclient k8sClient.Client, manifests []manifest) error {
+func createObjects(k8sclient *k8sClient.Client, manifests []manifest) error {
 	for _, manifest := range manifests {
-		err := k8sclient.Create(context.Background(), &unstructured.Unstructured{Object: manifest.usObj})
+		err := (*k8sclient).Create(context.Background(), &unstructured.Unstructured{Object: manifest.usObj})
 		if err != nil {
 			return fmt.Errorf("error creating object with namespaced:%+v and gvk:%+v, error :%v", manifest.namespacedName, manifest.gvk, err)
 		}
@@ -140,9 +144,9 @@ func createObjects(k8sclient k8sClient.Client, manifests []manifest) error {
 	return nil
 }
 
-func ensureObjectDeleted(k8sclient k8sClient.Client, object *unstructured.Unstructured) (err error) {
+func ensureObjectDeleted(k8sclient *k8sClient.Client, object *unstructured.Unstructured) (err error) {
 	deleteFn := func() (bool, error) {
-		err = k8sclient.Delete(context.Background(), object)
+		err = (*k8sclient).Delete(context.Background(), object)
 		if k8serrors.IsNotFound(err) || err == nil {
 			return false, nil
 		}
