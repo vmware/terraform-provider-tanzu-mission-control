@@ -1,0 +1,43 @@
+---
+Title: "Defining policies on different Scopes"
+Description: |-
+    Adding different policy resources to different scopes on which they are defined.
+---
+
+# Defining Security policy
+
+Security policies allow you to manage the security context in which deployed pods operate in your clusters by imposing constraints that define what pods can do and which resources they can access.
+The `tanzu-mission-control_security_policy` resource enables you to attach a security policy with an input recipe to a organisation, cluster group, or a cluster for management through Tanzu Mission Control.
+
+## Security Policy on Cluster
+
+For defining a security policy on a cluster, one can use dependency in the terraform script by defining a cluster resource (attach, workload clusters, EKS) and referencing the same in the policy resource.
+
+For provisioning of a cluster, refer to the `tanzu-mission-control_cluster` in guides.
+
+For cluster resource, one can again reference the cluster group name from the cluster group resource, based on the use case.
+
+You could define a `security policy` for a cluster with the following config:
+
+{{ tffile "examples/usecases/security_policy_usecase.tf" }}
+
+
+Similarly, one can define other policies such as custom, namespace quota and access policies using the above referencing hierarchy.
+Also, the scope of the policy can directly be a cluster group, organisation, workspace, or a namespace.
+
+Follow the below examples for reference.
+
+## Access Policy on a Namespace
+
+In the following example, there are multiple dependencies shown.
+
+- Cluster dependency on cluster group
+- Namespace dependency on cluster and workspace
+- IAM policy dependency on namespace
+
+{{ tffile "examples/usecases/access_policy_usecase.tf" }}
+
+## Custom Policy on a CLuster Group
+
+{{ tffile "examples/usecases/custom_policy_usecase.tf" }}
+

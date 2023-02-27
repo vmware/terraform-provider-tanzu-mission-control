@@ -11,8 +11,9 @@ By default, each workload cluster that you create through Tanzu Mission Control 
 The `tanzu-mission-control_cluster_node_pool` resource allows you to create additional node pools, as well as read, update, and delete existing node pools in your clusters.
 Because Tanzu Mission Control cannot provision additional resources in a cluster that is created elsewhere and subsequently attached, you cannot create a node pool in an attached cluster.
 
-For provisioning of a cluster, refer to the `tmc_cluster` in guides.
+For provisioning of a cluster, refer to the `tanzu-mission-control_cluster` in guides.
+For creating nodepool on the created cluster, one can use dependency in the terraform script.
 
-You could create/manage a `node pool` for a cluster with the following config:
+You could create/manage a `node pool` for a cluster with the following config which shows a node pool resource with dependency on a TKGs cluster:
 
-{{ tffile "resource_templates/cluster_node_pool.tf" }}
+{{ tffile "examples/usecases/nodepool_usecase.tf" }}

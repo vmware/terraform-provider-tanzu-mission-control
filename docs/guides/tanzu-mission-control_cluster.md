@@ -109,8 +109,8 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
               "<key>" : "<val>"
             }
             tkg_service_vsphere {
-              class         = "<class>"         // Required
-              storage_class = "<storage-class>" // Required
+              class          = "<class>"         // Required
+              storage_class  = "<storage-class>" // Required
               failure_domain = "<failure-domain>"
               volumes {
                 capacity          = volume-capacity
@@ -185,7 +185,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
     cluster_group = "<cluster-group>" // Default: default
     tkg_vsphere {
       advanced_configs {
-        key = "<key>"
+        key   = "<key>"
         value = "<value>"
       }
       settings {
@@ -212,10 +212,10 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
       }
 
       distribution {
-        os_arch = "<os-arch>"
-        os_name = "<os-name>"
+        os_arch    = "<os-arch>"
+        os_name    = "<os-name>"
         os_version = "<os-version>"
-        version = "<version>" // Required
+        version    = "<version>" // Required
 
         workspace {
           datacenter        = "<datacenter>"        // Required
