@@ -11,7 +11,6 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -95,7 +94,6 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 	)
 
 	t.Log("Custom policy resource acceptance test complete for tmc-https-ingress recipe!")
-	time.Sleep(2 * time.Minute)
 
 	// Test case for custom policy resource with tmc-block-nodeport-service recipe.
 	resource.Test(t, resource.TestCase{
@@ -130,7 +128,6 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 	)
 
 	t.Log("Custom policy resource acceptance test complete for tmc-block-nodeport-service recipe!")
-	time.Sleep(2 * time.Minute)
 
 	// Test case for custom policy resource with tmc-block-rolebinding-subjects recipe.
 	resource.Test(t, resource.TestCase{
@@ -165,7 +162,6 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 	)
 
 	t.Log("Custom policy resource acceptance test complete for tmc-block-rolebinding-subjects recipe!")
-	time.Sleep(2 * time.Minute)
 
 	// Test case for custom policy resource with tmc-block-resources recipe.
 	resource.Test(t, resource.TestCase{
@@ -200,7 +196,6 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 	)
 
 	t.Log("Custom policy resource acceptance test complete for tmc-block-resources recipe!")
-	time.Sleep(2 * time.Minute)
 
 	// Test case for custom policy resource with tmc-external-ips recipe.
 	resource.Test(t, resource.TestCase{
@@ -235,7 +230,6 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 	)
 
 	t.Log("Custom policy resource acceptance test complete for tmc-external-ips recipe!")
-	time.Sleep(2 * time.Minute)
 
 	// Test case for custom policy resource with tmc-require-labels recipe.
 	resource.Test(t, resource.TestCase{
