@@ -41,6 +41,24 @@ func IsNotFoundError(err error) bool {
 	return false
 }
 
+func IsUnauthorizedError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	convertedError, ok := err.(ClientErrors)
+	if !ok {
+		return strings.Contains(err.Error(), fmt.Sprintf("%d", http.StatusUnauthorized)) &&
+			strings.Contains(err.Error(), http.StatusText(http.StatusUnauthorized))
+	}
+
+	if convertedError.httpCode == http.StatusUnauthorized {
+		return true
+	}
+
+	return false
+}
+
 func (e ClientErrors) Error() string {
 	if e.err == nil {
 		return ""
