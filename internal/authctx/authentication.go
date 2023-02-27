@@ -134,3 +134,10 @@ func getUserAuthCtx(config *TanzuContext) (map[string]string, error) {
 
 	return md, nil
 }
+
+func RefreshUserAuthCtx(config *TanzuContext) {
+	md, _ := getUserAuthCtx(config)
+	for key, value := range md {
+		config.TMCConnection.Headers.Set(key, value)
+	}
+}
