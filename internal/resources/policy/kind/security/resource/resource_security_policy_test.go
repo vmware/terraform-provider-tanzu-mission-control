@@ -11,7 +11,6 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -95,7 +94,6 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 	)
 
 	t.Log("security policy resource acceptance test complete for baseline recipe!")
-	time.Sleep(2 * time.Minute)
 
 	// Test case for security policy resource with custom recipe.
 	resource.Test(t, resource.TestCase{
@@ -130,7 +128,6 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 	)
 
 	t.Log("security policy resource acceptance test complete for custom recipe!")
-	time.Sleep(2 * time.Minute)
 
 	// Test case for security policy resource with strict recipe.
 	resource.Test(t, resource.TestCase{

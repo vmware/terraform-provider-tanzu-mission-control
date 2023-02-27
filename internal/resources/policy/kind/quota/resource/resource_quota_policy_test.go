@@ -11,7 +11,6 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -95,7 +94,6 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 	)
 
 	t.Log("namespace quota policy resource acceptance test complete for custom recipe!")
-	time.Sleep(2 * time.Minute)
 
 	// Test case for namespace quota policy resource with small recipe.
 	resource.Test(t, resource.TestCase{
@@ -130,7 +128,6 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 	)
 
 	t.Log("namespace quota policy resource acceptance test complete for small recipe!")
-	time.Sleep(2 * time.Minute)
 
 	// Test case for namespace quota policy resource with medium recipe.
 	resource.Test(t, resource.TestCase{
@@ -165,7 +162,6 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 	)
 
 	t.Log("namespace quota policy resource acceptance test complete for medium recipe!")
-	time.Sleep(2 * time.Minute)
 
 	// Test case for namespace quota policy resource with large recipe.
 	resource.Test(t, resource.TestCase{

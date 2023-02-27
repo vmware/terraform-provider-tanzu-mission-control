@@ -11,7 +11,6 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -85,7 +84,6 @@ func TestAcceptanceForImagePolicyResource(t *testing.T) {
 	)
 
 	t.Log("Image policy resource acceptance test complete for allowed-name-tag recipe!")
-	time.Sleep(2 * time.Minute)
 
 	// Test case for image policy resource with block-latest-tag recipe.
 	resource.Test(t, resource.TestCase{
@@ -111,7 +109,6 @@ func TestAcceptanceForImagePolicyResource(t *testing.T) {
 	)
 
 	t.Log("Image policy resource acceptance test complete for block-latest-tag recipe!")
-	time.Sleep(2 * time.Minute)
 
 	// Test case for image policy resource with require-digest recipe.
 	resource.Test(t, resource.TestCase{
@@ -137,7 +134,6 @@ func TestAcceptanceForImagePolicyResource(t *testing.T) {
 	)
 
 	t.Log("Image policy resource acceptance test complete for require-digest recipe!")
-	time.Sleep(2 * time.Minute)
 
 	// Test case for image policy resource with custom recipe.
 	resource.Test(t, resource.TestCase{

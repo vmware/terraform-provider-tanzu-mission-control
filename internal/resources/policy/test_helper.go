@@ -27,7 +27,7 @@ const (
 	clusterResourceVar         = "test_cluster"
 	managementClusterName      = scope.AttachedValue
 	provisionerName            = scope.AttachedValue
-	clusterName                = "tf-attach-test"
+	clusterNamePrefix          = "tf-attach-test"
 	clusterGroupNameForCluster = "default"
 
 	// ClusterGroup.
@@ -82,7 +82,7 @@ func NewScopeHelperResources() *ScopeHelperResources {
 			ResourceVar:           clusterResourceVar,
 			ResourceName:          fmt.Sprintf("%s.%s", clusterResource, clusterResourceVar),
 			KubeConfigPath:        os.Getenv("KUBECONFIG"),
-			Name:                  clusterName,
+			Name:                  acctest.RandomWithPrefix(clusterNamePrefix),
 			ClusterGroupName:      clusterGroupNameForCluster,
 			ManagementClusterName: managementClusterName,
 			ProvisionerName:       provisionerName,
