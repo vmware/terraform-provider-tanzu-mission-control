@@ -549,13 +549,13 @@ Required:
 
 Required:
 
-- `control_plane_end_point` (String) ControlPlaneEndpoint specifies the control plane virtual IP address. The value should be unique for every create request, else cluster creation shall fail
 - `pods` (Block List, Min: 1) Pod CIDR for Kubernetes pods defaults to 192.168.0.0/16 (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--network--pods))
 - `services` (Block List, Min: 1) Service CIDR for kubernetes services defaults to 10.96.0.0/12 (see [below for nested schema](#nestedblock--spec--tkg_vsphere--settings--network--services))
 
 Optional:
 
 - `api_server_port` (Number) APIServerPort specifies the port address for the cluster that defaults to 6443.
+- `control_plane_end_point` (String) ControlPlaneEndpoint specifies the control plane virtual IP address. The value should be unique for every create request, else cluster creation shall fail
 
 <a id="nestedblock--spec--tkg_vsphere--settings--network--pods"></a>
 ### Nested Schema for `spec.tkg_vsphere.settings.network.pods`
