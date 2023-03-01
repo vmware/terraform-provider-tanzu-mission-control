@@ -7,12 +7,16 @@ package cluster
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	k8sClient "sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -39,6 +43,7 @@ func ResourceTMCCluster() *schema.Resource {
 		UpdateContext: resourceClusterInPlaceUpdate,
 		DeleteContext: resourceClusterDelete,
 		Schema:        clusterSchema,
+		CustomizeDiff: ValidateKubeConfig,
 	}
 }
 
@@ -74,7 +79,7 @@ var clusterSchema = map[string]*schema.Schema{
 	},
 	waitKey: {
 		Type:        schema.TypeString,
-		Description: "Wait timeout duration until cluster resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero",
+		Description: "Wait timeout duration until cluster resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero. Should be set to 0 in case of simple attach cluster where kubeconfig input is not provided.",
 		Default:     "default",
 		Optional:    true,
 	},
@@ -94,26 +99,40 @@ func constructFullname(d *schema.ResourceData) (fullname *clustermodel.VmwareTan
 	return fullname
 }
 
-var attachCluster = &schema.Schema{
-	Type:     schema.TypeList,
-	Optional: true,
-	MaxItems: 1,
-	Elem: &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			attachClusterKubeConfigKey: {
-				Type:        schema.TypeString,
-				Description: "Attach cluster KUBECONFIG path",
-				ForceNew:    true,
-				Optional:    true,
-			},
-			attachClusterDescriptionKey: {
-				Type:        schema.TypeString,
-				Description: "Attach cluster description",
-				Optional:    true,
+var (
+	attachCluster = &schema.Schema{
+		Type:     schema.TypeList,
+		Optional: true,
+		MinItems: 1,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				attachClusterKubeConfigPathKey: {
+					Type:         schema.TypeString,
+					Description:  "Attach cluster KUBECONFIG path",
+					ForceNew:     true,
+					Optional:     true,
+					ValidateFunc: validation.StringIsNotWhiteSpace,
+				},
+				attachClusterKubeConfigRawKey: {
+					Type:         schema.TypeString,
+					Description:  "Attach cluster KUBECONFIG",
+					Optional:     true,
+					ForceNew:     true,
+					Sensitive:    true,
+					ValidateFunc: validation.StringIsNotWhiteSpace,
+				},
+				attachClusterDescriptionKey: {
+					Type:         schema.TypeString,
+					Description:  "Attach cluster description",
+					Optional:     true,
+					ValidateFunc: validation.StringIsNotWhiteSpace,
+				},
 			},
 		},
-	},
-}
+	}
+	KubeConfigWayAllowed = [...]string{attachClusterKubeConfigPathKey, attachClusterKubeConfigRawKey}
+)
 
 var clusterSpec = &schema.Schema{
 	Type:        schema.TypeList,
@@ -213,24 +232,87 @@ func flattenSpec(spec *clustermodel.VmwareTanzuManageV1alpha1ClusterSpec) (data 
 	return []interface{}{flattenSpecData}
 }
 
+func ValidateKubeConfig(_ context.Context, diff *schema.ResourceDiff, _ interface{}) error {
+	value, ok := diff.GetOk(attachClusterKey)
+	if !ok {
+		return nil
+	}
+
+	data, _ := value.([]interface{})
+
+	if len(data) == 0 || data[0] == nil {
+		return fmt.Errorf("attach cluster data: %v is not valid: minimum one valid kube config type is required among: %v", data, strings.Join(KubeConfigWayAllowed[:], `, `))
+	}
+
+	kubeConfigData := data[0].(map[string]interface{})
+
+	kubeConfigTypeFound := make([]string, 0)
+
+	if v, ok := kubeConfigData[attachClusterKubeConfigPathKey]; ok {
+		if v1, ok := v.(string); ok && len(v1) != 0 {
+			kubeConfigTypeFound = append(kubeConfigTypeFound, attachClusterKubeConfigPathKey)
+		}
+	}
+
+	if v, ok := kubeConfigData[attachClusterKubeConfigRawKey]; ok {
+		if v1, ok := v.(string); ok && len(v1) != 0 {
+			kubeConfigTypeFound = append(kubeConfigTypeFound, attachClusterKubeConfigRawKey)
+		}
+	}
+
+	if len(kubeConfigTypeFound) == 0 {
+		return fmt.Errorf("no valid kube config type found: minimum one valid kube config type is required among: %v", strings.Join(KubeConfigWayAllowed[:], `, `))
+	} else if len(kubeConfigTypeFound) > 1 {
+		return fmt.Errorf("found kube config types: %v are not valid: maximum one valid kube config type is allowed", strings.Join(kubeConfigTypeFound, `, `))
+	}
+
+	return nil
+}
+
 func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
 	var (
-		kubeconfigfile string
-		k8sclient      k8sClient.Client
-		err            error
+		k8sclient  *k8sClient.Client
+		err        error
+		kubeConfig interface{}
 	)
 
-	if _, ok := d.GetOk(attachClusterKey); ok {
-		kubeconfigfile, _ = d.Get(helper.GetFirstElementOf(attachClusterKey, attachClusterKubeConfigKey)).(string)
+	if v, ok := d.GetOk(attachClusterKey); ok {
+		if v == nil {
+			return diag.Errorf("data for attach cluster block not found: %v", v)
+		}
 
-		if kubeconfigfile != "" {
-			k8sclient, err = getK8sClient(kubeconfigfile)
-			if err != nil {
-				log.Println("[ERROR] error while creating kubernetes client: ", err.Error())
-				return diag.FromErr(err)
+		isKubeConfigPresent := func(typeKey string) bool {
+			if value, ok := d.GetOk(helper.GetFirstElementOf(attachClusterKey, typeKey)); ok {
+				if value != nil {
+					kubeConfig = value
+					return true
+				}
 			}
+
+			return false
+		}
+
+		switch {
+		case isKubeConfigPresent(attachClusterKubeConfigPathKey):
+			kubeConfigFile, _ := kubeConfig.(string)
+			k8sclient, err = getK8sClient(withPath(kubeConfigFile))
+		case isKubeConfigPresent(attachClusterKubeConfigRawKey):
+			rawKubeConfig, _ := kubeConfig.(string)
+			k8sclient, err = getK8sClient(withRaw(rawKubeConfig))
+		}
+
+		if err != nil {
+			log.Println("[ERROR] error while creating kubernetes client: ", err.Error())
+			return diag.FromErr(err)
+		}
+
+		if k8sclient == nil {
+			err = errors.New("error while obtaining k8s client from REST config")
+			log.Println("[ERROR] error while creating kubernetes client: ", err.Error())
+
+			return diag.FromErr(err)
 		}
 	}
 
@@ -250,10 +332,10 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	// always run
 	d.SetId(clusterResponse.Cluster.Meta.UID)
 
-	if kubeconfigfile != "" {
+	if _, ok := d.GetOk(attachClusterKey); ok {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Warning,
-			Summary:  "Kubernetes cluster's kubeconfig file provided. Proceeding to attach the cluster TMC",
+			Summary:  "Kubernetes cluster's kubeconfig provided. Proceeding to attach the cluster TMC",
 		})
 
 		deploymentManifests, err := manifest.GetK8sManifest(clusterResponse.Cluster.Status.InstallerLink)
@@ -272,6 +354,66 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	}
 
 	return append(diags, dataSourceTMCClusterRead(context.WithValue(ctx, contextMethodKey{}, "create"), d, m)...)
+}
+
+type (
+	kubeConfigOption func(*kubeConfig)
+
+	kubeConfig struct {
+		filePath string
+		raw      string
+	}
+)
+
+func withPath(p string) kubeConfigOption {
+	return func(config *kubeConfig) {
+		config.filePath = p
+	}
+}
+
+func withRaw(r string) kubeConfigOption {
+	return func(config *kubeConfig) {
+		config.raw = r
+	}
+}
+
+func getK8sClient(opts ...kubeConfigOption) (*k8sClient.Client, error) {
+	cfg := &kubeConfig{}
+
+	for _, o := range opts {
+		o(cfg)
+	}
+
+	var (
+		restConfig *rest.Config
+		err        error
+	)
+
+	switch {
+	case cfg.filePath != "":
+		restConfig, err = clientcmd.BuildConfigFromFlags("", cfg.filePath)
+		if err != nil {
+			return nil, errors.WithMessagef(err, "Invalid kubeconfig file path provided, filepath : %s", cfg.filePath)
+		}
+	case cfg.raw != "":
+		restConfig, err = clientcmd.RESTConfigFromKubeConfig([]byte(cfg.raw))
+		if err != nil {
+			return nil, errors.WithMessagef(err, "Invalid raw kubeconfig provided.")
+		}
+	}
+
+	if restConfig == nil {
+		return nil, errors.WithMessagef(err, "Kubeconfig not provided.")
+	}
+
+	restConfig.Timeout = 10 * time.Second
+
+	client, err := k8sClient.New(restConfig, k8sClient.Options{})
+	if err != nil {
+		return nil, errors.WithMessagef(err, "Error in creating kubernetes client from kubeconfig file provided, filepath : %s", cfg.filePath)
+	}
+
+	return &client, nil
 }
 
 func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -423,20 +565,4 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	return dataSourceTMCClusterRead(ctx, d, m)
-}
-
-func getK8sClient(kubeConfigFile string) (k8sClient.Client, error) {
-	restConfig, err := clientcmd.BuildConfigFromFlags("", kubeConfigFile)
-	if err != nil {
-		return nil, errors.WithMessagef(err, "Invalid kubeconfig file path provided, filepath : %s", kubeConfigFile)
-	}
-
-	restConfig.Timeout = 10 * time.Second
-
-	k8sClient, err := k8sClient.New(restConfig, k8sClient.Options{})
-	if err != nil {
-		return nil, errors.WithMessagef(err, "Error in creating kubernetes client from kubeconfig file provided, filepath : %s", kubeConfigFile)
-	}
-
-	return k8sClient, nil
 }

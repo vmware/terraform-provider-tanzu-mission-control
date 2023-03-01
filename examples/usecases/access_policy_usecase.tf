@@ -35,7 +35,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
   name                    = "demo-cluster" // Required
 
   attach_k8s_cluster {
-    kubeconfig_file = "<kube-config path>" // Required
+    kubeconfig_file = "<kube-config-path>" // Required
     description     = "optional description about the kube-config provided"
   }
 

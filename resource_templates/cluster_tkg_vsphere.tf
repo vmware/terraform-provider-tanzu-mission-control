@@ -41,7 +41,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
           }
 
           api_server_port         = api-server-port-default-value
-          control_plane_end_point = "<end-point>" // Required
+          control_plane_end_point = "<end-point>" // Optional
         }
 
         security {

@@ -84,7 +84,7 @@ data "tanzu-mission-control_cluster" "read_tkg_aws_cluster" {
 - `management_cluster_name` (String) Name of the management cluster
 - `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
 - `provisioner_name` (String) Provisioner of the cluster
-- `ready_wait_timeout` (String) Wait timeout duration until cluster resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero
+- `ready_wait_timeout` (String) Wait timeout duration until cluster resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero. Should be set to 0 in case of simple attach cluster where kubeconfig input is not provided.
 - `spec` (Block List, Max: 1) Spec for the cluster (see [below for nested schema](#nestedblock--spec))
 
 ### Read-Only
@@ -99,6 +99,7 @@ Optional:
 
 - `description` (String) Attach cluster description
 - `kubeconfig_file` (String) Attach cluster KUBECONFIG path
+- `kubeconfig_raw` (String, Sensitive) Attach cluster KUBECONFIG
 
 
 <a id="nestedblock--meta"></a>
@@ -321,6 +322,11 @@ Read-Only:
 Required:
 
 - `aws_availability_zone` (String) The Availability Zone where the AWS nodes are placed
+
+
+
+
+
 
 <a id="nestedblock--spec--tkg_aws--advanced_configs"></a>
 ### Nested Schema for `spec.tkg_aws.advanced_configs`
@@ -555,7 +561,7 @@ Required:
 Optional:
 
 - `api_server_port` (Number) APIServerPort specifies the port address for the cluster that defaults to 6443.
-- `control_plane_end_point` (String) ControlPlaneEndpoint specifies the control plane virtual IP address. The value should be unique for every create request, else cluster creation shall fail
+- `control_plane_end_point` (String) ControlPlaneEndpoint specifies the control plane virtual IP address. The value should be unique for every create request, else cluster creation shall fail. This field is not needed when AVI enabled while creating a legacy cluster on TKGm.
 
 <a id="nestedblock--spec--tkg_vsphere--settings--network--pods"></a>
 ### Nested Schema for `spec.tkg_vsphere.settings.network.pods`
@@ -662,6 +668,11 @@ Optional:
 - `cpu` (String) Number of CPUs per node
 - `disk_size` (String) Root disk size in gigabytes for the VM
 - `memory` (String) Memory associated with the node in megabytes
+
+
+
+
+
 
 <a id="nestedblock--spec--tkg_vsphere--advanced_configs"></a>
 ### Nested Schema for `spec.tkg_vsphere.advanced_configs`

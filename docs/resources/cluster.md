@@ -42,6 +42,8 @@ resource "tanzu-mission-control_cluster" "attach_cluster_without_apply" {
     cluster_group = "default" # Default: default
   }
 
+  ready_wait_timeout = "0s" # Shouldn't wait for the default time of 3m in this case
+
   # The deployment link and the command needed to be run to attach this cluster would be provided in the output.status.execution_cmd
 }
 ```
@@ -52,15 +54,15 @@ resource "tanzu-mission-control_cluster" "attach_cluster_without_apply" {
 ### Example Usage
 
 ```terraform
-# Create Tanzu Mission Control attach cluster with k8s cluster kubeconfig provided
+# Create Tanzu Mission Control attach cluster with k8s cluster kubeconfig path provided
 # The provider would create the cluster entry and apply the deployment link manifests on to the k8s kubeconfig provided.
-resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
+resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig_path" {
   management_cluster_name = "attached"     # Default: attached
   provisioner_name        = "attached"     # Default: attached
   name                    = "demo-cluster" # Required
 
   attach_k8s_cluster {
-    kubeconfig_file = "<kube-config path>" # Required
+    kubeconfig_file = "<kube-config-path>" # Required
     description     = "optional description about the kube-config provided"
   }
 
@@ -74,6 +76,36 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
   }
 
   ready_wait_timeout = "15m" # Default: waits until 3 min for the cluster to become ready
+}
+
+# Create Tanzu Mission Control attach cluster with k8s cluster kubeconfig provided
+# The provider would create the cluster entry and apply the deployment link manifests on to the k8s kubeconfig provided.
+resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
+  management_cluster_name = "attached"     # Default: attached
+  provisioner_name        = "attached"     # Default: attached
+  name                    = "demo-cluster" # Required
+
+  attach_k8s_cluster {
+    kubeconfig_raw = var.kubeconfig # Required
+    description     = "optional description about the kube-config provided"
+  }
+
+  meta {
+    description = "description of the cluster"
+    labels      = { "key" : "value" }
+  }
+
+  spec {
+    cluster_group = "default" # Default: default
+  }
+
+  ready_wait_timeout = "15m" # Default: waits until 3 min for the cluster to become ready
+}
+
+variable "kubeconfig" {
+  default = <<EOF
+<config>
+EOF
 }
 ```
 
@@ -259,7 +291,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
           }
 
           api_server_port = 6443
-          control_plane_end_point = "10.191.249.39"
+          control_plane_end_point = "10.191.249.39" # optional for AVI enabled option
         }
 
         security {
@@ -445,7 +477,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
 - `management_cluster_name` (String) Name of the management cluster
 - `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
 - `provisioner_name` (String) Provisioner of the cluster
-- `ready_wait_timeout` (String) Wait timeout duration until cluster resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero
+- `ready_wait_timeout` (String) Wait timeout duration until cluster resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero. Should be set to 0 in case of simple attach cluster where kubeconfig input is not provided.
 - `spec` (Block List, Max: 1) Spec for the cluster (see [below for nested schema](#nestedblock--spec))
 
 ### Read-Only
@@ -460,6 +492,7 @@ Optional:
 
 - `description` (String) Attach cluster description
 - `kubeconfig_file` (String) Attach cluster KUBECONFIG path
+- `kubeconfig_raw` (String, Sensitive) Attach cluster KUBECONFIG
 
 
 <a id="nestedblock--meta"></a>
@@ -921,7 +954,7 @@ Required:
 Optional:
 
 - `api_server_port` (Number) APIServerPort specifies the port address for the cluster that defaults to 6443.
-- `control_plane_end_point` (String) ControlPlaneEndpoint specifies the control plane virtual IP address. The value should be unique for every create request, else cluster creation shall fail
+- `control_plane_end_point` (String) ControlPlaneEndpoint specifies the control plane virtual IP address. The value should be unique for every create request, else cluster creation shall fail. This field is not needed when AVI enabled while creating a legacy cluster on TKGm.
 
 <a id="nestedblock--spec--tkg_vsphere--settings--network--pods"></a>
 ### Nested Schema for `spec.tkg_vsphere.settings.network.pods`

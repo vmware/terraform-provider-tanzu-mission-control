@@ -178,7 +178,7 @@ var tkgVsphereNetwork = &schema.Schema{
 			},
 			controlPlaneEndPointKey: {
 				Type:        schema.TypeString,
-				Description: "ControlPlaneEndpoint specifies the control plane virtual IP address. The value should be unique for every create request, else cluster creation shall fail",
+				Description: "ControlPlaneEndpoint specifies the control plane virtual IP address. The value should be unique for every create request, else cluster creation shall fail. This field is not needed when AVI enabled while creating a legacy cluster on TKGm.",
 				Optional:    true,
 			},
 			podsKey: {
