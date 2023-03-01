@@ -179,7 +179,7 @@ var tkgVsphereNetwork = &schema.Schema{
 			controlPlaneEndPointKey: {
 				Type:        schema.TypeString,
 				Description: "ControlPlaneEndpoint specifies the control plane virtual IP address. The value should be unique for every create request, else cluster creation shall fail",
-				Required:    true,
+				Optional:    true,
 			},
 			podsKey: {
 				Type:        schema.TypeList,
