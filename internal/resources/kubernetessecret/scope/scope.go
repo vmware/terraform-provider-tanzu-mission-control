@@ -72,7 +72,6 @@ func FlattenScope(scopedFullname *ScopedFullname, scopesAllowed []string) (data 
 
 	flattenScopeData := make(map[string]interface{})
 
-	//nolint:all
 	switch scopedFullname.Scope {
 	case ClusterScope:
 		name = scopedFullname.FullnameCluster.Name
