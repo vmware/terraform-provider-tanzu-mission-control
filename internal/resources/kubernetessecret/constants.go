@@ -15,11 +15,13 @@ const (
 	dockerConfigJSONSecretDataKey = ".dockerconfigjson"
 	ImageRegistryURLKey           = "image_registry_url"
 	UsernameKey                   = "username"
+	DataSourceRead                = "dataSourceRead"
 	PasswordKey                   = "password"
 	DefaultSecretTypeValue        = "SECRET_TYPE_UNSPECIFIED"
 	SecretPhaseKey                = "secret_phase"
 	SecretExportPhaseKey          = "secret_export_phase"
 	specKey                       = "spec"
 	statusKey                     = "status"
+	Ready                         = "Ready"
 	ResourceName                  = "tanzu-mission-control_kubernetes_secret"
 )
