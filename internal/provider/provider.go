@@ -16,6 +16,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/credential"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/ekscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/iampolicy"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/namespace"
 	custompolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
 	custompolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom/resource"
@@ -33,19 +34,20 @@ func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: authctx.ProviderAuthSchema(),
 		ResourcesMap: map[string]*schema.Resource{
-			cluster.ResourceName:        cluster.ResourceTMCCluster(),
-			ekscluster.ResourceName:     ekscluster.ResourceTMCEKSCluster(),
-			workspace.ResourceName:      workspace.ResourceWorkspace(),
-			namespace.ResourceName:      namespace.ResourceNamespace(),
-			clustergroup.ResourceName:   clustergroup.ResourceClusterGroup(),
-			nodepools.ResourceName:      nodepools.ResourceNodePool(),
-			iampolicy.ResourceName:      iampolicy.ResourceIAMPolicy(),
-			custompolicy.ResourceName:   custompolicyresource.ResourceCustomPolicy(),
-			securitypolicy.ResourceName: securitypolicyresource.ResourceSecurityPolicy(),
-			imagepolicy.ResourceName:    imagepolicyresource.ResourceImagePolicy(),
-			quotapolicy.ResourceName:    quotapolicyresource.ResourceQuotaPolicy(),
-			credential.ResourceName:     credential.ResourceCredential(),
-			integration.ResourceName:    integration.ResourceIntegration(),
+			cluster.ResourceName:          cluster.ResourceTMCCluster(),
+			ekscluster.ResourceName:       ekscluster.ResourceTMCEKSCluster(),
+			workspace.ResourceName:        workspace.ResourceWorkspace(),
+			namespace.ResourceName:        namespace.ResourceNamespace(),
+			clustergroup.ResourceName:     clustergroup.ResourceClusterGroup(),
+			nodepools.ResourceName:        nodepools.ResourceNodePool(),
+			iampolicy.ResourceName:        iampolicy.ResourceIAMPolicy(),
+			custompolicy.ResourceName:     custompolicyresource.ResourceCustomPolicy(),
+			securitypolicy.ResourceName:   securitypolicyresource.ResourceSecurityPolicy(),
+			imagepolicy.ResourceName:      imagepolicyresource.ResourceImagePolicy(),
+			quotapolicy.ResourceName:      quotapolicyresource.ResourceQuotaPolicy(),
+			credential.ResourceName:       credential.ResourceCredential(),
+			integration.ResourceName:      integration.ResourceIntegration(),
+			kubernetessecret.ResourceName: kubernetessecret.ResourceSecret(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:      cluster.DataSourceTMCCluster(),

@@ -10,7 +10,7 @@ import "github.com/go-openapi/swag"
 
 // VmwareTanzuManageV1alpha1CommonPolicySpecQuotaV1Custom Input schema for namespace quota policy custom recipe version v1
 //
-// The input schema for namespace quota policy custom recipe version v1
+// The input schema for namespace quota policy custom recipe version v1.
 //
 // swagger:model VmwareTanzuManageV1alpha1CommonPolicySpecQuotaV1Custom
 type VmwareTanzuManageV1alpha1CommonPolicySpecQuotaV1Custom struct {
