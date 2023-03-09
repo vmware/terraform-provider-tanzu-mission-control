@@ -3,10 +3,10 @@
 
 # Read Tanzu Mission Control cluster nodepool : fetch cluster nodepool details
 data "tanzu-mission-control_cluster_node_pool" "read_node_pool" {
-  management_cluster_name = "<management-cluster>" // Default: attached
-  provisioner_name        = "<prov-name>"          // Default: attached
-  cluster_name            = "<cluster_name>"       // Required
-  name                    = "<node_pool-name>"     // Required
+  management_cluster_name = "<existing-management-cluster>" // Default: attached
+  provisioner_name        = "<existing-prov-name>"          // Default: attached
+  cluster_name            = "<existing-cluster_name>"       // Required
+  name                    = "<existing-node_pool-name>"     // Required
 }
 
 # Create Tanzu Mission Control cluster nodepool entry
