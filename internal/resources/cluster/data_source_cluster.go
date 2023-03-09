@@ -25,12 +25,14 @@ import (
 
 func DataSourceTMCCluster() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceTMCClusterRead,
-		Schema:      clusterSchema,
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+			return dataSourceClusterRead(context.WithValue(ctx, contextMethodKey{}, "dataSourceRead"), d, m)
+		},
+		Schema: clusterSchema,
 	}
 }
 
-func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	config := m.(authctx.TanzuContext)
 
 	// Warning or errors can be collected in a slice type
@@ -50,7 +52,12 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 		resp, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
 		if err != nil {
 			if clienterrors.IsNotFoundError(err) {
+				if ctx.Value(contextMethodKey{}) == "dataSourceRead" {
+					return false, errors.Wrapf(err, "Tanzu Mission Control cluster entry not found, name : %s", d.Get(NameKey))
+				}
+
 				_ = schema.RemoveFromState(d, m)
+
 				return false, nil
 			}
 
@@ -105,7 +112,7 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 		_, err = helper.RetryUntilTimeout(getClusterResourceRetryableFn, 10*time.Second, timeoutDuration)
 	}
 
-	if err != nil || resp == nil {
+	if err != nil || resp == nil || resp.Cluster == nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(NameKey)))
 	}
 
