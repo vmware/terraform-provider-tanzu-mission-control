@@ -120,12 +120,12 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(err)
 	}
 
-	clusterSpec := constructEksClusterSpec(d)
+	_, tfNodepools := constructEksClusterSpec(d)
 
-	nodepools := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition, len(clusterSpec.NodePools))
+	// see the explanation of this in the func doc of nodepoolPosMap
+	npPosMap := nodepoolPosMap(tfNodepools)
 
-	// see the explanation of this in the func doc
-	npPosMap := nodepoolPosMap(clusterSpec.NodePools)
+	nodepools := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition, len(tfNodepools))
 
 	for _, np := range npresp.Nodepools {
 		npDef := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{
@@ -150,9 +150,7 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 		}
 	}
 
-	resp.EksCluster.Spec.NodePools = nodepools
-
-	if err := d.Set(specKey, flattenClusterSpec(resp.EksCluster.Spec)); err != nil {
+	if err := d.Set(specKey, flattenClusterSpec(resp.EksCluster.Spec, nodepools)); err != nil {
 		return diag.FromErr(err)
 	}
 

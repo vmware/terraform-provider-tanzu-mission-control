@@ -59,6 +59,24 @@ func IsUnauthorizedError(err error) bool {
 	return false
 }
 
+func IsAlreadyExistsError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	convertedError, ok := err.(ClientErrors)
+	if !ok {
+		return strings.Contains(err.Error(), fmt.Sprintf("%d", http.StatusConflict)) &&
+			strings.Contains(err.Error(), http.StatusText(http.StatusConflict))
+	}
+
+	if convertedError.httpCode == http.StatusConflict {
+		return true
+	}
+
+	return false
+}
+
 func (e ClientErrors) Error() string {
 	if e.err == nil {
 		return ""

@@ -39,6 +39,9 @@ const (
 
 	infoKey                     = "info"
 	amiTypeKey                  = "ami_type"
+	amiInfoKey                  = "ami_info"
+	amiIDKey                    = "ami_id"
+	overrideBootstrapCmdKey     = "override_bootstrap_cmd"
 	capacityTypeKey             = "capacity_type"
 	rootDiskSizeKey             = "root_disk_size"
 	nodeLabelsKey               = "node_labels"
