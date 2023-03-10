@@ -325,7 +325,11 @@ func TestNodepoolSpecEqual(t *testing.T) {
 
 func getNodepoolSpec() *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec {
 	return &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec{
-		AmiType:      "AL2_x86_64",
+		AmiType: "CUSTOM",
+		AmiInfo: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAmiInfo{
+			AmiID:                "ami-2qu8409oisdfj0qw",
+			OverrideBootstrapCmd: "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+		},
 		CapacityType: "ON_DEMAND",
 		InstanceTypes: []string{
 			"t3.medium",

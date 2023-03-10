@@ -14,6 +14,9 @@ import (
 // swagger:model vmware.tanzu.manage.v1alpha1.ekscluster.nodepool.Spec
 type VmwareTanzuManageV1alpha1EksclusterNodepoolSpec struct {
 
+	// AMI info for the nodepool.
+	AmiInfo *VmwareTanzuManageV1alpha1EksclusterNodepoolAmiInfo `json:"amiInfo,omitempty"`
+
 	// AMI type.
 	AmiType string `json:"amiType,omitempty"`
 

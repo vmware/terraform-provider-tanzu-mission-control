@@ -64,9 +64,29 @@ var nodepoolSpecSchema = &schema.Schema{
 			},
 			amiTypeKey: {
 				Type:        schema.TypeString,
-				Description: "AMI Type, immutable",
+				Description: "AMI type, immutable",
 				Optional:    true,
 				Computed:    true,
+			},
+			amiInfoKey: {
+				Type:        schema.TypeList,
+				Description: "AMI info for the nodepool if AMI type is specified as CUSTOM",
+				Optional:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						amiIDKey: {
+							Type:        schema.TypeString,
+							Description: "ID of the AMI to be used",
+							Optional:    true,
+						},
+						overrideBootstrapCmdKey: {
+							Type:        schema.TypeString,
+							Description: "Override bootstrap command for the custom AMI",
+							Optional:    true,
+						},
+					},
+				},
 			},
 			capacityTypeKey: {
 				Type:        schema.TypeString,
@@ -78,6 +98,7 @@ var nodepoolSpecSchema = &schema.Schema{
 				Type:        schema.TypeInt,
 				Description: "Root disk size in GiB, immutable",
 				Optional:    true,
+				Computed:    true,
 			},
 			tagsKey: {
 				Type:        schema.TypeMap,
@@ -225,6 +246,7 @@ var nodepoolSpecSchema = &schema.Schema{
 				Type:        schema.TypeSet,
 				Description: "Nodepool instance types, immutable",
 				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -286,6 +308,12 @@ func flattenSpec(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec)
 	data := make(map[string]interface{})
 
 	data[amiTypeKey] = item.AmiType
+
+	if item.AmiInfo != nil &&
+		(item.AmiInfo.AmiID != "" || item.AmiInfo.OverrideBootstrapCmd != "") {
+		data[amiInfoKey] = flattenAmiInfo(item.AmiInfo)
+	}
+
 	data[capacityTypeKey] = item.CapacityType
 
 	if len(item.InstanceTypes) > 0 {
@@ -326,6 +354,19 @@ func flattenSpec(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec)
 	if item.UpdateConfig != nil {
 		data[updateConfigKey] = flattenUpdateConfig(item.UpdateConfig)
 	}
+
+	return []interface{}{data}
+}
+
+func flattenAmiInfo(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAmiInfo) []interface{} {
+	if item == nil {
+		return []interface{}{}
+	}
+
+	data := make(map[string]interface{})
+
+	data[amiIDKey] = item.AmiID
+	data[overrideBootstrapCmdKey] = item.OverrideBootstrapCmd
 
 	return []interface{}{data}
 }
@@ -485,6 +526,11 @@ func constructNodepoolSpec(data []interface{}) *eksmodel.VmwareTanzuManageV1alph
 		helper.SetPrimitiveValue(v, &spec.AmiType, amiTypeKey)
 	}
 
+	if v, ok := specData[amiInfoKey]; ok {
+		data, _ := v.([]interface{})
+		spec.AmiInfo = constructAmiInfo(data)
+	}
+
 	if v, ok := specData[capacityTypeKey]; ok {
 		helper.SetPrimitiveValue(v, &spec.CapacityType, capacityTypeKey)
 	}
@@ -541,6 +587,26 @@ func constructNodepoolSpec(data []interface{}) *eksmodel.VmwareTanzuManageV1alph
 	}
 
 	return spec
+}
+
+func constructAmiInfo(data []interface{}) *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAmiInfo {
+	amiInfo := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAmiInfo{}
+
+	if len(data) == 0 || data[0] == nil {
+		return amiInfo
+	}
+
+	aiData, _ := data[0].(map[string]interface{})
+
+	if v, ok := aiData[amiIDKey]; ok {
+		helper.SetPrimitiveValue(v, &amiInfo.AmiID, amiIDKey)
+	}
+
+	if v, ok := aiData[overrideBootstrapCmdKey]; ok {
+		helper.SetPrimitiveValue(v, &amiInfo.OverrideBootstrapCmd, overrideBootstrapCmdKey)
+	}
+
+	return amiInfo
 }
 
 func constructLaunchTemplate(data []interface{}) *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolLaunchTemplate {
@@ -801,8 +867,35 @@ func fillTMCSetValues(tmcNpSpec *eksmodel.VmwareTanzuManageV1alpha1EksclusterNod
 }
 
 func handleNodepoolCreates(config authctx.TanzuContext, opsRetryTimeout time.Duration, clusterFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName, nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
+	err := createNodepools(config, clusterFn, nps)
+	if err != nil {
+		return errors.Wrap(err, "error while creating nodepools")
+	}
+
 	for _, np := range nps {
 		npFn := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName{
+			OrgID:          clusterFn.OrgID,
+			CredentialName: clusterFn.CredentialName,
+			Region:         clusterFn.Region,
+			EksClusterName: clusterFn.Name,
+			Name:           np.Info.Name,
+		}
+
+		getNodepoolResourceRetryableFn := getWaitForNodepoolReadyFn(config, npFn)
+
+		_, err := helper.RetryUntilTimeout(getNodepoolResourceRetryableFn, 10*time.Second, opsRetryTimeout)
+		if err != nil {
+			return errors.Wrapf(err, "failed to verify EKS nodepool resource(%s) creation", npFn.Name)
+		}
+	}
+
+	return nil
+}
+
+func createNodepools(config authctx.TanzuContext, clusterFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName, nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
+	for _, np := range nps {
+		npFn := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName{
+			OrgID:          clusterFn.OrgID,
 			CredentialName: clusterFn.CredentialName,
 			Region:         clusterFn.Region,
 			EksClusterName: clusterFn.Name,
@@ -820,15 +913,8 @@ func handleNodepoolCreates(config authctx.TanzuContext, opsRetryTimeout time.Dur
 		}
 
 		_, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceCreate(req)
-		if err != nil {
+		if err != nil && !clienterrors.IsAlreadyExistsError(err) {
 			return errors.Wrapf(err, "failed to create nodepool %s", np.Info.Name)
-		}
-
-		getNodepoolResourceRetryableFn := getWaitForNodepoolReadyFn(config, npFn)
-
-		_, err = helper.RetryUntilTimeout(getNodepoolResourceRetryableFn, 10*time.Second, opsRetryTimeout)
-		if err != nil {
-			return errors.Wrapf(err, "failed to verify EKS nodepool resource(%s) creation", npFn.Name)
 		}
 	}
 

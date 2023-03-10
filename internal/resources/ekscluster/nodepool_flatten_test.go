@@ -38,7 +38,13 @@ func TestFlattenNodepools(t *testing.T) {
 					},
 					"spec": []interface{}{
 						map[string]interface{}{
-							"ami_type":      "AL2_x86_64",
+							"ami_type": "CUSTOM",
+							"ami_info": []interface{}{
+								map[string]interface{}{
+									"ami_id":                 "ami-2qu8409oisdfj0qw",
+									"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+								},
+							},
 							"capacity_type": "ON_DEMAND",
 							"instance_types": []string{
 								"t3.medium",
@@ -116,7 +122,13 @@ func TestFlattenNodepools(t *testing.T) {
 					},
 					"spec": []interface{}{
 						map[string]interface{}{
-							"ami_type":      "AL2_x86_64",
+							"ami_type": "CUSTOM",
+							"ami_info": []interface{}{
+								map[string]interface{}{
+									"ami_id":                 "ami-2qu8409oisdfj0qw",
+									"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+								},
+							},
 							"capacity_type": "ON_DEMAND",
 							"instance_types": []string{
 								"t3.medium",
@@ -183,7 +195,13 @@ func TestFlattenNodepools(t *testing.T) {
 					},
 					"spec": []interface{}{
 						map[string]interface{}{
-							"ami_type":      "AL2_x86_64",
+							"ami_type": "CUSTOM",
+							"ami_info": []interface{}{
+								map[string]interface{}{
+									"ami_id":                 "ami-2qu8409oisdfj0qw",
+									"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+								},
+							},
 							"capacity_type": "ON_DEMAND",
 							"instance_types": []string{
 								"t3.medium",
@@ -280,7 +298,13 @@ func TestFlattenNodepool(t *testing.T) {
 				},
 				"spec": []interface{}{
 					map[string]interface{}{
-						"ami_type":      "AL2_x86_64",
+						"ami_type": "CUSTOM",
+						"ami_info": []interface{}{
+							map[string]interface{}{
+								"ami_id":                 "ami-2qu8409oisdfj0qw",
+								"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+							},
+						},
 						"capacity_type": "ON_DEMAND",
 						"instance_types": []string{
 							"t3.medium",
@@ -367,7 +391,13 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			getInput:    getNodepoolSpec,
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type":      "AL2_x86_64",
+					"ami_type": "CUSTOM",
+					"ami_info": []interface{}{
+						map[string]interface{}{
+							"ami_id":                 "ami-2qu8409oisdfj0qw",
+							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+						},
+					},
 					"capacity_type": "ON_DEMAND",
 					"instance_types": []string{
 						"t3.medium",
@@ -438,7 +468,13 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type":      "AL2_x86_64",
+					"ami_type": "CUSTOM",
+					"ami_info": []interface{}{
+						map[string]interface{}{
+							"ami_id":                 "ami-2qu8409oisdfj0qw",
+							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+						},
+					},
 					"capacity_type": "ON_DEMAND",
 					"instance_types": []string{
 						"t3.medium",
@@ -505,7 +541,13 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type":      "AL2_x86_64",
+					"ami_type": "CUSTOM",
+					"ami_info": []interface{}{
+						map[string]interface{}{
+							"ami_id":                 "ami-2qu8409oisdfj0qw",
+							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+						},
+					},
 					"capacity_type": "ON_DEMAND",
 					"instance_types": []string{
 						"t3.medium",
@@ -564,7 +606,13 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type":      "AL2_x86_64",
+					"ami_type": "CUSTOM",
+					"ami_info": []interface{}{
+						map[string]interface{}{
+							"ami_id":                 "ami-2qu8409oisdfj0qw",
+							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+						},
+					},
 					"capacity_type": "ON_DEMAND",
 					"instance_types": []string{
 						"t3.medium",
@@ -630,7 +678,13 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type":       "AL2_x86_64",
+					"ami_type": "CUSTOM",
+					"ami_info": []interface{}{
+						map[string]interface{}{
+							"ami_id":                 "ami-2qu8409oisdfj0qw",
+							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+						},
+					},
 					"capacity_type":  "ON_DEMAND",
 					"root_disk_size": int32(20),
 					"instance_types": []string{
@@ -690,7 +744,13 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type":      "AL2_x86_64",
+					"ami_type": "CUSTOM",
+					"ami_info": []interface{}{
+						map[string]interface{}{
+							"ami_id":                 "ami-2qu8409oisdfj0qw",
+							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+						},
+					},
 					"capacity_type": "ON_DEMAND",
 					"instance_types": []string{
 						"t3.medium",
@@ -751,7 +811,13 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type":      "AL2_x86_64",
+					"ami_type": "CUSTOM",
+					"ami_info": []interface{}{
+						map[string]interface{}{
+							"ami_id":                 "ami-2qu8409oisdfj0qw",
+							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+						},
+					},
 					"capacity_type": "ON_DEMAND",
 					"instance_types": []string{
 						"t3.medium",
@@ -811,7 +877,13 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type":      "AL2_x86_64",
+					"ami_type": "CUSTOM",
+					"ami_info": []interface{}{
+						map[string]interface{}{
+							"ami_id":                 "ami-2qu8409oisdfj0qw",
+							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+						},
+					},
 					"capacity_type": "ON_DEMAND",
 					"instance_types": []string{
 						"t3.medium",
@@ -872,7 +944,13 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type":      "AL2_x86_64",
+					"ami_type": "CUSTOM",
+					"ami_info": []interface{}{
+						map[string]interface{}{
+							"ami_id":                 "ami-2qu8409oisdfj0qw",
+							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+						},
+					},
 					"capacity_type": "ON_DEMAND",
 					"instance_types": []string{
 						"t3.medium",

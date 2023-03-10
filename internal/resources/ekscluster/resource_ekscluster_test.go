@@ -24,6 +24,7 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/exp/slices"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
@@ -43,7 +44,7 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 	endpoint := os.Getenv("TMC_ENDPOINT")
 
 	// POST Cluster mock setup
-	clusterSpec := getMockEksClusterSpec(config.AWSAccountNumber, config.CloudFormationTemplateID)
+	clusterSpec, nps := getMockEksClusterSpec(config.AWSAccountNumber, config.CloudFormationTemplateID)
 	postRequestModel := &eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster{
 		FullName: &eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName{
 			Name:           clusterName,
@@ -70,6 +71,7 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 
 	postResponseModel := &eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster{
 		FullName: &eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName{
+			OrgID:          config.OrgID,
 			Name:           clusterName,
 			CredentialName: config.CredentialName,
 			Region:         config.Region,
@@ -132,9 +134,11 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 
 	// GET Nodepools mock setup
 	nodepools := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, 0)
+	nodepoolRequests := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest, 0)
+	nodepoolResponses := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIResponse, 0)
 	nodepoolReadyPhase := eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolStatusPhaseREADY
 
-	for count, nodepool := range getModel.Spec.NodePools {
+	for count, nodepool := range nps {
 		var nodepoolDescription string
 		if count == 0 {
 			nodepoolDescription = "tf nodepool description"
@@ -142,7 +146,7 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 			nodepoolDescription = fmt.Sprintf("tf nodepool %v description", count+1)
 		}
 
-		nodepools = append(nodepools, &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool{
+		npObj := eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool{
 			FullName: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName{
 				CredentialName: config.CredentialName,
 				EksClusterName: clusterName,
@@ -151,15 +155,27 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 				Region:         config.Region,
 			},
 			Spec: nodepool.Spec,
-			Status: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolStatus{
-				Phase: &nodepoolReadyPhase,
-				Conditions: map[string]eksmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-					"ready": readyCondition,
-				},
-			},
 			Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 				Description: nodepoolDescription,
 			},
+		}
+		npObjWithStatus := npObj
+
+		npObjWithStatus.Status = &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolStatus{
+			Phase: &nodepoolReadyPhase,
+			Conditions: map[string]eksmodel.VmwareTanzuCoreV1alpha1StatusCondition{
+				"ready": readyCondition,
+			},
+		}
+
+		nodepools = append(nodepools, &npObjWithStatus)
+
+		nodepoolRequests = append(nodepoolRequests, &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest{
+			Nodepool: &npObj,
+		})
+
+		nodepoolResponses = append(nodepoolResponses, &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIResponse{
+			Nodepool: &npObjWithStatus,
 		})
 	}
 
@@ -170,6 +186,7 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 	// Setup HTTP Responders
 	postEndpoint := fmt.Sprintf("https://%s/v1alpha1/eksclusters", endpoint)
 	getClusterEndpoint := fmt.Sprintf("https://%s/v1alpha1/eksclusters/%s", endpoint, clusterName)
+	postNodepoolsEndpoint := fmt.Sprintf("https://%s/v1alpha1/eksclusters/%s/nodepools", endpoint, clusterName)
 	getClusterNodepoolsEndpoint := fmt.Sprintf("https://%s/v1alpha1/eksclusters/%s/nodepools", endpoint, clusterName)
 	deleteEndpoint := getClusterEndpoint
 
@@ -178,6 +195,9 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 
 	httpmock.RegisterResponder("GET", getClusterEndpoint,
 		bodyInspectingResponder(t, nil, 200, getResponse))
+
+	httpmock.RegisterResponder("POST", postNodepoolsEndpoint,
+		nodepoolsBodyInspectingResponder(t, nodepoolRequests, 200, nodepoolResponses))
 
 	httpmock.RegisterResponder("GET", getClusterNodepoolsEndpoint,
 		bodyInspectingResponder(t, nil, 200, getNodepoolsResponse))
@@ -369,54 +389,59 @@ func verifyEKSClusterResourceCreation(
 	}
 }
 
-func getMockEksClusterSpec(accountID string, templateID string) eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec {
+func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec, []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) {
 	controlPlaneRoleARN := fmt.Sprintf("arn:aws:iam::%s:role/control-plane.%s.eks.tmc.cloud.vmware.com", accountID, templateID)
 	workerRoleArn := fmt.Sprintf("arn:aws:iam::%s:role/worker.%s.eks.tmc.cloud.vmware.com", accountID, templateID)
 
 	return eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec{
-		ClusterGroupName: "default",
-		Config: &eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig{
-			Version: "1.23",
-			RoleArn: controlPlaneRoleARN,
-			Tags: map[string]string{
-				"tmc.cloud.vmware.com/tmc-managed": "true",
-			},
-			KubernetesNetworkConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterKubernetesNetworkConfig{
-				ServiceCidr: "10.100.0.0/16",
-			},
-			Logging: &eksmodel.VmwareTanzuManageV1alpha1EksclusterLogging{
-				APIServer:         false,
-				Audit:             true,
-				Authenticator:     true,
-				ControllerManager: true,
-				Scheduler:         true,
-			},
-			Vpc: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVPCConfig{
-				EnablePrivateAccess: true,
-				EnablePublicAccess:  true,
-				PublicAccessCidrs: []string{
-					"0.0.0.0/0",
+			ClusterGroupName: "default",
+			Config: &eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig{
+				Version: "1.23",
+				RoleArn: controlPlaneRoleARN,
+				Tags: map[string]string{
+					"tmc.cloud.vmware.com/tmc-managed": "true",
 				},
-				SecurityGroups: []string{
-					"sg-0a6768722e9716768",
+				KubernetesNetworkConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterKubernetesNetworkConfig{
+					ServiceCidr: "10.100.0.0/16",
 				},
-				SubnetIds: []string{
-					"subnet-0a184f6302af32a86",
-					"subnet-0ed95d5c212ac62a1",
-					"subnet-0526ecaecde5b1bf7",
-					"subnet-06897e1063cc0cf4e",
+				Logging: &eksmodel.VmwareTanzuManageV1alpha1EksclusterLogging{
+					APIServer:         false,
+					Audit:             true,
+					Authenticator:     true,
+					ControllerManager: true,
+					Scheduler:         true,
+				},
+				Vpc: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVPCConfig{
+					EnablePrivateAccess: true,
+					EnablePublicAccess:  true,
+					PublicAccessCidrs: []string{
+						"0.0.0.0/0",
+					},
+					SecurityGroups: []string{
+						"sg-0a6768722e9716768",
+					},
+					SubnetIds: []string{
+						"subnet-0a184f6302af32a86",
+						"subnet-0ed95d5c212ac62a1",
+						"subnet-0526ecaecde5b1bf7",
+						"subnet-06897e1063cc0cf4e",
+					},
 				},
 			},
 		},
-		NodePools: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{
+		[]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{
 			{
 				Info: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolInfo{
 					Name:        "first-np",
 					Description: "tf nodepool description",
 				},
 				Spec: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec{
-					RoleArn:      workerRoleArn,
-					AmiType:      "AL2_x86_64",
+					RoleArn: workerRoleArn,
+					AmiType: "CUSTOM",
+					AmiInfo: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAmiInfo{
+						AmiID:                "ami-2qu8409oisdfj0qw",
+						OverrideBootstrapCmd: "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+					},
 					CapacityType: "ON_DEMAND",
 					RootDiskSize: 40,
 					Tags: map[string]string{
@@ -493,10 +518,10 @@ func getMockEksClusterSpec(accountID string, templateID string) eksmodel.VmwareT
 						},
 					},
 					InstanceTypes: []string{},
+					AmiInfo:       &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAmiInfo{},
 				},
 			},
-		},
-	}
+		}
 }
 
 func bodyInspectingResponder(t *testing.T, expectedContent interface{}, successResponse int, successResponseBody interface{}) httpmock.Responder {
@@ -566,7 +591,7 @@ func bodyInspectingResponder(t *testing.T, expectedContent interface{}, successR
 
 					if !(isSubnetKey || isExpectedTag) {
 						t.Fail()
-						return nil, errors.New("diff identified outside of subnet order and additional VMware tags")
+						return nil, errors.Errorf("diff identified outside of subnet order and additional VMware tags: %s", diffItem)
 					}
 				}
 
@@ -592,6 +617,140 @@ func bodyInspectingResponder(t *testing.T, expectedContent interface{}, successR
 
 		return successFunc()
 	}
+}
+
+func nodepoolsBodyInspectingResponder(t *testing.T, nodepools []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest, successResponse int, successResponseBody []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIResponse) httpmock.Responder {
+	return func(r *http.Request) (*http.Response, error) {
+		successFunc := func(i int) (*http.Response, error) {
+			return httpmock.NewJsonResponse(successResponse, successResponseBody[i])
+		}
+
+		if r.Body == nil {
+			t.Fail()
+			return nil, fmt.Errorf("expected body on request")
+		}
+
+		bodyBytes, err := io.ReadAll(r.Body)
+		if err != nil {
+			t.Fail()
+			return nil, err
+		}
+
+		// Map of map of strings for comparing subnet equality
+		subnetMap := make(map[string]map[string][]string, 0)
+
+		var bodyInterface map[string]interface{}
+		if err = json.Unmarshal(bodyBytes, &bodyInterface); err != nil {
+			return nil, err
+		}
+
+		npName, err := getNodepoolNameFromJSON(bodyInterface)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get nodepool namGe")
+		}
+
+		npIdx := slices.IndexFunc(nodepools, func(npr *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest) bool {
+			return npr.Nodepool.FullName.Name == npName
+		})
+
+		// Compare to expected content.
+		expectedBytes, err := json.Marshal(nodepools[npIdx])
+		if err != nil {
+			t.Fail()
+			return nil, err
+		}
+
+		var expectedInterface map[string]interface{}
+
+		err = json.Unmarshal(expectedBytes, &expectedInterface)
+		if err != nil {
+			return nil, err
+		}
+
+		diff := deep.Equal(bodyInterface, expectedInterface)
+		if diff == nil {
+			return successFunc(npIdx)
+		}
+
+		// special check for subnets
+		// First, populate all the diffs pertaining to subnets into maps
+		for _, diffItem := range diff {
+			isSubnetKey := strings.Contains(diffItem, "map[subnetIds]") && strings.Contains(diffItem, ".slice")
+			isExpectedTag := strings.Contains(diffItem, "map[tags]") && strings.Contains(diffItem, "tmc.cloud.vmware.com")
+
+			if isSubnetKey {
+				segments := strings.Split(diffItem, ":")
+				key := strings.Split(segments[0], ".slice")[0]
+
+				// Create map if not present
+				if subnetMap[key] == nil {
+					subnetMap[key] = make(map[string][]string, 0)
+				}
+
+				// Add vals to map
+				vals := strings.Split(segments[1], "!=")
+				subnetMap[key]["left"] = append(subnetMap[key]["left"], strings.TrimSpace(vals[0]))
+				subnetMap[key]["right"] = append(subnetMap[key]["right"], strings.TrimSpace(vals[1]))
+			}
+
+			if !(isSubnetKey || isExpectedTag) {
+				t.Fail()
+				return nil, errors.Errorf("diff identified outside of subnet order and additional VMware tags: %s", diffItem)
+			}
+		}
+
+		// Then, sort slices and compare
+		for _, set := range subnetMap {
+			left := set["left"]
+			right := set["right"]
+
+			// sort
+			sort.Strings(left)
+			sort.Strings(right)
+
+			subnetDiff := deep.Equal(left, right)
+			if subnetDiff != nil {
+				t.Fail()
+				return nil, errors.New("subnets did not match")
+			}
+		}
+
+		return successFunc(npIdx)
+	}
+}
+
+func getNodepoolNameFromJSON(json map[string]interface{}) (string, error) {
+	np, ok := json["nodepool"]
+	if !ok {
+		return "", errors.New("nodepool key not present in json")
+	}
+
+	npObj, ok := np.(map[string]interface{})
+	if !ok {
+		return "", errors.New("nodepool is not an object in json")
+	}
+
+	fn, ok := npObj["fullName"]
+	if !ok {
+		return "", errors.New("fullName key is not present in nodepool object")
+	}
+
+	fnObj, ok := fn.(map[string]interface{})
+	if !ok {
+		return "", errors.New("fullName is not an object in json")
+	}
+
+	name, ok := fnObj["name"]
+	if !ok {
+		return "", errors.New("name key is not present in fullName object")
+	}
+
+	nameStr, ok := name.(string)
+	if !ok {
+		return "", errors.New("name is not a string in json")
+	}
+
+	return nameStr, nil
 }
 
 // Register a new responder when the given call is made.
