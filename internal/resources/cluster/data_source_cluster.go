@@ -40,6 +40,12 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 		err   error
 	)
 
+	refreshUserAUthCtx := func(config *authctx.TanzuContext, refreshCondition func(error) bool) {
+		if refreshCondition(err) {
+			authctx.RefreshUserAuthCtx(config)
+		}
+	}
+
 	getClusterResourceRetryableFn := func() (retry bool, err error) {
 		resp, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
 		if err != nil {
@@ -47,6 +53,9 @@ func dataSourceTMCClusterRead(ctx context.Context, d *schema.ResourceData, m int
 				_ = schema.RemoveFromState(d, m)
 				return false, nil
 			}
+
+			// refresh auth bearer token if it expired
+			refreshUserAUthCtx(&config, clienterrors.IsUnauthorizedError)
 
 			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(NameKey))
 		}
