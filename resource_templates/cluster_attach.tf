@@ -1,11 +1,11 @@
 // Tanzu Mission Control Cluster Type: Attach. Bring your own k8s cluster and attach it to Tanzu Mission Control.
 // Operations supported : Read, Create, Update & Delete
 
-// Read Tanzu Mission Control cluster : fetch cluster details
+// Read Tanzu Mission Control cluster : fetch cluster details for an already attached cluster
 data "tanzu-mission-control_cluster" "ready_only_cluster_view" {
-  management_cluster_name = "<management-cluster>" // Default: attached
-  provisioner_name        = "<prov-name>"          // Default: attached
-  name                    = "<cluster-name>"       // Required
+  management_cluster_name = "<existing-management-cluster>" // Default: attached
+  provisioner_name        = "<existing-prov-name>"          // Default: attached
+  name                    = "<existing-cluster-name>"       // Required
 }
 
 // Create Tanzu Mission Control attach cluster entry

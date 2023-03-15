@@ -1,11 +1,11 @@
 // Tanzu Mission Control Cluster Type: Tanzu Kubernetes Grid AWS workload.
 // Operations supported : Read, Create, Update & Delete (except nodepools)
 
-// Read Tanzu Mission Control Tanzu Kubernetes Grid AWS workload cluster : fetch cluster details
+// Read Tanzu Mission Control Tanzu Kubernetes Grid AWS workload cluster : fetch cluster details for already present TKG AWS cluster
 data "tanzu-mission-control_cluster" "ready_only_cluster_view" {
-  management_cluster_name = "<management-cluster>" // Required
-  provisioner_name        = "<prov-name>"          // Required
-  name                    = "<cluster-name>"       // Required
+  management_cluster_name = "<existing-management-cluster>" // Required
+  provisioner_name        = "<existing-prov-name>"          // Required
+  name                    = "<existing-cluster-name>"       // Required
 }
 
 // Create Tanzu Mission Control Tanzu Kubernetes Grid AWS workload cluster entry

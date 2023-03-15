@@ -38,7 +38,7 @@ type (
 
 func ResourceTMCCluster() *schema.Resource {
 	return &schema.Resource{
-		ReadContext:   dataSourceTMCClusterRead,
+		ReadContext:   dataSourceClusterRead,
 		CreateContext: resourceClusterCreate,
 		UpdateContext: resourceClusterInPlaceUpdate,
 		DeleteContext: resourceClusterDelete,
@@ -353,7 +353,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		log.Printf("[INFO] Cluster attach successful. Tanzu Mission Control resources applied to the cluster(%s) successfully", constructFullname(d).ToString())
 	}
 
-	return append(diags, dataSourceTMCClusterRead(context.WithValue(ctx, contextMethodKey{}, "create"), d, m)...)
+	return append(diags, dataSourceClusterRead(context.WithValue(ctx, contextMethodKey{}, "create"), d, m)...)
 }
 
 type (
@@ -564,5 +564,5 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 		log.Printf("[INFO] cluster update successful")
 	}
 
-	return dataSourceTMCClusterRead(ctx, d, m)
+	return dataSourceClusterRead(ctx, d, m)
 }
