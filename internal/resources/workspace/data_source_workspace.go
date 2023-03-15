@@ -14,14 +14,17 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	workspacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/workspace"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 func DataSourceWorkspace() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceWorkspaceRead,
-		Schema:      workspaceSchema,
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+			return dataSourceWorkspaceRead(helper.GetContextWithCaller(ctx, helper.DataRead), d, m)
+		},
+		Schema: workspaceSchema,
 	}
 }
 
@@ -39,7 +42,7 @@ func dataSourceWorkspaceRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	resp, err := config.TMCConnection.WorkspaceResourceService.ManageV1alpha1WorkspaceResourceServiceGet(fn)
 	if err != nil {
-		if clienterrors.IsNotFoundError(err) {
+		if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
 			_ = schema.RemoveFromState(d, m)
 			return
 		}

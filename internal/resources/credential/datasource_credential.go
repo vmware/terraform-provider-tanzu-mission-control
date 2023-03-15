@@ -14,18 +14,21 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	credentialsmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/credential"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 func DataSourceCredential() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceCredentialRead,
-		Schema:      credentialSchema,
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+			return dataSourceCredentialRead(helper.GetContextWithCaller(ctx, helper.DataRead), d, m)
+		},
+		Schema: credentialSchema,
 	}
 }
 
-func dataSourceCredentialRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceCredentialRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	config := m.(authctx.TanzuContext)
 
 	var (
@@ -38,7 +41,7 @@ func dataSourceCredentialRead(_ context.Context, d *schema.ResourceData, m inter
 
 	resp, err = config.TMCConnection.CredentialResourceService.CredentialResourceServiceGet(constructFullname(d))
 	if err != nil || resp == nil {
-		if clienterrors.IsNotFoundError(err) {
+		if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
 			_ = schema.RemoveFromState(d, m)
 			return diags
 		}

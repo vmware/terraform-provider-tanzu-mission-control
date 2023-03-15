@@ -22,8 +22,10 @@ import (
 
 func DataSourceClusterNodePool() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceClusterNodePoolRead,
-		Schema:      nodePoolSchema,
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+			return dataSourceClusterNodePoolRead(helper.GetContextWithCaller(ctx, helper.DataRead), d, m)
+		},
+		Schema: nodePoolSchema,
 	}
 }
 
@@ -36,9 +38,15 @@ func dataSourceClusterNodePoolRead(ctx context.Context, d *schema.ResourceData, 
 	)
 
 	getNodepoolResourceRetryableFn := func() (retry bool, err error) {
-		resp, err := config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceGet(constructFullName(d))
+		resp, err = config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceGet(constructFullName(d))
 		if err != nil {
-			if clienterrors.IsNotFoundError(err) {
+			if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
+				_ = schema.RemoveFromState(d, m)
+
+				if helper.IsRefreshState(ctx) {
+					return false, nil
+				}
+
 				return true, nil
 			}
 
@@ -47,6 +55,11 @@ func dataSourceClusterNodePoolRead(ctx context.Context, d *schema.ResourceData, 
 
 			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control nodepool entry, name : %s", d.Get(nodePoolNameKey))
 		}
+
+		if resp.Nodepool.Status == nil || resp.Nodepool.Status.Phase == nil || resp.Nodepool.Status.Conditions == nil {
+			return true, nil
+		}
+
 		// always run
 		d.SetId(resp.Nodepool.FullName.Name + ":" + resp.Nodepool.FullName.ClusterName)
 
@@ -58,14 +71,16 @@ func dataSourceClusterNodePoolRead(ctx context.Context, d *schema.ResourceData, 
 
 	_, err = helper.RetryUntilTimeout(getNodepoolResourceRetryableFn, 10*time.Second, timeoutDuration)
 
-	if err != nil || resp == nil {
+	if err != nil || resp == nil || resp.Nodepool == nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to get tanzu cluster node pool entry"))
 	}
 
 	var readyConditon nodepoolsmodel.VmwareTanzuCoreV1alpha1StatusCondition
 
-	if value, ok := resp.Nodepool.Status.Conditions[ready]; ok {
-		readyConditon = value
+	if resp.Nodepool.Status.Conditions != nil {
+		if value, ok := resp.Nodepool.Status.Conditions[ready]; ok {
+			readyConditon = value
+		}
 	}
 
 	status := map[string]interface{}{
