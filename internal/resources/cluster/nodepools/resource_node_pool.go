@@ -8,6 +8,7 @@ package nodepools
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -66,6 +67,12 @@ var nodePoolSchema = map[string]*schema.Schema{
 		Description: "Status of node pool resource",
 		Computed:    true,
 		Elem:        &schema.Schema{Type: schema.TypeString},
+	},
+	waitKey: {
+		Type:        schema.TypeString,
+		Description: "Wait timeout duration until nodepool resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero.",
+		Default:     "10m",
+		Optional:    true,
 	},
 }
 
@@ -483,6 +490,10 @@ func resourceNodePoolCreate(ctx context.Context, d *schema.ResourceData, m inter
 		return diag.FromErr(errors.Wrapf(err, "unable to create tanzu node pool entry"))
 	}
 
+	if nodePoolResponse.Nodepool.Status == nil {
+		return diag.FromErr(errors.Wrapf(err, "Status of nodepool has not been populated"))
+	}
+
 	d.SetId(nodePoolResponse.Nodepool.FullName.Name + ":" + nodePoolResponse.Nodepool.FullName.ClusterName)
 
 	return dataSourceClusterNodePoolRead(ctx, d, m)
@@ -561,11 +572,32 @@ func resourceClusterNodePoolDelete(_ context.Context, d *schema.ResourceData, m 
 
 	var diags diag.Diagnostics
 
-	err := config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceDelete(constructFullName(d))
-	if err != nil && !clienterrors.IsNotFoundError(err) {
-		return diag.FromErr(errors.Wrapf(err, "Unable to delete tanzu cluster node pool entry"))
+	deleteNodepoolResourceRetryableFn := func() (retry bool, err error) {
+		err = config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceDelete(constructFullName(d))
+		if err != nil {
+			if clienterrors.IsNotFoundError(err) {
+				return true, nil
+			}
+
+			// refresh auth bearer token if it expired
+			authctx.RefreshUserAuthContext(&config, clienterrors.IsUnauthorizedError, err)
+
+			return true, errors.Wrapf(err, "Unable to delete tanzu cluster node pool entry, name : %s", d.Get(nodePoolNameKey))
+		}
+
+		return false, nil
+	}
+	timeoutValueData, _ := d.Get(waitKey).(string)
+
+	timeoutDuration, _ := time.ParseDuration(timeoutValueData)
+
+	_, err := helper.RetryUntilTimeout(deleteNodepoolResourceRetryableFn, 10*time.Second, timeoutDuration)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 
+	// d.SetId("") is automatically called assuming delete returns no errors, but
+	// it is added here for explicitness.
 	_ = schema.RemoveFromState(d, m)
 
 	return diags

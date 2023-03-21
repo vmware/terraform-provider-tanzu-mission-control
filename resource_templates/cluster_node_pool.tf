@@ -16,6 +16,7 @@ resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
   provisioner_name        = "<prov-name>"          // Default: attached
   cluster_name            = "<cluster_name>"       // Required
   name                    = "<node_pool-name>"     // Required
+  ready_wait_timeout      = "10m" // Default: waits until 10 min for the node pool to become ready
 
   spec {
     worker_node_count = "<worker-nodes>"

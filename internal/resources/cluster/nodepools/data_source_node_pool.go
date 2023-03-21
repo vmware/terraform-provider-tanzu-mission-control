@@ -7,12 +7,15 @@ package nodepools
 
 import (
 	"context"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	nodepoolsmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
@@ -24,17 +27,40 @@ func DataSourceClusterNodePool() *schema.Resource {
 	}
 }
 
-func dataSourceClusterNodePoolRead(_ context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+func dataSourceClusterNodePoolRead(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	resp, err := config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceGet(constructFullName(d))
+	var (
+		resp *nodepoolsmodel.VmwareTanzuManageV1alpha1ClusterNodepoolCreateNodepoolResponse
+		err  error
+	)
+
+	getNodepoolResourceRetryableFn := func() (retry bool, err error) {
+		resp, err := config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceGet(constructFullName(d))
+		if err != nil {
+			if clienterrors.IsNotFoundError(err) {
+				return true, nil
+			}
+
+			// refresh auth bearer token if it expired
+			authctx.RefreshUserAuthContext(&config, clienterrors.IsUnauthorizedError, err)
+
+			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control nodepool entry, name : %s", d.Get(nodePoolNameKey))
+		}
+		// always run
+		d.SetId(resp.Nodepool.FullName.Name + ":" + resp.Nodepool.FullName.ClusterName)
+
+		return false, nil
+	}
+	timeoutValueData, _ := d.Get(waitKey).(string)
+
+	timeoutDuration, _ := time.ParseDuration(timeoutValueData)
+
+	_, err = helper.RetryUntilTimeout(getNodepoolResourceRetryableFn, 10*time.Second, timeoutDuration)
 
 	if err != nil || resp == nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to get tanzu cluster node pool entry"))
 	}
-
-	// always run
-	d.SetId(resp.Nodepool.FullName.Name + ":" + resp.Nodepool.FullName.ClusterName)
 
 	var readyConditon nodepoolsmodel.VmwareTanzuCoreV1alpha1StatusCondition
 

@@ -31,4 +31,5 @@ const (
 	specKey                     = "spec"
 	statusKey                   = "status"
 	ready                       = "Ready"
+	waitKey                     = "ready_wait_timeout"
 )
