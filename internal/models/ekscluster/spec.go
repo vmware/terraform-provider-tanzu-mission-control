@@ -25,9 +25,6 @@ type VmwareTanzuManageV1alpha1EksclusterSpec struct {
 	// EKS config for the cluster control plane.
 	Config *VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig `json:"config,omitempty"`
 
-	// Nodepool definition for the cluster.
-	NodePools []*VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition `json:"nodePools"`
-
 	// Optional proxy name is the name of the Proxy Config
 	// to be used for the cluster.
 	ProxyName string `json:"proxyName,omitempty"`

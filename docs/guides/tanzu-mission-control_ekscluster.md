@@ -103,6 +103,11 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
           "<subnet-ids>",
         ]
 
+        ami_info {
+          ami_id = "<aws-ami-id>"
+          override_bootstrap_cmd = "<ami-bootstrap-command>"
+        }
+
         remote_access {
           ssh_key = "<aws-ssh-key-name>" // Required (if remote access is specified)
 

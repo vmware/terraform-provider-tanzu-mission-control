@@ -16,13 +16,13 @@ import (
 func TestFlattenCluterSpec(t *testing.T) {
 	tests := []struct {
 		description string
-		getInput    func() *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec
+		getInput    func() (*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec, []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition)
 		expected    []interface{}
 	}{
 		{
 			description: "nil spec",
-			getInput: func() *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec {
-				return nil
+			getInput: func() (*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec, []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) {
+				return nil, nil
 			},
 			expected: []interface{}{},
 		},
@@ -85,7 +85,13 @@ func TestFlattenCluterSpec(t *testing.T) {
 							},
 							"spec": []interface{}{
 								map[string]interface{}{
-									"ami_type":      "AL2_x86_64",
+									"ami_type": "CUSTOM",
+									"ami_info": []interface{}{
+										map[string]interface{}{
+											"ami_id":                 "ami-2qu8409oisdfj0qw",
+											"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+										},
+									},
 									"capacity_type": "ON_DEMAND",
 									"instance_types": []string{
 										"t3.medium",
@@ -149,10 +155,9 @@ func TestFlattenCluterSpec(t *testing.T) {
 		},
 		{
 			description: "empty nodepools",
-			getInput: func() *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec {
-				spec := getClusterSpec()
-				spec.NodePools = nil
-				return spec
+			getInput: func() (*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec, []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) {
+				spec, _ := getClusterSpec()
+				return spec, nil
 			},
 			expected: []interface{}{
 				map[string]interface{}{
@@ -205,11 +210,10 @@ func TestFlattenCluterSpec(t *testing.T) {
 		},
 		{
 			description: "empty proxy",
-			getInput: func() *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec {
-				spec := getClusterSpec()
+			getInput: func() (*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec, []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) {
+				spec, _ := getClusterSpec()
 				spec.ProxyName = ""
-				spec.NodePools = nil
-				return spec
+				return spec, nil
 			},
 			expected: []interface{}{
 				map[string]interface{}{
@@ -261,12 +265,11 @@ func TestFlattenCluterSpec(t *testing.T) {
 		},
 		{
 			description: "empty config",
-			getInput: func() *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec {
-				spec := getClusterSpec()
+			getInput: func() (*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec, []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) {
+				spec, _ := getClusterSpec()
 				spec.ProxyName = ""
 				spec.Config = nil
-				spec.NodePools = nil
-				return spec
+				return spec, nil
 			},
 			expected: []interface{}{
 				map[string]interface{}{
@@ -278,7 +281,8 @@ func TestFlattenCluterSpec(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.description, func(t *testing.T) {
-			output := flattenClusterSpec(test.getInput())
+			spec, nps := test.getInput()
+			output := flattenClusterSpec(spec, nps)
 			require.Equal(t, test.expected, output)
 		})
 	}
@@ -467,12 +471,12 @@ func TestFlattenConfig(t *testing.T) {
 	}
 }
 
-func getClusterSpec() *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec {
+func getClusterSpec() (*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec, []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) {
 	return &eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec{
-		ClusterGroupName: "test-cg",
-		ProxyName:        "test-prooxy",
-		Config:           getConfig(),
-		NodePools: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{
+			ClusterGroupName: "test-cg",
+			ProxyName:        "test-prooxy",
+			Config:           getConfig(),
+		}, []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{
 			{
 				Info: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolInfo{
 					Description: "test np",
@@ -480,8 +484,7 @@ func getClusterSpec() *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec {
 				},
 				Spec: getNodepoolSpec(),
 			},
-		},
-	}
+		}
 }
 
 func getConfig() *eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig {

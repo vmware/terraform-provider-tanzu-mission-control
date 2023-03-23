@@ -60,7 +60,7 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
       spec {
         role_arn       = "arn:aws:iam::000000000000:role/worker.1234567890123467890.eks.tmc.cloud.vmware.com" // Required
 
-        ami_type       = "AL2_x86_64"
+        ami_type       = "CUSTOM"
         capacity_type  = "ON_DEMAND"
         root_disk_size = 40 // Default: 20GiB
         tags           = { "nptag" : "nptagvalue9" }
@@ -73,7 +73,12 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
           "subnet-06497e6063c209f4d",
         ]
 
-        remote_access {
+        ami_info {
+          ami_id = "ami-2qu8409oisdfj0qw"
+          override_bootstrap_cmd = "#!/bin/bash\n/etc/eks/bootstrap.sh tf2-eks-cluster-2"
+        }
+
+       remote_access {
           ssh_key = "test-key" // Required (if remote access is specified)
 
           security_groups = [

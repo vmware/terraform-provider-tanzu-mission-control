@@ -259,19 +259,19 @@ var vpcSchema = &schema.Schema{
 	},
 }
 
-func constructEksClusterSpec(d *schema.ResourceData) (spec *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+func constructEksClusterSpec(d *schema.ResourceData) (spec *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec, nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) {
 	spec = &eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec{
 		ClusterGroupName: clusterGroupDefaultValue,
 	}
 
 	value, ok := d.GetOk(specKey)
 	if !ok {
-		return spec
+		return spec, nil
 	}
 
 	data, _ := value.([]interface{})
 	if len(data) == 0 || data[0] == nil {
-		return spec
+		return spec, nil
 	}
 
 	specData, _ := data[0].(map[string]interface{})
@@ -291,10 +291,10 @@ func constructEksClusterSpec(d *schema.ResourceData) (spec *eksmodel.VmwareTanzu
 
 	if v, ok := specData[nodepoolKey]; ok {
 		nodepoolListData, _ := v.([]interface{})
-		spec.NodePools = constructNodepools(nodepoolListData)
+		return spec, constructNodepools(nodepoolListData)
 	}
 
-	return spec
+	return spec, nil
 }
 
 func constructConfig(data []interface{}) *eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig {
@@ -456,20 +456,41 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		return diag.Errorf("error while retrieving Tanzu auth config")
 	}
 
+	clusterFn := constructFullname(d)
+	clusterSpec, nps := constructEksClusterSpec(d)
+
 	clusterReq := &eksmodel.VmwareTanzuManageV1alpha1EksclusterCreateUpdateEksClusterRequest{
 		EksCluster: &eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster{
-			FullName: constructFullname(d),
+			FullName: clusterFn,
 			Meta:     common.ConstructMeta(d),
-			Spec:     constructEksClusterSpec(d),
+			Spec:     clusterSpec,
 		},
 	}
 
+	var eksCluster *eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster
+
 	clusterResponse, err := config.TMCConnection.EKSClusterResourceService.EksClusterResourceServiceCreate(clusterReq)
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control EKS cluster entry, name : %s", d.Get(NameKey)))
+		if !clienterrors.IsAlreadyExistsError(err) {
+			return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control EKS cluster entry, name : %s", d.Get(NameKey)))
+		}
+
+		clusterResponse, err := config.TMCConnection.EKSClusterResourceService.EksClusterResourceServiceGet(clusterFn)
+		if err != nil {
+			return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control EKS cluster entry, name : %s", d.Get(NameKey)))
+		}
+
+		eksCluster = clusterResponse.EksCluster
+	} else {
+		eksCluster = clusterResponse.EksCluster
 	}
 
-	d.SetId(clusterResponse.EksCluster.Meta.UID)
+	err = createNodepools(config, eksCluster.FullName, nps)
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control EKS nodepools for cluster: %s", eksCluster.FullName.ToString()))
+	}
+
+	d.SetId(eksCluster.Meta.UID)
 
 	return dataSourceTMCEKSClusterRead(context.WithValue(ctx, contextMethodKey{}, "create"), d, m)
 }
@@ -489,9 +510,11 @@ func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interfac
 	// it is added here for explicitness.
 	d.SetId("")
 
+	clusterFn := constructFullname(d)
 	getClusterResourceRetryableFn := func() (retry bool, err error) {
-		_, err = config.TMCConnection.EKSClusterResourceService.EksClusterResourceServiceGet(constructFullname(d))
+		_, err = config.TMCConnection.EKSClusterResourceService.EksClusterResourceServiceGet(clusterFn)
 		if err == nil {
+			log.Printf("[DEBUG] cluster(%s) deletion in progress", clusterFn.ToString())
 			return true, errors.New("cluster deletion in progress")
 		}
 
@@ -523,14 +546,12 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 
 	opsRetryTimeout := getRetryTimeout(d)
 
-	clusterSpec := constructEksClusterSpec(d)
+	clusterSpec, nodepools := constructEksClusterSpec(d)
 
 	// EKS cluster update API on TMC side ignores nodepools passed to it.
 	// The nodepools have to be updated via separate nodepool API, hence we
 	// deal with them separately.
-	errnp := handleNodepoolDiffs(config, opsRetryTimeout, getResp.EksCluster.FullName, clusterSpec.NodePools)
-
-	clusterSpec.NodePools = nil
+	errnp := handleNodepoolDiffs(config, opsRetryTimeout, getResp.EksCluster.FullName, nodepools)
 
 	errcl := handleClusterDiff(config, getResp.EksCluster, common.ConstructMeta(d), clusterSpec)
 	if errcl != nil {
@@ -609,7 +630,7 @@ func getRetryTimeout(d *schema.ResourceData) time.Duration {
 	return defaultTimeout
 }
 
-func flattenClusterSpec(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) []interface{} {
+func flattenClusterSpec(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec, nodepools []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) []interface{} {
 	if item == nil {
 		return []interface{}{}
 	}
@@ -622,8 +643,8 @@ func flattenClusterSpec(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) 
 		data[configKey] = flattenConfig(item.Config)
 	}
 
-	if len(item.NodePools) > 0 {
-		data[nodepoolKey] = flattenNodePools(item.NodePools)
+	if len(nodepools) > 0 {
+		data[nodepoolKey] = flattenNodePools(nodepools)
 	}
 
 	if item.ProxyName != "" {

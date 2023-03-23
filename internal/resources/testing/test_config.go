@@ -54,7 +54,11 @@ const testDefaultCreateEksClusterScript = `
 				spec {
 					// Refer to nodepool's schema
 					role_arn       = "arn:aws:iam::{{.AWSAccountNumber}}:role/worker.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
-					ami_type       = "AL2_x86_64" // Forces New
+					ami_type       = "CUSTOM" // Forces New
+					ami_info {
+						ami_id = "ami-2qu8409oisdfj0qw"
+						override_bootstrap_cmd = "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami"
+					}
 					capacity_type  = "ON_DEMAND"
 					root_disk_size = 40 // Default: 20GiB, forces New
 					tags           = { "testnptag" : "testnptagvalue" }

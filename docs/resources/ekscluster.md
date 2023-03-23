@@ -90,7 +90,7 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
       spec {
         role_arn       = "arn:aws:iam::000000000000:role/worker.1234567890123467890.eks.tmc.cloud.vmware.com" // Required
 
-        ami_type       = "AL2_x86_64"
+        ami_type       = "CUSTOM"
         capacity_type  = "ON_DEMAND"
         root_disk_size = 40 // Default: 20GiB
         tags           = { "nptag" : "nptagvalue9" }
@@ -103,7 +103,12 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
           "subnet-06497e6063c209f4d",
         ]
 
-        remote_access {
+        ami_info {
+          ami_id = "ami-2qu8409oisdfj0qw"
+          override_bootstrap_cmd = "#!/bin/bash\n/etc/eks/bootstrap.sh tf2-eks-cluster-2"
+        }
+
+       remote_access {
           ssh_key = "test-key" // Required (if remote access is specified)
 
           security_groups = [
@@ -302,7 +307,8 @@ Required:
 
 Optional:
 
-- `ami_type` (String) AMI Type, immutable
+- `ami_info` (Block List, Max: 1) AMI info for the nodepool if AMI type is specified as CUSTOM (see [below for nested schema](#nestedblock--spec--nodepool--spec--ami_info))
+- `ami_type` (String) AMI type, immutable
 - `capacity_type` (String) Capacity Type
 - `instance_types` (Set of String) Nodepool instance types, immutable
 - `launch_template` (Block List, Max: 1) Launch template for the nodepool (see [below for nested schema](#nestedblock--spec--nodepool--spec--launch_template))
@@ -313,6 +319,15 @@ Optional:
 - `tags` (Map of String) EKS specific tags
 - `taints` (Block List) If specified, the node's taints (see [below for nested schema](#nestedblock--spec--nodepool--spec--taints))
 - `update_config` (Block List, Max: 1) Update config for the nodepool (see [below for nested schema](#nestedblock--spec--nodepool--spec--update_config))
+
+<a id="nestedblock--spec--nodepool--spec--ami_info"></a>
+### Nested Schema for `spec.nodepool.spec.ami_info`
+
+Optional:
+
+- `ami_id` (String) ID of the AMI to be used
+- `override_bootstrap_cmd` (String) Override bootstrap command for the custom AMI
+
 
 <a id="nestedblock--spec--nodepool--spec--launch_template"></a>
 ### Nested Schema for `spec.nodepool.spec.launch_template`
