@@ -15,7 +15,9 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/credential"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/ekscluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/gitrepository"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/iampolicy"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kustomization"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/namespace"
 	custompolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
 	custompolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom/resource"
@@ -49,16 +51,19 @@ func Provider() *schema.Provider {
 			networkpolicy.ResourceName:  networkpolicyresource.ResourceNetworkPolicy(),
 			credential.ResourceName:     credential.ResourceCredential(),
 			integration.ResourceName:    integration.ResourceIntegration(),
+			gitrepository.ResourceName:  gitrepository.ResourceGitRepository(),
+			kustomization.ResourceName:  kustomization.ResourceKustomization(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			cluster.ResourceName:      cluster.DataSourceTMCCluster(),
-			ekscluster.ResourceName:   ekscluster.DataSourceTMCEKSCluster(),
-			workspace.ResourceName:    workspace.DataSourceWorkspace(),
-			namespace.ResourceName:    namespace.DataSourceNamespace(),
-			clustergroup.ResourceName: clustergroup.DataSourceClusterGroup(),
-			nodepools.ResourceName:    nodepools.DataSourceClusterNodePool(),
-			credential.ResourceName:   credential.DataSourceCredential(),
-			integration.ResourceName:  integration.DataSourceIntegration(),
+			cluster.ResourceName:       cluster.DataSourceTMCCluster(),
+			ekscluster.ResourceName:    ekscluster.DataSourceTMCEKSCluster(),
+			workspace.ResourceName:     workspace.DataSourceWorkspace(),
+			namespace.ResourceName:     namespace.DataSourceNamespace(),
+			clustergroup.ResourceName:  clustergroup.DataSourceClusterGroup(),
+			nodepools.ResourceName:     nodepools.DataSourceClusterNodePool(),
+			credential.ResourceName:    credential.DataSourceCredential(),
+			integration.ResourceName:   integration.DataSourceIntegration(),
+			gitrepository.ResourceName: gitrepository.DataSourceGitRepository(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
