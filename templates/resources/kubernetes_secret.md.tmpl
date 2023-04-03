@@ -12,7 +12,24 @@ In managed clusters, both attached and provisioned, you can create Kubernetes Se
 
 To create a cluster secret, you must be associated with the cluster.admin role
 
+The `tanzu-mission-control_kubernetes_secret` resource enables you to create cluster secret to a particular scope for management through Tanzu Mission Control.
+
+You can optionally make export to true to make the secret available to all namespaces in the cluster.
+
 [cluster Secret]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-BBE2404D-C2EE-41C7-B639-C0322783A74D.html
+
+[export secret to all namespaces]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-B0A72F72-4216-4869-B293-6802368B11D2.html
+
+## Policy Scope and Inheritance
+
+In the Tanzu Mission Control resource hierarchy, there is currently one levels at which you can specify cluster secret resources:
+- **Kubernetes objects** - `cluster` block under `scope` sub-resource   
+
+**Note:**
+The scope parameter is mandatory in the schema and the user needs to add one of the defined scopes to the script for the provider to function.
+Only one scope per resource is allowed.
+
+## Cluster scoped cluster secret
 
 ## Example Usage
 
