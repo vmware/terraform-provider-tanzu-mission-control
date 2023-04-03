@@ -38,12 +38,13 @@ type (
 
 func ResourceTMCCluster() *schema.Resource {
 	return &schema.Resource{
-		ReadContext:   dataSourceClusterRead,
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+			return dataSourceClusterRead(helper.GetContextWithCaller(ctx, helper.RefreshState), d, m)
+		},
 		CreateContext: resourceClusterCreate,
 		UpdateContext: resourceClusterInPlaceUpdate,
 		DeleteContext: resourceClusterDelete,
 		Schema:        clusterSchema,
-		CustomizeDiff: ValidateKubeConfig,
 	}
 }
 
@@ -108,19 +109,17 @@ var (
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				attachClusterKubeConfigPathKey: {
-					Type:         schema.TypeString,
-					Description:  "Attach cluster KUBECONFIG path",
-					ForceNew:     true,
-					Optional:     true,
-					ValidateFunc: validation.StringIsNotWhiteSpace,
+					Type:        schema.TypeString,
+					Description: "Attach cluster KUBECONFIG path",
+					ForceNew:    true,
+					Optional:    true,
 				},
 				attachClusterKubeConfigRawKey: {
-					Type:         schema.TypeString,
-					Description:  "Attach cluster KUBECONFIG",
-					Optional:     true,
-					ForceNew:     true,
-					Sensitive:    true,
-					ValidateFunc: validation.StringIsNotWhiteSpace,
+					Type:        schema.TypeString,
+					Description: "Attach cluster KUBECONFIG",
+					Optional:    true,
+					ForceNew:    true,
+					Sensitive:   true,
 				},
 				attachClusterDescriptionKey: {
 					Type:         schema.TypeString,
@@ -232,12 +231,7 @@ func flattenSpec(spec *clustermodel.VmwareTanzuManageV1alpha1ClusterSpec) (data 
 	return []interface{}{flattenSpecData}
 }
 
-func ValidateKubeConfig(_ context.Context, diff *schema.ResourceDiff, _ interface{}) error {
-	value, ok := diff.GetOk(attachClusterKey)
-	if !ok {
-		return nil
-	}
-
+func validateKubeConfig(value interface{}) error {
 	data, _ := value.([]interface{})
 
 	if len(data) == 0 || data[0] == nil {
@@ -283,6 +277,11 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 			return diag.Errorf("data for attach cluster block not found: %v", v)
 		}
 
+		err = validateKubeConfig(v)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+
 		isKubeConfigPresent := func(typeKey string) bool {
 			if value, ok := d.GetOk(helper.GetFirstElementOf(attachClusterKey, typeKey)); ok {
 				if value != nil {
@@ -297,9 +296,15 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		switch {
 		case isKubeConfigPresent(attachClusterKubeConfigPathKey):
 			kubeConfigFile, _ := kubeConfig.(string)
+			if strings.TrimSpace(kubeConfigFile) == "" {
+				return diag.FromErr(fmt.Errorf("expected kubeconfig file path to not be an empty string or whitespace"))
+			}
 			k8sclient, err = getK8sClient(withPath(kubeConfigFile))
 		case isKubeConfigPresent(attachClusterKubeConfigRawKey):
 			rawKubeConfig, _ := kubeConfig.(string)
+			if strings.TrimSpace(rawKubeConfig) == "" {
+				return diag.FromErr(fmt.Errorf("expected raw kubeconfig to not be an empty string or whitespace"))
+			}
 			k8sclient, err = getK8sClient(withRaw(rawKubeConfig))
 		}
 
