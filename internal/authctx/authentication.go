@@ -135,7 +135,13 @@ func getUserAuthCtx(config *TanzuContext) (map[string]string, error) {
 	return md, nil
 }
 
-func RefreshUserAuthCtx(config *TanzuContext) {
+var RefreshUserAuthContext = func(config *TanzuContext, refreshCondition func(error) bool, err error) {
+	if refreshCondition(err) {
+		refreshUserAuthCtx(config)
+	}
+}
+
+func refreshUserAuthCtx(config *TanzuContext) {
 	md, _ := getUserAuthCtx(config)
 	for key, value := range md {
 		config.TMCConnection.Headers.Set(key, value)

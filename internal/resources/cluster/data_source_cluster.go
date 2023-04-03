@@ -42,12 +42,6 @@ func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, m interf
 		err   error
 	)
 
-	refreshUserAUthCtx := func(config *authctx.TanzuContext, refreshCondition func(error) bool, err error) {
-		if refreshCondition(err) {
-			authctx.RefreshUserAuthCtx(config)
-		}
-	}
-
 	getClusterResourceRetryableFn := func() (retry bool, err error) {
 		resp, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
 		if err != nil {
@@ -62,12 +56,16 @@ func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, m interf
 			}
 
 			// refresh auth bearer token if it expired
-			refreshUserAUthCtx(&config, clienterrors.IsUnauthorizedError, err)
+			authctx.RefreshUserAuthContext(&config, clienterrors.IsUnauthorizedError, err)
 
 			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster entry, name : %s", d.Get(NameKey))
 		}
 
 		d.SetId(resp.Cluster.Meta.UID)
+
+		if resp.Cluster.Status == nil || resp.Cluster.Status.Phase == nil {
+			return true, errors.Wrapf(err, "Status or Phase not found for Tanzu Mission Control cluster entry, name : %s", d.Get(NameKey))
+		}
 
 		if !strings.EqualFold(string(clustermodel.VmwareTanzuManageV1alpha1ClusterPhaseREADY), string(*resp.Cluster.Status.Phase)) {
 			log.Printf("[DEBUG] waiting for cluster(%s) to be in %v phase, present phase:%v", constructFullname(d).ToString(), clustermodel.VmwareTanzuManageV1alpha1ClusterPhaseREADY, *resp.Cluster.Status.Phase)

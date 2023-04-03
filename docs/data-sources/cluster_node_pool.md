@@ -36,6 +36,7 @@ data "tanzu-mission-control_cluster_node_pool" "read_node_pool" {
 ### Optional
 
 - `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
+- `ready_wait_timeout` (String) Wait timeout duration until nodepool resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero.
 - `spec` (Block List) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec))
 
 ### Read-Only

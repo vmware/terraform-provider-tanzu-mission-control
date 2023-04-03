@@ -21,6 +21,7 @@ resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
   provisioner_name = "test-gc-e2e-demo-ns"
   cluster_name = "tkgs-test"
   name = "terraform-nodepool"
+  ready_wait_timeout = "10m"
 
   spec {
     worker_node_count = "3"
@@ -54,6 +55,7 @@ resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
 ### Optional
 
 - `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
+- `ready_wait_timeout` (String) Wait timeout duration until nodepool resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero.
 - `spec` (Block List) Spec for the cluster nodepool (see [below for nested schema](#nestedblock--spec))
 
 ### Read-Only
