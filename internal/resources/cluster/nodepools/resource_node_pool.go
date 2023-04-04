@@ -27,7 +27,9 @@ const (
 
 func ResourceNodePool() *schema.Resource {
 	return &schema.Resource{
-		ReadContext:   dataSourceClusterNodePoolRead,
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+			return dataSourceClusterNodePoolRead(helper.GetContextWithCaller(ctx, helper.RefreshState), d, m)
+		},
 		CreateContext: resourceNodePoolCreate,
 		UpdateContext: resourceClusterNodePoolInPlaceUpdate,
 		DeleteContext: resourceClusterNodePoolDelete,

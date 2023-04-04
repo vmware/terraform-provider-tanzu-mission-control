@@ -14,14 +14,17 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	namespacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/namespace"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 func DataSourceNamespace() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceNamespaceRead,
-		Schema:      namespaceSchema,
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+			return dataSourceNamespaceRead(helper.GetContextWithCaller(ctx, helper.DataRead), d, m)
+		},
+		Schema: namespaceSchema,
 	}
 }
 
@@ -38,7 +41,7 @@ func dataSourceNamespaceRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	resp, err = config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceGet(constructFullname(d))
 	if err != nil || resp == nil {
-		if clienterrors.IsNotFoundError(err) {
+		if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
 			_ = schema.RemoveFromState(d, m)
 			return diags
 		}
