@@ -26,7 +26,7 @@ import (
 func DataSourceTMCCluster() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-			return dataSourceClusterRead(context.WithValue(ctx, contextMethodKey{}, "dataSourceRead"), d, m)
+			return dataSourceClusterRead(helper.GetContextWithCaller(ctx, helper.DataRead), d, m)
 		},
 		Schema: clusterSchema,
 	}
@@ -45,14 +45,14 @@ func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, m interf
 	getClusterResourceRetryableFn := func() (retry bool, err error) {
 		resp, err = config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(constructFullname(d))
 		if err != nil {
-			if clienterrors.IsNotFoundError(err) {
-				if ctx.Value(contextMethodKey{}) == "dataSourceRead" {
-					return false, errors.Wrapf(err, "Tanzu Mission Control cluster entry not found, name : %s", d.Get(NameKey))
-				}
-
+			if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
 				_ = schema.RemoveFromState(d, m)
 
-				return false, nil
+				if helper.IsRefreshState(ctx) {
+					return false, nil
+				}
+
+				return true, nil
 			}
 
 			// refresh auth bearer token if it expired
