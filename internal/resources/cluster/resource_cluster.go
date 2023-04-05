@@ -299,12 +299,15 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 			if strings.TrimSpace(kubeConfigFile) == "" {
 				return diag.FromErr(fmt.Errorf("expected kubeconfig file path to not be an empty string or whitespace"))
 			}
+
 			k8sclient, err = getK8sClient(withPath(kubeConfigFile))
+
 		case isKubeConfigPresent(attachClusterKubeConfigRawKey):
 			rawKubeConfig, _ := kubeConfig.(string)
 			if strings.TrimSpace(rawKubeConfig) == "" {
 				return diag.FromErr(fmt.Errorf("expected raw kubeconfig to not be an empty string or whitespace"))
 			}
+
 			k8sclient, err = getK8sClient(withRaw(rawKubeConfig))
 		}
 
