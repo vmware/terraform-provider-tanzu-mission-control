@@ -72,13 +72,13 @@ resource "tanzu-mission-control_kubernetes_secret" "create_secret" {
 - `name` (String) Name of the secret resource.
 - `namespace_name` (String) Name of Namespace where secret will be created.
 - `scope` (Block List, Min: 1, Max: 1) Scope for the secret having one of the valid scopes for secret: currently we have only cluster scope (see [below for nested schema](#nestedblock--scope))
+- `spec` (Block List, Min: 1, Max: 1) Spec for the kubernetes secret (see [below for nested schema](#nestedblock--spec))
 
 ### Optional
 
 - `export` (Boolean) Export the secret to all namespaces.
 - `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
 - `org_id` (String) ID of Organization.
-- `spec` (Block List, Max: 1) Spec for the kubernetes secret (see [below for nested schema](#nestedblock--spec))
 
 ### Read-Only
 
@@ -106,21 +106,6 @@ Optional:
 
 
 
-<a id="nestedblock--meta"></a>
-### Nested Schema for `meta`
-
-Optional:
-
-- `annotations` (Map of String) Annotations for the resource
-- `description` (String) Description of the resource
-- `labels` (Map of String) Labels for the resource
-
-Read-Only:
-
-- `resource_version` (String) Resource version of the resource
-- `uid` (String) UID of the resource
-
-
 <a id="nestedblock--spec"></a>
 ### Nested Schema for `spec`
 
@@ -136,3 +121,19 @@ Required:
 - `image_registry_url` (String) SecretType definition - Server URL of the registry.
 - `password` (String, Sensitive) SecretType definition - Password of the registry.
 - `username` (String) SecretType definition - Username of the registry.
+
+
+
+<a id="nestedblock--meta"></a>
+### Nested Schema for `meta`
+
+Optional:
+
+- `annotations` (Map of String) Annotations for the resource
+- `description` (String) Description of the resource
+- `labels` (Map of String) Labels for the resource
+
+Read-Only:
+
+- `resource_version` (String) Resource version of the resource
+- `uid` (String) UID of the resource

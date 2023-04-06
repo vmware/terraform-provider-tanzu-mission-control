@@ -34,52 +34,67 @@ func ResourceSecret() *schema.Resource {
 		DeleteContext: resourceSecretDelete,
 		UpdateContext: resourceSecretInPlaceUpdate,
 		ReadContext:   dataSourceSecretRead,
-		Schema:        secretSchema,
+		Schema:        getSecretSchema(false),
 	}
 }
 
-var secretSchema = map[string]*schema.Schema{
-	NameKey: {
-		Type:        schema.TypeString,
-		Description: "Name of the secret resource.",
-		Required:    true,
-		ForceNew:    true,
-		ValidateFunc: validation.All(
-			validation.StringLenBetween(1, 126),
-			validation.StringIsNotEmpty,
-			validation.StringIsNotWhiteSpace,
-		),
-	},
-	NamespaceNameKey: {
-		Type:        schema.TypeString,
-		Description: "Name of Namespace where secret will be created.",
-		Required:    true,
-		ForceNew:    true,
-		ValidateFunc: validation.All(
-			validation.StringIsNotEmpty,
-			validation.StringIsNotWhiteSpace,
-		),
-	},
-	OrgIDKey: {
-		Type:        schema.TypeString,
-		Description: "ID of Organization.",
-		Optional:    true,
-	},
-	scope.ScopeKey: scope.ScopeSchema,
-	specKey:        secretSpec,
-	common.MetaKey: common.Meta,
-	ExportKey: {
-		Type:        schema.TypeBool,
-		Description: "Export the secret to all namespaces.",
-		Optional:    true,
-		Default:     false,
-	},
-	statusKey: {
-		Type:        schema.TypeMap,
-		Description: "Status for the Secret Export.",
-		Computed:    true,
-		Elem:        &schema.Schema{Type: schema.TypeString},
-	},
+func getSecretSchema(isDataSource bool) map[string]*schema.Schema {
+	var secretSchema = map[string]*schema.Schema{
+		NameKey: {
+			Type:        schema.TypeString,
+			Description: "Name of the secret resource.",
+			Required:    true,
+			ForceNew:    true,
+			ValidateFunc: validation.All(
+				validation.StringLenBetween(1, 126),
+				validation.StringIsNotEmpty,
+				validation.StringIsNotWhiteSpace,
+			),
+		},
+		NamespaceNameKey: {
+			Type:        schema.TypeString,
+			Description: "Name of Namespace where secret will be created.",
+			Required:    true,
+			ForceNew:    true,
+			ValidateFunc: validation.All(
+				validation.StringIsNotEmpty,
+				validation.StringIsNotWhiteSpace,
+			),
+		},
+		OrgIDKey: {
+			Type:        schema.TypeString,
+			Description: "ID of Organization.",
+			Optional:    true,
+		},
+		scope.ScopeKey: scope.ScopeSchema,
+		statusKey: {
+			Type:        schema.TypeMap,
+			Description: "Status for the Secret Export.",
+			Computed:    true,
+			Elem:        &schema.Schema{Type: schema.TypeString},
+		},
+		common.MetaKey: common.Meta,
+	}
+
+	innerMap := map[string]*schema.Schema{
+		specKey: secretSpec,
+		ExportKey: {
+			Type:        schema.TypeBool,
+			Description: "Export the secret to all namespaces.",
+			Optional:    true,
+			Default:     false,
+		},
+	}
+
+	for key, value := range innerMap {
+		if isDataSource {
+			secretSchema[key] = helper.UpdateDataSourceSchema(value)
+		} else {
+			secretSchema[key] = value
+		}
+	}
+
+	return secretSchema
 }
 
 type dockerConfigJSON struct {
@@ -89,9 +104,11 @@ type dockerConfigJSON struct {
 var secretSpec = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "Spec for the kubernetes secret",
-	Optional:    true,
-	MaxItems:    1,
-	MinItems:    1,
+	Required:    true,
+	// Optional:    false,
+	// Default:     nil,
+	MaxItems: 1,
+	MinItems: 1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			DockerConfigjsonKey: {
