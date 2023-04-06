@@ -132,5 +132,6 @@ func UpdateDataSourceSchema(d *schema.Schema) *schema.Schema {
 		Computed:    true,
 		Elem:        d.Elem,
 	}
+
 	return dv
 }
