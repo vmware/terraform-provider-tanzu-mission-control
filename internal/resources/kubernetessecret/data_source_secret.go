@@ -25,7 +25,7 @@ func DataSourceSecret() *schema.Resource {
 		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 			return dataSourceSecretRead(context.WithValue(ctx, contextMethodKey{}, DataSourceRead), d, m)
 		},
-		Schema: secretSchema,
+		Schema: getDataSourceSchema(),
 	}
 }
 

@@ -54,14 +54,14 @@ data "tanzu-mission-control_kubernetes_secret" "read_secret" {
 
 ### Optional
 
-- `export` (Boolean) Export the secret to all namespaces.
 - `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
 - `org_id` (String) ID of Organization.
-- `spec` (Block List, Max: 1) Spec for the kubernetes secret (see [below for nested schema](#nestedblock--spec))
 
 ### Read-Only
 
+- `export` (Boolean) Export the secret to all namespaces.
 - `id` (String) The ID of this resource.
+- `spec` (List of Object) Spec for the kubernetes secret (see [below for nested schema](#nestedatt--spec))
 - `status` (Map of String) Status for the Secret Export.
 
 <a id="nestedblock--scope"></a>
@@ -100,18 +100,18 @@ Read-Only:
 - `uid` (String) UID of the resource
 
 
-<a id="nestedblock--spec"></a>
+<a id="nestedatt--spec"></a>
 ### Nested Schema for `spec`
 
-Required:
+Read-Only:
 
-- `docker_config_json` (Block List, Min: 1) SecretType definition - SECRET_TYPE_DOCKERCONFIGJSON, Kubernetes secrets type. (see [below for nested schema](#nestedblock--spec--docker_config_json))
+- `docker_config_json` (List of Object) (see [below for nested schema](#nestedobjatt--spec--docker_config_json))
 
-<a id="nestedblock--spec--docker_config_json"></a>
+<a id="nestedobjatt--spec--docker_config_json"></a>
 ### Nested Schema for `spec.docker_config_json`
 
-Required:
+Read-Only:
 
-- `image_registry_url` (String) SecretType definition - Server URL of the registry.
-- `password` (String, Sensitive) SecretType definition - Password of the registry.
-- `username` (String) SecretType definition - Username of the registry.
+- `image_registry_url` (String)
+- `password` (String)
+- `username` (String)
