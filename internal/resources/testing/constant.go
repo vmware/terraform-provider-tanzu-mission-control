@@ -13,4 +13,7 @@ const (
 	value1       = "value1"
 	value2       = "value2"
 	description  = "resource with description"
+
+	// if set, used mocked API server
+	EKSMockEnv = "ENABLE_EKS_ENV_TEST"
 )

@@ -131,6 +131,25 @@ const testDefaultCreateEksClusterScript = `
 	}
 `
 
+const testDefaultCreateProviderEksClusterScript = `
+	resource {{.ResourceName}} {{.ResourceNameVar}} {
+		name	= "{{.Name}}"
+		region	= "{{.Region}}"
+		credential_name = "{{.CredentialName}}"
+
+		{{.Meta}}
+
+		spec {
+			cluster_group = "{{.ClusterGroupName}}"
+
+			eks_arn = "arn:aws:eks:{{.Region}}:{{.AWSAccountNumber}}:cluster/{{.Name}}"
+			agent_name = "tf-test-cluster-3"
+		}
+
+		ready_wait_timeout = "59m"
+	}
+`
+
 const testDefaultAttachClusterScript = `
 	resource {{.ResourceName}} {{.ResourceNameVar}} {
 		management_cluster_name = "attached"

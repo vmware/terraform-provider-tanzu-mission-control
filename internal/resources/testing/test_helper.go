@@ -7,9 +7,15 @@ package testing
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"os"
 	"text/template"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 )
 
 type AcceptanceTestType int
@@ -21,20 +27,28 @@ const (
 	TkgsCluster
 	TkgVsphereCluster
 	CreateEksCluster
+	CreateProviderEksCluster
 )
 
 const (
 	ClusterResource      = "tanzu-mission-control_cluster"
 	ClusterResourceVar   = "test_attach_cluster"
 	ClusterDataSourceVar = "test_data_attach_cluster"
+	ClusterGroupResource = "tanzu-mission-control_cluster_group"
 )
 
 // EKS Constants.
 const (
 	EksClusterResource    = "tanzu-mission-control_ekscluster"
-	EksClusterGroup       = "tanzu-mission-control_cluster_group"
 	EksClusterResourceVar = "test_create_eks_cluster"
 	EksClusterGroupVar    = "test_create_eks_cluster_group"
+)
+
+// Provider EKS Constants.
+const (
+	ProviderEksClusterResource    = "tanzu-mission-control_provider-ekscluster"
+	ProviderEksClusterResourceVar = "test_create_provider_eks"
+	ProviderEksClusterGroupVar    = "test_create_provider_eks_group"
 )
 
 var (
@@ -42,7 +56,8 @@ var (
 	ClusterDataSourceName = fmt.Sprintf("data.%s.%s", ClusterResource, ClusterDataSourceVar)
 
 	EksClusterResourceName = fmt.Sprintf("%s.%s", EksClusterResource, EksClusterResourceVar)
-	EksClusterGroupName    = fmt.Sprintf("data.%s.%s", EksClusterGroup, EksClusterGroupVar)
+
+	ProviderEksClusterResourceName = fmt.Sprintf("%s.%s", ProviderEksClusterResource, ProviderEksClusterResourceVar)
 )
 
 type TestAcceptanceOption func(config *TestAcceptanceConfig)
@@ -71,6 +86,7 @@ type TestAcceptanceConfig struct {
 	CredentialName           string
 	OrgID                    string
 	ClusterGroupName         string
+	Proxy                    string
 }
 
 func WithClusterName(name string) TestAcceptanceOption {
@@ -112,7 +128,7 @@ func WithTKGmVsphereCluster() TestAcceptanceOption {
 func WithEKSCluster() TestAcceptanceOption {
 	return func(config *TestAcceptanceConfig) {
 		// Only read environment variables into config if the test is configured to run against a real environment without mocks
-		if _, found := os.LookupEnv("ENABLE_EKS_ENV_TEST"); found {
+		if _, found := os.LookupEnv(EKSMockEnv); found {
 			if val, exists := os.LookupEnv("EKS_ORG_ID"); exists {
 				config.OrgID = val
 			}
@@ -152,6 +168,40 @@ func WithEKSCluster() TestAcceptanceOption {
 
 		config.AccTestType = CreateEksCluster
 		config.TemplateData = testDefaultCreateEksClusterScript
+	}
+}
+
+func WithProviderEKSCluster() TestAcceptanceOption {
+	return func(config *TestAcceptanceConfig) {
+		// Only read environment variables into config if the test is configured to run against a real environment without mocks
+		if val, found := os.LookupEnv(EKSMockEnv); found && val != "" {
+			if val, exists := os.LookupEnv("EKS_ORG_ID"); exists {
+				config.OrgID = val
+			}
+
+			if val, exists := os.LookupEnv("EKS_AWS_ACCOUNT_NUMBER"); exists {
+				config.AWSAccountNumber = val
+			}
+
+			if val, exists := os.LookupEnv("EKS_AWS_REGION"); exists {
+				config.Region = val
+			}
+
+			if val, exists := os.LookupEnv("EKS_CLUSTER_GROUP_NAME"); exists {
+				config.ClusterGroupName = val
+			}
+
+			if val, exists := os.LookupEnv("EKS_CREDENTIAL_NAME"); exists {
+				config.CredentialName = val
+			}
+
+			if val, exists := os.LookupEnv("EKS_MANAGE_CLUSTER_NAME"); exists {
+				config.Name = val
+			}
+		}
+
+		config.AccTestType = CreateProviderEksCluster
+		config.TemplateData = testDefaultCreateProviderEksClusterScript
 	}
 }
 
@@ -201,6 +251,20 @@ func TestGetDefaultEksAcceptanceConfig() *TestAcceptanceConfig {
 	}
 }
 
+func TestGetDefaultProviderEksAcceptanceConfig() *TestAcceptanceConfig {
+	return &TestAcceptanceConfig{
+		ResourceName:     ProviderEksClusterResource,
+		ResourceNameVar:  ProviderEksClusterResourceVar,
+		Meta:             MetaTemplate,
+		AccTestType:      CreateProviderEksCluster,
+		TemplateData:     testDefaultCreateProviderEksClusterScript,
+		OrgID:            "bc27608b-4809-4cac-9e04-778803963da2",
+		AWSAccountNumber: "919197287370",
+		Region:           "us-west-2",
+		ClusterGroupName: "default",
+	}
+}
+
 func Parse(m interface{}, objects string) (string, error) {
 	var definitionBytes bytes.Buffer
 
@@ -210,4 +274,20 @@ func Parse(m interface{}, objects string) (string, error) {
 	}
 
 	return definitionBytes.String(), nil
+}
+
+func GetConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	if val, found := os.LookupEnv(EKSMockEnv); !found && val == "" {
+		return authctx.ProviderConfigureContextWithDefaultTransportForTesting
+	}
+
+	return authctx.ProviderConfigureContext
+}
+
+func GetSetupConfig(config *authctx.TanzuContext) error {
+	if val, found := os.LookupEnv(EKSMockEnv); !found && val == "" {
+		return config.SetupWithDefaultTransportForTesting()
+	}
+
+	return config.Setup()
 }

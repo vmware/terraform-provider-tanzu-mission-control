@@ -25,6 +25,7 @@ import (
 	quotapolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/quota/resource"
 	securitypolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 	securitypolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security/resource"
+	providereks "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/provider_ekscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/workspace"
 )
 
@@ -35,6 +36,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:        cluster.ResourceTMCCluster(),
 			ekscluster.ResourceName:     ekscluster.ResourceTMCEKSCluster(),
+			providereks.ResourceName:    providereks.ResourceTMCProviderEKSCluster(),
 			workspace.ResourceName:      workspace.ResourceWorkspace(),
 			namespace.ResourceName:      namespace.ResourceNamespace(),
 			clustergroup.ResourceName:   clustergroup.ResourceClusterGroup(),
@@ -50,6 +52,7 @@ func Provider() *schema.Provider {
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:      cluster.DataSourceTMCCluster(),
 			ekscluster.ResourceName:   ekscluster.DataSourceTMCEKSCluster(),
+			providereks.ResourceName:  providereks.DataSourceTMCProviderEKSCluster(),
 			workspace.ResourceName:    workspace.DataSourceWorkspace(),
 			namespace.ResourceName:    namespace.DataSourceNamespace(),
 			clustergroup.ResourceName: clustergroup.DataSourceClusterGroup(),

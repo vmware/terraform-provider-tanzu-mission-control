@@ -6,7 +6,6 @@ SPDX-License-Identifier: MPL-2.0
 package ekscluster
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -17,7 +16,6 @@ import (
 	"testing"
 
 	"github.com/go-test/deep"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -31,6 +29,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	eksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/ekscluster"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
+	statusmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/status"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
@@ -97,8 +96,8 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 	}
 
 	// GET Cluster mock setup
-	readyStatus := eksmodel.VmwareTanzuCoreV1alpha1StatusConditionStatusTRUE
-	readyCondition := eksmodel.VmwareTanzuCoreV1alpha1StatusCondition{
+	readyStatus := statusmodel.VmwareTanzuCoreV1alpha1StatusConditionStatusTRUE
+	readyCondition := statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
 		Type:   "ready",
 		Status: &readyStatus,
 	}
@@ -122,7 +121,7 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 		},
 		Status: &eksmodel.VmwareTanzuManageV1alpha1EksclusterStatus{
 			Phase: &readyPhase,
-			Conditions: map[string]eksmodel.VmwareTanzuCoreV1alpha1StatusCondition{
+			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
 				"ready": readyCondition,
 			},
 		},
@@ -163,7 +162,7 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 
 		npObjWithStatus.Status = &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolStatus{
 			Phase: &nodepoolReadyPhase,
-			Conditions: map[string]eksmodel.VmwareTanzuCoreV1alpha1StatusCondition{
+			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
 				"ready": readyCondition,
 			},
 		}
@@ -223,29 +222,13 @@ func initTestProvider(t *testing.T) *schema.Provider {
 			ResourceName:              DataSourceTMCEKSCluster(),
 			clustergroup.ResourceName: clustergroup.DataSourceClusterGroup(),
 		},
-		ConfigureContextFunc: getConfigureContextFunc(),
+		ConfigureContextFunc: testhelper.GetConfigureContextFunc(),
 	}
 	if err := testAccProvider.InternalValidate(); err != nil {
 		require.NoError(t, err)
 	}
 
 	return testAccProvider
-}
-
-func getConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	if _, found := os.LookupEnv("ENABLE_EKS_ENV_TEST"); !found {
-		return authctx.ProviderConfigureContextWithDefaultTransportForTesting
-	}
-
-	return authctx.ProviderConfigureContext
-}
-
-func getSetupConfig(config *authctx.TanzuContext) error {
-	if _, found := os.LookupEnv("ENABLE_EKS_ENV_TEST"); !found {
-		return config.SetupWithDefaultTransportForTesting()
-	}
-
-	return config.Setup()
 }
 
 func TestAcceptanceForMkpClusterResource(t *testing.T) {
@@ -257,7 +240,7 @@ func TestAcceptanceForMkpClusterResource(t *testing.T) {
 	}
 
 	// If the flag to execute EKS tests is not found, run this as a unit test by setting up an http intercept for each endpoint
-	if _, found := os.LookupEnv("ENABLE_EKS_ENV_TEST"); !found {
+	if val, found := os.LookupEnv(testhelper.EKSMockEnv); !found && val != "" {
 		setupHTTPMocks(t, clusterName)
 	} else {
 		// Environment variables with non default values required for a successful call to MKP
@@ -364,7 +347,7 @@ func verifyEKSClusterResourceCreation(
 			TLSConfig:        &proxy.TLSConfig{},
 		}
 
-		err := getSetupConfig(&config)
+		err := testhelper.GetSetupConfig(&config)
 		if err != nil {
 			return errors.Wrap(err, "unable to set the context")
 		}

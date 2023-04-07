@@ -7,6 +7,8 @@ package models
 
 import (
 	"github.com/go-openapi/swag"
+
+	statusmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/status"
 )
 
 // VmwareTanzuManageV1alpha1EksclusterStatus Status of the EKS cluster.
@@ -15,7 +17,7 @@ import (
 type VmwareTanzuManageV1alpha1EksclusterStatus struct {
 
 	// Conditions of the cluster resource.
-	Conditions map[string]VmwareTanzuCoreV1alpha1StatusCondition `json:"conditions,omitempty"`
+	Conditions map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition `json:"conditions,omitempty"`
 
 	// Phase of the cluster resource.
 	Phase *VmwareTanzuManageV1alpha1EksclusterPhase `json:"phase,omitempty"`
