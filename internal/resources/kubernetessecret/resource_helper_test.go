@@ -14,11 +14,6 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret/scope"
 )
 
-const (
-	enableNamespaceExclusionsSpecKey = "enableNamespaceExclusions"
-	namespaceExclusionsSpecKey       = "namespaceExclusions"
-)
-
 var resourceSchema = map[string]*schema.Schema{
 	NameKey: {
 		Type:        schema.TypeString,
@@ -54,7 +49,7 @@ var resourceSchema = map[string]*schema.Schema{
 		Elem:        &schema.Schema{Type: schema.TypeString},
 	},
 	common.MetaKey: common.Meta,
-	specKey:        specSchema,
+	specKey:        secretSpec,
 	ExportKey: {
 		Type:        schema.TypeBool,
 		Description: "Export the secret to all namespaces.",
@@ -99,67 +94,15 @@ var dataSourceSchema = map[string]*schema.Schema{
 	},
 	common.MetaKey: common.Meta,
 	specKey: {
-		Type:        specSchema.Type,
-		Description: specSchema.Description,
+		Type:        secretSpec.Type,
+		Description: secretSpec.Description,
 		Computed:    true,
-		Elem:        specSchema.Elem,
+		Elem:        secretSpec.Elem,
 	},
 	ExportKey: {
 		Type:        schema.TypeBool,
 		Description: "Export the secret to all namespaces.",
 		Computed:    true,
-	},
-}
-
-var specSchema = &schema.Schema{
-	Type:        schema.TypeList,
-	Description: "Spec for the kubernetes secret",
-	Required:    true,
-	MaxItems:    1,
-	MinItems:    1,
-	Elem: &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			DockerConfigjsonKey: {
-				Type:        schema.TypeList,
-				Required:    true,
-				Description: "SecretType definition - SECRET_TYPE_DOCKERCONFIGJSON, Kubernetes secrets type.",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						UsernameKey: {
-							Type:        schema.TypeString,
-							Description: "SecretType definition - Username of the registry.",
-							Required:    true,
-							ValidateFunc: validation.All(
-								validation.StringLenBetween(1, 126),
-								validation.StringIsNotEmpty,
-								validation.StringIsNotWhiteSpace,
-							),
-						},
-						PasswordKey: {
-							Type:        schema.TypeString,
-							Description: "SecretType definition - Password of the registry.",
-							Required:    true,
-							Sensitive:   true,
-							ValidateFunc: validation.All(
-								validation.StringLenBetween(1, 126),
-								validation.StringIsNotEmpty,
-								validation.StringIsNotWhiteSpace,
-							),
-						},
-						ImageRegistryURLKey: {
-							Type:        schema.TypeString,
-							Description: "SecretType definition - Server URL of the registry.",
-							Required:    true,
-							ValidateFunc: validation.All(
-								validation.StringLenBetween(1, 126),
-								validation.StringIsNotEmpty,
-								validation.StringIsNotWhiteSpace,
-							),
-						},
-					},
-				},
-			},
-		},
 	},
 }
 
@@ -192,9 +135,9 @@ func TestGetSecretSchema(t *testing.T) {
 				common.MetaKey:   common.Meta,
 				statusKey:        resourceSchema[statusKey],
 				specKey: {
-					Description: specSchema.Description,
-					Type:        specSchema.Type,
-					Elem:        specSchema.Elem,
+					Description: secretSpec.Description,
+					Type:        secretSpec.Type,
+					Elem:        secretSpec.Elem,
 					Optional:    true,
 				},
 				ExportKey: resourceSchema[ExportKey],
@@ -203,12 +146,9 @@ func TestGetSecretSchema(t *testing.T) {
 			expectedResult:  false,
 		},
 	}
-
 	for _, test := range testCasea {
-
 		t.Run(test.name,
 			func(t *testing.T) {
-
 				result := equalSchema(test.expectedSchema, test.generatedSchema)
 
 				if result != test.expectedResult {
@@ -238,11 +178,12 @@ func equalSchema(d1, d2 map[string]*schema.Schema) bool {
 
 			elem2, ok1 := v2.Elem.(*schema.Resource)
 
-			if ok && ok1 {
+			switch {
+			case ok && ok1:
 				ans = equalSchema(elem1.Schema, elem2.Schema)
-			} else if (ok && !ok1) || (!ok && ok1) {
+			case (ok && !ok1) || (!ok && ok1):
 				ans = false
-			} else {
+			default:
 				ans = (v1.GoString() == v2.GoString())
 			}
 
