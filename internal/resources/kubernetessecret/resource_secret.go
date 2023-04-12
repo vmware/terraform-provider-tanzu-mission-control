@@ -105,10 +105,8 @@ var secretSpec = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "Spec for the kubernetes secret",
 	Required:    true,
-	// Optional:    false,
-	// Default:     nil,
-	MaxItems: 1,
-	MinItems: 1,
+	MaxItems:    1,
+	MinItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			DockerConfigjsonKey: {
@@ -330,8 +328,6 @@ func resourceSecretDelete(_ context.Context, d *schema.ResourceData, m interface
 		return diag.FromErr(errors.Wrapf(err, "unable to delete Tanzu Mission Control secret entry, name : %s", secretName))
 	}
 
-	// d.SetId("") is automatically called assuming delete returns no errors, but
-	// it is added here for explicitness.
 	_ = schema.RemoveFromState(d, m)
 
 	return diags
