@@ -182,6 +182,26 @@ func TestGetSecretSchema(t *testing.T) {
 			generatedSchema: getDataSourceSchema(),
 			expectedResult:  true,
 		},
+		{
+			name: "generate wrong resource schema",
+			expectedSchema: map[string]*schema.Schema{
+				NameKey:          resourceSchema[NameKey],
+				NamespaceNameKey: resourceSchema[NamespaceNameKey],
+				OrgIDKey:         resourceSchema[OrgIDKey],
+				scope.ScopeKey:   resourceSchema[scope.ScopeKey],
+				common.MetaKey:   common.Meta,
+				statusKey:        resourceSchema[statusKey],
+				specKey: {
+					Description: specSchema.Description,
+					Type:        specSchema.Type,
+					Elem:        specSchema.Elem,
+					Optional:    true,
+				},
+				ExportKey: resourceSchema[ExportKey],
+			},
+			generatedSchema: getResourceSchema(),
+			expectedResult:  false,
+		},
 	}
 
 	for _, test := range testCasea {
@@ -207,7 +227,10 @@ func equalSchema(d1, d2 map[string]*schema.Schema) bool {
 	ans := false
 
 	for k, v1 := range d1 {
-		v2 := d2[k]
+		v2, ok := d2[k]
+		if !ok {
+			return false
+		}
 
 		switch v1.Type {
 		case schema.TypeList:
