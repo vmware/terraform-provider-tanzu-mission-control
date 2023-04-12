@@ -34,8 +34,16 @@ func ResourceSecret() *schema.Resource {
 		DeleteContext: resourceSecretDelete,
 		UpdateContext: resourceSecretInPlaceUpdate,
 		ReadContext:   dataSourceSecretRead,
-		Schema:        getSecretSchema(false),
+		Schema:        getResourceSchema(),
 	}
+}
+
+func getResourceSchema() map[string]*schema.Schema {
+	return getSecretSchema(false)
+}
+
+func getDataSourceSchema() map[string]*schema.Schema {
+	return getSecretSchema(true)
 }
 
 func getSecretSchema(isDataSource bool) map[string]*schema.Schema {
