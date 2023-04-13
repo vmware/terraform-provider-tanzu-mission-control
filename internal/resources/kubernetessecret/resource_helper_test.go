@@ -153,7 +153,7 @@ func TestGetSecretSchema(t *testing.T) {
 				result := equalSchema(test.expectedSchema, test.generatedSchema)
 
 				if result != test.expectedResult {
-					t.Errorf("expected schema is not equal with generated schema, expected schema ")
+					t.Error("expected schema is not equal with generated schema")
 				}
 			},
 		)
