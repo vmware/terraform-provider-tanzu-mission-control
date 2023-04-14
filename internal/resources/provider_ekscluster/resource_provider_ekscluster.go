@@ -164,7 +164,7 @@ func resourceProviderClusterDelete(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
-func providerClusterUpdate(ctx context.Context, d *schema.ResourceData, m interface{}, tmcManaged bool) (*models.VmwareTanzuManageV1alpha1ManageEksProvidereksclusterProviderEksCluster, error) {
+func providerClusterUpdate(_ context.Context, d *schema.ResourceData, m interface{}, tmcManaged bool) (*models.VmwareTanzuManageV1alpha1ManageEksProvidereksclusterProviderEksCluster, error) {
 	config, ok := m.(authctx.TanzuContext)
 	if !ok {
 		log.Println("[ERROR] error while retrieving Tanzu auth config")

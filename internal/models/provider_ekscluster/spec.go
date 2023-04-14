@@ -1,3 +1,8 @@
+/*
+Copyright 2023 VMware, Inc. All Rights Reserved.
+SPDX-License-Identifier: MPL-2.0
+*/
+
 package models
 
 import (
@@ -31,6 +36,7 @@ func (m *VmwareTanzuManageV1alpha1ManageEksProvidereksclusterSpec) MarshalBinary
 	if m == nil {
 		return nil, nil
 	}
+
 	return swag.WriteJSON(m)
 }
 
@@ -40,6 +46,8 @@ func (m *VmwareTanzuManageV1alpha1ManageEksProvidereksclusterSpec) UnmarshalBina
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
+
 	*m = res
+
 	return nil
 }

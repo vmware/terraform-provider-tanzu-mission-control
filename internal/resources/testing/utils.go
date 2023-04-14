@@ -1,9 +1,13 @@
+/*
+Copyright 2023 VMware, Inc. All Rights Reserved.
+SPDX-License-Identifier: MPL-2.0
+*/
+
 package testing
 
 import (
 	"encoding/json"
 	"fmt"
-	"golang.org/x/exp/slices"
 	"io"
 	"net/http"
 	"sort"
@@ -13,6 +17,7 @@ import (
 	"github.com/go-test/deep"
 	"github.com/jarcoal/httpmock"
 	"github.com/pkg/errors"
+	"golang.org/x/exp/slices"
 )
 
 type ignoreFunc func(string) bool
@@ -57,6 +62,7 @@ func BodyInspectingResponder(t *testing.T, expectedContent interface{}, successR
 		subnetMap := make(map[string]map[string][]string, 0)
 
 		var bodyInterface map[string]interface{}
+
 		err = json.Unmarshal(bodyBytes, &bodyInterface)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to unmarshal body")

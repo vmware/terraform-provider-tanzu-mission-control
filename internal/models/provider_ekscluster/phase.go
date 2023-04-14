@@ -1,3 +1,8 @@
+/*
+Copyright 2023 VMware, Inc. All Rights Reserved.
+SPDX-License-Identifier: MPL-2.0
+*/
+
 package models
 
 import (
@@ -54,6 +59,7 @@ func init() {
 	if err := json.Unmarshal([]byte(`["PHASE_UNSPECIFIED","PENDING_UNMANAGE","PENDING_MANAGE","UNMANAGED","MANAGED","ERROR"]`), &res); err != nil {
 		panic(err)
 	}
+
 	for _, v := range res {
 		vmwareTanzuManageV1alpha1ManageEksProvidereksclusterPhaseEnum = append(vmwareTanzuManageV1alpha1ManageEksProvidereksclusterPhaseEnum, v)
 	}

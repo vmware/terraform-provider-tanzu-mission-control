@@ -1,9 +1,15 @@
+/*
+Copyright 2023 VMware, Inc. All Rights Reserved.
+SPDX-License-Identifier: MPL-2.0
+*/
+
 package providerekscluster
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/provider_ekscluster"
 )
 
