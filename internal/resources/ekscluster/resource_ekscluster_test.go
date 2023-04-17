@@ -240,7 +240,7 @@ func TestAcceptanceForMkpClusterResource(t *testing.T) {
 	}
 
 	// If the flag to execute EKS tests is not found, run this as a unit test by setting up an http intercept for each endpoint
-	if val, found := os.LookupEnv(testhelper.EKSMockEnv); !found && val != "" {
+	if val, found := os.LookupEnv(testhelper.EKSMockEnv); !found || val == "" {
 		setupHTTPMocks(t, clusterName)
 	} else {
 		// Environment variables with non default values required for a successful call to MKP

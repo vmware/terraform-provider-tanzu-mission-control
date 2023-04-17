@@ -143,7 +143,7 @@ const testDefaultCreateProviderEksClusterScript = `
 			cluster_group = "{{.ClusterGroupName}}"
 
 			eks_arn = "arn:aws:eks:{{.Region}}:{{.AWSAccountNumber}}:cluster/{{.Name}}"
-			agent_name = "tf-test-cluster-3"
+			agent_name = "tf-test-cluster"
 		}
 
 		ready_wait_timeout = "59m"

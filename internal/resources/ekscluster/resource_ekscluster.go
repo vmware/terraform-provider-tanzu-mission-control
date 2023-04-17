@@ -44,7 +44,9 @@ func ResourceTMCEKSCluster() *schema.Resource {
 	return &schema.Resource{
 		Schema:        clusterSchema,
 		CreateContext: resourceClusterCreate,
-		ReadContext:   dataSourceTMCEKSClusterRead,
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+			return dataSourceTMCEKSClusterRead(helper.GetContextWithCaller(ctx, helper.RefreshState), d, m)
+		},
 		UpdateContext: resourceClusterInPlaceUpdate,
 		DeleteContext: resourceClusterDelete,
 		Description:   "Tanzu Mission Control EKS Cluster Resource",

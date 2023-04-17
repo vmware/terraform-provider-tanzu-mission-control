@@ -277,7 +277,7 @@ func Parse(m interface{}, objects string) (string, error) {
 }
 
 func GetConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	if val, found := os.LookupEnv(EKSMockEnv); !found && val == "" {
+	if val, found := os.LookupEnv(EKSMockEnv); !found || val == "" {
 		return authctx.ProviderConfigureContextWithDefaultTransportForTesting
 	}
 
@@ -285,7 +285,7 @@ func GetConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (
 }
 
 func GetSetupConfig(config *authctx.TanzuContext) error {
-	if val, found := os.LookupEnv(EKSMockEnv); !found && val == "" {
+	if val, found := os.LookupEnv(EKSMockEnv); !found || val == "" {
 		return config.SetupWithDefaultTransportForTesting()
 	}
 
