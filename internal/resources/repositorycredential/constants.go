@@ -9,4 +9,5 @@ const (
 	ResourceName = "tanzu-mission-control_repository_credential"
 	nameKey      = "name"
 	statusKey    = "status"
+	SpecKey      = "spec"
 )

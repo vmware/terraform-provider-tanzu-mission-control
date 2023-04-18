@@ -6,7 +6,7 @@ SPDX-License-Identifier: MPL-2.0
 package repositorycredentialclustermodel
 
 // Full name of the Source Secret.
-type VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialFullName struct {
+type VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretFullName struct {
 	// ID of Organization.
 	OrgId string `json:"orgId,omitempty"`
 	// Name of management cluster.

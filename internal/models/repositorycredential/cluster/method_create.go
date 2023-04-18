@@ -7,17 +7,16 @@ package repositorycredentialclustermodel
 
 import "github.com/go-openapi/swag"
 
-// VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRequest Request to create a credential.
+// VmwareTanzuManageV1alpha1ClusterFluxcdSourceSecretRequest Request to create a credential.
 //
-// swagger:model vmware.tanzu.manage.v1alpha1.cluster.fluxcd.repositorycredential.CreateRepositoryCredentialRequest
-type VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRequest struct {
-
-	// Credential to create.
-	Repositorycredential *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredential `json:"respositorycredential,omitempty"`
+// swagger:model vmware.tanzu.manage.v1alpha1.cluster.fluxcd.SourceSecret.CreateSourceSecretRequest
+type VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretRequest struct {
+	// SourceSecret to create.
+	SourceSecret *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecret `json:"sourceSecret,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRequest) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -26,8 +25,8 @@ func (m *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRequest) Mars
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRequest) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRequest
+func (m *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretRequest) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -37,17 +36,16 @@ func (m *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRequest) Unma
 	return nil
 }
 
-// VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialResponse Response from creating a Credential.
+// VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretResponse Response from creating a Credential.
 //
-// swagger:model vmware.tanzu.manage.v1alpha1.cluster.fluxcd.repositorycredential.CreateRepositoryCredentialResponse
-type VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialResponse struct {
-
-	// Secret created.
-	Repositorycredential *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredential `json:"respositorycredential,omitempty"`
+// swagger:model vmware.tanzu.manage.v1alpha1.cluster.fluxcd.sourcesecret.CreateSourceSecretResponse// Response from creating a SourceSecret.
+type VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretResponse struct {
+	// SourceSecret created.
+	SourceSecret *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecret `json:"sourceSecret,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialResponse) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -56,8 +54,8 @@ func (m *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialResponse) Mar
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialResponse) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialResponse
+func (m *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretResponse) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

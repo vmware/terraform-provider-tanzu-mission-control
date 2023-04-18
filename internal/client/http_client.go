@@ -15,7 +15,7 @@ import (
 	iamclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/iam_policy"
 	kustomizationclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/kustomization"
 	policyclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/policy"
-	repositorycredentialclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/repositorycredential"
+	respositorycredentialclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/repositorycredential"
 	clustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup"
 	continuousdeliveryclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/continuousdelivery"
 	gitrepositoryclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/gitrepository"
@@ -89,7 +89,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterGroupContinuousDeliveryResourceService: continuousdeliveryclustergroupclient.New(httpClient),
 		ClusterGroupGitRepositoryResourceService:      gitrepositoryclustergroupclient.New(httpClient),
 		ClusterGroupKustomizationResourceService:      kustomizationclustergroupclient.New(httpClient),
-		ClusterRepositorycredentialService:            repositorycredentialclusterclient.New(httpClient),
+		ClusterRepositorycredentialService:            respositorycredentialclusterclient.New(httpClient),
 	}
 }
 
@@ -120,5 +120,5 @@ type TanzuMissionControl struct {
 	ClusterGroupContinuousDeliveryResourceService continuousdeliveryclustergroupclient.ClientService
 	ClusterGroupGitRepositoryResourceService      gitrepositoryclustergroupclient.ClientService
 	ClusterGroupKustomizationResourceService      kustomizationclustergroupclient.ClientService
-	ClusterRepositorycredentialService            repositorycredentialclusterclient.ClientService
+	ClusterRepositorycredentialService            respositorycredentialclusterclient.ClientService
 }

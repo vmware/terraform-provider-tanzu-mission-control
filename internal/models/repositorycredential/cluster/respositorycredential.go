@@ -12,21 +12,21 @@ import (
 )
 
 // Repositorycredential represents a credential used to authenticate to a fluxcd source such as GitRepository.
-type VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredential struct {
+type VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecret struct {
 	// Metadata describing the type of the resource.
 	Type *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectType `json:"type,omitempty"`
 	// Full name for the Source Secret.
-	FullName *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialFullName `json:"fullName,omitempty"`
+	FullName *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretFullName `json:"fullName,omitempty"`
 	// Metadata for the Source Secret object.
 	Meta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta `json:"meta,omitempty"`
 	// Spec for the Source Secret.
-	Spec *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialSpec `json:"spec,omitempty"`
+	Spec *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSpec `json:"spec,omitempty"`
 	// Status for the Source Secret.
-	Status *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialStatus `json:"status,omitempty"`
+	Status *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretStatus `json:"status,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredential) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecret) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -35,8 +35,8 @@ func (m *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycre
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredential) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredential
+func (m *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecret) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecret
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -8,20 +8,20 @@ package repositorycredentialclustermodel
 import (
 	"encoding/json"
 
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	credentialmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/credential"
 )
 
 // Spec of the Source Secret.
-type VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialSpec struct {
+type VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSpec struct {
 	// Type of Source Secret(username-password or SSH).
-	RepositorycredentialType *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialType `json:"repositorycredentialType,omitempty"`
+	SourceSecretType *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretType `json:"sourceSecretType,omitempty"`
 	// Data is the source credential in the form of key-value.
-	Data map[string]strfmt.Base64 `json:"data,omitempty"`
+	Data *credentialmodels.VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpec `json:"data,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialSpec) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSpec) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -30,8 +30,8 @@ func (m *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialSpec) Marshal
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialSpec) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialSpec
+func (m *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSpec) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSpec
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -41,42 +41,31 @@ func (m *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialSpec) Unmarsh
 	return nil
 }
 
-// VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialType RepositoryCredentialType definition - indicates the repository credential type.
-//
-//   - REPOSITORYCREDENTIAL_TYPE_UNSPECIFIED: REPOSITORYCREDENTIAL_TYPE_UNSPECIFIED, Unspecified credential type (default).
-//   - REPOSITORYCREDENTIAL_TYPE_USERNAME_PASSWORD: REPOSITORYCREDENTIAL_TYPE_USERNAME_PASSWORD, basic auth
-//   - REPOSITORYCREDENTIAL_TYPE_SSH: REPOSITORYCREDENTIAL_TYPE_SSH, ssh key
-//
-// swagger:model vmware.tanzu.manage.v1alpha1.cluster.fluxcd.respoistorycredential.repositorycredentialtype
-type VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialType string
+type VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretType string
 
-func NewVmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialType(value VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialType) *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialType {
+func NewVmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretType(value VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretType) *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretType {
 	return &value
 }
 
 //nolint:all
 const (
+	VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretTypeUNSPECIFIED VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretType = "UNSPECIFIED"
 
-	// VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialTypeREPOSITORYCREDENTIALTYPEUNSPECIFIED captures enum value "REPOSITORYCREDENTIAL_TYPE_UNSPECIFIED"
-	VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialTypeREPOSITORYCREDENTIALTYPEUNSPECIFIED VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialType = "REPOSITORYCREDENTIAL_TYPE_UNSPECIFIED"
+	VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretTypeUSERNAMEPASSWORD VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretType = "USERNAME_PASSWORD"
 
-	// VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialTypeREPOSITORYCREDENTIALTYPEUSERNAMEPASSWORD captures enum value "REPOSITORYCREDENTIAL_TYPE_DOCKERCONFIGJSON"
-	VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialTypeREPOSITORYCREDENTIALTYPEUSERNAMEPASSWORD VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialType = "REPOSITORYCREDENTIAL_TYPE_USERNAME_PASSWORD"
-
-	// VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialTypeREPOSITORYCREDENTIALTYPESSH captures enum value "REPOSITORYCREDENTIAL_TYPE_DOCKERCONFIGJSON"
-	VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialTypeREPOSITORYCREDENTIALTYPSSH VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialType = "REPOSITORYCREDENTIAL_TYPE_SSH"
+	VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretTypeSSH VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretType = "SSH"
 )
 
 // for schema.
-var vmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialTypeEnum []interface{}
+var vmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretTypeEnum []interface{}
 
 func init() {
-	var res []VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredentialType
-	if err := json.Unmarshal([]byte(`["REPOSITORYCREDENTIAL_TYPE_UNSPECIFIED","REPOSITORYCREDENTIAL_TYPE_USERNAME_PASSWORD","REPOSITORYCREDENTIAL_TYPE_SSH"]`), &res); err != nil {
+	var res []VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretType
+	if err := json.Unmarshal([]byte(`["UNSPECIFIED","USERNAME_PASSWORD","SSH"]`), &res); err != nil {
 		panic(err)
 	}
 
 	for _, v := range res {
-		vmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialTypeEnum = append(vmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialTypeEnum, v)
+		vmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretTypeEnum = append(vmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretTypeEnum, v)
 	}
 }

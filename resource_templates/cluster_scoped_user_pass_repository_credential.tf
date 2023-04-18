@@ -15,9 +15,11 @@ resource "tanzu-mission-control_repository_credential" "test_credential" {
   
    source_secret_type = "USERNAME_PASSWORD"
 
-   data = {
+   data  {
+    username_password  {
      username = "someusername"
      password = "somepassword"
+    }
    }
  }
 

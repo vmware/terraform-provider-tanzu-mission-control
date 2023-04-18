@@ -10,9 +10,9 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kustomization/scope"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kustomization/spec"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kustomization/status"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/repositorycredential/scope"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/repositorycredential/spec"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/repositorycredential/status"
 )
 
 func ResourceRepositorycredential() *schema.Resource {

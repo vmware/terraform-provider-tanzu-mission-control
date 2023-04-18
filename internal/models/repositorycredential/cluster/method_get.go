@@ -7,17 +7,13 @@ package repositorycredentialclustermodel
 
 import "github.com/go-openapi/swag"
 
-// VmwareTanzuManageV1alpha1ClusterFluxcdGetRepositorycredentialResponse Response from getting a Credential.
-//
-// swagger:model vmware.tanzu.manage.v1alpha1.cluster.fluxcd.repositorycredential.GetRepositorycredentialResponse
-type VmwareTanzuManageV1alpha1ClusterFluxcdGetRepositorycredentialResponse struct {
-
-	// credential returned.
-	Repositorycredential *VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRepositorycredential `json:"respositorycredential,omitempty"`
+type VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretGetSourceSecretResponse struct {
+	// SourceSecret returned.
+	SourceSecret *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecret `json:"sourceSecret,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClusterFluxcdGetRepositorycredentialResponse) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretGetSourceSecretResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -26,8 +22,8 @@ func (m *VmwareTanzuManageV1alpha1ClusterFluxcdGetRepositorycredentialResponse) 
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ClusterFluxcdGetRepositorycredentialResponse) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ClusterFluxcdGetRepositorycredentialResponse
+func (m *VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretGetSourceSecretResponse) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretGetSourceSecretResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

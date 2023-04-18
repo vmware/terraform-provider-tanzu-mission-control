@@ -3,14 +3,14 @@ Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package respositorycredentialclient
+package respositorycredentialclusterclient
 
 import (
 	"net/url"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
-	respoistorycredential "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/repositorycredential/cluster"
+	repositorycredentialclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/repositorycredential/cluster"
 )
 
 const (
@@ -34,21 +34,21 @@ type Client struct {
 
 // ClientService is the interface for Client methods.
 type ClientService interface {
-	RepositorycredentialResourceServiceCreate(request *respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRequest) (*respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialResponse, error)
+	SourceSecretResourceServiceCreate(request *repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretRequest) (*repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretResponse, error)
 
-	RepositorycredentialResourceServiceDelete(fn *respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialFullName) error
+	SourceSecretResourceServiceDelete(fn *repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretFullName) error
 
-	RepositorycredentialResourceServiceGet(fn *respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialFullName) (*respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdGetRepositorycredentialResponse, error)
+	SourceSecretResourceServiceGet(fn *repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretFullName) (*repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretGetSourceSecretResponse, error)
 
-	RepositorycredentialResourceServiceUpdate(request *respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRequest) (*respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialResponse, error)
+	SourceSecretResourceServiceUpdate(request *repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretRequest) (*repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretResponse, error)
 }
 
 /*
-RepositorycredentialResourceServiceCreate creates a repository credential.
+SourceSecretResourceServiceCreate creates a repository credential.
 */
-func (c *Client) RepositorycredentialResourceServiceCreate(request *respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRequest) (*respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialResponse, error) {
-	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, request.Repositorycredential.FullName.ClusterName, apiKind).String()
-	repocredResponse := &respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialResponse{}
+func (c *Client) SourceSecretResourceServiceCreate(request *repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretRequest) (*repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretResponse, error) {
+	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, request.SourceSecret.FullName.ClusterName, apiKind).String()
+	repocredResponse := &repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretResponse{}
 	err := c.Create(requestURL, request, repocredResponse)
 
 	return repocredResponse, err
@@ -57,7 +57,7 @@ func (c *Client) RepositorycredentialResourceServiceCreate(request *respoistoryc
 /*
 RepositorycredentialResourceServiceDelete deletes a repository credential.
 */
-func (c *Client) RepositorycredentialResourceServiceDelete(fn *respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialFullName) error {
+func (c *Client) SourceSecretResourceServiceDelete(fn *repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretFullName) error {
 	queryParams := url.Values{}
 
 	if fn.ManagementClusterName != "" {
@@ -76,7 +76,7 @@ func (c *Client) RepositorycredentialResourceServiceDelete(fn *respoistorycreden
 /*
 RepositorycredentialResourceServiceGet gets a repository credential.
 */
-func (c *Client) RepositorycredentialResourceServiceGet(fn *respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialFullName) (*respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdGetRepositorycredentialResponse, error) {
+func (c *Client) SourceSecretResourceServiceGet(fn *repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretFullName) (*repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretGetSourceSecretResponse, error) {
 	queryParams := url.Values{}
 
 	if fn.ManagementClusterName != "" {
@@ -88,7 +88,7 @@ func (c *Client) RepositorycredentialResourceServiceGet(fn *respoistorycredentia
 	}
 
 	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, fn.ClusterName, apiKind, fn.Name).AppendQueryParams(queryParams).String()
-	repocredResponse := &respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdGetRepositorycredentialResponse{}
+	repocredResponse := &repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretGetSourceSecretResponse{}
 	err := c.Get(requestURL, repocredResponse)
 
 	return repocredResponse, err
@@ -97,9 +97,9 @@ func (c *Client) RepositorycredentialResourceServiceGet(fn *respoistorycredentia
 /*
 RepositorycredentialResourceServiceUpdate updates overwrite a repository credential.
 */
-func (c *Client) RepositorycredentialResourceServiceUpdate(request *respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialRequest) (*respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialResponse, error) {
-	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, request.Repositorycredential.FullName.ClusterName, apiKind, request.Repositorycredential.FullName.Name).String()
-	repocredResponse := &respoistorycredential.VmwareTanzuManageV1alpha1ClusterFluxcdRepositorycredentialResponse{}
+func (c *Client) SourceSecretResourceServiceUpdate(request *repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretRequest) (*repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretResponse, error) {
+	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, request.SourceSecret.FullName.ClusterName, apiKind, request.SourceSecret.FullName.Name).String()
+	repocredResponse := &repositorycredentialclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSourceSecretResponse{}
 	err := c.Update(requestURL, request, repocredResponse)
 
 	return repocredResponse, err

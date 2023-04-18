@@ -15,9 +15,11 @@ resource "tanzu-mission-control_repository_credential" "test_credential" {
   
    source_secret_type = "SSH"
 
-   data = {
+   data {
+    ssh_key {
      ssh_key = "somesshkey"
      known_hosts = "knowshosts"
+    }
    }
  }
 
