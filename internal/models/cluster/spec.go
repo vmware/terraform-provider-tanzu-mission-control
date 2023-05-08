@@ -11,6 +11,7 @@ import (
 	tkgawsmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgaws"
 	tkgservicevspheremodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgservicevsphere"
 	tkgvspheremodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgvsphere"
+	tanzukubernetescluster "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzu_kubernetes_cluster"
 )
 
 // VmwareTanzuManageV1alpha1ClusterSpec Spec of the cluster.
@@ -33,6 +34,9 @@ type VmwareTanzuManageV1alpha1ClusterSpec struct {
 
 	// TKG vSphere cluster spec.
 	TkgVsphere *tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereSpec `json:"tkgVsphere,omitempty"`
+
+	// Tanzu Kubernetes cluster topology.
+	Topology *tanzukubernetescluster.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterTopology `json:"topology,omitempty"`
 }
 
 // MarshalBinary interface implementation.
