@@ -11,9 +11,10 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
+	"github.com/pkg/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 )
 
 func ProviderAuthSchema() map[string]*schema.Schema {
@@ -28,12 +29,16 @@ func ProviderAuthSchema() map[string]*schema.Schema {
 			Required:    true,
 			DefaultFunc: schema.EnvDefaultFunc(VMWCloudEndpointEnvVar, defaultCSPEndpoint),
 		},
+
 		vmwCloudAPIToken: {
 			Type:        schema.TypeString,
-			Required:    true,
+			Optional:    true,
 			Sensitive:   true,
 			DefaultFunc: schema.EnvDefaultFunc(VMWCloudAPITokenEnvVar, ""),
 		},
+
+		selfManaged: selfManagedAuthSchema,
+
 		insecureAllowUnverifiedSSL: {
 			Type:        schema.TypeBool,
 			Optional:    true,
@@ -76,14 +81,45 @@ func ProviderAuthSchema() map[string]*schema.Schema {
 	}
 }
 
+var selfManagedAuthSchema = &schema.Schema{
+	Type:     schema.TypeList,
+	Optional: true,
+	MaxItems: 1,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			oidcIssuer: {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			smUsername: {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			smPassword: {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+		},
+	},
+}
+
 func ProviderConfigureContext(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := TanzuContext{
-		TLSConfig: &proxy.TLSConfig{},
+		TLSConfig:   &proxy.TLSConfig{},
+		SelfManaged: false,
 	}
+
+	_, saasAuth := d.GetOk(vmwCloudAPIToken)
+	_, smAuth := d.GetOk(selfManaged)
 
 	config.ServerEndpoint, _ = d.Get(endpoint).(string)
 	config.VMWCloudEndPoint, _ = d.Get(vmwCloudEndpoint).(string)
 	config.Token, _ = d.Get(vmwCloudAPIToken).(string)
+
+	smOIDCIssuer, _ := d.Get(helper.GetFirstElementOf(selfManaged, oidcIssuer)).(string)
+	smUsrname, _ := d.Get(helper.GetFirstElementOf(selfManaged, smUsername)).(string)
+	smPwd, _ := d.Get(helper.GetFirstElementOf(selfManaged, smPassword)).(string)
+
 	config.TLSConfig.Insecure, _ = d.Get(insecureAllowUnverifiedSSL).(bool)
 	config.TLSConfig.ClientAuthCertFile, _ = d.Get(clientAuthCertFile).(string)
 	config.TLSConfig.ClientAuthKeyFile, _ = d.Get(clientAuthKeyFile).(string)
@@ -91,6 +127,24 @@ func ProviderConfigureContext(_ context.Context, d *schema.ResourceData) (interf
 	config.TLSConfig.ClientAuthCert, _ = d.Get(clientAuthCert).(string)
 	config.TLSConfig.ClientAuthKey, _ = d.Get(clientAuthKey).(string)
 	config.TLSConfig.CaCert, _ = d.Get(caCert).(string)
+
+	switch {
+	case saasAuth && smAuth:
+		return nil, diag.FromErr(errors.New("Please configure authentication info either for SaaS or Self-Managed TMC flavour."))
+	case saasAuth:
+		if config.Token == "" {
+			return nil, diag.FromErr(errors.Errorf("Please set %s", vmwCloudAPIToken))
+		}
+	case smAuth:
+		if smOIDCIssuer == "" || smUsrname == "" || smPwd == "" {
+			return nil, diag.FromErr(errors.New("Please set all the attributes under self_managed block"))
+		}
+
+		config.SelfManaged = smAuth
+		config.VMWCloudEndPoint = smOIDCIssuer
+		config.SMUsername = smUsrname
+		config.Token = smPwd
+	}
 
 	return setContext(&config)
 }
@@ -130,7 +184,7 @@ func setContext(config *TanzuContext) (TanzuContext, diag.Diagnostics) {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "Tanzu Mission Control credentials environment is not set",
-			Detail:   fmt.Sprintf("Please set %s, %s & %s to authenticate to Tanzu Mission Control provider", ServerEndpointEnvVar, VMWCloudEndpointEnvVar, VMWCloudAPITokenEnvVar),
+			Detail:   fmt.Sprintf("Please set %s & %s to authenticate to Tanzu Mission Control provider", ServerEndpointEnvVar, VMWCloudAPITokenEnvVar),
 		})
 
 		return *config, diags

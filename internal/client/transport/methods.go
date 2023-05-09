@@ -46,6 +46,15 @@ func (c *Client) invokeAction(httpMethodType string, url string, request Request
 	}
 
 	headers := c.Headers.Clone()
+
+	md, err := c.RefreshAuthCtx()
+	if err != nil {
+		return errors.Wrap(err, "error while setting auth headers")
+	}
+	for key, value := range md {
+		headers.Set(key, value)
+	}
+
 	headers.Set(contentLengthKey, fmt.Sprintf("%d", len(body)))
 
 	var resp *http.Response

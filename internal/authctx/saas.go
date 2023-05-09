@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
+Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
@@ -109,14 +109,14 @@ func getBearerToken(cspEndpoint, cspToken string, config *proxy.TLSConfig) (stri
 	return token.AccessToken, nil
 }
 
-func getUserAuthCtx(config *TanzuContext) (map[string]string, error) {
+func getSaaSUserAuthCtx(vmCloudEndPoint, cspToken string, proxyConfig *proxy.TLSConfig) (map[string]string, error) {
 	var (
 		token string
 		err   error
 	)
 
 	for i := 0; i < 3; i++ {
-		token, err = getBearerToken(config.VMWCloudEndPoint, config.Token, config.TLSConfig)
+		token, err = getBearerToken(vmCloudEndPoint, cspToken, proxyConfig)
 		if err == nil {
 			break
 		}
@@ -129,14 +129,19 @@ func getUserAuthCtx(config *TanzuContext) (map[string]string, error) {
 	}
 
 	md := map[string]string{
-		"authorization": "Bearer " + token,
+		mdKeyAuthToken: authTokenPrefix + token,
 	}
 
 	return md, nil
 }
 
 func RefreshUserAuthCtx(config *TanzuContext) {
-	md, _ := getUserAuthCtx(config)
+	if config.IsSelfManaged() {
+		// For self-managed the refresh happens before every request is made
+		return
+	}
+
+	md, _ := getSaaSUserAuthCtx(config.VMWCloudEndPoint, config.Token, config.TLSConfig)
 	for key, value := range md {
 		config.TMCConnection.Headers.Set(key, value)
 	}

@@ -6,10 +6,16 @@ SPDX-License-Identifier: MPL-2.0
 package authctx
 
 const (
-	endpoint                   = "endpoint"
-	vmwCloudEndpoint           = "vmw_cloud_endpoint"
-	vmwCloudAPIToken           = "vmw_cloud_api_token"
-	defaultCSPEndpoint         = "console.cloud.vmware.com"
+	endpoint           = "endpoint"
+	vmwCloudEndpoint   = "vmw_cloud_endpoint"
+	vmwCloudAPIToken   = "vmw_cloud_api_token"
+	defaultCSPEndpoint = "console.cloud.vmware.com"
+	selfManaged        = "self_managed"
+	oidcIssuer         = "oidc_issuer"
+	smUsername         = "username"
+	smPassword         = "password"
+
+	// proxy configs
 	insecureAllowUnverifiedSSL = "insecure_allow_unverified_ssl"
 	clientAuthCertFile         = "client_auth_cert_file"
 	clientAuthKeyFile          = "client_auth_key_file"
