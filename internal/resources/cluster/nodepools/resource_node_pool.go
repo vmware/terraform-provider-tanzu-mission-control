@@ -482,8 +482,8 @@ func resourceNodePoolCreate(ctx context.Context, d *schema.ResourceData, m inter
 		},
 	}
 
-	if nodePoolRequest.Nodepool.Spec.TkgServiceVsphere == nil {
-		return diag.FromErr(fmt.Errorf("TKGs vsphere nodepool spec has to be provided"))
+	if nodePoolRequest.Nodepool.Spec.TkgServiceVsphere == nil && nodePoolRequest.Nodepool.Spec.TkgVsphere == nil && nodePoolRequest.Nodepool.Spec.TkgAws == nil {
+		return diag.FromErr(fmt.Errorf("nodepool config must be provided"))
 	}
 
 	nodePoolResponse, err := config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceCreate(nodePoolRequest)
