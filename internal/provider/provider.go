@@ -27,6 +27,7 @@ import (
 	quotapolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/quota/resource"
 	securitypolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 	securitypolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security/resource"
+	packagerepository "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackagerepository"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/workspace"
 )
 
@@ -35,32 +36,34 @@ func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: authctx.ProviderAuthSchema(),
 		ResourcesMap: map[string]*schema.Resource{
-			cluster.ResourceName:        cluster.ResourceTMCCluster(),
-			ekscluster.ResourceName:     ekscluster.ResourceTMCEKSCluster(),
-			workspace.ResourceName:      workspace.ResourceWorkspace(),
-			namespace.ResourceName:      namespace.ResourceNamespace(),
-			clustergroup.ResourceName:   clustergroup.ResourceClusterGroup(),
-			nodepools.ResourceName:      nodepools.ResourceNodePool(),
-			iampolicy.ResourceName:      iampolicy.ResourceIAMPolicy(),
-			custompolicy.ResourceName:   custompolicyresource.ResourceCustomPolicy(),
-			securitypolicy.ResourceName: securitypolicyresource.ResourceSecurityPolicy(),
-			imagepolicy.ResourceName:    imagepolicyresource.ResourceImagePolicy(),
-			quotapolicy.ResourceName:    quotapolicyresource.ResourceQuotaPolicy(),
-			credential.ResourceName:     credential.ResourceCredential(),
-			integration.ResourceName:    integration.ResourceIntegration(),
-			gitrepository.ResourceName:  gitrepository.ResourceGitRepository(),
-			kustomization.ResourceName:  kustomization.ResourceKustomization(),
+			cluster.ResourceName:           cluster.ResourceTMCCluster(),
+			ekscluster.ResourceName:        ekscluster.ResourceTMCEKSCluster(),
+			workspace.ResourceName:         workspace.ResourceWorkspace(),
+			namespace.ResourceName:         namespace.ResourceNamespace(),
+			clustergroup.ResourceName:      clustergroup.ResourceClusterGroup(),
+			nodepools.ResourceName:         nodepools.ResourceNodePool(),
+			iampolicy.ResourceName:         iampolicy.ResourceIAMPolicy(),
+			custompolicy.ResourceName:      custompolicyresource.ResourceCustomPolicy(),
+			securitypolicy.ResourceName:    securitypolicyresource.ResourceSecurityPolicy(),
+			imagepolicy.ResourceName:       imagepolicyresource.ResourceImagePolicy(),
+			quotapolicy.ResourceName:       quotapolicyresource.ResourceQuotaPolicy(),
+			credential.ResourceName:        credential.ResourceCredential(),
+			integration.ResourceName:       integration.ResourceIntegration(),
+			gitrepository.ResourceName:     gitrepository.ResourceGitRepository(),
+			kustomization.ResourceName:     kustomization.ResourceKustomization(),
+			packagerepository.ResourceName: packagerepository.ResourceSecret(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			cluster.ResourceName:       cluster.DataSourceTMCCluster(),
-			ekscluster.ResourceName:    ekscluster.DataSourceTMCEKSCluster(),
-			workspace.ResourceName:     workspace.DataSourceWorkspace(),
-			namespace.ResourceName:     namespace.DataSourceNamespace(),
-			clustergroup.ResourceName:  clustergroup.DataSourceClusterGroup(),
-			nodepools.ResourceName:     nodepools.DataSourceClusterNodePool(),
-			credential.ResourceName:    credential.DataSourceCredential(),
-			integration.ResourceName:   integration.DataSourceIntegration(),
-			gitrepository.ResourceName: gitrepository.DataSourceGitRepository(),
+			cluster.ResourceName:           cluster.DataSourceTMCCluster(),
+			ekscluster.ResourceName:        ekscluster.DataSourceTMCEKSCluster(),
+			workspace.ResourceName:         workspace.DataSourceWorkspace(),
+			namespace.ResourceName:         namespace.DataSourceNamespace(),
+			clustergroup.ResourceName:      clustergroup.DataSourceClusterGroup(),
+			nodepools.ResourceName:         nodepools.DataSourceClusterNodePool(),
+			credential.ResourceName:        credential.DataSourceCredential(),
+			integration.ResourceName:       integration.DataSourceIntegration(),
+			gitrepository.ResourceName:     gitrepository.DataSourceGitRepository(),
+			packagerepository.ResourceName: packagerepository.DataSourcePackageRepository(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}

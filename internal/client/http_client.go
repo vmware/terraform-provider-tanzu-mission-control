@@ -31,6 +31,8 @@ import (
 	iamorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/iam_policy"
 	policyorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/policy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
+	pkgrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository"
+	pkgrepoavailabilityclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository/packagerepositoryavailability"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	workspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace"
 	iamworkspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace/iam_policy"
@@ -88,6 +90,8 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterGroupContinuousDeliveryResourceService: continuousdeliveryclustergroupclient.New(httpClient),
 		ClusterGroupGitRepositoryResourceService:      gitrepositoryclustergroupclient.New(httpClient),
 		ClusterGroupKustomizationResourceService:      kustomizationclustergroupclient.New(httpClient),
+		ClusterPackageRepositoryService:               pkgrepositoryclusterclient.New(httpClient),
+		ClusterPackageRepositoryAvailabilityService:   pkgrepoavailabilityclusterclient.New(httpClient),
 	}
 }
 
@@ -118,4 +122,6 @@ type TanzuMissionControl struct {
 	ClusterGroupContinuousDeliveryResourceService continuousdeliveryclustergroupclient.ClientService
 	ClusterGroupGitRepositoryResourceService      gitrepositoryclustergroupclient.ClientService
 	ClusterGroupKustomizationResourceService      kustomizationclustergroupclient.ClientService
+	ClusterPackageRepositoryService               pkgrepositoryclusterclient.ClientService
+	ClusterPackageRepositoryAvailabilityService   pkgrepoavailabilityclusterclient.ClientService
 }
