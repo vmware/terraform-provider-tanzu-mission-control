@@ -26,6 +26,45 @@ func nodepoolSpecEqual(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepo
 		structEqual(spec1.UpdateConfig, spec2.UpdateConfig)
 }
 
+func clusterSpecEqual(spec1, spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) bool {
+	return spec1.ClusterGroupName == spec2.ClusterGroupName &&
+		spec1.ProxyName == spec2.ProxyName &&
+		clusterConfigEqual(spec1.Config, spec2.Config)
+}
+
+func clusterConfigEqual(config1, config2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig) bool {
+	if config1 == nil {
+		return config2 == nil
+	}
+
+	if config2 == nil {
+		return false
+	}
+
+	return structEqual(config1.KubernetesNetworkConfig, config2.KubernetesNetworkConfig) &&
+		structEqual(config1.Logging, config2.Logging) &&
+		config1.RoleArn == config2.RoleArn &&
+		reflect.DeepEqual(config1.Tags, config2.Tags) &&
+		config1.Version == config2.Version &&
+		clusterVPCConfigEqual(config1.Vpc, config2.Vpc)
+}
+
+func clusterVPCConfigEqual(vpc1, vpc2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterVPCConfig) bool {
+	if vpc1 == nil {
+		return vpc2 == nil
+	}
+
+	if vpc2 == nil {
+		return false
+	}
+
+	return vpc1.EnablePrivateAccess == vpc2.EnablePrivateAccess &&
+		vpc1.EnablePublicAccess == vpc2.EnablePublicAccess &&
+		setEquality(vpc1.PublicAccessCidrs, vpc2.PublicAccessCidrs) &&
+		setEquality(vpc1.SecurityGroups, vpc2.SecurityGroups) &&
+		setEquality(vpc1.SubnetIds, vpc2.SubnetIds)
+}
+
 func structEqual[T any](a, b *T) bool {
 	if a == nil {
 		a = new(T)

@@ -65,7 +65,14 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 		if ctx.Value(contextMethodKey{}) == "create" &&
 			resp.EksCluster.Status.Phase != nil &&
 			*resp.EksCluster.Status.Phase != eksmodel.VmwareTanzuManageV1alpha1EksclusterPhaseREADY {
+			if c, ok := resp.EksCluster.Status.Conditions[readyCondition]; ok &&
+				c.Severity != nil &&
+				*c.Severity == eksmodel.VmwareTanzuCoreV1alpha1StatusConditionSeverityERROR {
+				return false, errors.Errorf("Cluster %s creation failed due to %s, %s", d.Get(NameKey), c.Reason, c.Message)
+			}
+
 			log.Printf("[DEBUG] waiting for cluster(%s) to be in READY phase", constructFullname(d).ToString())
+
 			return true, nil
 		}
 
