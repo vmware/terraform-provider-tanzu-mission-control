@@ -5,7 +5,7 @@ Description: |-
 ---
 # EKS Cluster
 
-The `tanzu-mission-control_ekscluster` resource can directly perform cluster lifecycle management operations on EKS clusters (and associated node gourps) including create, update, upgrade, and delete through Tanzu Mission Control.
+The `tanzu-mission-control_ekscluster` resource can directly perform cluster lifecycle management operations on EKS clusters (and associated node groups) including create, update, upgrade, and delete through Tanzu Mission Control.
 
 ## Prerequisites
 
