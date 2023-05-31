@@ -43,12 +43,12 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
 
   spec {
     cluster_group = "test-cluster-group" // Default: default
-    #proxy		  = "<proxy>"              // Proxy if used
+    #proxy		  = "<proxy>"    // Name of TMC Proxy if outbound connection from EKS cluster is via Proxy
 
     config {
       role_arn = "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com" // Required, forces new
 
-      kubernetes_version = "1.23" // Required
+      kubernetes_version = "1.24" // Required
       tags               = { "tagkey" : "tagvalue" }
 
       kubernetes_network_config {
@@ -123,7 +123,7 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
         }
 
         update_config {
-          max_unavailable_nodes = "10"
+          max_unavailable_nodes = "4"
         }
 
         instance_types = [
@@ -153,7 +153,7 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
         ]
 
         launch_template {
-          name    = "vivek"
+          name    = "name-of-pre-existing-launch-template"
           version = "7"
         }
 
@@ -183,9 +183,9 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
 
 ### Required
 
-- `credential_name` (String) Name of the AWS Crendential in Tanzu Mission Control
+- `credential_name` (String) Name of the AWS Credential in Tanzu Mission Control
 - `name` (String) Name of this cluster
-- `region` (String) AWS Region of the this cluster
+- `region` (String) AWS Region of this cluster
 
 ### Optional
 
