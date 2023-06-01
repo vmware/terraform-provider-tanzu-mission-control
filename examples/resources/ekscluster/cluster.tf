@@ -13,12 +13,12 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
 
   spec {
     cluster_group = "test-cluster-group" // Default: default
-    #proxy		  = "<proxy>"              // Proxy if used
+    #proxy		  = "<proxy>"            // Name of TMC Proxy if outbound connection from EKS cluster is via Proxy
 
     config {
       role_arn = "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com" // Required, forces new
 
-      kubernetes_version = "1.23" // Required
+      kubernetes_version = "1.24" // Required
       tags               = { "tagkey" : "tagvalue" }
 
       kubernetes_network_config {
@@ -93,7 +93,7 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
         }
 
         update_config {
-          max_unavailable_nodes = "10"
+          max_unavailable_nodes = "4"
         }
 
         instance_types = [
@@ -123,7 +123,7 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
         ]
 
         launch_template {
-          name    = "vivek"
+          name    = "name-of-pre-existing-launch-template"
           version = "7"
         }
 
