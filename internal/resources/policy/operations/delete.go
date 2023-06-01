@@ -19,7 +19,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 )
 
-func ResourcePolicyDelete(ctx context.Context, d *schema.ResourceData, m interface{}, rn string) (diags diag.Diagnostics) {
+func ResourcePolicyDelete(_ context.Context, d *schema.ResourceData, m interface{}, rn string) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 	policyName, _ := d.Get(policy.NameKey).(string)
 	scopedFullnameData := scope.ConstructScope(d, policyName)

@@ -23,6 +23,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindcustom "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
 	policykindimage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
+	policykindnetwork "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/network"
 	policykindquota "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/quota"
 	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
@@ -48,6 +49,8 @@ func ResourcePolicyCreate(ctx context.Context, d *schema.ResourceData, m interfa
 		policySpec = policykindimage.ConstructSpec(d)
 	case policykindquota.ResourceName:
 		policySpec = policykindquota.ConstructSpec(d)
+	case policykindnetwork.ResourceName:
+		policySpec = policykindnetwork.ConstructSpec(d)
 	}
 
 	var UID string
