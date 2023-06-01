@@ -77,7 +77,7 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
         ]
 
         ami_info {
-          ami_id = "<aws-ami-id>"
+          ami_id                 = "<aws-ami-id>"
           override_bootstrap_cmd = "<ami-bootstrap-command>"
         }
 
