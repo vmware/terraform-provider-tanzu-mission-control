@@ -67,7 +67,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
 
   attach_k8s_cluster {
     kubeconfig_raw = var.kubeconfig // Required
-    description     = "optional description about the kubeconfig provided"
+    description    = "optional description about the kubeconfig provided"
   }
 
   meta {
