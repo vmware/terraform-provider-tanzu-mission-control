@@ -1,0 +1,37 @@
+---
+Title: "Git Repository Data Source"
+Description: |-
+    Creating the Git Repository Data Source.
+---
+
+# Git Repository
+
+The `tanzu-mission-control_git_repository` Data Source allows you to get git repository to a particular scope through Tanzu Mission Control.
+
+Git repositories are used to store kustomizations that will be synced to your cluster.
+To add a repository, you must be associated with the cluster.admin or clustergroup.admin role.
+
+[git-repository]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-26C2D2F3-0E5C-4E56-B875-B7FB003267E4.html
+
+## Git Repository Scope
+
+In the Tanzu Mission Control resource hierarchy, there are two levels at which you can specify git repository resources:
+- **object groups** - `cluster_group` block under `scope` sub-resource
+- **Kubernetes objects** - `cluster` block under `scope` sub-resource
+
+**Note:**
+The scope parameter is mandatory in the schema and the user needs to add one of the defined scopes to the script for the provider to function.
+Only one scope per resource is allowed.
+
+## Cluster group scoped Git Repository
+
+### Example Usage
+
+{{ tffile "examples/data-sources/git_repository/data_source_cluster_group.tf" }}
+
+## Cluster scoped Git Repository
+
+### Example Usage
+
+{{ tffile "examples/data-sources/git_repository/data_source_cluster.tf" }}
+{{ .SchemaMarkdown | trimspace }}
