@@ -23,8 +23,10 @@ import (
 
 func DataSourceTMCEKSCluster() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceTMCEKSClusterRead,
-		Schema:      clusterSchema,
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+			return dataSourceTMCEKSClusterRead(helper.GetContextWithCaller(ctx, helper.DataRead), d, m)
+		},
+		Schema: clusterSchema,
 	}
 }
 
@@ -43,8 +45,8 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 	getEksClusterResourceRetryableFn := func() (retry bool, err error) {
 		resp, err = config.TMCConnection.EKSClusterResourceService.EksClusterResourceServiceGet(clusterFn)
 		if err != nil {
-			if clienterrors.IsNotFoundError(err) {
-				d.SetId("")
+			if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
+				_ = schema.RemoveFromState(d, m)
 				return false, nil
 			}
 
@@ -65,7 +67,14 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 		if ctx.Value(contextMethodKey{}) == "create" &&
 			resp.EksCluster.Status.Phase != nil &&
 			*resp.EksCluster.Status.Phase != eksmodel.VmwareTanzuManageV1alpha1EksclusterPhaseREADY {
+			if c, ok := resp.EksCluster.Status.Conditions[readyCondition]; ok &&
+				c.Severity != nil &&
+				*c.Severity == eksmodel.VmwareTanzuCoreV1alpha1StatusConditionSeverityERROR {
+				return false, errors.Errorf("Cluster %s creation failed due to %s, %s", d.Get(NameKey), c.Reason, c.Message)
+			}
+
 			log.Printf("[DEBUG] waiting for cluster(%s) to be in READY phase", constructFullname(d).ToString())
+
 			return true, nil
 		}
 

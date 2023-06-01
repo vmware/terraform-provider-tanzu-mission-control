@@ -930,6 +930,12 @@ func getWaitForNodepoolReadyFn(config authctx.TanzuContext, npFn *eksmodel.Vmwar
 
 		if resp.Nodepool.Status.Phase != nil &&
 			*resp.Nodepool.Status.Phase != eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolStatusPhaseREADY {
+			if c, ok := resp.Nodepool.Status.Conditions[readyCondition]; ok &&
+				c.Severity != nil &&
+				*c.Severity == eksmodel.VmwareTanzuCoreV1alpha1StatusConditionSeverityERROR {
+				return false, errors.Errorf("nodepool %s in error state due to %s, %s", npFn.Name, c.Reason, c.Message)
+			}
+
 			return true, nil
 		}
 

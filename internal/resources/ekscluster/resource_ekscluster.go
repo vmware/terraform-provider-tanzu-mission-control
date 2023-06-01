@@ -44,7 +44,9 @@ func ResourceTMCEKSCluster() *schema.Resource {
 	return &schema.Resource{
 		Schema:        clusterSchema,
 		CreateContext: resourceClusterCreate,
-		ReadContext:   dataSourceTMCEKSClusterRead,
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+			return dataSourceTMCEKSClusterRead(helper.GetContextWithCaller(ctx, helper.RefreshState), d, m)
+		},
 		UpdateContext: resourceClusterInPlaceUpdate,
 		DeleteContext: resourceClusterDelete,
 		Description:   "Tanzu Mission Control EKS Cluster Resource",
@@ -555,13 +557,13 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 
 	errcl := handleClusterDiff(config, getResp.EksCluster, common.ConstructMeta(d), clusterSpec)
 	if errcl != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control EKS cluster entry, name : %s", d.Get(NameKey)))
+		return diag.FromErr(errors.Wrapf(errcl, "Unable to update Tanzu Mission Control EKS cluster entry, name : %s", d.Get(NameKey)))
 	}
 
 	// this is moved here so as to not bail on the cluster update
 	// when there is a nodepool update error
 	if errnp != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control EKS cluster's nodepools, name : %s", d.Get(NameKey)))
+		return diag.FromErr(errors.Wrapf(errnp, "Unable to update Tanzu Mission Control EKS cluster's nodepools, name : %s", d.Get(NameKey)))
 	}
 
 	log.Printf("[INFO] cluster update successful")
@@ -577,6 +579,10 @@ func handleClusterDiff(config authctx.TanzuContext, tmcCluster *eksmodel.VmwareT
 		updateCluster = true
 		tmcCluster.Meta.Description = meta.Description
 		tmcCluster.Meta.Labels = meta.Labels
+	}
+
+	if !clusterSpecEqual(clusterSpec, tmcCluster.Spec) {
+		updateCluster = true
 	}
 
 	// The TF update request was only for nodepools.

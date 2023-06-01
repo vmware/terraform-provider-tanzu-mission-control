@@ -323,6 +323,271 @@ func TestNodepoolSpecEqual(t *testing.T) {
 	}
 }
 
+func TestClusterSpecEqual(t *testing.T) {
+	tests := []struct {
+		name        string
+		modifySpec1 func(*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec)
+		modifySpec2 func(*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec)
+		result      bool
+	}{
+		{
+			name:        "both are equal",
+			modifySpec1: func(*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {},
+			modifySpec2: func(*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {},
+			result:      true,
+		},
+		{
+			name:        "cluster group names are not equal",
+			modifySpec1: func(*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.ClusterGroupName = "cg-2"
+			},
+		},
+		{
+			name:        "proxies are not equal",
+			modifySpec1: func(*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.ProxyName = "p2"
+			},
+			result: false,
+		},
+		{
+			name: "config1 is nil",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config = nil
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {},
+			result:      false,
+		},
+		{
+			name:        "config2 is nil",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config = nil
+			},
+			result: false,
+		},
+		{
+			name: "both config are nil",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config = nil
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config = nil
+			},
+			result: true,
+		},
+		{
+			name: "k8s network configs are not equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.KubernetesNetworkConfig.ServiceCidr = "192.100.0.0/16"
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+			},
+			result: false,
+		},
+		{
+			name: "loggings are not equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.Logging.Audit = true
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config.Logging.Audit = false
+			},
+			result: false,
+		},
+		{
+			name: "role arns are not equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.RoleArn = "arn:arn1"
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config.RoleArn = "arn:arn2"
+			},
+			result: false,
+		},
+		{
+			name: "tags are not equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.Tags = map[string]string{
+					"abc": "def",
+					"pqr": "stu",
+				}
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config.Tags = map[string]string{
+					"ghi": "jkl",
+					"mno": "pqr",
+				}
+			},
+			result: false,
+		},
+		{
+			name: "versions are not equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.Version = "1.23"
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config.Version = "1.24"
+			},
+			result: false,
+		},
+		{
+			name: "vpc1 is nil",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.Vpc = nil
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {},
+			result:      false,
+		},
+		{
+			name:        "vpc2 is nil",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config.Vpc = nil
+			},
+			result: false,
+		},
+		{
+			name: "both vpcs are nil",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.Vpc = nil
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config.Vpc = nil
+			},
+			result: true,
+		},
+		{
+			name: "vpc private accesses are not equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.Vpc.EnablePrivateAccess = true
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config.Vpc.EnablePrivateAccess = false
+			},
+			result: false,
+		},
+		{
+			name: "vpc public accesses are not equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.Vpc.EnablePublicAccess = true
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config.Vpc.EnablePublicAccess = false
+			},
+			result: false,
+		},
+		{
+			name: "public cirds are not equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.Vpc.PublicAccessCidrs = []string{
+					"100.10.1.0/24",
+					"196.19.1.0/24",
+				}
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config.Vpc.PublicAccessCidrs = []string{
+					"100.10.2.0/24",
+					"196.19.2.0/24",
+				}
+			},
+			result: false,
+		},
+		{
+			name: "public cirds are set equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.Vpc.PublicAccessCidrs = []string{
+					"100.10.1.0/24",
+					"196.19.1.0/24",
+				}
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config.Vpc.PublicAccessCidrs = []string{
+					"196.19.1.0/24",
+					"100.10.1.0/24",
+				}
+			},
+			result: true,
+		},
+		{
+			name: "security groups are not equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.Vpc.SecurityGroups = []string{
+					"sg-1",
+					"sg-2",
+				}
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config.Vpc.SecurityGroups = []string{
+					"sg-3",
+					"sg-4",
+				}
+			},
+			result: false,
+		},
+		{
+			name: "security groups are set equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.Vpc.SecurityGroups = []string{
+					"sg-1",
+					"sg-2",
+				}
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config.Vpc.SecurityGroups = []string{
+					"sg-2",
+					"sg-1",
+				}
+			},
+			result: true,
+		},
+		{
+			name: "subnets are not equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.Vpc.SubnetIds = []string{
+					"subnet-1",
+					"subnet-2",
+				}
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config.Vpc.SubnetIds = []string{
+					"subnet-3",
+					"subnet-4",
+				}
+			},
+			result: false,
+		},
+		{
+			name: "subnets are set equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.Vpc.SubnetIds = []string{
+					"subnet-1",
+					"subnet-2",
+				}
+			},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec2.Config.Vpc.SubnetIds = []string{
+					"subnet-2",
+					"subnet-1",
+				}
+			},
+			result: true,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			spec1, _ := getClusterSpec()
+			spec2, _ := getClusterSpec()
+			test.modifySpec1(spec1)
+			test.modifySpec2(spec2)
+
+			require.Equal(t, test.result, clusterSpecEqual(spec1, spec2), "return didn't match the expected output")
+		})
+	}
+}
+
 func getNodepoolSpec() *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec {
 	return &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec{
 		AmiType: "CUSTOM",
