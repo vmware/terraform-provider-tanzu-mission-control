@@ -1,0 +1,184 @@
+---
+Title: "Network Policy Resource"
+Description: |-
+    Creating the Tanzu Kubernetes network policy resource.
+---
+
+# Managing Network Communication for Your Clusters
+
+Define how pods communicate using network policies.
+
+Using VMware Tanzu Mission Control, you can create a network policy that defines how pods communicate with each other and other network endpoints, using preconfigured templates called recipes.
+By default, Tanzu Mission Control does not impose any such restriction, and allows you to manage network restrictions at the organizational level and at the workspace level.
+
+Tanzu Mission Control implements network policies using Kubernetes native network policies. Each namespace and workspace can be governed by a network policy, and these policies are inherited down through the organizational hierarchy.
+Network policies are additive, both inherited and direct network policies are applied and are effective on your namespaces according to Kubernetes rules.
+
+For more information about Kubernetes native network policies, see [Network Policies][network-policies] in the Kuberenetes documentation.
+For more information about policy inheritance in Tanzu Mission Control, see [Policy-Driven Cluster Management][policy-driven-cluster-management] in VMware Tanzu Mission Control Concepts.
+
+[network-policies]: https://kubernetes.io/docs/concepts/services-networking/network-policies/
+[policy-driven-cluster-management]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-847414C9-EF54-44E5-BA62-C4895160CE1D.html
+
+## Input Recipe
+
+In the Tanzu Mission Control network policy resource, there are currently eight system defined types of network policy recipes that you can use:
+
+- **allow-all**
+- **allow-all-to-pods**
+- **allow-all-egress**
+- **deny-all**
+- **deny-all-to-pods**
+- **deny-all-egress**
+- **custom-egress**
+- **custom-ingress**
+
+## Policy Scope and Inheritance
+
+In the Tanzu Mission Control resource hierarchy, there are two levels at which you can specify network policy resource:
+- **organization** - `organization` block under `scope` sub-resource
+- **object groups** - `workspace` block under `scope` sub-resource
+
+In addition to the direct policy defined for a given object, each object has inherited policies described in the parent objects. For example, a namespace has inherited policies from the workspace and organization to which it is linked.
+
+**Note:**
+The scope parameter is mandatory in the schema and the user needs to add one of the defined scopes to the script for the provider to function.
+Only one scope per resource is allowed.
+
+## Rules in Network Policies
+
+Some of the network policy recipes allow you to provide a rule that uses a set of criteria to identify the target locations with which to permit or restrict communication, and the port on which they can communicate.
+The criteria used in these rules can include the following types:
+
+- IP range (allow and exclude)
+- label selector (pods and namespaces)
+- port and protocol
+
+You can define multiple criteria of a given type in a single rule, and use these criteria in combination with each other.
+The location criteria (IP range and label selector) that you define are specific to the template that you are using.
+For the custom-ingress template, you identify sources from which to allow traffic; and for the custom-egress template, you identify destinations to which to allow traffic.
+
+If you do not specify any location criteria, the policy does not restrict traffic by location.
+All sources or destinations are allowed. Likewise, if you do not specify any ports, all ports are allowed.
+
+### IP Range Criteria
+
+When you specify a range for allowed IP addresses, traffic is permitted on all IP addresses in that range.
+You can also optionally exclude a range of IP addresses within the allowed range.
+
+If you specify multiple IP ranges for a given location, the location must match any one of the criteria.
+For example, if you define three allowed IP ranges, traffic is allowed to (or from) locations within any one of the three ranges.
+
+### Label Selector Criteria
+
+If you specify multiple label selectors for a given type, the location must match any one of the criteria to allow traffic.
+For example, if you define three pod selectors, traffic is allowed to (or from) pods that have a label matching any one of the three selectors.
+
+If you specify a location using both the pod selector and the namespace selector in a single location definition, then both must be satisfied.
+
+### Port Criteria
+
+The port and protocol fields allow you to specify a port on which to allow traffic, and the protocol that the traffic must use.
+You can specify multiple ports, and each one must have a corresponding protocol. The port can be either a numerical or named port.
+
+If you specify multiple ports, the channel must match any one of the criteria to allow traffic.
+For example, if you define three ports, traffic is allowed through any one of the three ports.
+
+## Workspace scoped allow-all Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_workspace_allow-all_network_policy.tf" }}
+
+## Workspace scoped allow-all-to-pods Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_workspace_allow-all-to-pods_network_policy.tf" }}
+
+## Workspace scoped allow-all-egress Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_workspace_allow-all-egress_network_policy.tf" }}
+
+## Workspace scoped deny-all Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_workspace_deny-all_network_policy.tf" }}
+
+## Workspace scoped deny-all-to-pods Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_workspace_deny-all-to-pods_network_policy.tf" }}
+
+## Workspace scoped deny-all-egress Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_workspace_deny-all-egress_network_policy.tf" }}
+
+## Workspace scoped custom-egress Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_workspace_custom-egress_network_policy.tf" }}
+
+## Workspace scoped custom-ingress Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_workspace_custom-ingress_network_policy.tf" }}
+
+
+## Organization scoped allow-all Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_organization_allow-all_network_policy.tf" }}
+
+## Organization scoped allow-all-to-pods Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_organization_allow-all-to-pods_network_policy.tf" }}
+
+## Organization scoped allow-all-egress Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_organization_allow-all-egress_network_policy.tf" }}
+
+## Organization scoped deny-all Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_organization_deny-all_network_policy.tf" }}
+
+## Organization scoped deny-all-to-pods Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_organization_deny-all-to-pods_network_policy.tf" }}
+
+## Organization scoped deny-all-egress Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_organization_deny-all-egress_network_policy.tf" }}
+
+## Organization scoped custom-egress Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_organization_custom-egress_network_policy.tf" }}
+
+## Organization scoped custom-ingress Network Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/network_policy/resource_organization_custom-ingress_network_policy.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
