@@ -16,12 +16,13 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindcustom "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
 	policykindimage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
+	policykindnetwork "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/network"
 	policykindquota "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/quota"
 	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/scope"
 )
 
-func ResourcePolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}, rn string) (diags diag.Diagnostics) {
+func ResourcePolicyRead(_ context.Context, d *schema.ResourceData, m interface{}, rn string) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
 	policyName, ok := d.Get(policy.NameKey).(string)
@@ -58,6 +59,8 @@ func ResourcePolicyRead(ctx context.Context, d *schema.ResourceData, m interface
 		flattenedSpec = policykindimage.FlattenSpec(spec)
 	case policykindquota.ResourceName:
 		flattenedSpec = policykindquota.FlattenSpec(spec)
+	case policykindnetwork.ResourceName:
+		flattenedSpec = policykindnetwork.FlattenSpec(spec)
 	}
 
 	if err := d.Set(policy.SpecKey, flattenedSpec); err != nil {
