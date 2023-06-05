@@ -134,7 +134,7 @@ var nodepoolSpecSchema = &schema.Schema{
 					Schema: map[string]*schema.Schema{
 						sshKeyKey: {
 							Type:        schema.TypeString,
-							Description: "SSH key for the nodepool VMs",
+							Description: "SSH key allows you to connect to your instances and gather diagnostic information if there are issues.",
 							Optional:    true,
 						},
 						securityGroupsKey: {
