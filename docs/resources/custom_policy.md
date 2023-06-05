@@ -6,11 +6,7 @@ Description: |-
 
 # Custom Policy
 
-The `tanzu-mission-control_custom_policy` resource enables you to attach a custom policy with an input recipe to a particular scope for management through Tanzu Mission Control.
-Custom policies allow you to implement additional business rules, using templates that you define, to enforce policies that are not already addressed using the other built-in policy types.
-For more information, see [Creating Customized Policies][create-customized-policies] using VMware Tanzu Mission Control.
-
-[create-customized-policies]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-1FF7A1E5-8456-4EF4-A532-9CF31BE88EAA.html
+The `tanzu-mission-control_custom_policy` resource enables you to attach one of the pre-defined custom policy recipes to a particular scope for management through Tanzu Mission Control.
 
 ## Input Recipe
 
@@ -1086,7 +1082,7 @@ resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-require-
 ### Required
 
 - `name` (String) Name of the custom policy
-- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image and quota policy, having one of the valid scopes for custom, security and quota policy: cluster, cluster_group or organization and valid scopes for image policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image and namespace quota policy, having one of the valid scopes for custom, security and namespace quota policy: cluster, cluster_group or organization and valid scopes for image policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Spec for the custom policy (see [below for nested schema](#nestedblock--spec))
 
 ### Optional
