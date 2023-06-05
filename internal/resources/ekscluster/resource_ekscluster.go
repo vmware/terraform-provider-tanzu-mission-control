@@ -56,13 +56,13 @@ func ResourceTMCEKSCluster() *schema.Resource {
 var clusterSchema = map[string]*schema.Schema{
 	CredentialNameKey: {
 		Type:        schema.TypeString,
-		Description: "Name of the AWS Crendential in Tanzu Mission Control",
+		Description: "Name of the AWS Credential in Tanzu Mission Control",
 		Required:    true,
 		ForceNew:    true,
 	},
 	RegionKey: {
 		Type:        schema.TypeString,
-		Description: "AWS Region of the this cluster",
+		Description: "AWS Region of this cluster",
 		Required:    true,
 		ForceNew:    true,
 	},
@@ -218,19 +218,19 @@ var vpcSchema = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			enablePrivateAccessKey: {
 				Type:        schema.TypeBool,
-				Description: "Enable private access on the cluster",
+				Description: "Enable Kubernetes API requests within your cluster's VPC (such as node to control plane communication) use the private VPC endpoint (see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))",
 				Optional:    true,
 				ForceNew:    false,
 			},
 			enablePublicAccessKey: {
 				Type:        schema.TypeBool,
-				Description: "Enable public access on the cluster",
+				Description: "Enable cluster API server access from the internet. You can, optionally, limit the CIDR blocks that can access the public endpoint using public_access_cidrs (see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))",
 				Optional:    true,
 				ForceNew:    false,
 			},
 			publicAccessCidrsKey: {
 				Type:        schema.TypeSet,
-				Description: "Public access cidrs",
+				Description: "Specify which addresses from the internet can communicate to the public endpoint, if public endpoint is enabled (see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))",
 				Optional:    true,
 				ForceNew:    false,
 				Elem: &schema.Schema{
@@ -249,7 +249,7 @@ var vpcSchema = &schema.Schema{
 			},
 			subnetIdsKey: {
 				Type:        schema.TypeSet,
-				Description: "Subnet ids used by the cluster",
+				Description: "Subnet ids used by the cluster (see [Amazon EKS VPC and subnet requirements and considerations](https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#network-requirements-subnets))",
 				Required:    true,
 				ForceNew:    true,
 				MinItems:    2,

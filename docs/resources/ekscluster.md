@@ -43,7 +43,7 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
 
   spec {
     cluster_group = "test-cluster-group" // Default: default
-    #proxy		  = "<proxy>"    // Name of TMC Proxy if outbound connection from EKS cluster is via Proxy
+    #proxy		  = "<proxy>"            // Name of TMC Proxy if outbound connection from EKS cluster is via Proxy
 
     config {
       role_arn = "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com" // Required, forces new
@@ -246,13 +246,13 @@ Optional:
 
 Required:
 
-- `subnet_ids` (Set of String) Subnet ids used by the cluster
+- `subnet_ids` (Set of String) Subnet ids used by the cluster (see [Amazon EKS VPC and subnet requirements and considerations](https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#network-requirements-subnets))
 
 Optional:
 
-- `enable_private_access` (Boolean) Enable private access on the cluster
-- `enable_public_access` (Boolean) Enable public access on the cluster
-- `public_access_cidrs` (Set of String) Public access cidrs
+- `enable_private_access` (Boolean) Enable Kubernetes API requests within your cluster's VPC (such as node to control plane communication) use the private VPC endpoint (see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))
+- `enable_public_access` (Boolean) Enable cluster API server access from the internet. You can, optionally, limit the CIDR blocks that can access the public endpoint using public_access_cidrs (see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))
+- `public_access_cidrs` (Set of String) Specify which addresses from the internet can communicate to the public endpoint, if public endpoint is enabled (see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))
 - `security_groups` (Set of String) Security groups for the cluster VMs
 
 
@@ -345,7 +345,7 @@ Optional:
 Optional:
 
 - `security_groups` (Set of String) Security groups for the VMs
-- `ssh_key` (String) SSH key for the nodepool VMs
+- `ssh_key` (String) SSH key allows you to connect to your instances and gather diagnostic information if there are issues.
 
 
 <a id="nestedblock--spec--nodepool--spec--scaling_config"></a>

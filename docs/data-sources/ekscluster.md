@@ -39,9 +39,9 @@ data "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
 
 ### Required
 
-- `credential_name` (String) Name of the AWS Crendential in Tanzu Mission Control
+- `credential_name` (String) Name of the AWS Credential in Tanzu Mission Control
 - `name` (String) Name of this cluster
-- `region` (String) AWS Region of the this cluster
+- `region` (String) AWS Region of this cluster
 
 ### Optional
 
@@ -107,7 +107,7 @@ Required:
 Optional:
 
 - `enable_private_access` (Boolean) Enable Kubernetes API requests within your cluster's VPC (such as node to control plane communication) use the private VPC endpoint (see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))
-- `enable_public_access` (Boolean) Enable cluster API server access from the internet.  You can, optionally, limit the CIDR blocks that can access the public endpoint using public_access_cidrs (see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))
+- `enable_public_access` (Boolean) Enable cluster API server access from the internet. You can, optionally, limit the CIDR blocks that can access the public endpoint using public_access_cidrs (see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))
 - `public_access_cidrs` (Set of String) Specify which addresses from the internet can communicate to the public endpoint, if public endpoint is enabled (see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))
 - `security_groups` (Set of String) Security groups for the cluster VMs
 
