@@ -122,3 +122,7 @@ func SetPrimitiveValue(input, model interface{}, key string) {
 func BoolPointer(b bool) *bool {
 	return &b
 }
+
+func StringPointer(s string) *string {
+	return &s
+}
