@@ -757,7 +757,7 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_strict_sec
 ### Required
 
 - `name` (String) Name of the security policy
-- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image and quota policy, having one of the valid scopes for custom, security and quota policy: cluster, cluster_group or organization and valid scopes for image policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image, network and namespace quota policy, having one of the valid scopes for custom, security and namespace quota policy: cluster, cluster_group or organization and valid scopes for image and network policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Spec for the security policy (see [below for nested schema](#nestedblock--spec))
 
 ### Optional

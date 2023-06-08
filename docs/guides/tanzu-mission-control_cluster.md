@@ -322,7 +322,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
     cluster_group = "<cluster-group>" // Default: default
     tkg_aws {
       advanced_configs {
-        key = "<key>"
+        key   = "<key>"
         value = "<value>"
       }
       settings {
@@ -360,11 +360,11 @@ resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
       }
 
       distribution {
-        os_arch = "<os-arch>"
-        os_name = "<os-name>"
+        os_arch    = "<os-arch>"
+        os_name    = "<os-name>"
         os_version = "<os-version>"
-        region  = "<region>"  // Required
-        version = "<version>" // Required
+        region     = "<region>"  // Required
+        version    = "<version>" // Required
       }
 
       topology {

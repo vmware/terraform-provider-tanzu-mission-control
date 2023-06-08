@@ -620,7 +620,7 @@ resource "tanzu-mission-control_namespace_quota_policy" "organization_scoped_cus
 ### Required
 
 - `name` (String) Name of the namespace quota policy
-- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image and namespace quota policy, having one of the valid scopes for custom, security and namespace quota policy: cluster, cluster_group or organization and valid scopes for image policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image, network and namespace quota policy, having one of the valid scopes for custom, security and namespace quota policy: cluster, cluster_group or organization and valid scopes for image and network policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Spec for the namespace namespace quota policy (see [below for nested schema](#nestedblock--spec))
 
 ### Optional
@@ -704,7 +704,6 @@ Optional:
 - `requests_storage` (String) The sum of storage requests across all persistent volume claims cannot exceed this value
 - `requests_storage_per_class` (Map of String) Across all persistent volume claims associated with each storage class, the sum of storage requests cannot exceed this value
 - `resource_counts` (Map of Number) The total number of Services of the given type that can exist in a namespace
-
 
 <a id="nestedblock--spec--namespace_selector"></a>
 ### Nested Schema for `spec.namespace_selector`
