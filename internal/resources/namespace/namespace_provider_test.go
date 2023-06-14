@@ -6,7 +6,6 @@ SPDX-License-Identifier: MPL-2.0
 package namespace
 
 import (
-	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,8 +14,6 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 )
-
-const providerName = "tmc"
 
 func initTestProvider(t *testing.T) *schema.Provider {
 	testProvider := &schema.Provider{
@@ -36,19 +33,4 @@ func initTestProvider(t *testing.T) *schema.Provider {
 	}
 
 	return testProvider
-}
-
-func testPreCheck(t *testing.T) func() {
-	return func() {
-		for _, env := range []string{authctx.ServerEndpointEnvVar, authctx.VMWCloudAPITokenEnvVar, authctx.VMWCloudEndpointEnvVar} {
-			require.NotEmpty(t, os.Getenv(env))
-		}
-	}
-}
-
-func getTestProviderFactories(provider *schema.Provider) map[string]func() (*schema.Provider, error) {
-	//nolint:unparam
-	return map[string]func() (*schema.Provider, error){
-		providerName: func() (*schema.Provider, error) { return provider, nil },
-	}
 }

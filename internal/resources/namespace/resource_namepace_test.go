@@ -30,8 +30,8 @@ func TestAcceptanceForNamespaceResource(t *testing.T) {
 	clusterName := acctest.RandomWithPrefix("tf-cluster")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          testPreCheck(t),
-		ProviderFactories: getTestProviderFactories(provider),
+		PreCheck:          testhelper.TestPreCheck(t),
+		ProviderFactories: testhelper.GetTestProviderFactories(provider),
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{

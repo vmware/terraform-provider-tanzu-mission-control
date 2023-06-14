@@ -35,8 +35,8 @@ func TestAcceptanceForNamespaceDataSource(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.%s", namespaceResource, namespaceResourceVar)
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:          testPreCheck(t),
-		ProviderFactories: getTestProviderFactories(provider),
+		PreCheck:          testhelper.TestPreCheck(t),
+		ProviderFactories: testhelper.GetTestProviderFactories(provider),
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
