@@ -95,17 +95,13 @@ func HasSpecChanged(d *schema.ResourceData) bool {
 
 	switch {
 	case d.Get(helper.GetFirstElementOf(SpecKey, DataKey, UsernamePasswordKey)) != nil:
-		switch {
-		case d.HasChange(helper.GetFirstElementOf(SpecKey, DataKey, UsernamePasswordKey, usernameKey)):
-			fallthrough
-		case d.HasChange(helper.GetFirstElementOf(SpecKey, DataKey, UsernamePasswordKey, PasswordKey)):
+		if d.HasChange(helper.GetFirstElementOf(SpecKey, DataKey, UsernamePasswordKey, usernameKey)) || d.HasChange(helper.GetFirstElementOf(SpecKey, DataKey, UsernamePasswordKey, PasswordKey)) {
 			updateRequired = true
 		}
+
+		fallthrough
 	case d.Get(helper.GetFirstElementOf(SpecKey, DataKey, SSHKey)) != nil:
-		switch {
-		case d.HasChange(helper.GetFirstElementOf(SpecKey, DataKey, SSHKey, IdentityKey)):
-			fallthrough
-		case d.HasChange(helper.GetFirstElementOf(SpecKey, DataKey, SSHKey, KnownhostsKey)):
+		if d.HasChange(helper.GetFirstElementOf(SpecKey, DataKey, SSHKey, IdentityKey)) || d.HasChange(helper.GetFirstElementOf(SpecKey, DataKey, SSHKey, KnownhostsKey)) {
 			updateRequired = true
 		}
 	}
