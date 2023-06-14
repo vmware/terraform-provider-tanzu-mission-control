@@ -29,6 +29,7 @@ import (
 	quotapolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/quota/resource"
 	securitypolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 	securitypolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security/resource"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/sourcesecret"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/workspace"
 )
 
@@ -53,6 +54,7 @@ func Provider() *schema.Provider {
 			integration.ResourceName:    integration.ResourceIntegration(),
 			gitrepository.ResourceName:  gitrepository.ResourceGitRepository(),
 			kustomization.ResourceName:  kustomization.ResourceKustomization(),
+			sourcesecret.ResourceName:   sourcesecret.ResourceSourceSecret(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:       cluster.DataSourceTMCCluster(),
@@ -64,6 +66,7 @@ func Provider() *schema.Provider {
 			credential.ResourceName:    credential.DataSourceCredential(),
 			integration.ResourceName:   integration.DataSourceIntegration(),
 			gitrepository.ResourceName: gitrepository.DataSourceGitRepository(),
+			sourcesecret.ResourceName:  sourcesecret.DataSourceSourcesecret(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
