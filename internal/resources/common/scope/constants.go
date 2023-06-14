@@ -17,6 +17,7 @@ const (
 	ProvisionerNameKey       = "provisioner_name"
 	NameKey                  = "name"
 	ScopeKey                 = "scope"
+	AttachedValue            = "attached"
 	ClusterKey               = "cluster"
 	ClusterGroupKey          = "cluster_group"
 )
