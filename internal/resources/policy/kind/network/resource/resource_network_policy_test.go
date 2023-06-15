@@ -6,12 +6,14 @@ SPDX-License-Identifier: MPL-2.0
 package networkpolicyresource
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -55,8 +57,53 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 	}
 }
 
+// Function to set context containing different env variables based on the type of testing- Mock/Actual environment.
+func getConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	if _, found := os.LookupEnv("ENABLE_POLICY_ENV_TEST"); !found {
+		return authctx.ProviderConfigureContextWithDefaultTransportForTesting
+	}
+
+	return authctx.ProviderConfigureContext
+}
+
+// Function to set up config based on the type of testing- Mock/Actual environment.
+func getSetupConfig(config *authctx.TanzuContext) error {
+	if _, found := os.LookupEnv("ENABLE_POLICY_ENV_TEST"); !found {
+		return config.SetupWithDefaultTransportForTesting()
+	}
+
+	return config.Setup()
+}
+
 func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 	testConfig := testGetDefaultAcceptanceConfig(t)
+
+	var found bool
+	// If the flag to execute policy tests is not found, run this as a unit test by setting up an http intercept for each endpoint
+	if _, found = os.LookupEnv("ENABLE_POLICY_ENV_TEST"); !found {
+		os.Setenv("TF_ACC", "true")
+		os.Setenv("TMC_ENDPOINT", "play.abc.def.ghi.com")
+		os.Setenv("VMW_CLOUD_API_TOKEN", "dummy")
+		os.Setenv("VMW_CLOUD_ENDPOINT", "console.cloud.vmware.com")
+
+		testConfig.ScopeHelperResources.OrgID = "dummy_org"
+		testConfig.setupHTTPMocks(t)
+	} else {
+		// Environment variables with non default values required for a successful call to MKP
+		requiredVars := []string{
+			"VMW_CLOUD_ENDPOINT",
+			"TMC_ENDPOINT",
+			"VMW_CLOUD_API_TOKEN",
+			"ORG_ID",
+		}
+
+		// Check if the required environment variables are set
+		for _, name := range requiredVars {
+			if _, found := os.LookupEnv(name); !found {
+				t.Errorf("required environment variable '%s' missing", name)
+			}
+		}
+	}
 
 	t.Log("start network policy resource acceptance tests!")
 
@@ -65,27 +112,32 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 		PreCheck:          testhelper.TestPreCheck(t),
 		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
 		CheckDestroy:      nil,
-		Steps: []resource.TestStep{
-			{
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.AllowAllRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope),
-			},
-			{
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.AllowAllRecipe, WithFromOwnNamespace("true")),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope),
-			},
-			{
-				PreConfig: func() {
-					if testConfig.ScopeHelperResources.OrgID == "" {
-						t.Skip("ORG_ID env var is not set for organization scoped network policy acceptance test")
-					}
+		Steps: func() []resource.TestStep {
+			steps := []resource.TestStep{
+				{
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.AllowAllRecipe),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.AllowAllRecipe),
 				},
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindNetwork.AllowAllRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope),
-			},
-		},
-	},
-	)
+				{
+					PreConfig: func() {
+						if testConfig.ScopeHelperResources.OrgID == "" {
+							t.Skip("ORG_ID env var is not set for organization scoped network policy acceptance test")
+						}
+					},
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindNetwork.AllowAllRecipe),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope, policykindNetwork.AllowAllRecipe),
+				},
+			}
+
+			if found {
+				steps = append(steps, resource.TestStep{
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.AllowAllRecipe, WithFromOwnNamespace("true")),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.AllowAllRecipe),
+				})
+			}
+			return steps
+		}(),
+	})
 
 	t.Log("Network policy resource acceptance test complete for allow-all recipe!")
 
@@ -94,27 +146,32 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 		PreCheck:          testhelper.TestPreCheck(t),
 		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
 		CheckDestroy:      nil,
-		Steps: []resource.TestStep{
-			{
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.AllowAllToPodsRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope),
-			},
-			{
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.AllowAllToPodsRecipe, WithFromOwnNamespace("true"), WithPodLabel("key3", "value3")),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope),
-			},
-			{
-				PreConfig: func() {
-					if testConfig.ScopeHelperResources.OrgID == "" {
-						t.Skip("ORG_ID env var is not set for organization scoped network policy acceptance test")
-					}
+		Steps: func() []resource.TestStep {
+			steps := []resource.TestStep{
+				{
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.AllowAllToPodsRecipe),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.AllowAllToPodsRecipe),
 				},
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindNetwork.AllowAllToPodsRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope),
-			},
-		},
-	},
-	)
+				{
+					PreConfig: func() {
+						if testConfig.ScopeHelperResources.OrgID == "" {
+							t.Skip("ORG_ID env var is not set for organization scoped network policy acceptance test")
+						}
+					},
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindNetwork.AllowAllToPodsRecipe),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope, policykindNetwork.AllowAllToPodsRecipe),
+				},
+			}
+
+			if found {
+				steps = append(steps, resource.TestStep{
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.AllowAllToPodsRecipe, WithFromOwnNamespace("true"), WithPodLabel("key3", "value3")),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.AllowAllToPodsRecipe),
+				})
+			}
+			return steps
+		}(),
+	})
 
 	t.Log("Network policy resource acceptance test complete for allow-all-to-pods recipe!")
 
@@ -126,7 +183,7 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.AllowAllEgressRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope),
+				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.AllowAllEgressRecipe),
 			},
 			{
 				PreConfig: func() {
@@ -135,11 +192,10 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 					}
 				},
 				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindNetwork.AllowAllEgressRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope),
+				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope, policykindNetwork.AllowAllEgressRecipe),
 			},
 		},
-	},
-	)
+	})
 
 	t.Log("Network policy resource acceptance test complete for allow-all-egress recipe!")
 
@@ -151,7 +207,7 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.DenyAllRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope),
+				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.DenyAllRecipe),
 			},
 			{
 				PreConfig: func() {
@@ -160,11 +216,10 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 					}
 				},
 				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindNetwork.DenyAllRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope),
+				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope, policykindNetwork.DenyAllRecipe),
 			},
 		},
-	},
-	)
+	})
 
 	t.Log("Network policy resource acceptance test complete for deny-all recipe!")
 
@@ -173,27 +228,32 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 		PreCheck:          testhelper.TestPreCheck(t),
 		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
 		CheckDestroy:      nil,
-		Steps: []resource.TestStep{
-			{
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.DenyAllToPodsRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope),
-			},
-			{
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.DenyAllToPodsRecipe, WithPodLabel("key3", "value3")),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope),
-			},
-			{
-				PreConfig: func() {
-					if testConfig.ScopeHelperResources.OrgID == "" {
-						t.Skip("ORG_ID env var is not set for organization scoped network policy acceptance test")
-					}
+		Steps: func() []resource.TestStep {
+			steps := []resource.TestStep{
+				{
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.DenyAllToPodsRecipe),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.DenyAllToPodsRecipe),
 				},
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindNetwork.DenyAllToPodsRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope),
-			},
-		},
-	},
-	)
+				{
+					PreConfig: func() {
+						if testConfig.ScopeHelperResources.OrgID == "" {
+							t.Skip("ORG_ID env var is not set for organization scoped network policy acceptance test")
+						}
+					},
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindNetwork.DenyAllToPodsRecipe),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope, policykindNetwork.DenyAllToPodsRecipe),
+				},
+			}
+
+			if found {
+				steps = append(steps, resource.TestStep{
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.DenyAllToPodsRecipe, WithPodLabel("key3", "value3")),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.DenyAllToPodsRecipe),
+				})
+			}
+			return steps
+		}(),
+	})
 
 	t.Log("Network policy resource acceptance test complete for deny-all-to-pods recipe!")
 
@@ -203,10 +263,9 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
-
 			{
 				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.DenyAllEgressRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope),
+				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.DenyAllEgressRecipe),
 			},
 			{
 				PreConfig: func() {
@@ -215,11 +274,10 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 					}
 				},
 				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindNetwork.DenyAllEgressRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope),
+				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope, policykindNetwork.DenyAllEgressRecipe),
 			},
 		},
-	},
-	)
+	})
 
 	t.Log("Network policy resource acceptance test complete for deny-all-egress recipe!")
 
@@ -228,28 +286,32 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 		PreCheck:          testhelper.TestPreCheck(t),
 		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
 		CheckDestroy:      nil,
-		Steps: []resource.TestStep{
-
-			{
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.CustomEgressRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope),
-			},
-			{
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.CustomEgressRecipe, WithPodLabel("key3", "value3")),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope),
-			},
-			{
-				PreConfig: func() {
-					if testConfig.ScopeHelperResources.OrgID == "" {
-						t.Skip("ORG_ID env var is not set for organization scoped network policy acceptance test")
-					}
+		Steps: func() []resource.TestStep {
+			steps := []resource.TestStep{
+				{
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.CustomEgressRecipe),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.CustomEgressRecipe),
 				},
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindNetwork.CustomEgressRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope),
-			},
-		},
-	},
-	)
+				{
+					PreConfig: func() {
+						if testConfig.ScopeHelperResources.OrgID == "" {
+							t.Skip("ORG_ID env var is not set for organization scoped network policy acceptance test")
+						}
+					},
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindNetwork.CustomEgressRecipe),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope, policykindNetwork.CustomEgressRecipe),
+				},
+			}
+
+			if found {
+				steps = append(steps, resource.TestStep{
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.CustomEgressRecipe, WithPodLabel("key3", "value3")),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.CustomEgressRecipe),
+				})
+			}
+			return steps
+		}(),
+	})
 
 	t.Log("Network policy resource acceptance test complete for custom-egress recipe!")
 
@@ -258,30 +320,34 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 		PreCheck:          testhelper.TestPreCheck(t),
 		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
 		CheckDestroy:      nil,
-		Steps: []resource.TestStep{
-
-			{
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.CustomIngressRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope),
-			},
-			{
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.CustomIngressRecipe, WithPodLabel("key3", "value3")),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope),
-			},
-			{
-				PreConfig: func() {
-					if testConfig.ScopeHelperResources.OrgID == "" {
-						t.Skip("ORG_ID env var is not set for organization scoped network policy acceptance test")
-					}
+		Steps: func() []resource.TestStep {
+			steps := []resource.TestStep{
+				{
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.CustomIngressRecipe),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.CustomIngressRecipe),
 				},
-				Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindNetwork.CustomIngressRecipe),
-				Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope),
-			},
-		},
-	},
-	)
+				{
+					PreConfig: func() {
+						if testConfig.ScopeHelperResources.OrgID == "" {
+							t.Skip("ORG_ID env var is not set for organization scoped network policy acceptance test")
+						}
+					},
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.OrganizationScope, policykindNetwork.CustomIngressRecipe),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.OrganizationScope, policykindNetwork.CustomIngressRecipe),
+				},
+			}
 
+			if found {
+				steps = append(steps, resource.TestStep{
+					Config: testConfig.getTestNetworkPolicyResourceBasicConfigValue(scope.WorkspaceScope, policykindNetwork.CustomIngressRecipe, WithPodLabel("key3", "value3")),
+					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.CustomIngressRecipe),
+				})
+			}
+			return steps
+		}(),
+	})
 	t.Log("Network policy resource acceptance test complete for custom-ingress recipe!")
+
 	t.Log("all network policy resource acceptance tests complete!")
 }
 
@@ -309,8 +375,15 @@ func WithPodLabel(k, v string) OperationOption {
 }
 
 func (testConfig *testAcceptanceConfig) getTestNetworkPolicyResourceBasicConfigValue(scope scope.Scope, recipe policykindNetwork.Recipe, opts ...OperationOption) string {
-	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope, policyoperations.ScopeMap[testConfig.NetworkPolicyResource])
+	var (
+		helperBlock string
+		scopeBlock  string
+	)
+
 	inputBlock := testConfig.getTestNetworkPolicyResourceInput(recipe, opts...)
+
+	_, found := os.LookupEnv("ENABLE_POLICY_ENV_TEST")
+	helperBlock, scopeBlock = testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope, policyoperations.ScopeMap[testConfig.NetworkPolicyResource], !found)
 
 	return fmt.Sprintf(`
 	%s
@@ -340,7 +413,7 @@ func (testConfig *testAcceptanceConfig) getTestNetworkPolicyResourceBasicConfigV
 	   }
 	 }
 	}
-	`, helperBlock, testConfig.NetworkPolicyResource, testConfig.NetworkPolicyResourceVar, testConfig.NetworkPolicyName, scopeBlock, inputBlock)
+	`, helperBlock, testConfig.NetworkPolicyResource, testConfig.NetworkPolicyResourceVar, testConfig.NetworkPolicyName+strings.ReplaceAll(string(recipe), "_", "-"), scopeBlock, inputBlock)
 }
 
 // getTestNetworkPolicyResourceInput builds the input block for network policy resource based a recipe.
@@ -477,14 +550,14 @@ func (testConfig *testAcceptanceConfig) getTestNetworkPolicyResourceInput(recipe
                 "key-2" = "value-2"
               }
               pod_selector = {
-				"%s" = "%s"
+                "key-1" = "value-1"
                 "key-2" = "value-2"
               }
             }
           }
         }
         to_pod_labels = {
-          "key1" = "value1"
+          "%s" = "%s"
           "key2" = "value2"
         }
       }
@@ -499,15 +572,21 @@ func (testConfig *testAcceptanceConfig) getTestNetworkPolicyResourceInput(recipe
 }
 
 // checkNetworkPolicyResourceAttributes checks for network policy creation along with meta attributes.
-func (testConfig *testAcceptanceConfig) checkNetworkPolicyResourceAttributes(scopeType scope.Scope) resource.TestCheckFunc {
+func (testConfig *testAcceptanceConfig) checkNetworkPolicyResourceAttributes(scopeType scope.Scope, recipe policykindNetwork.Recipe) resource.TestCheckFunc {
 	var check = []resource.TestCheckFunc{
-		testConfig.verifyNetworkPolicyResourceCreation(scopeType),
-		resource.TestCheckResourceAttr(testConfig.NetworkPolicyResourceName, "name", testConfig.NetworkPolicyName),
+		testConfig.verifyNetworkPolicyResourceCreation(scopeType, recipe),
+		resource.TestCheckResourceAttr(testConfig.NetworkPolicyResourceName, "name", testConfig.NetworkPolicyName+strings.ReplaceAll(string(recipe), "_", "-")),
 	}
 
 	switch scopeType {
 	case scope.WorkspaceScope:
-		check = append(check, resource.TestCheckResourceAttr(testConfig.NetworkPolicyResourceName, "scope.0.workspace.0.workspace", testConfig.ScopeHelperResources.Workspace.Name))
+		workspaceName := testConfig.ScopeHelperResources.Workspace.Name
+
+		if _, found := os.LookupEnv("ENABLE_POLICY_ENV_TEST"); !found {
+			workspaceName = "workspace1"
+		}
+
+		check = append(check, resource.TestCheckResourceAttr(testConfig.NetworkPolicyResourceName, "scope.0.workspace.0.workspace", workspaceName))
 	case scope.OrganizationScope:
 		check = append(check, resource.TestCheckResourceAttr(testConfig.NetworkPolicyResourceName, "scope.0.organization.0.organization", testConfig.ScopeHelperResources.OrgID))
 	case scope.UnknownScope:
@@ -519,7 +598,7 @@ func (testConfig *testAcceptanceConfig) checkNetworkPolicyResourceAttributes(sco
 	return resource.ComposeTestCheckFunc(check...)
 }
 
-func (testConfig *testAcceptanceConfig) verifyNetworkPolicyResourceCreation(scopeType scope.Scope) resource.TestCheckFunc {
+func (testConfig *testAcceptanceConfig) verifyNetworkPolicyResourceCreation(scopeType scope.Scope, recipe policykindNetwork.Recipe) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if testConfig.Provider == nil {
 			return fmt.Errorf("provider not initialised")
@@ -541,16 +620,22 @@ func (testConfig *testAcceptanceConfig) verifyNetworkPolicyResourceCreation(scop
 			TLSConfig:        &proxy.TLSConfig{},
 		}
 
-		err := config.Setup()
+		err := getSetupConfig(&config)
 		if err != nil {
 			return errors.Wrap(err, "unable to set the context")
 		}
 
 		switch scopeType {
 		case scope.WorkspaceScope:
+			workspaceName := testConfig.ScopeHelperResources.Workspace.Name
+
+			if _, found := os.LookupEnv("ENABLE_POLICY_ENV_TEST"); !found {
+				workspaceName = "workspace1"
+			}
+
 			fn := &policyworkspacemodel.VmwareTanzuManageV1alpha1WorkspacePolicyFullName{
-				WorkspaceName: testConfig.ScopeHelperResources.Workspace.Name,
-				Name:          testConfig.NetworkPolicyName,
+				WorkspaceName: workspaceName,
+				Name:          testConfig.NetworkPolicyName + strings.ReplaceAll(string(recipe), "_", "-"),
 			}
 
 			resp, err := config.TMCConnection.WorkspacePolicyResourceService.ManageV1alpha1WorkspacePolicyResourceServiceGet(fn)
@@ -564,7 +649,7 @@ func (testConfig *testAcceptanceConfig) verifyNetworkPolicyResourceCreation(scop
 		case scope.OrganizationScope:
 			fn := &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyFullName{
 				OrgID: testConfig.ScopeHelperResources.OrgID,
-				Name:  testConfig.NetworkPolicyName,
+				Name:  testConfig.NetworkPolicyName + strings.ReplaceAll(string(recipe), "_", "-"),
 			}
 
 			resp, err := config.TMCConnection.OrganizationPolicyResourceService.ManageV1alpha1OrganizationPolicyResourceServiceGet(fn)
