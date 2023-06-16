@@ -21,20 +21,23 @@ type VmwareTanzuManageV1alpha1CommonClusterStatus struct {
 	Phase *VmwareTanzuManageV1alpha1CommonClusterStatusPhase `json:"phase,omitempty"`
 }
 
-// MarshalBinary interface implementation
+// MarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1CommonClusterStatus) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
+
 	return swag.WriteJSON(m)
 }
 
-// UnmarshalBinary interface implementation
+// UnmarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1CommonClusterStatus) UnmarshalBinary(b []byte) error {
 	var res VmwareTanzuManageV1alpha1CommonClusterStatus
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
+
 	*m = res
+
 	return nil
 }

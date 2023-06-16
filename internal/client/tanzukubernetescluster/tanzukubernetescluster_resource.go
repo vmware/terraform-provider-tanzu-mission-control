@@ -1,18 +1,16 @@
 /*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
+Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package tanzu_kubernetes_cluster_resource_service
+package tanzukubernetesclusterclient
 
 import (
 	"net/url"
 
-	"github.com/go-openapi/runtime"
-
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
-	tkcmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzukubernetescluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
+	tkcmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzukubernetescluster"
 )
 
 const (
@@ -32,16 +30,13 @@ func New(transport *transport.Client) ClientService {
 }
 
 /*
-Client for tanzu kubernetes cluster resource service API
+Client for tanzu kubernetes cluster resource service API.
 */
 type Client struct {
 	*transport.Client
 }
 
-// ClientOption is the option for Client methods
-type ClientOption func(*runtime.ClientOperation)
-
-// ClientService is the interface for Client methods
+// ClientService is the interface for Client methods.
 type ClientService interface {
 	TanzuKubernetesClusterResourceServiceCreate(req *tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterRequest) (*tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse, error)
 
@@ -53,10 +48,11 @@ type ClientService interface {
 }
 
 /*
-TanzuKubernetesClusterResourceServiceCreate creates a tanzu kubernetes cluster
+TanzuKubernetesClusterResourceServiceCreate creates a tanzu kubernetes cluster.
 */
 func (c *Client) TanzuKubernetesClusterResourceServiceCreate(req *tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterRequest) (*tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse, error) {
 	response := &tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse{}
+
 	var reqURL helper.RequestURL
 
 	if req.TanzuKubernetesCluster.FullName != nil {
@@ -66,14 +62,16 @@ func (c *Client) TanzuKubernetesClusterResourceServiceCreate(req *tkcmodels.Vmwa
 	}
 
 	err := c.Create(reqURL.String(), req, response)
+
 	return response, err
 }
 
 /*
-TanzuKubernetesClusterResourceServiceDelete deletes a tanzu kubernetes cluster
+TanzuKubernetesClusterResourceServiceDelete deletes a tanzu kubernetes cluster.
 */
 func (c *Client) TanzuKubernetesClusterResourceServiceDelete(fn *tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterFullName, force string) error {
 	var reqURL helper.RequestURL
+
 	queryParams := url.Values{
 		queryParamKeyForce: []string{force},
 	}
@@ -87,14 +85,16 @@ func (c *Client) TanzuKubernetesClusterResourceServiceDelete(fn *tkcmodels.Vmwar
 	}
 
 	err := c.Delete(reqURL.String())
+
 	return err
 }
 
 /*
-TanzuKubernetesClusterResourceServiceGet gets a tanzu kubernetes cluster
+TanzuKubernetesClusterResourceServiceGet gets a tanzu kubernetes cluster.
 */
 func (c *Client) TanzuKubernetesClusterResourceServiceGet(fn *tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterFullName) (*tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterGetTanzuKubernetesClusterResponse, error) {
 	response := &tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterGetTanzuKubernetesClusterResponse{}
+
 	var reqURL helper.RequestURL
 
 	if fn.ManagementClusterName != "" && fn.ProvisionerName != "" {
@@ -106,26 +106,30 @@ func (c *Client) TanzuKubernetesClusterResourceServiceGet(fn *tkcmodels.VmwareTa
 	}
 
 	err := c.Get(reqURL.String(), response)
+
 	return response, err
 }
 
 /*
-TanzuKubernetesClusterResourceServiceUpdate updates overwrite a tanzu kubernetes cluster
+TanzuKubernetesClusterResourceServiceUpdate updates overwrite a tanzu kubernetes cluster.
 */
 func (c *Client) TanzuKubernetesClusterResourceServiceUpdate(
 	req *tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterRequest) (*tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse, error) {
 	response := &tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse{}
+
 	var reqURL helper.RequestURL
 
 	if req.TanzuKubernetesCluster.FullName != nil {
 		if req.TanzuKubernetesCluster.FullName.ManagementClusterName != "" && req.TanzuKubernetesCluster.FullName.ProvisionerName != "" {
 			getBaseReqURL(req.TanzuKubernetesCluster.FullName.ManagementClusterName, req.TanzuKubernetesCluster.FullName.ProvisionerName)
 		}
+
 		if req.TanzuKubernetesCluster.FullName.Name != "" {
 			reqURL = helper.ConstructRequestURL(reqURL.String(), req.TanzuKubernetesCluster.FullName.Name)
 		}
 	}
 
 	err := c.Update(reqURL.String(), req, response)
+
 	return response, err
 }

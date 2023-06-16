@@ -45,20 +45,23 @@ type VmwareTanzuCoreV1alpha1StatusCondition struct {
 	Type string `json:"type,omitempty"`
 }
 
-// MarshalBinary interface implementation
+// MarshalBinary interface implementation.
 func (m *VmwareTanzuCoreV1alpha1StatusCondition) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
+
 	return swag.WriteJSON(m)
 }
 
-// UnmarshalBinary interface implementation
+// UnmarshalBinary interface implementation.
 func (m *VmwareTanzuCoreV1alpha1StatusCondition) UnmarshalBinary(b []byte) error {
 	var res VmwareTanzuCoreV1alpha1StatusCondition
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
+
 	*m = res
+
 	return nil
 }
