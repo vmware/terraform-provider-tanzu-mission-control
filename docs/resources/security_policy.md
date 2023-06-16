@@ -757,7 +757,7 @@ resource "tanzu-mission-control_security_policy" "organization_scoped_strict_sec
 ### Required
 
 - `name` (String) Name of the security policy
-- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image and quota policy, having one of the valid scopes for custom, security and quota policy: cluster, cluster_group or organization and valid scopes for image policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image and namespace quota policy, having one of the valid scopes for custom, security and namespace quota policy: cluster, cluster_group or organization and valid scopes for image policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Spec for the security policy (see [below for nested schema](#nestedblock--spec))
 
 ### Optional
@@ -776,6 +776,7 @@ Optional:
 - `cluster` (Block List, Max: 1) The schema for cluster policy full name (see [below for nested schema](#nestedblock--scope--cluster))
 - `cluster_group` (Block List, Max: 1) The schema for cluster group policy full name (see [below for nested schema](#nestedblock--scope--cluster_group))
 - `organization` (Block List, Max: 1) The schema for organization policy full name (see [below for nested schema](#nestedblock--scope--organization))
+- `workspace` (Block List, Max: 1) The schema for workspace policy full name (see [below for nested schema](#nestedblock--scope--workspace))
 
 <a id="nestedblock--scope--cluster"></a>
 ### Nested Schema for `scope.cluster`
@@ -804,6 +805,15 @@ Required:
 Required:
 
 - `organization` (String) ID of this organization
+
+
+<a id="nestedblock--scope--workspace"></a>
+### Nested Schema for `scope.workspace`
+
+Required:
+
+- `workspace` (String) Name of this workspace
+
 
 
 <a id="nestedblock--spec"></a>
