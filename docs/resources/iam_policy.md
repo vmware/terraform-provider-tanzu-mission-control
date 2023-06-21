@@ -245,8 +245,8 @@ Required:
 
 Optional:
 
-- `cluster` (Block List, Max: 1) The schema for cluster iam policy full name (see [below for nested schema](#nestedblock--scope--cluster))
-- `cluster_group` (Block List, Max: 1) The schema for cluster group iam policy full name (see [below for nested schema](#nestedblock--scope--cluster_group))
+- `cluster` (Block List, Max: 1) The schema for cluster full name (see [below for nested schema](#nestedblock--scope--cluster))
+- `cluster_group` (Block List, Max: 1) The schema for cluster group full name (see [below for nested schema](#nestedblock--scope--cluster_group))
 - `namespace` (Block List, Max: 1) The schema for namespace iam policy full name (see [below for nested schema](#nestedblock--scope--namespace))
 - `organization` (Block List, Max: 1) The schema for organization iam policy full name (see [below for nested schema](#nestedblock--scope--organization))
 - `workspace` (Block List, Max: 1) The schema for workspace iam policy full name (see [below for nested schema](#nestedblock--scope--workspace))

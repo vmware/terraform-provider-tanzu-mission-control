@@ -7,6 +7,7 @@ package sourcesecret
 
 import (
 	"context"
+	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -248,16 +249,7 @@ func resourceSourcesecretInPlaceUpdate(ctx context.Context, d *schema.ResourceDa
 
 	_, meta, atomicSpec, err := retrieveSourcesecretUIDMetaAndSpecFromServer(config, scopedFullnameData, d)
 	if err != nil {
-		if !clienterrors.IsNotFoundError(err) {
-			return diag.FromErr(err)
-		}
-
-		err = enableContinuousDelivery(&config, scopedFullnameData, common.ConstructMeta(d))
-		if err != nil {
-			return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control git repository entry, name : %s", sourcesecretName))
-		}
-
-		return resourceSourcesecretCreate(ctx, d, m)
+		return diag.FromErr(err)
 	}
 
 	var updateAvailable bool
@@ -286,7 +278,7 @@ func resourceSourcesecretInPlaceUpdate(ctx context.Context, d *schema.ResourceDa
 			}
 
 			_, err := config.TMCConnection.ClusterSourcesecretResourceService.ManageV1alpha1ClusterFluxcdSourcesecretResourceServiceUpdate(sourcesecretReq)
-			if err != nil && !clienterrors.IsFeatureDisabledError(err) {
+			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster source secret entry, name : %s", sourcesecretName))
 			}
 		}
@@ -303,7 +295,7 @@ func resourceSourcesecretInPlaceUpdate(ctx context.Context, d *schema.ResourceDa
 			}
 
 			_, err := config.TMCConnection.ClusterGroupSourcesecretResourceService.ManageV1alpha1ClustergroupFluxcdSourcesecretResourceServiceUpdate(sourcesecretReq)
-			if err != nil && !clienterrors.IsFeatureDisabledError(err) {
+			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster group source secret entry, name : %s", sourcesecretName))
 			}
 		}
@@ -311,14 +303,7 @@ func resourceSourcesecretInPlaceUpdate(ctx context.Context, d *schema.ResourceDa
 		return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scope.CredentialTypesAllowed[:], `, `))
 	}
 
-	if err != nil {
-		err = enableContinuousDelivery(&config, scopedFullnameData, common.ConstructMeta(d))
-		if err != nil {
-			return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control git repository entry, name : %s", sourcesecretName))
-		}
-
-		return resourceSourcesecretCreate(ctx, d, m)
-	}
+	log.Printf("[INFO] source secret update successful")
 
 	return resourceSourcesecretRead(ctx, d, m)
 }

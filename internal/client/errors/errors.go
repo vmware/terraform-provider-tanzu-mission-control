@@ -77,24 +77,6 @@ func IsAlreadyExistsError(err error) bool {
 	return false
 }
 
-func IsFeatureDisabledError(err error) bool {
-	if err == nil {
-		return false
-	}
-
-	convertedError, ok := err.(ClientErrors)
-	if !ok {
-		return strings.Contains(err.Error(), fmt.Sprintf("%d", http.StatusPreconditionFailed)) &&
-			strings.Contains(err.Error(), http.StatusText(http.StatusPreconditionFailed))
-	}
-
-	if convertedError.httpCode == http.StatusPreconditionFailed {
-		return true
-	}
-
-	return false
-}
-
 func (e ClientErrors) Error() string {
 	if e.err == nil {
 		return ""
