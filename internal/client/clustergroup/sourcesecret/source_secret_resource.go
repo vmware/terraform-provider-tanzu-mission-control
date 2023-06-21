@@ -64,6 +64,10 @@ func (p *Client) ManageV1alpha1ClustergroupFluxcdSourcesecretResourceServiceDele
 		queryParams.Add(queryParamKeyOrgID, fn.OrgID)
 	}
 
+	if fn.OrgID != "" {
+		queryParams.Add(queryParamKeyOrgID, fn.OrgID)
+	}
+
 	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, fn.ClusterGroupName, apiKind, fn.Name).AppendQueryParams(queryParams).String()
 
 	return p.Delete(requestURL)

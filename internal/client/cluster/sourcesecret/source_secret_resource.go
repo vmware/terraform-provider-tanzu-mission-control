@@ -19,6 +19,7 @@ const (
 	namespaces                         = "namespaces"
 	queryParamKeyManagementClusterName = "fullName.managementClusterName"
 	queryParamKeyProvisionerName       = "fullName.provisionerName"
+	queryParamKeyOrgID                 = "fullName.orgID"
 )
 
 // New creates a new secret resource service API client.
@@ -62,11 +63,15 @@ func (c *Client) ManageV1alpha1ClusterFluxcdSourcesecretResourceServiceDelete(fn
 	queryParams := url.Values{}
 
 	if fn.ManagementClusterName != "" {
-		queryParams[queryParamKeyManagementClusterName] = []string{fn.ManagementClusterName}
+		queryParams.Add(queryParamKeyManagementClusterName, fn.ManagementClusterName)
 	}
 
 	if fn.ProvisionerName != "" {
-		queryParams[queryParamKeyProvisionerName] = []string{fn.ProvisionerName}
+		queryParams.Add(queryParamKeyProvisionerName, fn.ProvisionerName)
+	}
+
+	if fn.OrgID != "" {
+		queryParams.Add(queryParamKeyOrgID, fn.OrgID)
 	}
 
 	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, fn.ClusterName, apiKind, fn.Name).AppendQueryParams(queryParams).String()
@@ -81,11 +86,15 @@ func (c *Client) ManageV1alpha1ClusterFluxcdSourcesecretResourceServiceGet(fn *s
 	queryParams := url.Values{}
 
 	if fn.ManagementClusterName != "" {
-		queryParams[queryParamKeyManagementClusterName] = []string{fn.ManagementClusterName}
+		queryParams.Add(queryParamKeyManagementClusterName, fn.ManagementClusterName)
 	}
 
 	if fn.ProvisionerName != "" {
-		queryParams[queryParamKeyProvisionerName] = []string{fn.ProvisionerName}
+		queryParams.Add(queryParamKeyProvisionerName, fn.ProvisionerName)
+	}
+
+	if fn.OrgID != "" {
+		queryParams.Add(queryParamKeyOrgID, fn.OrgID)
 	}
 
 	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, fn.ClusterName, apiKind, fn.Name).AppendQueryParams(queryParams).String()
