@@ -37,6 +37,11 @@ var (
 					Computed:    true,
 					Description: "Release notes of Package.",
 				},
+				RepositoryNameKey: {
+					Type:        schema.TypeString,
+					Computed:    true,
+					Description: "Name of package repository to which this package belongs.",
+				},
 				ValuesSchemaKey: valueSchema,
 			},
 		},

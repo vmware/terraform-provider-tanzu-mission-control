@@ -27,6 +27,7 @@ func FlattenSpecForClusterScope(spec *packageclustermodel.VmwareTanzuManageV1alp
 	flattenSpecData[ReleasedAtKey] = (spec.ReleasedAt).String()
 	flattenSpecData[CapacityRequirementsDescriptionKey] = spec.CapacityRequirementsDescription
 	flattenSpecData[ReleaseNotesKey] = spec.ReleaseNotes
+	flattenSpecData[RepositoryNameKey] = spec.RepositoryName
 
 	if len(spec.Licenses) > 0 {
 		flattenSpecData[LicensesKey] = spec.Licenses

@@ -20,6 +20,8 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/iampolicy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kustomization"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/namespace"
+	tanzupackage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/package"
+	tanzupackages "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/packages"
 	custompolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
 	custompolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom/resource"
 	imagepolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
@@ -73,6 +75,8 @@ func Provider() *schema.Provider {
 			gitrepository.ResourceName:     gitrepository.DataSourceGitRepository(),
 			sourcesecret.ResourceName:      sourcesecret.DataSourceSourcesecret(),
 			packagerepository.ResourceName: packagerepository.DataSourcePackageRepository(),
+			tanzupackage.ResourceName:      tanzupackage.DataSourceTanzuPackage(),
+			tanzupackages.ResourceName:     tanzupackages.DataSourceTanzuPackages(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
