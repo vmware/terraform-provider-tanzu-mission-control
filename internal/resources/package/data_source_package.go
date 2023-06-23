@@ -25,6 +25,8 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/package/spec"
 )
 
+type contextMethodKey struct{}
+
 func DataSourceTanzuPackage() *schema.Resource {
 	return &schema.Resource{
 		Schema:      packageSchema,
