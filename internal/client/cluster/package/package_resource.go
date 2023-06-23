@@ -38,6 +38,8 @@ type Client struct {
 // ClientService is the interface for Client methods.
 type ClientService interface {
 	ManageV1alpha1ClusterPackageResourceServiceGet(fn *tanzupackage.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageFullName) (*tanzupackage.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataGetPackageResponse, error)
+
+	ManageV1alpha1ClusterPackageResourceServiceList(req *tanzupackage.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageSearchScope) (*tanzupackage.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageListPackagesResponse, error)
 }
 
 /*
@@ -63,4 +65,25 @@ func (c *Client) ManageV1alpha1ClusterPackageResourceServiceGet(fn *tanzupackage
 	err := c.Get(requestURL, packageResponse)
 
 	return packageResponse, err
+}
+
+/*
+ManageV1alpha1ClusterPackageResourceServiceList gets a source secret.
+*/
+func (c *Client) ManageV1alpha1ClusterPackageResourceServiceList(req *tanzupackage.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageSearchScope) (*tanzupackage.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageListPackagesResponse, error) {
+	queryParams := url.Values{}
+
+	if req.ManagementClusterName != "" {
+		queryParams.Add(queryParamKeyManagementClusterName, req.ManagementClusterName)
+	}
+
+	if req.ProvisionerName != "" {
+		queryParams.Add(queryParamKeyProvisionerName, req.ProvisionerName)
+	}
+
+	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, req.ClusterName, namespaces, req.NamespaceName, apiKind, req.MetadataName, packages).AppendQueryParams(queryParams).String()
+	listPackageResponse := &tanzupackage.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageListPackagesResponse{}
+	err := c.Get(requestURL, listPackageResponse)
+
+	return listPackageResponse, err
 }

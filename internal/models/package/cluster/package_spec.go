@@ -28,6 +28,9 @@ type VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageSpec st
 	// Format: date-time
 	ReleasedAt strfmt.DateTime `json:"releasedAt,omitempty"`
 
+	// Name of package repository to which this package belongs.
+	RepositoryName string `json:"repositoryName,omitempty"`
+
 	// Values schema is used to show template values that can be configured by users.
 	ValuesSchema *VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageValuesSchema `json:"valuesSchema,omitempty"`
 }

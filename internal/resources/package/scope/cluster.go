@@ -11,7 +11,7 @@ import (
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 )
 
-func ConstructClusterPackageFullname(data []interface{}, name, metadataName, namespace string) (fullname *packageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageFullName) {
+func ConstructClusterPackageFullname(data []interface{}) (fullname *packageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageFullName) {
 	if len(data) == 0 || data[0] == nil {
 		return fullname
 	}
@@ -31,10 +31,6 @@ func ConstructClusterPackageFullname(data []interface{}, name, metadataName, nam
 	if nameValue, ok := fullNameData[commonscope.NameKey]; ok {
 		helper.SetPrimitiveValue(nameValue, &fullname.ClusterName, commonscope.NameKey)
 	}
-
-	fullname.Name = name
-	fullname.NamespaceName = namespace
-	fullname.MetadataName = metadataName
 
 	return fullname
 }

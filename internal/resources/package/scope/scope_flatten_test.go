@@ -65,11 +65,8 @@ func TestFlattenScope(t *testing.T) {
 	for _, each := range cases {
 		test := each
 		t.Run(test.description, func(t *testing.T) {
-			actualData, actualName, actualMetadata, actualNamespace := FlattenScope(test.input)
+			actualData := FlattenScope(test.input)
 			require.Equal(t, test.expectedData, actualData)
-			require.Equal(t, test.expectedName, actualName)
-			require.Equal(t, test.expectedMetadata, actualMetadata)
-			require.Equal(t, test.expectedNamespace, actualNamespace)
 		})
 	}
 }

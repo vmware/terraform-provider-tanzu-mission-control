@@ -34,8 +34,9 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 				Licenses: []string{
 					"some1",
 				},
-				ReleaseNotes: "someReleaseNotes",
-				ReleasedAt:   strfmt.DateTime{},
+				ReleaseNotes:   "someReleaseNotes",
+				ReleasedAt:     strfmt.DateTime{},
+				RepositoryName: "testRepo",
 				ValuesSchema: &packageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageValuesSchema{
 					Template: &packageclustermodel.K8sIoApimachineryPkgRuntimeRawExtension{
 						Raw: []byte("somevalue"),
@@ -48,8 +49,9 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 					LicensesKey: []string{
 						"some1",
 					},
-					ReleaseNotesKey: "someReleaseNotes",
-					ReleasedAtKey:   strfmt.DateTime{}.String(),
+					RepositoryNameKey: "testRepo",
+					ReleaseNotesKey:   "someReleaseNotes",
+					ReleasedAtKey:     strfmt.DateTime{}.String(),
 					ValuesSchemaKey: []interface{}{
 						map[string]interface{}{
 							TemplateKey: []interface{}{
