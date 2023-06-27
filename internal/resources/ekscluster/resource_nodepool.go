@@ -6,8 +6,11 @@ SPDX-License-Identifier: MPL-2.0
 package ekscluster
 
 import (
+	"context"
+	"log"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 
@@ -18,6 +21,40 @@ import (
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
+
+func ResourceTMCEKSNodepool() *schema.Resource {
+	return &schema.Resource{
+		Schema:        nodepoolDefinitionSchema.Schema,
+		CreateContext: resourceNodepoolCreate,
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+			return dataSourceTMCEKSNodepoolRead(helper.GetContextWithCaller(ctx, helper.RefreshState), d, m)
+		},
+		UpdateContext: resourceNodepoolInPlaceUpdate,
+		DeleteContext: resourceNodepoolDelete,
+		Description:   "Tanzu Mission Control EKS Cluster Resource",
+	}
+}
+
+func constructNodepoolFullname(d *schema.ResourceData) (fullname *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName) {
+	fullname = &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName{}
+
+	fullname.CredentialName, _ = d.Get(CredentialNameKey).(string)
+	fullname.EksClusterName, _ = d.Get(nodepoolClusterNameKey).(string)
+	fullname.Region, _ = d.Get(RegionKey).(string)
+	fullname.Name, _ = d.Get(NameKey).(string)
+
+	return fullname
+}
+
+func constructEksNodepoolSpec(d *schema.ResourceData) (spec *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {
+	value, ok := d.GetOk(specKey)
+	if !ok {
+		return &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec{}
+	}
+
+	data, _ := value.([]interface{})
+	return constructNodepoolSpecFromData(data)
+}
 
 // nodepoolDefinitionSchema defines the info and nodepool spec for EKS clusters.
 //
@@ -255,6 +292,126 @@ var nodepoolSpecSchema = &schema.Schema{
 	},
 }
 
+func resourceNodepoolCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	config, ok := m.(authctx.TanzuContext)
+	if !ok {
+		log.Println("[ERROR] error while retrieving Tanzu auth config")
+		return diag.Errorf("error while retrieving Tanzu auth config")
+	}
+
+	nodepoolFn := constructNodepoolFullname(d)
+	nodepoolReq := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest{
+		Nodepool: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool{
+			FullName: nodepoolFn,
+			Meta:     common.ConstructMeta(d),
+			Spec:     constructEksNodepoolSpec(d),
+		},
+	}
+
+	var eksNodepool *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool
+	nodepoolResp, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceCreate(nodepoolReq)
+	if err != nil {
+		if !clienterrors.IsAlreadyExistsError(err) {
+			return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control EKS nodepool entry, name : %s", d.Get(NameKey)))
+		}
+
+		nodepoolResp, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceGet(nodepoolFn)
+		if err != nil {
+			return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control EKS nodepool entry, name : %s", d.Get(NameKey)))
+		}
+
+		eksNodepool = nodepoolResp.Nodepool
+	} else {
+		eksNodepool = nodepoolResp.Nodepool
+	}
+
+	d.SetId(eksNodepool.Meta.UID)
+	return dataSourceTMCEKSNodepoolRead(context.WithValue(ctx, contextMethodKey{}, "create"), d, m)
+}
+
+func resourceNodepoolDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	config := m.(authctx.TanzuContext)
+
+	// Warning or errors can be collected in a slice type
+	var diags diag.Diagnostics
+
+	err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceDelete(constructNodepoolFullname(d))
+	if err != nil && !clienterrors.IsNotFoundError(err) {
+		return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control EKS nodepool entry, name : %s", d.Get(NameKey)))
+	}
+
+	d.SetId("")
+	nodepoolFn := constructNodepoolFullname(d)
+	getNodepoolResourceRetryableFn := func() (retry bool, err error) {
+		_, err = config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceGet(nodepoolFn)
+		if err == nil {
+			log.Printf("[DEBUG] nodepool(%s) deletion in progress", nodepoolFn.ToString())
+			return true, errors.New("nodepool deletion in progress")
+		}
+
+		if !clienterrors.IsNotFoundError(err) {
+			return true, err
+		}
+
+		return false, nil
+	}
+
+	timeoutDuration := getRetryTimeout(d)
+
+	_, err = helper.RetryUntilTimeout(getNodepoolResourceRetryableFn, 10*time.Second, timeoutDuration)
+	if err != nil {
+		diag.FromErr(errors.Wrapf(err, "verify %s EKS nodepool resource clean up", d.Get(NameKey)))
+	}
+
+	return diags
+}
+
+func resourceNodepoolInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+	config := m.(authctx.TanzuContext)
+
+	// Get call to initialise the nodepool struct
+	nodepoolGetResp, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceGet(constructNodepoolFullname(d))
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control EKS nodepool entry, name : %s", d.Get(NameKey)))
+	}
+
+	oldNp := nodepoolGetResp.Nodepool
+	newNp := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool{
+		FullName: constructNodepoolFullname(d),
+		Meta:     common.ConstructMeta(d),
+		Spec:     constructEksNodepoolSpec(d),
+	}
+
+	opsRetryTimeout := getRetryTimeout(d)
+	updateErr := handleNodepoolDiff(config, oldNp, newNp, opsRetryTimeout)
+	if updateErr != nil {
+		return diag.FromErr(updateErr)
+	}
+
+	return dataSourceTMCEKSNodepoolRead(ctx, d, m)
+}
+
+func handleNodepoolDiff(config authctx.TanzuContext, currentNodepool *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, newNodepool *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, opsRetryTimeout time.Duration) error {
+	if checkNodepoolUpdate(currentNodepool, newNodepool) {
+		req := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest{
+			Nodepool: newNodepool,
+		}
+
+		_, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceUpdate(req)
+		if err != nil {
+			return errors.Wrapf(err, "Unable to update Tanzu Mission Control EKS nodepool, name : %s", newNodepool.FullName.Name)
+		}
+
+		getNodepoolResourceRetryableFn := getWaitForNodepoolReadyFn(config, newNodepool.FullName)
+		_, err = helper.RetryUntilTimeout(getNodepoolResourceRetryableFn, 10*time.Second, opsRetryTimeout)
+		if err != nil {
+			return errors.Wrapf(err, "failed to verify EKS nodepool resource(%s) creation", newNodepool.FullName.Name)
+		}
+	}
+
+	return nil
+}
+
 func flattenNodePools(arr []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) []interface{} {
 	data := make([]interface{}, 0, len(arr))
 
@@ -483,7 +640,7 @@ func constructNodepoolDef(nodepoolDefData map[string]interface{}) *eksmodel.Vmwa
 
 	if v, ok := nodepoolDefData[specKey]; ok {
 		data, _ := v.([]interface{})
-		definition.Spec = constructNodepoolSpec(data)
+		definition.Spec = constructNodepoolSpecFromData(data)
 	}
 
 	return definition
@@ -509,7 +666,7 @@ func constructNodepoolInfo(data []interface{}) *eksmodel.VmwareTanzuManageV1alph
 	return info
 }
 
-func constructNodepoolSpec(data []interface{}) *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec {
+func constructNodepoolSpecFromData(data []interface{}) *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec {
 	spec := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec{}
 
 	if len(data) == 0 || data[0] == nil {
@@ -736,60 +893,6 @@ func constructTaints(taintsData []interface{}) []*eksmodel.VmwareTanzuManageV1al
 	return taints
 }
 
-func handleNodepoolDiffs(config authctx.TanzuContext, opsRetryTimeout time.Duration, clusterFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName, nodepools []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
-	npresp, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceList(clusterFn)
-	if err != nil {
-		return errors.Wrapf(err, "failed to list nodepools for cluster: %s", clusterFn)
-	}
-
-	npPosMap := nodepoolPosMap(nodepools)
-	tmcNps := map[string]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool{}
-
-	npUpdate := []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{}
-	npCreate := []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{}
-	npDelete := []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName{}
-
-	for _, tmcNp := range npresp.Nodepools {
-		tmcNps[tmcNp.FullName.Name] = tmcNp
-
-		if pos, ok := npPosMap[tmcNp.FullName.Name]; ok {
-			// np exisits in both TMC and TF
-			newNp := nodepools[pos]
-			fillTMCSetValues(tmcNp.Spec, newNp.Spec)
-
-			if checkNodepoolUpdate(tmcNp, newNp) {
-				npUpdate = append(npUpdate, newNp)
-			}
-		} else {
-			// np exisits in TMC but not in TF
-			npDelete = append(npDelete, tmcNp.FullName)
-		}
-	}
-
-	for _, tfNp := range nodepools {
-		if _, ok := tmcNps[tfNp.Info.Name]; !ok {
-			npCreate = append(npCreate, tfNp)
-		}
-	}
-
-	err = handleNodepoolCreates(config, opsRetryTimeout, clusterFn, npCreate)
-	if err != nil {
-		return errors.Wrap(err, "failed to create nodepools that are not present in TMC")
-	}
-
-	err = handleNodepoolUpdates(config, opsRetryTimeout, tmcNps, npUpdate)
-	if err != nil {
-		return errors.Wrapf(err, "failed to update existing nodepools")
-	}
-
-	err = handleNodepoolDeletes(config, opsRetryTimeout, npDelete)
-	if err != nil {
-		return errors.Wrapf(err, "failed to delete nodepools")
-	}
-
-	return nil
-}
-
 func handleNodepoolDeletes(config authctx.TanzuContext, opsRetryTimeout time.Duration, npFns []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName) error {
 	for _, npFn := range npFns {
 		err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceDelete(npFn)
@@ -815,41 +918,6 @@ func handleNodepoolDeletes(config authctx.TanzuContext, opsRetryTimeout time.Dur
 		_, err = helper.RetryUntilTimeout(getNodepoolResourceRetryableFn, 10*time.Second, opsRetryTimeout)
 		if err != nil {
 			return errors.Wrapf(err, "failed to verify EKS nodepool resource(%s) clean up", npFn.Name)
-		}
-	}
-
-	return nil
-}
-
-func handleNodepoolUpdates(config authctx.TanzuContext, opsRetryTimeout time.Duration, tmcNps map[string]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
-	for _, np := range nps {
-		tmcNp := tmcNps[np.Info.Name]
-
-		req := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest{
-			Nodepool: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool{
-				FullName: tmcNp.FullName,
-				Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
-					Annotations:      tmcNp.Meta.Annotations,
-					Description:      np.Info.Description,
-					Labels:           tmcNp.Meta.Labels,
-					ParentReferences: tmcNp.Meta.ParentReferences,
-					ResourceVersion:  tmcNp.Meta.ResourceVersion,
-					UID:              tmcNp.Meta.UID,
-				},
-				Spec: np.Spec,
-			},
-		}
-
-		_, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceUpdate(req)
-		if err != nil {
-			return errors.Wrapf(err, "failed to update nodepool %s", np.Info.Name)
-		}
-
-		getNodepoolResourceRetryableFn := getWaitForNodepoolReadyFn(config, tmcNp.FullName)
-
-		_, err = helper.RetryUntilTimeout(getNodepoolResourceRetryableFn, 10*time.Second, opsRetryTimeout)
-		if err != nil {
-			return errors.Wrapf(err, "failed to verify EKS nodepool resource(%s) creation", np.Info.Name)
 		}
 	}
 
@@ -943,7 +1011,7 @@ func getWaitForNodepoolReadyFn(config authctx.TanzuContext, npFn *eksmodel.Vmwar
 	}
 }
 
-func checkNodepoolUpdate(oldNp *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, newNp *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) bool {
-	return oldNp.Meta.Description != newNp.Info.Description ||
+func checkNodepoolUpdate(oldNp *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, newNp *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool) bool {
+	return oldNp.Meta.Description != newNp.Meta.Description ||
 		!nodepoolSpecEqual(oldNp.Spec, newNp.Spec)
 }

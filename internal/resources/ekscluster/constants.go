@@ -36,6 +36,7 @@ const (
 	publicAccessCidrsKey       = "public_access_cidrs"
 	securityGroupsKey          = "security_groups"
 	subnetIdsKey               = "subnet_ids"
+	nodepoolClusterNameKey     = "eks_cluster_name"
 
 	infoKey                     = "info"
 	amiTypeKey                  = "ami_type"

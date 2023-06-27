@@ -6,6 +6,8 @@ SPDX-License-Identifier: MPL-2.0
 package models
 
 import (
+	"fmt"
+
 	"github.com/go-openapi/swag"
 )
 
@@ -50,4 +52,12 @@ func (m *VmwareTanzuManageV1alpha1EksclusterNodepoolFullName) UnmarshalBinary(b 
 	*m = res
 
 	return nil
+}
+
+func (m *VmwareTanzuManageV1alpha1EksclusterNodepoolFullName) ToString() string {
+	if m == nil {
+		return ""
+	}
+
+	return fmt.Sprintf("%s:%s:%s:%s", m.OrgID, m.CredentialName, m.Region, m.Name)
 }

@@ -16,13 +16,14 @@ import (
 )
 
 const (
-	MetaKey            = "meta"
-	LabelsKey          = "labels"
-	DescriptionKey     = "description"
-	annotationsKey     = "annotations"
-	uidKey             = "uid"
-	resourceVersionKey = "resource_version"
-	CreatorLabelKey    = "tmc.cloud.vmware.com/creator"
+	MetaKey             = "meta"
+	LabelsKey           = "labels"
+	DescriptionKey      = "description"
+	annotationsKey      = "annotations"
+	uidKey              = "uid"
+	resourceVersionKey  = "resource_version"
+	parentReferencesKey = "parent_references"
+	CreatorLabelKey     = "tmc.cloud.vmware.com/creator"
 )
 
 var Meta = &schema.Schema{
@@ -126,6 +127,10 @@ func ConstructMeta(d *schema.ResourceData) (objectMeta *objectmetamodel.VmwareTa
 
 	if v, ok := objectMetaData[resourceVersionKey]; ok {
 		helper.SetPrimitiveValue(v, &objectMeta.ResourceVersion, resourceVersionKey)
+	}
+
+	if v, ok := objectMetaData[parentReferencesKey]; ok {
+		helper.SetPrimitiveValue(v, &objectMeta.ParentReferences, parentReferencesKey)
 	}
 
 	return objectMeta

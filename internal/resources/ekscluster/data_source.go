@@ -30,18 +30,26 @@ func DataSourceTMCEKSCluster() *schema.Resource {
 	}
 }
 
+func DataSourceTMCEKSNodepool() *schema.Resource {
+	return &schema.Resource{
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+			return dataSourceTMCEKSNodepoolRead(helper.GetContextWithCaller(ctx, helper.DataRead), d, m)
+		},
+		Schema: nodepoolDefinitionSchema.Schema,
+	}
+}
+
 func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	config := m.(authctx.TanzuContext)
 
 	// Warning or errors can be collected in a slice type
 	var (
-		diags  diag.Diagnostics
-		resp   *eksmodel.VmwareTanzuManageV1alpha1EksclusterGetEksClusterResponse
-		npresp *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolListNodepoolsResponse
-		err    error
+		diags diag.Diagnostics
+		resp  *eksmodel.VmwareTanzuManageV1alpha1EksclusterGetEksClusterResponse
+		err   error
 	)
 
-	clusterFn := constructFullname(d)
+	clusterFn := constructClusterFullname(d)
 	getEksClusterResourceRetryableFn := func() (retry bool, err error) {
 		resp, err = config.TMCConnection.EKSClusterResourceService.EksClusterResourceServiceGet(clusterFn)
 		if err != nil {
@@ -55,15 +63,6 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 
 		d.SetId(resp.EksCluster.Meta.UID)
 
-		npresp, err = config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceList(clusterFn)
-		if err != nil {
-			if clienterrors.IsNotFoundError(err) {
-				return false, nil
-			}
-
-			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control EKS nodepools for cluster %s", d.Get(NameKey))
-		}
-
 		if ctx.Value(contextMethodKey{}) == "create" &&
 			resp.EksCluster.Status.Phase != nil &&
 			*resp.EksCluster.Status.Phase != eksmodel.VmwareTanzuManageV1alpha1EksclusterPhaseREADY {
@@ -73,7 +72,7 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 				return false, errors.Errorf("Cluster %s creation failed due to %s, %s", d.Get(NameKey), c.Reason, c.Message)
 			}
 
-			log.Printf("[DEBUG] waiting for cluster(%s) to be in READY phase", constructFullname(d).ToString())
+			log.Printf("[DEBUG] waiting for cluster(%s) to be in READY phase", constructClusterFullname(d).ToString())
 
 			return true, nil
 		}
@@ -108,7 +107,7 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 		_, err = helper.RetryUntilTimeout(getEksClusterResourceRetryableFn, 10*time.Second, timeoutDuration)
 	}
 
-	if err != nil || resp == nil || npresp == nil {
+	if err != nil || resp == nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control EKS cluster entry, name : %s", d.Get(NameKey)))
 	}
 
@@ -129,37 +128,95 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(err)
 	}
 
-	_, tfNodepools := constructEksClusterSpec(d)
+	return diags
+}
 
-	// see the explanation of this in the func doc of nodepoolPosMap
-	npPosMap := nodepoolPosMap(tfNodepools)
+func dataSourceTMCEKSNodepoolRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	config := m.(authctx.TanzuContext)
 
-	nodepools := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition, len(tfNodepools))
+	// Warning or errors can be collected in a slice type
+	var (
+		diags  diag.Diagnostics
+		resp   *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIResponse
+		npresp *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolListNodepoolsResponse
+		err    error
+	)
 
-	for _, np := range npresp.Nodepools {
-		npDef := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{
-			Info: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolInfo{
-				Description: np.Meta.Description,
-				Name:        np.FullName.Name,
-			},
-			Spec: np.Spec,
+	nodepoolFn := constructNodepoolFullname(d)
+	getEksNodepoolResourceRetryableFn := func() (retry bool, err error) {
+		resp, err = config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceGet(nodepoolFn)
+		if err != nil {
+			if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
+				_ = schema.RemoveFromState(d, m)
+				return false, nil
+			}
+
+			return true, errors.Wrapf(err, "Unable to get Tanzu Mission Control EKS nodepool entry, name : %s", d.Get(NameKey))
 		}
 
-		if pos, ok := npPosMap[np.FullName.Name]; ok {
-			nodepools[pos] = npDef
-		} else {
-			nodepools = append(nodepools, npDef)
+		d.SetId(resp.Nodepool.Meta.UID)
+
+		if ctx.Value(contextMethodKey{}) == "create" &&
+			resp.Nodepool.Status.Phase != nil &&
+			*resp.Nodepool.Status.Phase != eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolStatusPhaseREADY {
+			if c, ok := resp.Nodepool.Status.Conditions[readyCondition]; ok &&
+				c.Severity != nil &&
+				*c.Severity == eksmodel.VmwareTanzuCoreV1alpha1StatusConditionSeverityERROR {
+				return false, errors.Errorf("Nodepool %s creation failed due to %s, %s", d.Get(NameKey), c.Reason, c.Message)
+			}
+
+			log.Printf("[DEBUG] waiting for nodepool(%s) to be in READY phase", constructNodepoolFullname(d).ToString())
+
+			return true, nil
 		}
+
+		return false, nil
 	}
 
-	// check for deleted nodepools
-	for i := range nodepools {
-		if nodepools[i] == nil {
-			nodepools[i] = &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{}
-		}
+	timeoutValueData, _ := d.Get(waitKey).(string)
+
+	if ctx.Value(contextMethodKey{}) != "create" {
+		timeoutValueData = "do_not_retry"
 	}
 
-	if err := d.Set(specKey, flattenClusterSpec(resp.EksCluster.Spec, nodepools)); err != nil {
+	switch timeoutValueData {
+	case "do_not_retry":
+		_, err = getEksNodepoolResourceRetryableFn()
+	case "":
+		fallthrough
+	case "default":
+		timeoutValueData = "5m"
+
+		fallthrough
+	default:
+		timeoutDuration, parseErr := time.ParseDuration(timeoutValueData)
+		if parseErr != nil {
+			log.Printf("[INFO] unable to prase the duration value for the key %s. Defaulting to 5 minutes(5m)"+
+				" Please refer to 'https://pkg.go.dev/time#ParseDuration' for providing the right value", waitKey)
+
+			timeoutDuration = defaultTimeout
+		}
+
+		_, err = helper.RetryUntilTimeout(getEksNodepoolResourceRetryableFn, 10*time.Second, timeoutDuration)
+	}
+
+	if err != nil || resp == nil || npresp == nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control EKS cluster entry, name : %s", d.Get(NameKey)))
+	}
+
+	// always run
+	d.SetId(resp.Nodepool.Meta.UID)
+
+	status := map[string]interface{}{
+		// TODO: add condition
+		"phase": resp.Nodepool.Status.Phase,
+	}
+
+	if err := d.Set(StatusKey, status); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := d.Set(common.MetaKey, common.FlattenMeta(resp.Nodepool.Meta)); err != nil {
 		return diag.FromErr(err)
 	}
 
