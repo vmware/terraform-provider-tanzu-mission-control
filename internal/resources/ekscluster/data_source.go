@@ -35,7 +35,7 @@ func DataSourceTMCEKSNodepool() *schema.Resource {
 		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 			return dataSourceTMCEKSNodepoolRead(helper.GetContextWithCaller(ctx, helper.DataRead), d, m)
 		},
-		Schema: nodepoolDefinitionSchema.Schema,
+		Schema: nodepoolSchema,
 	}
 }
 

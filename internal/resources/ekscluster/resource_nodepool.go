@@ -24,7 +24,7 @@ import (
 
 func ResourceTMCEKSNodepool() *schema.Resource {
 	return &schema.Resource{
-		Schema:        nodepoolDefinitionSchema.Schema,
+		Schema:        nodepoolSchema,
 		CreateContext: resourceNodepoolCreate,
 		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 			return dataSourceTMCEKSNodepoolRead(helper.GetContextWithCaller(ctx, helper.RefreshState), d, m)
@@ -61,35 +61,50 @@ func constructEksNodepoolSpec(d *schema.ResourceData) (spec *eksmodel.VmwareTanz
 // Note: ForceNew is not used in any of the elements because this is a part of
 // EKS cluster and we don't want to replace full clusters because of Nodepool
 // change.
-var nodepoolDefinitionSchema = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		infoKey: {
-			Type:        schema.TypeList,
-			Description: "Info for the nodepool",
-			Required:    true,
-			MaxItems:    1,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					NameKey: {
-						Type:        schema.TypeString,
-						Description: "Name of the nodepool, immutable",
-						Required:    true,
-					},
-					common.DescriptionKey: {
-						Type:        schema.TypeString,
-						Description: "Description for the nodepool",
-						Optional:    true,
-					},
-				},
-			},
-		},
-		specKey: nodepoolSpecSchema,
+var nodepoolSchema = map[string]*schema.Schema{
+	CredentialNameKey: {
+		Type:        schema.TypeString,
+		Description: "Name of the AWS Credential in Tanzu Mission Control",
+		Required:    true,
+		ForceNew:    true,
+	},
+	RegionKey: {
+		Type:        schema.TypeString,
+		Description: "AWS Region of this nodepool",
+		Required:    true,
+		ForceNew:    true,
+	},
+	NameKey: {
+		Type:        schema.TypeString,
+		Description: "Name of this nodepool",
+		Required:    true,
+		ForceNew:    true,
+	},
+	nodepoolClusterNameKey: {
+		Type:        schema.TypeString,
+		Description: "Name of the cluster this nodepool belongs to",
+		Required:    true,
+		ForceNew:    true,
+	},
+	common.MetaKey: common.Meta,
+	specKey:        nodepoolSpecSchema,
+	StatusKey: {
+		Type:        schema.TypeMap,
+		Description: "Status of the nodepool",
+		Computed:    true,
+		Elem:        &schema.Schema{Type: schema.TypeString},
+	},
+	waitKey: {
+		Type:        schema.TypeString,
+		Description: "Wait timeout duration until nodepool resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero",
+		Default:     "default",
+		Optional:    true,
 	},
 }
 
 var nodepoolSpecSchema = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "Spec for the cluster",
+	Description: "Spec for the nodepool",
 	Required:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{

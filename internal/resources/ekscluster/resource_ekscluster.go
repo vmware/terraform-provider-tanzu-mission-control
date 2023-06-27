@@ -100,13 +100,6 @@ var clusterSpecSchema = &schema.Schema{
 				Optional:    true,
 			},
 			configKey: configSchema,
-			nodepoolKey: {
-				Type:        schema.TypeList,
-				Description: "Nodepool definitions for the cluster",
-				Required:    true,
-				MinItems:    1,
-				Elem:        nodepoolDefinitionSchema,
-			},
 		},
 	},
 }

@@ -50,16 +50,18 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
         ]
       }
     }
+  }
+}
 
-    nodepool {
-      info {
-        name        = "fist-np"
-        description = "tf nodepool description"
-      }
+resource "tanzu-mission-control_eksnodepool" "tf_eks_nodepool" {
+      credential_name = "eks-test"                // Required
+      region          = "us-west-2"               // Required
+      name            = "first-np"                // Required
+      description     = "tf nodepool description" // Required
+      eksClusterName  = "tf2-eks-cluster-2"       // Required
 
       spec {
         role_arn       = "arn:aws:iam::000000000000:role/worker.1234567890123467890.eks.tmc.cloud.vmware.com" // Required
-
         ami_type       = "CUSTOM"
         capacity_type  = "ON_DEMAND"
         root_disk_size = 40 // Default: 20GiB
@@ -104,11 +106,12 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
       }
     }
 
-    nodepool {
-      info {
-        name        = "second-np"
-        description = "tf nodepool 2 description"
-      }
+    resource "tanzu-mission-control_eksnodepool" "tf_eks_nodepool" {
+      credential_name = "eks-test"                  // Required
+      region          = "us-west-2"                 // Required
+      name            = "second-np"                 // Required
+      description     = "tf nodepool 2 description" // Required
+      eksClusterName  = "tf2-eks-cluster-2"         // Required
 
       spec {
         role_arn    = "arn:aws:iam::000000000000:role/worker.1234567890123467890.eks.tmc.cloud.vmware.com" // Required
@@ -144,5 +147,3 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
         }
       }
     }
-  }
-}
