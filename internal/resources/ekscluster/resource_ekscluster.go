@@ -33,13 +33,6 @@ var ignoredTagsPrefix = "tmc.cloud.vmware.com/"
 
 const defaultTimeout = 3 * time.Minute
 
-var TMCGeneratedTags []string = []string{
-	"tmc.cloud.vmware.com/tmc-creator",
-	"tmc.cloud.vmware.com/tmc-credential",
-	"tmc.cloud.vmware.com/tmc-managed",
-	"tmc.cloud.vmware.com/tmc-org",
-}
-
 func ResourceTMCEKSCluster() *schema.Resource {
 	return &schema.Resource{
 		Schema:        clusterSchema,
@@ -49,7 +42,10 @@ func ResourceTMCEKSCluster() *schema.Resource {
 		},
 		UpdateContext: resourceClusterInPlaceUpdate,
 		DeleteContext: resourceClusterDelete,
-		Description:   "Tanzu Mission Control EKS Cluster Resource",
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceClusterImporter,
+		},
+		Description: "Tanzu Mission Control EKS Cluster Resource",
 	}
 }
 
@@ -85,6 +81,9 @@ var clusterSchema = map[string]*schema.Schema{
 		Description: "Wait timeout duration until cluster resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero",
 		Default:     "default",
 		Optional:    true,
+		DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+			return true
+		},
 	},
 }
 
@@ -169,6 +168,17 @@ var configSchema = &schema.Schema{
 				Optional:    true,
 				ForceNew:    false,
 				MaxItems:    1,
+				// Suppress the diff between not being declared and all the values being false
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					lastDotIndex := strings.LastIndex(k, ".")
+					if lastDotIndex == -1 {
+						return false
+					}
+
+					k = k[:lastDotIndex]
+					v1, v2 := d.GetChange(k)
+					return reflect.DeepEqual(v1, v2)
+				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						apiServerKey: {
@@ -571,11 +581,49 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 	return dataSourceTMCEKSClusterRead(ctx, d, m)
 }
 
+func resourceClusterImporter(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	config := m.(authctx.TanzuContext)
+
+	id := d.Id()
+	if id == "" {
+		return nil, errors.New("ID is needed to import an TMC EKS cluster")
+	}
+
+	resp, err := config.TMCConnection.EKSClusterResourceService.EksClusterResourceServiceGetByID(id)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Unable to get Tanzu Mission Control EKS cluster entry for id %s", id)
+	}
+
+	npresp, err := config.TMCConnection.EKSNodePoolResourceService.EksNodePoolResourceServiceList(resp.EksCluster.FullName)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Unable to get Tanzu Mission Control EKS nodepools for cluster %s", resp.EksCluster.FullName.Name)
+	}
+
+	if err = d.Set(CredentialNameKey, resp.EksCluster.FullName.CredentialName); err != nil {
+		return nil, errors.Wrapf(err, "Failed to set credential name for the cluster %s", resp.EksCluster.FullName.Name)
+	}
+
+	if err = d.Set(RegionKey, resp.EksCluster.FullName.Region); err != nil {
+		return nil, errors.Wrapf(err, "Failed to set region for the cluster %s", resp.EksCluster.FullName.Name)
+	}
+
+	if err = d.Set(NameKey, resp.EksCluster.FullName.Name); err != nil {
+		return nil, errors.Wrapf(err, "Failed to set name for the cluster %s", resp.EksCluster.FullName.Name)
+	}
+
+	err = setResourceData(d, resp.EksCluster, npresp.Nodepools)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Failed to set resource data during import for %s", resp.EksCluster.FullName.Name)
+	}
+
+	return []*schema.ResourceData{d}, nil
+}
+
 func handleClusterDiff(config authctx.TanzuContext, tmcCluster *eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster, meta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta, clusterSpec *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) error {
 	updateCluster := false
 
 	if meta.Description != tmcCluster.Meta.Description ||
-		!reflect.DeepEqual(meta.Labels, tmcCluster.Meta.Labels) {
+		!mapEqual(meta.Labels, tmcCluster.Meta.Labels) {
 		updateCluster = true
 		tmcCluster.Meta.Description = meta.Description
 		tmcCluster.Meta.Labels = meta.Labels

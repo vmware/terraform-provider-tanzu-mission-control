@@ -15,13 +15,13 @@ func nodepoolSpecEqual(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepo
 		spec1.CapacityType == spec2.CapacityType &&
 		setEquality(spec1.InstanceTypes, spec2.InstanceTypes) &&
 		structEqual(spec1.LaunchTemplate, spec2.LaunchTemplate) &&
-		reflect.DeepEqual(spec1.NodeLabels, spec2.NodeLabels) &&
+		mapEqual(spec1.NodeLabels, spec2.NodeLabels) &&
 		nodepoolRemoteAccessEqual(spec1.RemoteAccess, spec2.RemoteAccess) &&
 		spec1.RoleArn == spec2.RoleArn &&
 		spec1.RootDiskSize == spec2.RootDiskSize &&
 		structEqual(spec1.ScalingConfig, spec2.ScalingConfig) &&
 		setEquality(spec1.SubnetIds, spec2.SubnetIds) &&
-		reflect.DeepEqual(spec1.Tags, spec2.Tags) &&
+		mapEqual(spec1.Tags, spec2.Tags) &&
 		nodepoolTaintsEqual(spec1.Taints, spec2.Taints) &&
 		structEqual(spec1.UpdateConfig, spec2.UpdateConfig)
 }
@@ -44,7 +44,7 @@ func clusterConfigEqual(config1, config2 *eksmodel.VmwareTanzuManageV1alpha1Eksc
 	return structEqual(config1.KubernetesNetworkConfig, config2.KubernetesNetworkConfig) &&
 		structEqual(config1.Logging, config2.Logging) &&
 		config1.RoleArn == config2.RoleArn &&
-		reflect.DeepEqual(config1.Tags, config2.Tags) &&
+		mapEqual(config1.Tags, config2.Tags) &&
 		config1.Version == config2.Version &&
 		clusterVPCConfigEqual(config1.Vpc, config2.Vpc)
 }
@@ -72,6 +72,19 @@ func structEqual[T any](a, b *T) bool {
 
 	if b == nil {
 		b = new(T)
+	}
+
+	return reflect.DeepEqual(a, b)
+}
+
+// mapEqual handles the cases where one map is nil and the other one is empty.
+func mapEqual[K comparable, V any](a, b map[K]V) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	if len(a) == 0 {
+		return true
 	}
 
 	return reflect.DeepEqual(a, b)

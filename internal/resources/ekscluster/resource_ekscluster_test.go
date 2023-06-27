@@ -132,6 +132,11 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 		EksCluster: getModel,
 	}
 
+	listResponse := eksmodel.VmwareTanzuManageV1alpha1EksclusterListEksClustersResponse{
+		EksClusters: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster{getModel},
+		TotalCount:  "1",
+	}
+
 	// GET Nodepools mock setup
 	nodepools := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, 0)
 	nodepoolRequests := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest, 0)
@@ -186,6 +191,7 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 	// Setup HTTP Responders
 	postEndpoint := fmt.Sprintf("https://%s/v1alpha1/eksclusters", endpoint)
 	getClusterEndpoint := fmt.Sprintf("https://%s/v1alpha1/eksclusters/%s", endpoint, clusterName)
+	listClusterEndpoint := fmt.Sprintf("https://%s/v1alpha1/eksclusters?query=uid%%3D%%22%s%%22", endpoint, postResponseModel.Meta.UID)
 	postNodepoolsEndpoint := fmt.Sprintf("https://%s/v1alpha1/eksclusters/%s/nodepools", endpoint, clusterName)
 	getClusterNodepoolsEndpoint := fmt.Sprintf("https://%s/v1alpha1/eksclusters/%s/nodepools", endpoint, clusterName)
 	deleteEndpoint := getClusterEndpoint
@@ -195,6 +201,9 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 
 	httpmock.RegisterResponder("GET", getClusterEndpoint,
 		bodyInspectingResponder(t, nil, 200, getResponse))
+
+	httpmock.RegisterResponder("GET", listClusterEndpoint,
+		bodyInspectingResponder(t, nil, 200, listResponse))
 
 	httpmock.RegisterResponder("POST", postNodepoolsEndpoint,
 		nodepoolsBodyInspectingResponder(t, nodepoolRequests, 200, nodepoolResponses))
@@ -293,6 +302,11 @@ func TestAcceptanceForMkpClusterResource(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					checkResourceAttributes(provider, clusterConfig["CreateEksCluster"]...),
 				),
+			},
+			{
+				ResourceName:      testhelper.EksClusterResourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
