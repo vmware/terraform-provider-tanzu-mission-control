@@ -1,0 +1,73 @@
+---
+Title: "Gitops  Resource"
+Description: |-
+    Adding Gitops resource to a cluster.
+---
+
+# Defining Gitops
+
+This feature will allow cluster admins to attach git repositories to their cluster or cluster groups ,
+and sync folders in the repo to the cluster. Repositories may or may not require authentication.
+
+The `tanzu-mission-control_git_repository` enables the Continuous Delivery feature on cluster or cluster group level scope.
+
+# Terraform Resources for Gitops
+
+## Git Repository
+
+The `tanzu-mission-control_git_repository` resource allows you to add, update, and delete git repository to a particular scope through Tanzu Mission Control.
+
+Git repositories are used to store kustomizations that will be synced to your cluster.
+
+Please refer to [Add a Git Repository to a Cluster or Cluster Group.][git-repository]
+
+[git-repository]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-26C2D2F3-0E5C-4E56-B875-B7FB003267E4.html
+
+## Kustomization
+
+The `tanzu-mission-control_kustomization` resource allows you to add, update, and delete Kustomization to a particular scope through Tanzu Mission Control.
+
+In Creation of kustomization we must required to create Git Repository first, which we need to referenced in spec of kustomization, Git Repository can be created by using "tanzu-mission-control_git_repository" resource from terraform provider itself.
+
+Please refer to [Add a Kustomization to a Cluster or Cluster Group.][kustomization]
+
+[kustomization]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-99916A6D-5DAF-4A26-88C7-28662F847F2F.html
+
+## Repository Credential
+
+The `tanzu-mission-control_repository_credential` resource allows you to add, update, and delete repository credential to a particular scope through Tanzu Mission Control.
+
+Repository credentials are used to authenticate to Git repositories and must be created before adding your Git repository.
+
+Please refer to [Create a Repository Credential for a Cluster or Cluster Group.][repository-credential]
+
+[repository-credential]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-657661A2-B26E-412A-9A46-7467A44A075A.html
+
+To Create these resources you must be associated with the cluster.admin or clustergroup.admin role.
+
+
+# Usecase Example for adding Cluster level Git Repository with basic authentication and kustomization
+
+{{ tffile "examples/usecases/auth_git_repo_usecase.tf" }}
+
+
+# Usecase Example for adding Cluster level Git Repository and kustomization
+
+{{ tffile "examples/usecases/git_repo_usecase.tf" }}
+
+
+### Similarly, we can create SSH Key type Repository Credential for authenticated Git Repositories
+
+# Usecase Example for adding Cluster level Repository Credential
+
+{{ tffile "examples/usecases/ssh_repo_credential.tf" }}
+
+
+# Usecase Example for adding Cluster group level Git Repository and kustomization with SSH Key type authentication
+
+{{ tffile "examples/usecases/ssh_cg_git_repo_usecase.tf" }}
+
+
+# Usecase Example for adding Cluster group level Git Repository and kustomization
+
+{{ tffile "examples/usecases/cg_git_repo_usecase.tf" }}
