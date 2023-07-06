@@ -23,7 +23,7 @@ func TestAcceptanceForGitRepositoryDataSource(t *testing.T) {
 
 	t.Log("start git repository data source acceptance tests!")
 
-	// Test case for git repository data source for GO_GIT git implementation type.
+	// Test case for git repository data source.
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
 		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
@@ -35,64 +35,31 @@ func TestAcceptanceForGitRepositoryDataSource(t *testing.T) {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped git repository acceptance test")
 					}
 				},
-				Config: testConfig.getTestGitRepositoryDataSourceBasicConfigValue(commonscope.ClusterScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT)),
+				Config: testConfig.getTestGitRepositoryDataSourceBasicConfigValue(commonscope.ClusterScope, WithGitImplementation(fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT))),
 				Check:  testConfig.checkGitRepositoryDataSourceAttributes(),
 			},
 			{
-				Config: testConfig.getTestGitRepositoryDataSourceBasicConfigValue(commonscope.ClusterScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT), WithInterval("10m")),
+				Config: testConfig.getTestGitRepositoryDataSourceBasicConfigValue(commonscope.ClusterScope, WithGitImplementation(fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationLIBGIT2)), WithInterval("10m")),
 				Check:  testConfig.checkGitRepositoryDataSourceAttributes(),
 			},
 			{
-				Config: testConfig.getTestGitRepositoryDataSourceBasicConfigValue(commonscope.ClusterGroupScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT)),
+				Config: testConfig.getTestGitRepositoryDataSourceBasicConfigValue(commonscope.ClusterGroupScope, WithGitImplementation(fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT))),
 				Check:  testConfig.checkGitRepositoryDataSourceAttributes(),
 			},
 			{
-				Config: testConfig.getTestGitRepositoryDataSourceBasicConfigValue(commonscope.ClusterGroupScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT), WithInterval("10m")),
+				Config: testConfig.getTestGitRepositoryDataSourceBasicConfigValue(commonscope.ClusterGroupScope, WithGitImplementation(fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationLIBGIT2)), WithInterval("10m")),
 				Check:  testConfig.checkGitRepositoryDataSourceAttributes(),
 			},
 		},
 	},
 	)
 
-	t.Log("git repository data source acceptance test complete for GO_GIT git implementation type")
-
-	// Test case for git repository data source for LIB_GIT2 git implementation type.
-	resource.Test(t, resource.TestCase{
-		PreCheck:          testhelper.TestPreCheck(t),
-		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
-		CheckDestroy:      nil,
-		Steps: []resource.TestStep{
-			{
-				Config: testConfig.getTestGitRepositoryDataSourceBasicConfigValue(commonscope.ClusterGroupScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationLIBGIT2)),
-				Check:  testConfig.checkGitRepositoryDataSourceAttributes(),
-			},
-			{
-				Config: testConfig.getTestGitRepositoryDataSourceBasicConfigValue(commonscope.ClusterGroupScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationLIBGIT2), WithInterval("10m")),
-				Check:  testConfig.checkGitRepositoryDataSourceAttributes(),
-			},
-			{
-				PreConfig: func() {
-					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" {
-						t.Skip("KUBECONFIG env var is not set for cluster scoped git repository acceptance test")
-					}
-				},
-				Config: testConfig.getTestGitRepositoryDataSourceBasicConfigValue(commonscope.ClusterScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationLIBGIT2)),
-				Check:  testConfig.checkGitRepositoryDataSourceAttributes(),
-			},
-			{
-				Config: testConfig.getTestGitRepositoryDataSourceBasicConfigValue(commonscope.ClusterScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationLIBGIT2), WithInterval("10m")),
-				Check:  testConfig.checkGitRepositoryDataSourceAttributes(),
-			},
-		},
-	},
-	)
-
-	t.Log("git repository data source acceptance test complete for LIB_GIT2 git implementation type")
+	t.Log("git repository data source acceptance test completed")
 }
 
-func (testConfig *testAcceptanceConfig) getTestGitRepositoryDataSourceBasicConfigValue(scope commonscope.Scope, gitImplementation string, opts ...OperationOption) string {
+func (testConfig *testAcceptanceConfig) getTestGitRepositoryDataSourceBasicConfigValue(scope commonscope.Scope, opts ...OperationOption) string {
 	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestResourceHelperAndScope(scope, gitrepositoryscope.ScopesAllowed[:])
-	gitRepoSpec := testConfig.getTestGitRepositoryResourceSpec(gitImplementation, opts...)
+	gitRepoSpec := testConfig.getTestGitRepositoryResourceSpec(opts...)
 
 	return fmt.Sprintf(`
 	%s

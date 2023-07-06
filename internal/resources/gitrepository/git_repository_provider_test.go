@@ -30,7 +30,7 @@ func initTestProvider(t *testing.T) *schema.Provider {
 			cluster.ResourceName:      cluster.DataSourceTMCCluster(),
 			clustergroup.ResourceName: clustergroup.DataSourceClusterGroup(),
 		},
-		ConfigureContextFunc: authctx.ProviderConfigureContext,
+		ConfigureContextFunc: getConfigureContextFunc(),
 	}
 	if err := testProvider.InternalValidate(); err != nil {
 		require.NoError(t, err)
