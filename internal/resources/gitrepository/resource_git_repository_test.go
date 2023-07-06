@@ -6,12 +6,14 @@ SPDX-License-Identifier: MPL-2.0
 package gitrepository
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -43,6 +45,7 @@ type testAcceptanceConfig struct {
 	ScopeHelperResources        *commonscope.ScopeHelperResources
 	GitRepositoryDataSourceVar  string
 	GitRepositoryDataSourceName string
+	Namespace                   string
 }
 
 func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
@@ -55,15 +58,59 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 		ScopeHelperResources:        commonscope.NewScopeHelperResources(),
 		GitRepositoryDataSourceVar:  gitRepositoryDataSourceVar,
 		GitRepositoryDataSourceName: fmt.Sprintf("data.%s.%s", ResourceName, gitRepositoryDataSourceVar),
+		Namespace:                   "tanzu-continuousdelivery-resources",
 	}
+}
+
+func getConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	if _, found := os.LookupEnv("ENABLE_GITREPO_ENV_TEST"); !found {
+		return authctx.ProviderConfigureContextWithDefaultTransportForTesting
+	}
+
+	return authctx.ProviderConfigureContext
+}
+
+func getSetupConfig(config *authctx.TanzuContext) error {
+	if _, found := os.LookupEnv("ENABLE_GITREPO_ENV_TEST"); !found {
+		return config.SetupWithDefaultTransportForTesting()
+	}
+
+	return config.Setup()
 }
 
 func TestAcceptanceForGitRepositoryResource(t *testing.T) {
 	testConfig := testGetDefaultAcceptanceConfig(t)
 
+	// If the flag to execute git repository tests is not found, run this as a mock test by setting up an http intercept for each endpoint.
+	_, found := os.LookupEnv("ENABLE_GITREPO_ENV_TEST")
+	if !found {
+		os.Setenv("TF_ACC", "true")
+		os.Setenv("TMC_ENDPOINT", "dummy.tmc.mock.vmware.com")
+		os.Setenv("VMW_CLOUD_API_TOKEN", "dummy")
+		os.Setenv("VMW_CLOUD_ENDPOINT", "console.cloud.vmware.com")
+
+		log.Println("Setting up the mock endpoints...")
+		testConfig.setupHTTPMocks(t)
+	} else {
+		// Environment variables with non default values required for a successful call to Cluster Config Service.
+		requiredVars := []string{
+			"VMW_CLOUD_ENDPOINT",
+			"TMC_ENDPOINT",
+			"VMW_CLOUD_API_TOKEN",
+			"ORG_ID",
+		}
+
+		// Check if the required environment variables are set.
+		for _, name := range requiredVars {
+			if _, found := os.LookupEnv(name); !found {
+				t.Errorf("required environment variable '%s' missing", name)
+			}
+		}
+	}
+
 	t.Log("start git repository resource acceptance tests!")
 
-	// Test case for git repository resource for GO_GIT git implementation type.
+	// Test case for git repository resource.
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
 		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
@@ -71,79 +118,107 @@ func TestAcceptanceForGitRepositoryResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
-					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" {
+					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" && found {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped git repository acceptance test")
 					}
 				},
-				Config: testConfig.getTestGitRepositoryResourceBasicConfigValue(commonscope.ClusterScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT)),
+				Config: testConfig.getTestGitRepositoryResourceBasicConfigValue(commonscope.ClusterScope, WithGitImplementation(fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT))),
 				Check:  testConfig.checkGitRepositoryResourceAttributes(commonscope.ClusterScope),
 			},
 			{
-				Config: testConfig.getTestGitRepositoryResourceBasicConfigValue(commonscope.ClusterScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT), WithInterval("10m")),
+				PreConfig: func() {
+					if !found {
+						t.Log("Setting up the updated GET mock responder for cluster scope...")
+						testConfig.setupHTTPMocksUpdate(t, commonscope.ClusterScope)
+					}
+				},
+				Config: testConfig.getTestGitRepositoryResourceBasicConfigValue(commonscope.ClusterScope, WithGitImplementation(fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationLIBGIT2)), WithInterval("10m")),
 				Check:  testConfig.checkGitRepositoryResourceAttributes(commonscope.ClusterScope),
 			},
 			{
-				Config: testConfig.getTestGitRepositoryResourceBasicConfigValue(commonscope.ClusterGroupScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT)),
-				Check:  testConfig.checkGitRepositoryResourceAttributes(commonscope.ClusterGroupScope),
-			},
-			{
-				Config: testConfig.getTestGitRepositoryResourceBasicConfigValue(commonscope.ClusterGroupScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT), WithInterval("10m")),
-				Check:  testConfig.checkGitRepositoryResourceAttributes(commonscope.ClusterGroupScope),
-			},
-		},
-	},
-	)
-
-	t.Log("git repository resource acceptance test complete for GO_GIT git implementation type")
-
-	// Test case for git repository resource for LIB_GIT2 git implementation type.
-	resource.Test(t, resource.TestCase{
-		PreCheck:          testhelper.TestPreCheck(t),
-		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
-		CheckDestroy:      nil,
-		Steps: []resource.TestStep{
-			{
-				Config: testConfig.getTestGitRepositoryResourceBasicConfigValue(commonscope.ClusterGroupScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationLIBGIT2)),
-				Check:  testConfig.checkGitRepositoryResourceAttributes(commonscope.ClusterGroupScope),
-			},
-			{
-				Config: testConfig.getTestGitRepositoryResourceBasicConfigValue(commonscope.ClusterGroupScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationLIBGIT2), WithInterval("10m")),
+				Config: testConfig.getTestGitRepositoryResourceBasicConfigValue(commonscope.ClusterGroupScope, WithGitImplementation(fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT))),
 				Check:  testConfig.checkGitRepositoryResourceAttributes(commonscope.ClusterGroupScope),
 			},
 			{
 				PreConfig: func() {
-					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" {
-						t.Skip("KUBECONFIG env var is not set for cluster scoped git repository acceptance test")
+					if !found {
+						t.Log("Setting up the updated GET mock responder for cluster group scope...")
+						testConfig.setupHTTPMocksUpdate(t, commonscope.ClusterGroupScope)
 					}
 				},
-				Config: testConfig.getTestGitRepositoryResourceBasicConfigValue(commonscope.ClusterScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationLIBGIT2)),
-				Check:  testConfig.checkGitRepositoryResourceAttributes(commonscope.ClusterScope),
-			},
-			{
-				Config: testConfig.getTestGitRepositoryResourceBasicConfigValue(commonscope.ClusterScope, fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationLIBGIT2), WithInterval("10m")),
-				Check:  testConfig.checkGitRepositoryResourceAttributes(commonscope.ClusterScope),
+				Config: testConfig.getTestGitRepositoryResourceBasicConfigValue(commonscope.ClusterGroupScope, WithGitImplementation(fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationLIBGIT2)), WithInterval("10m")),
+				Check:  testConfig.checkGitRepositoryResourceAttributes(commonscope.ClusterGroupScope),
 			},
 		},
 	},
 	)
 
-	t.Log("git repository resource acceptance test complete for LIB_GIT2 git implementation type")
+	t.Log("git repository resource acceptance test completed")
 }
 
-func (testConfig *testAcceptanceConfig) getTestGitRepositoryResourceBasicConfigValue(scope commonscope.Scope, gitImplementation string, opts ...OperationOption) string {
+func (testConfig *testAcceptanceConfig) getTestGitRepositoryResourceBasicConfigValue(scope commonscope.Scope, opts ...OperationOption) string {
 	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestResourceHelperAndScope(scope, gitrepositoryscope.ScopesAllowed[:])
-	gitRepoSpec := testConfig.getTestGitRepositoryResourceSpec(gitImplementation, opts...)
+	gitRepoSpec := testConfig.getTestGitRepositoryResourceSpec(opts...)
 
-	return fmt.Sprintf(`
-	%s
-	
+	if _, found := os.LookupEnv("ENABLE_GITREPO_ENV_TEST"); !found {
+		clStr := fmt.Sprintf(`
 	resource "%s" "%s" {
 	 name = "%s"
 
 	 namespace_name = "tanzu-continuousdelivery-resources"
 	
-	 %s
+	 scope {
+		cluster {
+			name = "%s"
+			management_cluster_name = "attached"
+			provisioner_name = "attached"
+		}
+	 }
 	
+	 spec {
+	   %s
+	 }
+	}
+	`, testConfig.GitRepositoryResource, testConfig.GitRepositoryResourceVar, testConfig.GitRepositoryName, testConfig.ScopeHelperResources.Cluster.Name, gitRepoSpec)
+
+		cgStr := fmt.Sprintf(`
+	resource "%s" "%s" {
+	 name = "%s"
+
+	 namespace_name = "tanzu-continuousdelivery-resources"
+	
+	 scope {
+		cluster_group {
+			name = "%s"
+		}
+	 }
+	
+	 spec {
+	   %s
+	 }
+	}
+	`, testConfig.GitRepositoryResource, testConfig.GitRepositoryResourceVar, testConfig.GitRepositoryName, testConfig.ScopeHelperResources.ClusterGroup.Name, gitRepoSpec)
+
+		switch scope {
+		case commonscope.ClusterScope:
+			return clStr
+		case commonscope.ClusterGroupScope:
+			return cgStr
+		default:
+			return ""
+		}
+	}
+
+	return fmt.Sprintf(`
+	%s
+
+	resource "%s" "%s" {
+	 name = "%s"
+
+	 namespace_name = "tanzu-continuousdelivery-resources"
+
+	 %s
+
 	 spec {
 	   %s
 	 }
@@ -153,7 +228,8 @@ func (testConfig *testAcceptanceConfig) getTestGitRepositoryResourceBasicConfigV
 
 type (
 	OperationConfig struct {
-		interval string
+		interval          string
+		gitImplementation string
 	}
 
 	OperationOption func(*OperationConfig)
@@ -165,37 +241,31 @@ func WithInterval(val string) OperationOption {
 	}
 }
 
-// getTestGitRepositoryResourceSpec builds the input block for git repository resource based a recipe.
-func (testConfig *testAcceptanceConfig) getTestGitRepositoryResourceSpec(allowedCredential string, opts ...OperationOption) string {
+func WithGitImplementation(val string) OperationOption {
+	return func(config *OperationConfig) {
+		config.gitImplementation = val
+	}
+}
+
+// getTestGitRepositoryResourceSpec builds the input block for git repository resource.
+func (testConfig *testAcceptanceConfig) getTestGitRepositoryResourceSpec(opts ...OperationOption) string {
 	cfg := &OperationConfig{
-		interval: "5m",
+		interval:          "5m",
+		gitImplementation: fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT),
 	}
 
 	for _, o := range opts {
 		o(cfg)
 	}
 
-	var gitRepoSpec string
-
-	switch allowedCredential {
-	case fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT):
-		gitRepoSpec = fmt.Sprintf(`
+	gitRepoSpec := fmt.Sprintf(`
 		url = "https://github.com/tmc-build-integrations/sample-update-configmap"
+		git_implementation = "%s"
 		interval = "%s"
 		ref {
 			branch = "master"
 		}
-	`, cfg.interval)
-	case fmt.Sprint(gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationLIBGIT2):
-		gitRepoSpec = fmt.Sprintf(`
-		url = "https://github.com/tmc-build-integrations/sample-update-configmap"
-		interval = "%s"
-		git_implementation = "LIB_GIT2"
-		ref {
-			branch = "master"
-		}
-	`, cfg.interval)
-	}
+	`, cfg.gitImplementation, cfg.interval)
 
 	return gitRepoSpec
 }
@@ -243,7 +313,7 @@ func (testConfig *testAcceptanceConfig) verifyGitRepositoryResourceCreation(scop
 			TLSConfig:        &proxy.TLSConfig{},
 		}
 
-		err := config.Setup()
+		err := getSetupConfig(&config)
 		if err != nil {
 			return errors.Wrap(err, "unable to set the context")
 		}
@@ -254,7 +324,7 @@ func (testConfig *testAcceptanceConfig) verifyGitRepositoryResourceCreation(scop
 				ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 				ManagementClusterName: commonscope.AttachedValue,
 				Name:                  testConfig.GitRepositoryName,
-				NamespaceName:         "tanzu-continuousdelivery-resources",
+				NamespaceName:         testConfig.Namespace,
 				ProvisionerName:       commonscope.AttachedValue,
 			}
 
@@ -270,7 +340,7 @@ func (testConfig *testAcceptanceConfig) verifyGitRepositoryResourceCreation(scop
 			fn := &gitrepositoryclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdGitrepositoryFullName{
 				ClusterGroupName: testConfig.ScopeHelperResources.ClusterGroup.Name,
 				Name:             testConfig.GitRepositoryName,
-				NamespaceName:    "tanzu-continuousdelivery-resources",
+				NamespaceName:    testConfig.Namespace,
 			}
 
 			resp, err := config.TMCConnection.ClusterGroupGitRepositoryResourceService.VmwareTanzuManageV1alpha1ClustergroupFluxcdGitrepositoryResourceServiceGet(fn)
