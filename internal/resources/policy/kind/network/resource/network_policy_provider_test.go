@@ -23,7 +23,7 @@ func initTestProvider(t *testing.T) *schema.Provider {
 			policykindnetwork.ResourceName: ResourceNetworkPolicy(),
 			workspace.ResourceName:         workspace.ResourceWorkspace(),
 		},
-		ConfigureContextFunc: authctx.ProviderConfigureContext,
+		ConfigureContextFunc: getConfigureContextFunc(),
 	}
 	if err := testAccProvider.InternalValidate(); err != nil {
 		require.NoError(t, err)

@@ -27,10 +27,8 @@ const (
 	ClusterResource      = "tanzu-mission-control_cluster"
 	ClusterResourceVar   = "test_attach_cluster"
 	ClusterDataSourceVar = "test_data_attach_cluster"
-)
 
-// EKS Constants.
-const (
+	// EKS Constants.
 	EksClusterResource    = "tanzu-mission-control_ekscluster"
 	EksClusterGroup       = "tanzu-mission-control_cluster_group"
 	EksClusterResourceVar = "test_create_eks_cluster"

@@ -146,7 +146,7 @@ resource "%s" "%s" {
 }
 
 // GetTestPolicyResourceHelperAndScope builds the helper resource and scope blocks for policy resource based on a scope type.
-func (shr *ScopeHelperResources) GetTestPolicyResourceHelperAndScope(scopeType scope.Scope, scopesAllowed []string) (string, string) {
+func (shr *ScopeHelperResources) GetTestPolicyResourceHelperAndScope(scopeType scope.Scope, scopesAllowed []string, mock bool) (string, string) {
 	var (
 		helperBlock string
 		scopeBlock  string
@@ -174,6 +174,18 @@ func (shr *ScopeHelperResources) GetTestPolicyResourceHelperAndScope(scopeType s
 	}
 	`, shr.ClusterGroup.ResourceName)
 	case scope.WorkspaceScope:
+		if mock {
+			helperBlock = ""
+			scopeBlock = `
+	scope {
+	  workspace {
+	    workspace = "workspace1"
+		}
+	}
+	`
+
+			break
+		}
 		helperBlock = shr.getTestResourceWorkspaceConfigValue()
 		scopeBlock = fmt.Sprintf(`
 	scope {
