@@ -14,6 +14,7 @@ import (
 	"golang.org/x/exp/slices"
 
 	secretclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/cluster"
+	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 )
 
 var ScopeSchema = &schema.Schema{
@@ -29,6 +30,8 @@ var ScopeSchema = &schema.Schema{
 		},
 	},
 }
+
+var ScopesAllowed = [...]string{commonscope.ClusterKey}
 
 type (
 	Scope int64
@@ -76,6 +79,8 @@ func FlattenScope(scopedFullname *ScopedFullname, scopesAllowed []string) (data 
 	case ClusterScope:
 		name = scopedFullname.FullnameCluster.Name
 		flattenScopeData[ClusterKey] = FlattenClusterFullname(scopedFullname.FullnameCluster)
+	case UnknownScope:
+		fmt.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(ScopesAllowed[:], `, `))
 	}
 
 	return []interface{}{flattenScopeData}, name

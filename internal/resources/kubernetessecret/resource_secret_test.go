@@ -1,3 +1,6 @@
+//go:build clustersecret
+// +build clustersecret
+
 /*
 Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
@@ -7,6 +10,7 @@ package kubernetessecret
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"testing"
 
@@ -23,21 +27,6 @@ import (
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
-const (
-	secretResourceVar   = "test_secret"
-	secretDataSourceVar = "test_data_secret"
-	clusterResource     = "tanzu-mission-control_cluster"
-	clusterResourceVar  = "tmc_cluster_test"
-)
-
-type testAcceptanceConfig struct {
-	Provider           *schema.Provider
-	SecretResource     string
-	SecretResourceVar  string
-	SecretResourceName string
-	SecretName         string
-}
-
 func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 	return &testAcceptanceConfig{
 		Provider:           initTestProvider(t),
@@ -45,13 +34,48 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 		SecretResourceVar:  secretResourceVar,
 		SecretResourceName: fmt.Sprintf("%s.%s", ResourceName, secretResourceVar),
 		SecretName:         acctest.RandomWithPrefix("tf-sc-test"),
+		NamespaceName:      "default",
+		ClusterName:        acctest.RandomWithPrefix("tf-cluster"),
 	}
 }
 
-func TestAcceptanceForSecretResource(t *testing.T) {
-	clusterName := acctest.RandomWithPrefix("tf-cluster")
+func getSetupConfig(config *authctx.TanzuContext) error {
+	if _, found := os.LookupEnv("ENABLE_SECRET_ENV_TEST"); !found {
+		return config.SetupWithDefaultTransportForTesting()
+	}
 
+	return config.Setup()
+}
+
+func TestAcceptanceForSecretResource(t *testing.T) {
 	testConfig := testGetDefaultAcceptanceConfig(t)
+
+	// If the flag to execute kubernetes secret tests is not found, run this as a mock test by setting up an http intercept for each endpoint.
+	if _, found := os.LookupEnv("ENABLE_SECRET_ENV_TEST"); !found {
+		os.Setenv("TF_ACC", "true")
+		os.Setenv("TMC_ENDPOINT", "dummy.tmc.mock.vmware.com")
+		os.Setenv("VMW_CLOUD_API_TOKEN", "dummy")
+		os.Setenv("VMW_CLOUD_ENDPOINT", "console.cloud.vmware.com")
+
+		log.Println("Setting up the mock endpoints...")
+
+		testConfig.setupHTTPMocks(t)
+	} else {
+		// Environment variables with non default values required for a successful call to MKP
+		requiredVars := []string{
+			"VMW_CLOUD_ENDPOINT",
+			"TMC_ENDPOINT",
+			"VMW_CLOUD_API_TOKEN",
+			"ORG_ID",
+		}
+
+		// Check if the required environment variables are set
+		for _, name := range requiredVars {
+			if _, found := os.LookupEnv(name); !found {
+				t.Errorf("required environment variable '%s' missing", name)
+			}
+		}
+	}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
@@ -59,9 +83,9 @@ func TestAcceptanceForSecretResource(t *testing.T) {
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
-				Config: testConfig.getTestResourceClusterGroupConfigValue(t, clusterName),
+				Config: testConfig.getTestResourceClusterGroupConfigValue(t),
 				Check: resource.ComposeTestCheckFunc(
-					testConfig.checkResourceAttributes(testConfig.Provider, testConfig.SecretResource, clusterName, testConfig.SecretName),
+					testConfig.checkResourceAttributes(testConfig.Provider, testConfig.SecretResource, testConfig.SecretName),
 				),
 			},
 		},
@@ -70,7 +94,32 @@ func TestAcceptanceForSecretResource(t *testing.T) {
 	t.Log("secret resource acceptance test complete!")
 }
 
-func (testConfig *testAcceptanceConfig) getTestResourceClusterGroupConfigValue(t *testing.T, clusterName string) string {
+func (testConfig *testAcceptanceConfig) getTestResourceClusterGroupConfigValue(t *testing.T, opts ...OperationOption) string {
+	secretSpec := testConfig.getTestSecretResourceSpec(opts...)
+
+	if _, found := os.LookupEnv("ENABLE_SECRET_ENV_TEST"); !found {
+		return fmt.Sprintf(`
+
+resource "%s" "%s" {
+  name = "%s"
+
+  namespace_name = "default"
+
+  scope {
+	cluster {
+		management_cluster_name = "attached"
+		provisioner_name = "attached"
+		cluster_name = "%s"
+	}
+  }
+
+  %s
+
+}
+
+`, testConfig.SecretResource, testConfig.SecretResourceVar, testConfig.SecretName, testConfig.ClusterName, secretSpec)
+	}
+
 	kubeconfigPath := os.Getenv("KUBECONFIG")
 	if kubeconfigPath == "" {
 		t.Skipf("KUBECONFIG env var is not set: %s", kubeconfigPath)
@@ -87,7 +136,7 @@ resource "%s" "%s" {
   attach_k8s_cluster {
     kubeconfig_file = "%s"
   }
- 
+
   spec {
     cluster_group = "default"
   }
@@ -108,23 +157,17 @@ resource "%s" "%s" {
 	}
   }
 
-  spec {
-	docker_config_json {
-		username = "someusername"
-		password = "somepassword"
-		image_registry_url = "someregistryurl"
-	}
-  }
+  %s
 
 }
 
-`, clusterResource, clusterResourceVar, scope.AttachedValue, scope.AttachedValue, clusterName, testhelper.MetaTemplate, kubeconfigPath,
-		testConfig.SecretResource, testConfig.SecretResourceVar, testConfig.SecretName)
+`, clusterResource, clusterResourceVar, scope.AttachedValue, scope.AttachedValue, testConfig.ClusterName, testhelper.MetaTemplate, kubeconfigPath,
+		testConfig.SecretResource, testConfig.SecretResourceVar, testConfig.SecretName, secretSpec)
 }
 
-func (testConfig *testAcceptanceConfig) checkResourceAttributes(provider *schema.Provider, resourceName, clusterName, secretName string) resource.TestCheckFunc {
+func (testConfig *testAcceptanceConfig) checkResourceAttributes(provider *schema.Provider, resourceName, secretName string) resource.TestCheckFunc {
 	var check = []resource.TestCheckFunc{
-		testConfig.verifySecretResourceCreation(provider, resourceName, clusterName, secretName),
+		testConfig.verifySecretResourceCreation(provider, resourceName, testConfig.ClusterName, secretName),
 		resource.TestCheckResourceAttr(testConfig.SecretResourceName, "name", testConfig.SecretName),
 	}
 
@@ -161,7 +204,7 @@ func (testConfig *testAcceptanceConfig) verifySecretResourceCreation(
 			TLSConfig:        &proxy.TLSConfig{},
 		}
 
-		err := config.Setup()
+		err := getSetupConfig(&config)
 		if err != nil {
 			return errors.Wrap(err, "unable to set the context")
 		}
@@ -171,7 +214,7 @@ func (testConfig *testAcceptanceConfig) verifySecretResourceCreation(
 			ClusterName:           clusterName,
 			ManagementClusterName: "attached",
 			ProvisionerName:       "attached",
-			NamespaceName:         "default",
+			NamespaceName:         testConfig.NamespaceName,
 		}
 
 		resp, err := config.TMCConnection.SecretResourceService.SecretResourceServiceGet(fn)
@@ -185,4 +228,55 @@ func (testConfig *testAcceptanceConfig) verifySecretResourceCreation(
 
 		return nil
 	}
+}
+
+type (
+	OperationConfig struct {
+		username         string
+		password         string
+		imageRegistryURL string
+	}
+
+	OperationOption func(*OperationConfig)
+)
+
+func WithUsername(val string) OperationOption {
+	return func(config *OperationConfig) {
+		config.username = val
+	}
+}
+
+func WithPassword(val string) OperationOption {
+	return func(config *OperationConfig) {
+		config.password = val
+	}
+}
+
+func WithURL(val string) OperationOption {
+	return func(config *OperationConfig) {
+		config.imageRegistryURL = val
+	}
+}
+
+// getTestSecretResourceSpec builds the input block for git repository resource based a recipe.
+func (testConfig *testAcceptanceConfig) getTestSecretResourceSpec(opts ...OperationOption) string {
+	cfg := &OperationConfig{
+		username:         "someusername",
+		password:         "somepassword",
+		imageRegistryURL: "someregistryurl",
+	}
+
+	for _, o := range opts {
+		o(cfg)
+	}
+
+	secretSpec := fmt.Sprintf(`  spec {
+	docker_config_json {
+		username = "%s"
+		password = "%s"
+		image_registry_url = "%s"
+	}
+  }`, cfg.username, cfg.password, cfg.imageRegistryURL)
+
+	return secretSpec
 }

@@ -1,3 +1,6 @@
+//go:build clustersecret
+// +build clustersecret
+
 /*
 Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
@@ -52,7 +55,6 @@ resource "%s" "%s" {
 	management_cluster_name = "attached"
 	provisioner_name        = "attached"
 	name                    = "%s"
-
 
   attach_k8s_cluster {
     kubeconfig_file = "%s"

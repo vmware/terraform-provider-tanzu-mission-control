@@ -27,7 +27,7 @@ func initTestProvider(t *testing.T) *schema.Provider {
 			ResourceName:         DataSourceSecret(),
 			cluster.ResourceName: cluster.DataSourceTMCCluster(),
 		},
-		ConfigureContextFunc: authctx.ProviderConfigureContext,
+		ConfigureContextFunc: getConfigureContextFunc(),
 	}
 	if err := testProvider.InternalValidate(); err != nil {
 		require.NoError(t, err)

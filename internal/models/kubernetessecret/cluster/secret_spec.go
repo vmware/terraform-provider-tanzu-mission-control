@@ -57,13 +57,9 @@ func NewVmwareTanzuManageV1alpha1ClusterNamespaceSecretType(value VmwareTanzuMan
 	return &value
 }
 
-//nolint:all
 const (
 
-	// VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEUNSPECIFIED captures enum value "SECRET_TYPE_UNSPECIFIED"
-	VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEUNSPECIFIED VmwareTanzuManageV1alpha1ClusterNamespaceSecretType = "SECRET_TYPE_UNSPECIFIED"
-
-	// VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEDOCKERCONFIGJSON captures enum value "SECRET_TYPE_DOCKERCONFIGJSON"
+	// VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEDOCKERCONFIGJSON captures enum value "SECRET_TYPE_DOCKERCONFIGJSON".
 	VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEDOCKERCONFIGJSON VmwareTanzuManageV1alpha1ClusterNamespaceSecretType = "SECRET_TYPE_DOCKERCONFIGJSON"
 )
 

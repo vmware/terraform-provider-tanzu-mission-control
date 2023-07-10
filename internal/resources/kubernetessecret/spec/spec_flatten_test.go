@@ -3,7 +3,7 @@ Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package kubernetessecret
+package spec
 
 import (
 	"testing"
@@ -52,7 +52,7 @@ func TestFlattenSpec(t *testing.T) {
 	for _, each := range cases {
 		test := each
 		t.Run(test.description, func(t *testing.T) {
-			actual := flattenSpec(test.input, "somepassword")
+			actual := FlattenSpec(test.input, "somepassword")
 			require.Equal(t, test.expected, actual)
 		})
 	}

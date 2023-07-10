@@ -84,6 +84,7 @@ run:
     - packagerepository
     - tanzupackages
     - tanzupackage
+    - clustersecret
 
 linters-settings:
   funlen:

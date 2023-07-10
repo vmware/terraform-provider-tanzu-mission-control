@@ -18,6 +18,7 @@ import (
 	secretclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/cluster"
 	secretexportclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/cluster/secretexport"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret/spec"
 )
 
 func DataSourceSecret() *schema.Resource {
@@ -58,8 +59,8 @@ func dataSourceSecretRead(ctx context.Context, d *schema.ResourceData, m interfa
 
 	var password string
 
-	if _, ok := d.GetOk(specKey); ok {
-		password, _ = (d.Get(helper.GetFirstElementOf(specKey, DockerConfigjsonKey, PasswordKey))).(string)
+	if _, ok := d.GetOk(spec.SpecKey); ok {
+		password, _ = (d.Get(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.PasswordKey))).(string)
 	}
 
 	status := map[string]interface{}{
@@ -100,7 +101,7 @@ func dataSourceSecretRead(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.FromErr(err)
 	}
 
-	if err := d.Set(specKey, flattenSpec(secretResp.Secret.Spec, password)); err != nil {
+	if err := d.Set(spec.SpecKey, spec.FlattenSpec(secretResp.Secret.Spec, password)); err != nil {
 		return diag.FromErr(err)
 	}
 
