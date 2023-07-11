@@ -66,11 +66,8 @@ func TestFlattenInput(t *testing.T) {
 					reciperesource.AllowAllToPodsKey: []interface{}{
 						map[string]interface{}{
 							reciperesource.FromOwnNamespaceKey: true,
-							reciperesource.ToPodLabelsKey: []interface{}{
-								map[string]interface{}{
-									reciperesource.LabelKey:      "foo",
-									reciperesource.LabelValueKey: "bar",
-								},
+							reciperesource.ToPodLabelsKey: map[string]interface{}{
+								"foo": "bar",
 							},
 						},
 					},
@@ -120,11 +117,8 @@ func TestFlattenInput(t *testing.T) {
 				map[string]interface{}{
 					reciperesource.DenyAllToPodsKey: []interface{}{
 						map[string]interface{}{
-							reciperesource.ToPodLabelsKey: []interface{}{
-								map[string]interface{}{
-									reciperesource.LabelKey:      "foo",
-									reciperesource.LabelValueKey: "bar",
-								},
+							reciperesource.ToPodLabelsKey: map[string]interface{}{
+								"foo": "bar",
 							},
 						},
 					},
