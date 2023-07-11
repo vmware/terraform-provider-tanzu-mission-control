@@ -200,7 +200,7 @@ func TestAcceptanceForQuotaPolicyResource(t *testing.T) {
 }
 
 func (testConfig *testAcceptanceConfig) getTestQuotaPolicyResourceBasicConfigValue(scope scope.Scope, recipe policykindquota.Recipe) string {
-	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope, policyoperations.ScopeMap[testConfig.QuotaPolicyResource])
+	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope, policyoperations.ScopeMap[testConfig.QuotaPolicyResource], false)
 	inputBlock := testConfig.getTestQuotaPolicyResourceInput(recipe)
 
 	return fmt.Sprintf(`

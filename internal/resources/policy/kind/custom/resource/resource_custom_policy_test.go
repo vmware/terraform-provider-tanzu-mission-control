@@ -268,7 +268,7 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 }
 
 func (testConfig *testAcceptanceConfig) getTestCustomPolicyResourceBasicConfigValue(scope scope.Scope, recipe policykindCustom.Recipe) string {
-	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope, policyoperations.ScopeMap[testConfig.CustomPolicyResource])
+	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope, policyoperations.ScopeMap[testConfig.CustomPolicyResource], false)
 	inputBlock := testConfig.getTestCustomPolicyResourceInput(recipe)
 
 	return fmt.Sprintf(`

@@ -164,7 +164,7 @@ func TestAcceptanceForImagePolicyResource(t *testing.T) {
 }
 
 func (testConfig *testAcceptanceConfig) getTestImagePolicyResourceBasicConfigValue(scope scope.Scope, recipe policykindImage.Recipe) string {
-	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope, policyoperations.ScopeMap[testConfig.ImagePolicyResource])
+	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope, policyoperations.ScopeMap[testConfig.ImagePolicyResource], false)
 	inputBlock := testConfig.getTestImagePolicyResourceInput(recipe)
 
 	return fmt.Sprintf(`

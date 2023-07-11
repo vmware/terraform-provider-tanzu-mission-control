@@ -166,7 +166,7 @@ func TestAcceptanceForSecurityPolicyResource(t *testing.T) {
 }
 
 func (testConfig *testAcceptanceConfig) getTestSecurityPolicyResourceBasicConfigValue(scope scope.Scope, recipe policykindsecurity.Recipe) string {
-	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope, policyoperations.ScopeMap[testConfig.SecurityPolicyResource])
+	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestPolicyResourceHelperAndScope(scope, policyoperations.ScopeMap[testConfig.SecurityPolicyResource], false)
 	inputBlock := testConfig.getTestSecurityPolicyResourceInput(recipe)
 
 	return fmt.Sprintf(`
