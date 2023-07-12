@@ -186,6 +186,7 @@ func (shr *ScopeHelperResources) GetTestPolicyResourceHelperAndScope(scopeType s
 
 			break
 		}
+
 		helperBlock = shr.getTestResourceWorkspaceConfigValue()
 		scopeBlock = fmt.Sprintf(`
 	scope {

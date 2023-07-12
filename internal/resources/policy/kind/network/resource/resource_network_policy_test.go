@@ -75,6 +75,7 @@ func getSetupConfig(config *authctx.TanzuContext) error {
 	return config.Setup()
 }
 
+// nolint: dupl
 func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 	testConfig := testGetDefaultAcceptanceConfig(t)
 
