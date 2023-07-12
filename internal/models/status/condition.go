@@ -14,6 +14,7 @@ import (
 
 // VmwareTanzuCoreV1alpha1StatusCondition Condition describes the status of resource.
 // Each resource should provide meaningful set of conditions.
+<<<<<<< HEAD
 // For Tanzu, each resource must support 'Ready' and 'Scheduled' conditions
 // Here is meaning of base conditions and their states:
 // Condition 'Ready' with Status 'True' means user action has reached the desired state
@@ -23,6 +24,17 @@ import (
 // Condition 'Scheduled' with Status 'Unknown' means system does not know the status of the action
 //
 // swagger:model vmware.tanzu.core.v1alpha1.status.Condition
+=======
+// For Tanzu, each resource must support 'Ready' and 'Scheduled' conditions.
+// Here is meaning of base conditions and their states:
+// Condition 'Ready' with Status 'True' means user action has reached the desired state.
+// Condition 'Ready' with Status 'False' means user action failed to reach desired state.
+// Condition 'Scheduled' with Status 'False' means user action can not be scheduled due to some reason.
+// Condition 'Scheduled' with Status 'True', Ready unknown means job is scheduled and system is working/will work on reaching to desires state.
+// Condition 'Scheduled' with Status 'Unknown' means system does not know the status of the action.
+//
+// swagger:model vmware.tanzu.core.v1alpha1.status.Condition.
+>>>>>>> 2dc0bf6 (Add models and clients for Package repository resource and define schema)
 type VmwareTanzuCoreV1alpha1StatusCondition struct {
 
 	// Last time the condition transit from one status to another.
@@ -75,7 +87,11 @@ func (m *VmwareTanzuCoreV1alpha1StatusCondition) UnmarshalBinary(b []byte) error
 //   - WARNING: Failure of a condition type should be viewed as a warning, but that things could still work.
 //   - INFO: Failure of a condition type should be viewed as purely informational, and that things could still work.
 //
+<<<<<<< HEAD
 // swagger:model vmware.tanzu.core.v1alpha1.status.Condition.Severity
+=======
+// swagger:model vmware.tanzu.core.v1alpha1.status.Condition.Severity.
+>>>>>>> 2dc0bf6 (Add models and clients for Package repository resource and define schema)
 type VmwareTanzuCoreV1alpha1StatusConditionSeverity string
 
 func NewVmwareTanzuCoreV1alpha1StatusConditionSeverity(value VmwareTanzuCoreV1alpha1StatusConditionSeverity) *VmwareTanzuCoreV1alpha1StatusConditionSeverity {
@@ -122,7 +138,11 @@ func init() {
 //   - TRUE: Reconciliation has succeeded. Once all transition conditions have succeeded, the "happy state" condition should be set to True..
 //   - FALSE: Reconciliation has failed. This should be a terminal failure state until user action occurs.
 //
+<<<<<<< HEAD
 // swagger:model vmware.tanzu.core.v1alpha1.status.Condition.Status
+=======
+// swagger:model vmware.tanzu.core.v1alpha1.status.Condition.Status.
+>>>>>>> 2dc0bf6 (Add models and clients for Package repository resource and define schema)
 type VmwareTanzuCoreV1alpha1StatusConditionStatus string
 
 func NewVmwareTanzuCoreV1alpha1StatusConditionStatus(value VmwareTanzuCoreV1alpha1StatusConditionStatus) *VmwareTanzuCoreV1alpha1StatusConditionStatus {
