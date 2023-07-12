@@ -12,4 +12,6 @@ const (
 	NamespaceKey   = "namespace_name"
 	disabledKey    = "disabled"
 	DataSourceRead = "dataSourceRead"
+
+	globalRepoNamespace = "tanzu-package-repo-global"
 )
