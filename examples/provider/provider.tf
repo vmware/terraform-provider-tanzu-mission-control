@@ -10,11 +10,11 @@ provider "tanzu-mission-control" {
 
 # Provider configuration for TMC Self-Managed
 provider "tanzu-mission-control" {
-  endpoint = "example.local-dev.tmc.com"
+  endpoint = var.endpoint               # optionally use TMC_ENDPOINT env var
 
   self_managed {
-    oidc_issuer = "pinniped-supervisor.example.local-dev.tmc.com"
-    username = "testuser01@tmcselfmanaged.com"
-    password = "dummy_password"
+    oidc_issuer   = var.oidc_issuer        # optionally use OIDC_ISSUER env var,  Ex: export OIDC_ISSUER=pinniped-supervisor.example.local-dev.tmc.com
+    username      = var.username           # optionally use TMC_SM_USERNAME env var
+    password      = var.password           # optionally use TMC_SM_PASSWORD env var
   }
 }
