@@ -7,10 +7,9 @@ package akscluster
 
 import (
 	"context"
+	"encoding/json"
 	"sort"
 	"time"
-
-	"encoding/json"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	. "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
@@ -73,6 +72,7 @@ func getErrorReason(conditions map[string]VmwareTanzuCoreV1alpha1StatusCondition
 	if err != nil {
 		return "unknown error"
 	}
+
 	return string(msg)
 }
 

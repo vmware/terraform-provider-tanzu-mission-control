@@ -27,26 +27,26 @@ func (m VmwareTanzuManageV1alpha1AksclusterChannel) Pointer() *VmwareTanzuManage
 
 const (
 
-	// VmwareTanzuManageV1alpha1AksclusterChannelCHANNELUNSPECIFIED captures enum value "CHANNEL_UNSPECIFIED"
+	// VmwareTanzuManageV1alpha1AksclusterChannelCHANNELUNSPECIFIED captures enum value "CHANNEL_UNSPECIFIED".
 	VmwareTanzuManageV1alpha1AksclusterChannelCHANNELUNSPECIFIED VmwareTanzuManageV1alpha1AksclusterChannel = "CHANNEL_UNSPECIFIED"
 
-	// VmwareTanzuManageV1alpha1AksclusterChannelNONE captures enum value "NONE"
+	// VmwareTanzuManageV1alpha1AksclusterChannelNONE captures enum value "NONE".
 	VmwareTanzuManageV1alpha1AksclusterChannelNONE VmwareTanzuManageV1alpha1AksclusterChannel = "NONE"
 
-	// VmwareTanzuManageV1alpha1AksclusterChannelPATCH captures enum value "PATCH"
+	// VmwareTanzuManageV1alpha1AksclusterChannelPATCH captures enum value "PATCH".
 	VmwareTanzuManageV1alpha1AksclusterChannelPATCH VmwareTanzuManageV1alpha1AksclusterChannel = "PATCH"
 
-	// VmwareTanzuManageV1alpha1AksclusterChannelSTABLE captures enum value "STABLE"
+	// VmwareTanzuManageV1alpha1AksclusterChannelSTABLE captures enum value "STABLE".
 	VmwareTanzuManageV1alpha1AksclusterChannelSTABLE VmwareTanzuManageV1alpha1AksclusterChannel = "STABLE"
 
-	// VmwareTanzuManageV1alpha1AksclusterChannelRAPID captures enum value "RAPID"
+	// VmwareTanzuManageV1alpha1AksclusterChannelRAPID captures enum value "RAPID".
 	VmwareTanzuManageV1alpha1AksclusterChannelRAPID VmwareTanzuManageV1alpha1AksclusterChannel = "RAPID"
 
-	// VmwareTanzuManageV1alpha1AksclusterChannelNODEIMAGE captures enum value "NODE_IMAGE"
+	// VmwareTanzuManageV1alpha1AksclusterChannelNODEIMAGE captures enum value "NODE_IMAGE".
 	VmwareTanzuManageV1alpha1AksclusterChannelNODEIMAGE VmwareTanzuManageV1alpha1AksclusterChannel = "NODE_IMAGE"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1AksclusterChannelEnum []interface{}
 
 func init() {

@@ -25,20 +25,20 @@ func (m VmwareTanzuCoreV1alpha1StatusConditionSeverity) Pointer() *VmwareTanzuCo
 
 const (
 
-	// VmwareTanzuCoreV1alpha1StatusConditionSeveritySEVERITYUNSPECIFIED captures enum value "SEVERITY_UNSPECIFIED"
+	// VmwareTanzuCoreV1alpha1StatusConditionSeveritySEVERITYUNSPECIFIED captures enum value "SEVERITY_UNSPECIFIED".
 	VmwareTanzuCoreV1alpha1StatusConditionSeveritySEVERITYUNSPECIFIED VmwareTanzuCoreV1alpha1StatusConditionSeverity = "SEVERITY_UNSPECIFIED"
 
-	// VmwareTanzuCoreV1alpha1StatusConditionSeverityERROR captures enum value "ERROR"
+	// VmwareTanzuCoreV1alpha1StatusConditionSeverityERROR captures enum value "ERROR".
 	VmwareTanzuCoreV1alpha1StatusConditionSeverityERROR VmwareTanzuCoreV1alpha1StatusConditionSeverity = "ERROR"
 
-	// VmwareTanzuCoreV1alpha1StatusConditionSeverityWARNING captures enum value "WARNING"
+	// VmwareTanzuCoreV1alpha1StatusConditionSeverityWARNING captures enum value "WARNING".
 	VmwareTanzuCoreV1alpha1StatusConditionSeverityWARNING VmwareTanzuCoreV1alpha1StatusConditionSeverity = "WARNING"
 
-	// VmwareTanzuCoreV1alpha1StatusConditionSeverityINFO captures enum value "INFO"
+	// VmwareTanzuCoreV1alpha1StatusConditionSeverityINFO captures enum value "INFO".
 	VmwareTanzuCoreV1alpha1StatusConditionSeverityINFO VmwareTanzuCoreV1alpha1StatusConditionSeverity = "INFO"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuCoreV1alpha1StatusConditionSeverityEnum []interface{}
 
 func init() {

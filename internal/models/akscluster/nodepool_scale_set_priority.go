@@ -24,17 +24,17 @@ func (m VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriority) Pointer() *
 
 const (
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPrioritySCALESETPRIORITYUNSPECIFIED captures enum value "SCALE_SET_PRIORITY_UNSPECIFIED"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPrioritySCALESETPRIORITYUNSPECIFIED captures enum value "SCALE_SET_PRIORITY_UNSPECIFIED".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPrioritySCALESETPRIORITYUNSPECIFIED VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriority = "SCALE_SET_PRIORITY_UNSPECIFIED"
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriorityREGULAR captures enum value "REGULAR"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriorityREGULAR captures enum value "REGULAR".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriorityREGULAR VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriority = "REGULAR"
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPrioritySPOT captures enum value "SPOT"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPrioritySPOT captures enum value "SPOT".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPrioritySPOT VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriority = "SPOT"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriorityEnum []interface{}
 
 func init() {

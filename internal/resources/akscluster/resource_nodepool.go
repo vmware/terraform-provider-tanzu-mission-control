@@ -134,7 +134,7 @@ func createNodepool(_ context.Context, np *aksmodel.VmwareTanzuManageV1alpha1Aks
 }
 
 // addNodepool adds a nodepool to an existing cluster and waits for the nodepool to be ready as part of an inplace
-// update flow
+// update flow.
 func addNodepool(ctx context.Context, np *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool, client *client.TanzuMissionControl, timeout time.Duration) error {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
@@ -148,7 +148,7 @@ func addNodepool(ctx context.Context, np *aksmodel.VmwareTanzuManageV1alpha1Aksc
 }
 
 // updateNodepool updates the configuration of an existing nodepool and waits for the nodepool to be ready as part of an
-// inplace update flow
+// inplace update flow.
 func updateNodepool(ctx context.Context, np *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool, client *client.TanzuMissionControl, timeout time.Duration) error {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
@@ -237,6 +237,7 @@ func identical(new *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool
 func changedNodeCount(data *schema.ResourceData) int {
 	o, n := data.GetChange("spec.0.nodepool.#")
 	npCount := max(o.(int), n.(int))
+
 	return npCount
 }
 
@@ -244,5 +245,6 @@ func max(x int, y int) int {
 	if x > y {
 		return x
 	}
+
 	return y
 }

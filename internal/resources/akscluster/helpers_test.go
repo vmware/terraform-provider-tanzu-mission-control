@@ -429,6 +429,7 @@ type mockClusterClient struct {
 
 func (m *mockClusterClient) AksClusterResourceServiceCreate(_ *VmwareTanzuManageV1alpha1AksclusterCreateAksClusterRequest) (*VmwareTanzuManageV1alpha1AksclusterCreateAksClusterResponse, error) {
 	m.AksCreateClusterWasCalled = true
+
 	return &VmwareTanzuManageV1alpha1AksclusterCreateAksClusterResponse{
 		AksCluster: m.createClusterResp,
 	}, m.createErr
@@ -437,6 +438,7 @@ func (m *mockClusterClient) AksClusterResourceServiceCreate(_ *VmwareTanzuManage
 func (m *mockClusterClient) AksClusterResourceServiceGet(fn *VmwareTanzuManageV1alpha1AksclusterFullName) (*VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse, error) {
 	m.AksClusterResourceServiceGetCalledWith = fn
 	m.AksClusterResourceServiceGetCallCount += 1
+
 	return &VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{
 		AksCluster: m.getClusterResp,
 	}, m.getErr
@@ -444,11 +446,13 @@ func (m *mockClusterClient) AksClusterResourceServiceGet(fn *VmwareTanzuManageV1
 
 func (m *mockClusterClient) AksClusterResourceServiceUpdate(ucr *VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterRequest) (*VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterResponse, error) {
 	m.AksUpdateClusterWasCalledWith = ucr.AksCluster
+
 	return nil, m.updateErr
 }
 
 func (m *mockClusterClient) AksClusterResourceServiceDelete(fn *VmwareTanzuManageV1alpha1AksclusterFullName, _ string) error {
 	m.AksClusterResourceServiceDeleteCalledWith = fn
+
 	return m.deleteErr
 }
 
@@ -471,11 +475,13 @@ type mockNodepoolClient struct {
 
 func (m *mockNodepoolClient) AksNodePoolResourceServiceCreate(req *VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolRequest) (*VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse, error) {
 	m.CreateNodepoolWasCalledWith = req.Nodepool
+
 	return nil, m.createErr
 }
 
 func (m *mockNodepoolClient) AksNodePoolResourceServiceList(fn *VmwareTanzuManageV1alpha1AksclusterFullName) (*VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse, error) {
 	m.AksNodePoolResourceServiceListCalledWith = fn
+
 	return &VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{
 		Nodepools:  m.nodepoolListResp,
 		TotalCount: "1",
@@ -484,15 +490,18 @@ func (m *mockNodepoolClient) AksNodePoolResourceServiceList(fn *VmwareTanzuManag
 
 func (m *mockNodepoolClient) AksNodePoolResourceServiceGet(fn *VmwareTanzuManageV1alpha1AksclusterNodepoolFullName) (*VmwareTanzuManageV1alpha1AksclusterNodepoolGetNodepoolResponse, error) {
 	m.GetNodepoolCalledWith = fn
+
 	return &VmwareTanzuManageV1alpha1AksclusterNodepoolGetNodepoolResponse{Nodepool: m.nodepoolGetResp}, m.getErr
 }
 
 func (m *mockNodepoolClient) AksNodePoolResourceServiceUpdate(req *VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolRequest) (*VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse, error) {
 	m.UpdatedNodepoolWasCalledWith = req.Nodepool
+
 	return nil, m.updateErr
 }
 
 func (m *mockNodepoolClient) AksNodePoolResourceServiceDelete(req *VmwareTanzuManageV1alpha1AksclusterNodepoolFullName) error {
 	m.DeleteNodepoolWasCalledWith = req
+
 	return m.DeleteErr
 }

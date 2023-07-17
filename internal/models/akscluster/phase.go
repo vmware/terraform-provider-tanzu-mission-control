@@ -37,50 +37,50 @@ func (m VmwareTanzuManageV1alpha1AksclusterPhase) Pointer() *VmwareTanzuManageV1
 
 const (
 
-	// VmwareTanzuManageV1alpha1AksclusterPhasePHASEUNSPECIFIED captures enum value "PHASE_UNSPECIFIED"
+	// VmwareTanzuManageV1alpha1AksclusterPhasePHASEUNSPECIFIED captures enum value "PHASE_UNSPECIFIED".
 	VmwareTanzuManageV1alpha1AksclusterPhasePHASEUNSPECIFIED VmwareTanzuManageV1alpha1AksclusterPhase = "PHASE_UNSPECIFIED"
 
-	// VmwareTanzuManageV1alpha1AksclusterPhasePENDING captures enum value "PENDING"
+	// VmwareTanzuManageV1alpha1AksclusterPhasePENDING captures enum value "PENDING".
 	VmwareTanzuManageV1alpha1AksclusterPhasePENDING VmwareTanzuManageV1alpha1AksclusterPhase = "PENDING"
 
-	// VmwareTanzuManageV1alpha1AksclusterPhaseCREATING captures enum value "CREATING"
+	// VmwareTanzuManageV1alpha1AksclusterPhaseCREATING captures enum value "CREATING".
 	VmwareTanzuManageV1alpha1AksclusterPhaseCREATING VmwareTanzuManageV1alpha1AksclusterPhase = "CREATING"
 
-	// VmwareTanzuManageV1alpha1AksclusterPhaseREADY captures enum value "READY"
+	// VmwareTanzuManageV1alpha1AksclusterPhaseREADY captures enum value "READY".
 	VmwareTanzuManageV1alpha1AksclusterPhaseREADY VmwareTanzuManageV1alpha1AksclusterPhase = "READY"
 
-	// VmwareTanzuManageV1alpha1AksclusterPhaseDELETING captures enum value "DELETING"
+	// VmwareTanzuManageV1alpha1AksclusterPhaseDELETING captures enum value "DELETING".
 	VmwareTanzuManageV1alpha1AksclusterPhaseDELETING VmwareTanzuManageV1alpha1AksclusterPhase = "DELETING"
 
-	// VmwareTanzuManageV1alpha1AksclusterPhaseERROR captures enum value "ERROR"
+	// VmwareTanzuManageV1alpha1AksclusterPhaseERROR captures enum value "ERROR".
 	VmwareTanzuManageV1alpha1AksclusterPhaseERROR VmwareTanzuManageV1alpha1AksclusterPhase = "ERROR"
 
-	// VmwareTanzuManageV1alpha1AksclusterPhaseUPDATING captures enum value "UPDATING"
+	// VmwareTanzuManageV1alpha1AksclusterPhaseUPDATING captures enum value "UPDATING".
 	VmwareTanzuManageV1alpha1AksclusterPhaseUPDATING VmwareTanzuManageV1alpha1AksclusterPhase = "UPDATING"
 
-	// VmwareTanzuManageV1alpha1AksclusterPhaseOVERLIMIT captures enum value "OVER_LIMIT"
+	// VmwareTanzuManageV1alpha1AksclusterPhaseOVERLIMIT captures enum value "OVER_LIMIT".
 	VmwareTanzuManageV1alpha1AksclusterPhaseOVERLIMIT VmwareTanzuManageV1alpha1AksclusterPhase = "OVER_LIMIT"
 
-	// VmwareTanzuManageV1alpha1AksclusterPhaseUPGRADING captures enum value "UPGRADING"
+	// VmwareTanzuManageV1alpha1AksclusterPhaseUPGRADING captures enum value "UPGRADING".
 	VmwareTanzuManageV1alpha1AksclusterPhaseUPGRADING VmwareTanzuManageV1alpha1AksclusterPhase = "UPGRADING"
 
-	// VmwareTanzuManageV1alpha1AksclusterPhaseSTARTING captures enum value "STARTING"
+	// VmwareTanzuManageV1alpha1AksclusterPhaseSTARTING captures enum value "STARTING".
 	VmwareTanzuManageV1alpha1AksclusterPhaseSTARTING VmwareTanzuManageV1alpha1AksclusterPhase = "STARTING"
 
-	// VmwareTanzuManageV1alpha1AksclusterPhaseSTOPPING captures enum value "STOPPING"
+	// VmwareTanzuManageV1alpha1AksclusterPhaseSTOPPING captures enum value "STOPPING".
 	VmwareTanzuManageV1alpha1AksclusterPhaseSTOPPING VmwareTanzuManageV1alpha1AksclusterPhase = "STOPPING"
 
-	// VmwareTanzuManageV1alpha1AksclusterPhaseSTOPPED captures enum value "STOPPED"
+	// VmwareTanzuManageV1alpha1AksclusterPhaseSTOPPED captures enum value "STOPPED".
 	VmwareTanzuManageV1alpha1AksclusterPhaseSTOPPED VmwareTanzuManageV1alpha1AksclusterPhase = "STOPPED"
 
-	// VmwareTanzuManageV1alpha1AksclusterPhasePENDINGMANAGE captures enum value "PENDING_MANAGE"
+	// VmwareTanzuManageV1alpha1AksclusterPhasePENDINGMANAGE captures enum value "PENDING_MANAGE".
 	VmwareTanzuManageV1alpha1AksclusterPhasePENDINGMANAGE VmwareTanzuManageV1alpha1AksclusterPhase = "PENDING_MANAGE"
 
-	// VmwareTanzuManageV1alpha1AksclusterPhasePENDINGUNMANAGE captures enum value "PENDING_UNMANAGE"
+	// VmwareTanzuManageV1alpha1AksclusterPhasePENDINGUNMANAGE captures enum value "PENDING_UNMANAGE".
 	VmwareTanzuManageV1alpha1AksclusterPhasePENDINGUNMANAGE VmwareTanzuManageV1alpha1AksclusterPhase = "PENDING_UNMANAGE"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1AksclusterPhaseEnum []interface{}
 
 func init() {

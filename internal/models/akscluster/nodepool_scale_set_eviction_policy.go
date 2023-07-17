@@ -24,17 +24,17 @@ func (m VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicy) Point
 
 const (
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicySCALESETEVICTIONPOLICYUNSPECIFIED captures enum value "SCALE_SET_EVICTION_POLICY_UNSPECIFIED"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicySCALESETEVICTIONPOLICYUNSPECIFIED captures enum value "SCALE_SET_EVICTION_POLICY_UNSPECIFIED".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicySCALESETEVICTIONPOLICYUNSPECIFIED VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicy = "SCALE_SET_EVICTION_POLICY_UNSPECIFIED"
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicyDELETE captures enum value "DELETE"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicyDELETE captures enum value "DELETE".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicyDELETE VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicy = "DELETE"
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicyDEALLOCATE captures enum value "DEALLOCATE"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicyDEALLOCATE captures enum value "DEALLOCATE".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicyDEALLOCATE VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicy = "DEALLOCATE"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicyEnum []interface{}
 
 func init() {

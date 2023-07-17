@@ -74,6 +74,7 @@ func TestAccAksCluster_basics(t *testing.T) {
 	rname := fmt.Sprintf("tanzu-mission-control_akscluster.%v", fn.Name)
 
 	var aksCluster aksmodel.VmwareTanzuManageV1alpha1AksclusterAksCluster
+
 	var aksnodepool aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool
 
 	resource.Test(t, resource.TestCase{
@@ -115,7 +116,7 @@ func TestAccAksCluster_basics(t *testing.T) {
 			{
 				Config: testAKSClusterRemoveUserNodepool(fn),
 				Check: resource.ComposeTestCheckFunc(
-					testAksNodepoolDoesNotExists(getNodepoolFullName(fn, "userpool"), nodepoolClient, &aksnodepool),
+					testAksNodepoolDoesNotExists(getNodepoolFullName(fn, "userpool"), nodepoolClient),
 					resource.TestCheckResourceAttr(rname, "spec.0.nodepool.#", "1"),
 				),
 			},
@@ -142,7 +143,7 @@ func getNodepoolFullName(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullNam
 	}
 }
 
-func testAksNodepoolDoesNotExists(npfn *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName, client aksnodepool.ClientService, a *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) resource.TestCheckFunc {
+func testAksNodepoolDoesNotExists(npfn *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName, client aksnodepool.ClientService) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		np, err := client.AksNodePoolResourceServiceGet(npfn)
 		if clienterrors.IsNotFoundError(err) {

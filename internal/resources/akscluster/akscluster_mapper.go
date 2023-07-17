@@ -583,6 +583,7 @@ func toAddonConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAddonsConfig) [
 	data[azureKeyvaultSecretsProviderAddonConfigKey] = toAzureKeyvaultSecretsProviderConfigMap(config.AzureKeyvaultSecretsProviderConfig)
 	data[monitorAddonConfigKey] = toMonitorAddonConfigMap(config.MonitoringConfig)
 	data[azurePolicyAddonConfigKey] = toAzurePolicyAddonConfigMap(config.AzurePolicyConfig)
+
 	return []any{data}
 }
 
@@ -595,6 +596,7 @@ func toAzureKeyvaultSecretsProviderConfigMap(config *VmwareTanzuManageV1alpha1Ak
 	data[enableKey] = config.Enabled
 	data[enableSecretsRotationKey] = config.EnableSecretRotation
 	data[rotationPollIntervalKey] = config.RotationPoolInterval
+
 	return []any{data}
 }
 
@@ -606,6 +608,7 @@ func toMonitorAddonConfigMap(config *VmwareTanzuManageV1alpha1AksclusterMonitori
 	data := make(map[string]any)
 	data[enableKey] = config.Enabled
 	data[logAnalyticsWorkspaceIDKey] = config.LogAnalyticsWorkspaceID
+
 	return []any{data}
 }
 
@@ -616,6 +619,7 @@ func toAzurePolicyAddonConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAzur
 
 	data := make(map[string]any)
 	data[enableKey] = config.Enabled
+
 	return []any{data}
 }
 
@@ -648,6 +652,7 @@ func toInterfaceArray(vals []string) any {
 	for _, v := range vals {
 		a = append(a, v)
 	}
+
 	return a
 }
 

@@ -24,17 +24,17 @@ func (m VmwareTanzuCoreV1alpha1StatusConditionStatus) Pointer() *VmwareTanzuCore
 
 const (
 
-	// VmwareTanzuCoreV1alpha1StatusConditionStatusSTATUSUNSPECIFIED captures enum value "STATUS_UNSPECIFIED"
+	// VmwareTanzuCoreV1alpha1StatusConditionStatusSTATUSUNSPECIFIED captures enum value "STATUS_UNSPECIFIED".
 	VmwareTanzuCoreV1alpha1StatusConditionStatusSTATUSUNSPECIFIED VmwareTanzuCoreV1alpha1StatusConditionStatus = "STATUS_UNSPECIFIED"
 
-	// VmwareTanzuCoreV1alpha1StatusConditionStatusTRUE captures enum value "TRUE"
+	// VmwareTanzuCoreV1alpha1StatusConditionStatusTRUE captures enum value "TRUE".
 	VmwareTanzuCoreV1alpha1StatusConditionStatusTRUE VmwareTanzuCoreV1alpha1StatusConditionStatus = "TRUE"
 
-	// VmwareTanzuCoreV1alpha1StatusConditionStatusFALSE captures enum value "FALSE"
+	// VmwareTanzuCoreV1alpha1StatusConditionStatusFALSE captures enum value "FALSE".
 	VmwareTanzuCoreV1alpha1StatusConditionStatusFALSE VmwareTanzuCoreV1alpha1StatusConditionStatus = "FALSE"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuCoreV1alpha1StatusConditionStatusEnum []interface{}
 
 func init() {

@@ -24,17 +24,17 @@ func (m VmwareTanzuManageV1alpha1AksclusterNodepoolType) Pointer() *VmwareTanzuM
 
 const (
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolTypeTYPEUNSPECIFIED captures enum value "TYPE_UNSPECIFIED"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolTypeTYPEUNSPECIFIED captures enum value "TYPE_UNSPECIFIED".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolTypeTYPEUNSPECIFIED VmwareTanzuManageV1alpha1AksclusterNodepoolType = "TYPE_UNSPECIFIED"
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolTypeVIRTUALMACHINESCALESETS captures enum value "VIRTUAL_MACHINE_SCALE_SETS"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolTypeVIRTUALMACHINESCALESETS captures enum value "VIRTUAL_MACHINE_SCALE_SETS".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolTypeVIRTUALMACHINESCALESETS VmwareTanzuManageV1alpha1AksclusterNodepoolType = "VIRTUAL_MACHINE_SCALE_SETS"
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolTypeAVAILABILITYSET captures enum value "AVAILABILITY_SET"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolTypeAVAILABILITYSET captures enum value "AVAILABILITY_SET".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolTypeAVAILABILITYSET VmwareTanzuManageV1alpha1AksclusterNodepoolType = "AVAILABILITY_SET"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1AksclusterNodepoolTypeEnum []interface{}
 
 func init() {

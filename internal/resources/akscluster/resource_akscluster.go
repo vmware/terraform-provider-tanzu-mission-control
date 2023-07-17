@@ -153,6 +153,7 @@ func createOrUpdateCluster(data *schema.ResourceData, client aksclusterclient.Cl
 	}
 
 	data.SetId(createResp.AksCluster.Meta.UID)
+
 	return nil
 }
 
@@ -163,6 +164,7 @@ func getExistingCluster(data *schema.ResourceData, client aksclusterclient.Clien
 	}
 
 	data.SetId(getResp.AksCluster.Meta.UID)
+
 	return nil
 }
 
@@ -177,6 +179,7 @@ func updateClusterConfig(ctx context.Context, data *schema.ResourceData, cluster
 
 	ctxTimeout, cancel := context.WithTimeout(ctx, getTimeOut(data))
 	defer cancel()
+
 	return pollUntilReady(ctxTimeout, data, tc.TMCConnection, getPollInterval(ctx))
 }
 

@@ -27,20 +27,20 @@ func (m VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffect) Pointer() *Vmwar
 
 const (
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectEFFECTUNSPECIFIED captures enum value "EFFECT_UNSPECIFIED"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectEFFECTUNSPECIFIED captures enum value "EFFECT_UNSPECIFIED".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectEFFECTUNSPECIFIED VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffect = "EFFECT_UNSPECIFIED"
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOSCHEDULE captures enum value "NO_SCHEDULE"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOSCHEDULE captures enum value "NO_SCHEDULE".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOSCHEDULE VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffect = "NO_SCHEDULE"
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOEXECUTE captures enum value "NO_EXECUTE"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOEXECUTE captures enum value "NO_EXECUTE".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOEXECUTE VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffect = "NO_EXECUTE"
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectPREFERNOSCHEDULE captures enum value "PREFER_NO_SCHEDULE"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectPREFERNOSCHEDULE captures enum value "PREFER_NO_SCHEDULE".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectPREFERNOSCHEDULE VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffect = "PREFER_NO_SCHEDULE"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectEnum []interface{}
 
 func init() {

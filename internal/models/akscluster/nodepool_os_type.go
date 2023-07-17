@@ -23,14 +23,14 @@ func (m VmwareTanzuManageV1alpha1AksclusterNodepoolOsType) Pointer() *VmwareTanz
 
 const (
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolOsTypeOSTYPEUNSPECIFIED captures enum value "OS_TYPE_UNSPECIFIED"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolOsTypeOSTYPEUNSPECIFIED captures enum value "OS_TYPE_UNSPECIFIED".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolOsTypeOSTYPEUNSPECIFIED VmwareTanzuManageV1alpha1AksclusterNodepoolOsType = "OS_TYPE_UNSPECIFIED"
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolOsTypeLINUX captures enum value "LINUX"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolOsTypeLINUX captures enum value "LINUX".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolOsTypeLINUX VmwareTanzuManageV1alpha1AksclusterNodepoolOsType = "LINUX"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1AksclusterNodepoolOsTypeEnum []interface{}
 
 func init() {

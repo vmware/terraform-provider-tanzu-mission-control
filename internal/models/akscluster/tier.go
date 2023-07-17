@@ -26,17 +26,17 @@ func (m VmwareTanzuManageV1alpha1AksclusterTier) Pointer() *VmwareTanzuManageV1a
 
 const (
 
-	// VmwareTanzuManageV1alpha1AksclusterTierTIERUNSPECIFIED captures enum value "TIER_UNSPECIFIED"
+	// VmwareTanzuManageV1alpha1AksclusterTierTIERUNSPECIFIED captures enum value "TIER_UNSPECIFIED".
 	VmwareTanzuManageV1alpha1AksclusterTierTIERUNSPECIFIED VmwareTanzuManageV1alpha1AksclusterTier = "TIER_UNSPECIFIED"
 
-	// VmwareTanzuManageV1alpha1AksclusterTierFREE captures enum value "FREE"
+	// VmwareTanzuManageV1alpha1AksclusterTierFREE captures enum value "FREE".
 	VmwareTanzuManageV1alpha1AksclusterTierFREE VmwareTanzuManageV1alpha1AksclusterTier = "FREE"
 
-	// VmwareTanzuManageV1alpha1AksclusterTierPAID captures enum value "PAID"
+	// VmwareTanzuManageV1alpha1AksclusterTierPAID captures enum value "PAID".
 	VmwareTanzuManageV1alpha1AksclusterTierPAID VmwareTanzuManageV1alpha1AksclusterTier = "PAID"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1AksclusterTierEnum []interface{}
 
 func init() {

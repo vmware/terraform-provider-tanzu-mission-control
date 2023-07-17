@@ -11,7 +11,7 @@ import (
 	. "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 )
 
-// ConstructNodepools extracts all nodepool sections from schema data and converts them to a list of Nodepool Objects
+// ConstructNodepools extracts all nodepool sections from schema data and converts them to a list of Nodepool Objects.
 func ConstructNodepools(data *schema.ResourceData) []*VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool {
 	cfn := extractClusterFullName(data)
 	specData := extractClusterSpec(data)
@@ -271,6 +271,7 @@ func toNodepoolSpecMap(spec *VmwareTanzuManageV1alpha1AksclusterNodepoolSpec) []
 	data[tagsKey] = toInterfaceMap(spec.Tags)
 	data[autoscalingConfigKey] = toAutoscalingConfigMap(spec.AutoScaling)
 	data[upgradeConfigKey] = toUpgradeConfigMap(spec.UpgradeConfig)
+
 	return []any{data}
 }
 
@@ -279,6 +280,7 @@ func toTaintList(t []*VmwareTanzuManageV1alpha1AksclusterNodepoolTaint) []any {
 	for _, item := range t {
 		data = append(data, toTaintMap(item))
 	}
+
 	return data
 }
 
@@ -291,6 +293,7 @@ func toTaintMap(item *VmwareTanzuManageV1alpha1AksclusterNodepoolTaint) map[stri
 	data[effectKey] = helper.PtrString(item.Effect)
 	data[keyKey] = item.Key
 	data[valueKey] = item.Value
+
 	return data
 }
 
@@ -317,5 +320,6 @@ func toUpgradeConfigMap(config *VmwareTanzuManageV1alpha1AksclusterNodepoolUpgra
 
 	data := make(map[string]any)
 	data[maxSurgeKey] = config.MaxSurge
+
 	return []any{data}
 }

@@ -312,7 +312,7 @@ func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_updateClusterFails()
 func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_updateClusterTimeout() {
 	originalCluster := aTestClusterDataMap(withDNSPrefix("new-prefix1"))
 	updatedCluster := aTestClusterDataMap(withDNSPrefix("new-prefix2"), with5msTimeout)
-	s.mocks.clusterClient.getClusterResp = aTestCluster() //without success status
+	s.mocks.clusterClient.getClusterResp = aTestCluster() // without success status
 	d := dataDiffFrom(s.T(), originalCluster, updatedCluster)
 
 	result := s.aksClusterResource.UpdateContext(s.ctx, d, s.config)

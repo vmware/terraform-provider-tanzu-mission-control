@@ -24,17 +24,17 @@ func (m VmwareTanzuManageV1alpha1AksclusterNodepoolMode) Pointer() *VmwareTanzuM
 
 const (
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolModeMODEUNSPECIFIED captures enum value "MODE_UNSPECIFIED"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolModeMODEUNSPECIFIED captures enum value "MODE_UNSPECIFIED".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolModeMODEUNSPECIFIED VmwareTanzuManageV1alpha1AksclusterNodepoolMode = "MODE_UNSPECIFIED"
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolModeUSER captures enum value "USER"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolModeUSER captures enum value "USER".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolModeUSER VmwareTanzuManageV1alpha1AksclusterNodepoolMode = "USER"
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM captures enum value "SYSTEM"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM captures enum value "SYSTEM".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM VmwareTanzuManageV1alpha1AksclusterNodepoolMode = "SYSTEM"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1AksclusterNodepoolModeEnum []interface{}
 
 func init() {

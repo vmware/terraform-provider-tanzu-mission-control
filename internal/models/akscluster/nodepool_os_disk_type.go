@@ -24,17 +24,17 @@ func (m VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskType) Pointer() *Vmware
 
 const (
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskTypeOSDISKTYPEUNSPECIFIED captures enum value "OS_DISK_TYPE_UNSPECIFIED"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskTypeOSDISKTYPEUNSPECIFIED captures enum value "OS_DISK_TYPE_UNSPECIFIED".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskTypeOSDISKTYPEUNSPECIFIED VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskType = "OS_DISK_TYPE_UNSPECIFIED"
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskTypeEPHEMERAL captures enum value "EPHEMERAL"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskTypeEPHEMERAL captures enum value "EPHEMERAL".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskTypeEPHEMERAL VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskType = "EPHEMERAL"
 
-	// VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskTypeMANAGED captures enum value "MANAGED"
+	// VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskTypeMANAGED captures enum value "MANAGED".
 	VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskTypeMANAGED VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskType = "MANAGED"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskTypeEnum []interface{}
 
 func init() {

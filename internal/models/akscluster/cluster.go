@@ -26,7 +26,7 @@ type VmwareTanzuManageV1alpha1AksclusterAksCluster struct {
 	Type *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectType `json:"type,omitempty"`
 }
 
-// MarshalBinary interface implementation
+// MarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1AksclusterAksCluster) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil

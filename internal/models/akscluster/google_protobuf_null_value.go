@@ -25,11 +25,11 @@ func (m GoogleProtobufNullValue) Pointer() *GoogleProtobufNullValue {
 
 const (
 
-	// GoogleProtobufNullValueNULLVALUE captures enum value "NULL_VALUE"
+	// GoogleProtobufNullValueNULLVALUE captures enum value "NULL_VALUE".
 	GoogleProtobufNullValueNULLVALUE GoogleProtobufNullValue = "NULL_VALUE"
 )
 
-// for schema
+// for schema.
 var googleProtobufNullValueEnum []interface{}
 
 func init() {
