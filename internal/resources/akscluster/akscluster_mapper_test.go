@@ -9,15 +9,17 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/stretchr/testify/assert"
-	aksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
-	. "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
+
+	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 )
 
 func Test_ConstructAKSCluster(t *testing.T) {
-	d := schema.TestResourceDataRaw(t, ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(t, akscluster.ClusterSchema, aTestClusterDataMap())
 
-	result := ConstructCluster(d)
+	result := akscluster.ConstructCluster(d)
 	expected := aTestCluster()
 
 	assert.NotNil(t, result, "no request created")
@@ -26,16 +28,16 @@ func Test_ConstructAKSCluster(t *testing.T) {
 }
 
 func Test_FlattenToMap_nilSpec(t *testing.T) {
-	got := ToAKSClusterMap(nil, nil)
+	got := akscluster.ToAKSClusterMap(nil, nil)
 	assert.Equal(t, []any{}, got)
 }
 
 func Test_FlattenToMap_fullSpec(t *testing.T) {
 	testCluster := aTestCluster()
-	testNodepool := []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()}
+	testNodepool := []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()}
 	expected := aTestClusterDataMap()
 
-	got := ToAKSClusterMap(testCluster, testNodepool)
+	got := akscluster.ToAKSClusterMap(testCluster, testNodepool)
 	assert.Equal(t, expected, got)
 }
 
@@ -43,6 +45,6 @@ func Test_FlattenToMap_nilNodepools(t *testing.T) {
 	testCluster := aTestCluster()
 	expected := aTestClusterDataMap(withoutNodepools)
 
-	got := ToAKSClusterMap(testCluster, nil)
+	got := akscluster.ToAKSClusterMap(testCluster, nil)
 	assert.Equal(t, expected, got)
 }

@@ -12,13 +12,16 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/pkg/errors"
+
 	"github.com/stretchr/testify/suite"
+
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
-	. "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
-	. "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
+	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
@@ -48,7 +51,7 @@ func (s *CreatClusterTestSuite) SetupTest() {
 		getClusterResp:    aTestCluster(withStatusSuccess),
 	}
 	s.mocks.nodepoolClient = &mockNodepoolClient{
-		nodepoolListResp: []*VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
+		nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
 	}
 	s.config = authctx.TanzuContext{
 		TMCConnection: &client.TanzuMissionControl{
@@ -56,12 +59,12 @@ func (s *CreatClusterTestSuite) SetupTest() {
 			AKSNodePoolResourceService: s.mocks.nodepoolClient,
 		},
 	}
-	s.aksClusterResource = ResourceTMCAKSCluster()
-	s.ctx = context.WithValue(context.Background(), RetryInterval, 10*time.Millisecond)
+	s.aksClusterResource = akscluster.ResourceTMCAKSCluster()
+	s.ctx = context.WithValue(context.Background(), akscluster.RetryInterval, 10*time.Millisecond)
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate() {
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 	expectedNP := aTestNodePool(forCluster(aTestCluster()))
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
@@ -75,7 +78,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate() {
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_invalidConfig() {
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, nil)
 
@@ -84,7 +87,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_invalidConfig() {
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_fails() {
 	s.mocks.clusterClient.createErr = errors.New("create cluster failed")
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
 
@@ -93,7 +96,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_fails()
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodepoolCreate_fails() {
 	s.mocks.nodepoolClient.createErr = errors.New("create nodepool failed")
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
 
@@ -102,7 +105,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodepoolCreate_fails(
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_timeout() {
 	s.mocks.clusterClient.getClusterResp = aTestCluster()
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap(with5msTimeout))
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap(with5msTimeout))
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
 
@@ -111,7 +114,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_timeout
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_has_error_status() {
 	s.mocks.clusterClient.getClusterResp = aTestCluster(withStatusError)
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
 
@@ -120,7 +123,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_has_err
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_alreadyExists() {
 	s.mocks.clusterClient.createErr = clienterrors.ErrorWithHTTPCode(http.StatusConflict, nil)
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
 
@@ -131,7 +134,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_already
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_alreadyExists_but_notFound() {
 	s.mocks.clusterClient.createErr = clienterrors.ErrorWithHTTPCode(http.StatusConflict, nil)
 	s.mocks.clusterClient.getErr = clienterrors.ErrorWithHTTPCode(http.StatusNotFound, nil)
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
 
@@ -141,7 +144,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_already
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_succeeded_but_cluster_notFound() {
 	s.mocks.clusterClient.getErr = clienterrors.ErrorWithHTTPCode(http.StatusNotFound, nil)
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
 
@@ -151,7 +154,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_succeed
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_succeeded_but_nodepools_notFound() {
 	s.mocks.nodepoolClient.listErr = clienterrors.ErrorWithHTTPCode(http.StatusNotFound, nil)
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
 
@@ -161,7 +164,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_succeed
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_no_system_nodepool() {
 	userpool := []any{aTestNodepoolDataMap(withNodepoolMode("USER"))}
 	cluster := aTestClusterDataMap(withNodepools(userpool))
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, cluster)
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
 
@@ -182,7 +185,7 @@ func (s *ReadClusterTestSuite) SetupTest() {
 		getClusterResp:    aTestCluster(withStatusSuccess),
 	}
 	s.mocks.nodepoolClient = &mockNodepoolClient{
-		nodepoolListResp: []*VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
+		nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
 	}
 	s.config = authctx.TanzuContext{
 		TMCConnection: &client.TanzuMissionControl{
@@ -190,12 +193,12 @@ func (s *ReadClusterTestSuite) SetupTest() {
 			AKSNodePoolResourceService: s.mocks.nodepoolClient,
 		},
 	}
-	s.aksClusterResource = ResourceTMCAKSCluster()
-	s.ctx = context.WithValue(context.Background(), RetryInterval, 10*time.Millisecond)
+	s.aksClusterResource = akscluster.ResourceTMCAKSCluster()
+	s.ctx = context.WithValue(context.Background(), akscluster.RetryInterval, 10*time.Millisecond)
 }
 
 func (s *ReadClusterTestSuite) Test_resourceClusterRead() {
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.aksClusterResource.ReadContext(s.ctx, d, s.config)
 
@@ -221,7 +224,7 @@ func (s *UpdateClusterTestSuite) SetupTest() {
 		getClusterResp:    aTestCluster(withStatusSuccess),
 	}
 	s.mocks.nodepoolClient = &mockNodepoolClient{
-		nodepoolListResp: []*VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
+		nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
 		nodepoolGetResp:  aTestNodePool(withNodepoolStatusSuccess),
 	}
 	s.config = authctx.TanzuContext{
@@ -230,8 +233,8 @@ func (s *UpdateClusterTestSuite) SetupTest() {
 			AKSNodePoolResourceService: s.mocks.nodepoolClient,
 		},
 	}
-	s.aksClusterResource = ResourceTMCAKSCluster()
-	s.ctx = context.WithValue(context.Background(), RetryInterval, 10*time.Millisecond)
+	s.aksClusterResource = akscluster.ResourceTMCAKSCluster()
+	s.ctx = context.WithValue(context.Background(), akscluster.RetryInterval, 10*time.Millisecond)
 }
 
 func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_updateClusterConfig() {
@@ -291,7 +294,7 @@ func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_deleteNodepool() {
 }
 
 func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_invalidConfig() {
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.aksClusterResource.UpdateContext(s.ctx, d, "config")
 
@@ -397,7 +400,7 @@ func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_deleteNodepoolTimeou
 }
 
 func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_nodepoolOrderChange() {
-	s.mocks.nodepoolClient.nodepoolListResp = []*VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{
+	s.mocks.nodepoolClient.nodepoolListResp = []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{
 		aTestNodePool(withNodepoolName("np1")),
 		aTestNodePool(withNodepoolName("np2")),
 	}
@@ -431,13 +434,13 @@ func (s *DeleteClusterTestSuite) SetupTest() {
 			AKSClusterResourceService: s.mocks.clusterClient,
 		},
 	}
-	s.aksClusterResource = ResourceTMCAKSCluster()
-	s.ctx = context.WithValue(context.Background(), RetryInterval, 10*time.Millisecond)
+	s.aksClusterResource = akscluster.ResourceTMCAKSCluster()
+	s.ctx = context.WithValue(context.Background(), akscluster.RetryInterval, 10*time.Millisecond)
 }
 
 func (s *DeleteClusterTestSuite) Test_resourceClusterDelete() {
 	s.mocks.clusterClient.getErr = clienterrors.ErrorWithHTTPCode(http.StatusNotFound, nil)
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.aksClusterResource.DeleteContext(s.ctx, d, s.config)
 
@@ -446,7 +449,7 @@ func (s *DeleteClusterTestSuite) Test_resourceClusterDelete() {
 }
 
 func (s *DeleteClusterTestSuite) Test_resourceClusterDelete_invalidConfig() {
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.aksClusterResource.DeleteContext(s.ctx, d, "config")
 
@@ -455,7 +458,7 @@ func (s *DeleteClusterTestSuite) Test_resourceClusterDelete_invalidConfig() {
 
 func (s *DeleteClusterTestSuite) Test_resourceClusterDelete_fails() {
 	s.mocks.clusterClient.deleteErr = errors.New("cluster delete failed")
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.aksClusterResource.DeleteContext(s.ctx, d, s.config)
 
@@ -464,7 +467,7 @@ func (s *DeleteClusterTestSuite) Test_resourceClusterDelete_fails() {
 }
 
 func (s *DeleteClusterTestSuite) Test_resourceClusterDelete_timeout() {
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap(with5msTimeout))
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap(with5msTimeout))
 
 	result := s.aksClusterResource.DeleteContext(s.ctx, d, s.config)
 

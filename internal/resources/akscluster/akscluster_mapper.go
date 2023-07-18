@@ -7,23 +7,24 @@ package akscluster
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
-	. "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
-func ConstructCluster(data *schema.ResourceData) *VmwareTanzuManageV1alpha1AksclusterAksCluster {
-	return &VmwareTanzuManageV1alpha1AksclusterAksCluster{
+func ConstructCluster(data *schema.ResourceData) *models.VmwareTanzuManageV1alpha1AksclusterAksCluster {
+	return &models.VmwareTanzuManageV1alpha1AksclusterAksCluster{
 		FullName: extractClusterFullName(data),
 		Meta:     common.ConstructMeta(data),
 		Spec:     constructAKSClusterSpec(data),
 	}
 }
 
-func constructAKSClusterSpec(data *schema.ResourceData) *VmwareTanzuManageV1alpha1AksclusterSpec {
+func constructAKSClusterSpec(data *schema.ResourceData) *models.VmwareTanzuManageV1alpha1AksclusterSpec {
 	specData := extractClusterSpec(data)
 
-	spec := &VmwareTanzuManageV1alpha1AksclusterSpec{}
+	spec := &models.VmwareTanzuManageV1alpha1AksclusterSpec{}
 	if v, ok := specData[clusterGroupKey]; ok {
 		helper.SetPrimitiveValue(v, &spec.ClusterGroupName, clusterGroupKey)
 	}
@@ -63,14 +64,14 @@ func extractClusterSpec(data *schema.ResourceData) map[string]any {
 	return dataSpec[0].(map[string]any)
 }
 
-func constructConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterClusterConfig {
+func constructConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterClusterConfig {
 	if len(data) < 1 {
 		return nil
 	}
 
 	// Config schema defines max 1
 	configData, _ := data[0].(map[string]any)
-	config := &VmwareTanzuManageV1alpha1AksclusterClusterConfig{}
+	config := &models.VmwareTanzuManageV1alpha1AksclusterClusterConfig{}
 
 	if v, ok := configData[tagsKey]; ok {
 		data, _ := v.(map[string]any)
@@ -140,36 +141,36 @@ func constructConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterClusterConf
 	return config
 }
 
-func constructSku(data []any) *VmwareTanzuManageV1alpha1AksclusterClusterSKU {
+func constructSku(data []any) *models.VmwareTanzuManageV1alpha1AksclusterClusterSKU {
 	if len(data) < 1 {
 		return nil
 	}
 
 	// SKU schema defines max 1
 	skuData, _ := data[0].(map[string]any)
-	sku := &VmwareTanzuManageV1alpha1AksclusterClusterSKU{}
+	sku := &models.VmwareTanzuManageV1alpha1AksclusterClusterSKU{}
 
 	if v, ok := skuData[skuNameKey]; ok {
-		name := VmwareTanzuManageV1alpha1AksclusterClusterSKUName(v.(string))
+		name := models.VmwareTanzuManageV1alpha1AksclusterClusterSKUName(v.(string))
 		sku.Name = &name
 	}
 
 	if v, ok := skuData[skuTierKey]; ok {
-		tier := VmwareTanzuManageV1alpha1AksclusterTier(v.(string))
+		tier := models.VmwareTanzuManageV1alpha1AksclusterTier(v.(string))
 		sku.Tier = &tier
 	}
 
 	return sku
 }
 
-func constructAccessConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterAccessConfig {
+func constructAccessConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterAccessConfig {
 	if len(data) < 1 {
 		return nil
 	}
 
 	// AccessConfig schema defines max 1
 	accessConfigData, _ := data[0].(map[string]any)
-	accessConfig := &VmwareTanzuManageV1alpha1AksclusterAccessConfig{}
+	accessConfig := &models.VmwareTanzuManageV1alpha1AksclusterAccessConfig{}
 
 	if v, ok := accessConfigData[aadConfigKey]; ok {
 		data, _ := v.([]any)
@@ -187,14 +188,14 @@ func constructAccessConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterAcces
 	return accessConfig
 }
 
-func constructAPIServerAccessConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterAPIServerAccessConfig {
+func constructAPIServerAccessConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterAPIServerAccessConfig {
 	if len(data) < 1 {
 		return nil
 	}
 
 	// APIServerConfig schema defines max 1
 	apiServerAccessConfigData, _ := data[0].(map[string]any)
-	apiServerAccessConfig := &VmwareTanzuManageV1alpha1AksclusterAPIServerAccessConfig{}
+	apiServerAccessConfig := &models.VmwareTanzuManageV1alpha1AksclusterAPIServerAccessConfig{}
 
 	if v, ok := apiServerAccessConfigData[authorizedIPRangesKey]; ok {
 		apiServerAccessConfig.AuthorizedIPRanges = helper.SetPrimitiveList[string](v)
@@ -207,14 +208,14 @@ func constructAPIServerAccessConfig(data []any) *VmwareTanzuManageV1alpha1Aksclu
 	return apiServerAccessConfig
 }
 
-func constructLinuxConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterLinuxConfig {
+func constructLinuxConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterLinuxConfig {
 	if len(data) < 1 {
 		return nil
 	}
 
 	// LinuxConfig schema defines max 1
 	linuxConfigData, _ := data[0].(map[string]any)
-	linuxConfig := &VmwareTanzuManageV1alpha1AksclusterLinuxConfig{}
+	linuxConfig := &models.VmwareTanzuManageV1alpha1AksclusterLinuxConfig{}
 
 	if v, ok := linuxConfigData[adminUserNameKey]; ok {
 		helper.SetPrimitiveValue(v, &linuxConfig.AdminUsername, adminUserNameKey)
@@ -227,14 +228,14 @@ func constructLinuxConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterLinuxC
 	return linuxConfig
 }
 
-func constructNetworkConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterNetworkConfig {
+func constructNetworkConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterNetworkConfig {
 	if len(data) < 1 {
 		return nil
 	}
 
 	// NetworkConfig schema defines max 1
 	networkConfigData, _ := data[0].(map[string]any)
-	networkConfig := &VmwareTanzuManageV1alpha1AksclusterNetworkConfig{}
+	networkConfig := &models.VmwareTanzuManageV1alpha1AksclusterNetworkConfig{}
 
 	if v, ok := networkConfigData[networkPluginKey]; ok {
 		helper.SetPrimitiveValue(v, &networkConfig.NetworkPlugin, networkPluginKey)
@@ -271,13 +272,13 @@ func constructNetworkConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterNetw
 	return networkConfig
 }
 
-func constructStorageConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterStorageConfig {
+func constructStorageConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterStorageConfig {
 	if len(data) < 1 {
 		return nil
 	}
 
 	storageConfigData, _ := data[0].(map[string]any)
-	storageConfig := &VmwareTanzuManageV1alpha1AksclusterStorageConfig{}
+	storageConfig := &models.VmwareTanzuManageV1alpha1AksclusterStorageConfig{}
 
 	if v, ok := storageConfigData[enableDiskCsiDriverKey]; ok {
 		helper.SetPrimitiveValue(v, &storageConfig.EnableDiskCsiDriver, enableDiskCsiDriverKey)
@@ -294,14 +295,14 @@ func constructStorageConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterStor
 	return storageConfig
 }
 
-func constructAddonsConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterAddonsConfig {
+func constructAddonsConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterAddonsConfig {
 	if len(data) < 1 {
 		return nil
 	}
 
 	// AddonConfig schema defines max 1
 	addonsConfigData, _ := data[0].(map[string]any)
-	addonsConfig := &VmwareTanzuManageV1alpha1AksclusterAddonsConfig{}
+	addonsConfig := &models.VmwareTanzuManageV1alpha1AksclusterAddonsConfig{}
 
 	if v, ok := addonsConfigData[azureKeyvaultSecretsProviderAddonConfigKey]; ok {
 		data, _ := v.([]any)
@@ -321,14 +322,14 @@ func constructAddonsConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterAddon
 	return addonsConfig
 }
 
-func constructAadConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterAADConfig {
+func constructAadConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterAADConfig {
 	if len(data) < 1 {
 		return nil
 	}
 
 	// AADConfig schema defines max 1
 	aadConfigData, _ := data[0].(map[string]any)
-	aadConfig := &VmwareTanzuManageV1alpha1AksclusterAADConfig{}
+	aadConfig := &models.VmwareTanzuManageV1alpha1AksclusterAADConfig{}
 
 	if v, ok := aadConfigData[adminGroupIDsKey]; ok {
 		aadConfig.AdminGroupObjectIds = helper.SetPrimitiveList[string](v)
@@ -349,14 +350,14 @@ func constructAadConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterAADConfi
 	return aadConfig
 }
 
-func constructMonitoringConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterMonitoringAddonConfig {
+func constructMonitoringConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterMonitoringAddonConfig {
 	if len(data) < 1 {
 		return nil
 	}
 
 	// MonitoringConfig schema defines max 1
 	monitoringConfigData, _ := data[0].(map[string]any)
-	monitoringConfig := &VmwareTanzuManageV1alpha1AksclusterMonitoringAddonConfig{}
+	monitoringConfig := &models.VmwareTanzuManageV1alpha1AksclusterMonitoringAddonConfig{}
 
 	if v, ok := monitoringConfigData[enableKey]; ok {
 		helper.SetPrimitiveValue(v, &monitoringConfig.Enabled, enableKey)
@@ -369,14 +370,14 @@ func constructMonitoringConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterM
 	return monitoringConfig
 }
 
-func constructAzurePolicyConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterAzurePolicyAddonConfig {
+func constructAzurePolicyConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterAzurePolicyAddonConfig {
 	if len(data) < 1 {
 		return nil
 	}
 
 	// AzurePolicyConfig schema defines max 1
 	azurePolicyConfigData, _ := data[0].(map[string]any)
-	azurePolicyConfig := &VmwareTanzuManageV1alpha1AksclusterAzurePolicyAddonConfig{}
+	azurePolicyConfig := &models.VmwareTanzuManageV1alpha1AksclusterAzurePolicyAddonConfig{}
 
 	if v, ok := azurePolicyConfigData[enableKey]; ok {
 		helper.SetPrimitiveValue(v, &azurePolicyConfig.Enabled, enableKey)
@@ -385,14 +386,14 @@ func constructAzurePolicyConfig(data []any) *VmwareTanzuManageV1alpha1Akscluster
 	return azurePolicyConfig
 }
 
-func constructAzureKeyVaultSecretsProviderConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterAzureKeyvaultSecretsProviderAddonConfig {
+func constructAzureKeyVaultSecretsProviderConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterAzureKeyvaultSecretsProviderAddonConfig {
 	if len(data) < 1 {
 		return nil
 	}
 
 	// AzureKeyVaultSecretsProviderConfig defines max 1
 	azureKeyVaultSecretsProviderConfigData, _ := data[0].(map[string]any)
-	azureKeyVaultSecretsProviderConfig := &VmwareTanzuManageV1alpha1AksclusterAzureKeyvaultSecretsProviderAddonConfig{}
+	azureKeyVaultSecretsProviderConfig := &models.VmwareTanzuManageV1alpha1AksclusterAzureKeyvaultSecretsProviderAddonConfig{}
 
 	if v, ok := azureKeyVaultSecretsProviderConfigData[enableSecretsRotationKey]; ok {
 		helper.SetPrimitiveValue(v, &azureKeyVaultSecretsProviderConfig.EnableSecretRotation, enableSecretsRotationKey)
@@ -409,24 +410,24 @@ func constructAzureKeyVaultSecretsProviderConfig(data []any) *VmwareTanzuManageV
 	return azureKeyVaultSecretsProviderConfig
 }
 
-func constructAutoUpgradeConfig(data []any) *VmwareTanzuManageV1alpha1AksclusterAutoUpgradeConfig {
+func constructAutoUpgradeConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterAutoUpgradeConfig {
 	if len(data) < 1 {
 		return nil
 	}
 
 	// AutoUpgradeConfig schema defines max 1
 	autoUpgradeConfigData, _ := data[0].(map[string]any)
-	autoUpgradeConfig := &VmwareTanzuManageV1alpha1AksclusterAutoUpgradeConfig{}
+	autoUpgradeConfig := &models.VmwareTanzuManageV1alpha1AksclusterAutoUpgradeConfig{}
 
 	if v, ok := autoUpgradeConfigData[upgradeChannelKey]; ok {
-		channel := VmwareTanzuManageV1alpha1AksclusterChannel(v.(string))
+		channel := models.VmwareTanzuManageV1alpha1AksclusterChannel(v.(string))
 		autoUpgradeConfig.Channel = &channel
 	}
 
 	return autoUpgradeConfig
 }
 
-func ToAKSClusterMap(cluster *VmwareTanzuManageV1alpha1AksclusterAksCluster, nodepools []*VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) any {
+func ToAKSClusterMap(cluster *models.VmwareTanzuManageV1alpha1AksclusterAksCluster, nodepools []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) any {
 	if cluster == nil {
 		return []any{}
 	}
@@ -441,7 +442,7 @@ func ToAKSClusterMap(cluster *VmwareTanzuManageV1alpha1AksclusterAksCluster, nod
 	return data
 }
 
-func toClusterSpecMap(spec *VmwareTanzuManageV1alpha1AksclusterSpec, nodepools []*VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) []any {
+func toClusterSpecMap(spec *models.VmwareTanzuManageV1alpha1AksclusterSpec, nodepools []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) []any {
 	if spec == nil {
 		return []any{}
 	}
@@ -457,7 +458,7 @@ func toClusterSpecMap(spec *VmwareTanzuManageV1alpha1AksclusterSpec, nodepools [
 	return []any{data}
 }
 
-func toConfigMap(config *VmwareTanzuManageV1alpha1AksclusterClusterConfig) []any {
+func toConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterClusterConfig) []any {
 	data := make(map[string]any)
 	if config == nil {
 		return []any{data}
@@ -480,7 +481,7 @@ func toConfigMap(config *VmwareTanzuManageV1alpha1AksclusterClusterConfig) []any
 	return []any{data}
 }
 
-func toSKUMap(sku *VmwareTanzuManageV1alpha1AksclusterClusterSKU) []any {
+func toSKUMap(sku *models.VmwareTanzuManageV1alpha1AksclusterClusterSKU) []any {
 	if sku == nil {
 		return []any{}
 	}
@@ -492,7 +493,7 @@ func toSKUMap(sku *VmwareTanzuManageV1alpha1AksclusterClusterSKU) []any {
 	return []any{data}
 }
 
-func toServerAccessConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAPIServerAccessConfig) []any {
+func toServerAccessConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterAPIServerAccessConfig) []any {
 	if config == nil {
 		return []any{}
 	}
@@ -504,7 +505,7 @@ func toServerAccessConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAPIServe
 	return []any{data}
 }
 
-func toAccessConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAccessConfig) []any {
+func toAccessConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterAccessConfig) []any {
 	if config == nil {
 		return []any{}
 	}
@@ -517,7 +518,7 @@ func toAccessConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAccessConfig) 
 	return []any{data}
 }
 
-func toAADConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAADConfig) []any {
+func toAADConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterAADConfig) []any {
 	if config == nil {
 		return []any{}
 	}
@@ -531,7 +532,7 @@ func toAADConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAADConfig) []any 
 	return []any{data}
 }
 
-func toLinuxConfigMap(config *VmwareTanzuManageV1alpha1AksclusterLinuxConfig) []any {
+func toLinuxConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterLinuxConfig) []any {
 	if config == nil {
 		return []any{}
 	}
@@ -543,7 +544,7 @@ func toLinuxConfigMap(config *VmwareTanzuManageV1alpha1AksclusterLinuxConfig) []
 	return []any{data}
 }
 
-func toNetworkConfigMap(config *VmwareTanzuManageV1alpha1AksclusterNetworkConfig) []any {
+func toNetworkConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterNetworkConfig) []any {
 	if config == nil {
 		return []any{}
 	}
@@ -561,7 +562,7 @@ func toNetworkConfigMap(config *VmwareTanzuManageV1alpha1AksclusterNetworkConfig
 	return []any{data}
 }
 
-func toStorageConfigMap(config *VmwareTanzuManageV1alpha1AksclusterStorageConfig) []any {
+func toStorageConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterStorageConfig) []any {
 	if config == nil {
 		return []any{}
 	}
@@ -574,7 +575,7 @@ func toStorageConfigMap(config *VmwareTanzuManageV1alpha1AksclusterStorageConfig
 	return []any{data}
 }
 
-func toAddonConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAddonsConfig) []any {
+func toAddonConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterAddonsConfig) []any {
 	if config == nil {
 		return []any{}
 	}
@@ -587,7 +588,7 @@ func toAddonConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAddonsConfig) [
 	return []any{data}
 }
 
-func toAzureKeyvaultSecretsProviderConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAzureKeyvaultSecretsProviderAddonConfig) []any {
+func toAzureKeyvaultSecretsProviderConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterAzureKeyvaultSecretsProviderAddonConfig) []any {
 	if config == nil {
 		return []any{}
 	}
@@ -600,7 +601,7 @@ func toAzureKeyvaultSecretsProviderConfigMap(config *VmwareTanzuManageV1alpha1Ak
 	return []any{data}
 }
 
-func toMonitorAddonConfigMap(config *VmwareTanzuManageV1alpha1AksclusterMonitoringAddonConfig) []any {
+func toMonitorAddonConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterMonitoringAddonConfig) []any {
 	if config == nil {
 		return []any{}
 	}
@@ -612,7 +613,7 @@ func toMonitorAddonConfigMap(config *VmwareTanzuManageV1alpha1AksclusterMonitori
 	return []any{data}
 }
 
-func toAzurePolicyAddonConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAzurePolicyAddonConfig) []any {
+func toAzurePolicyAddonConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterAzurePolicyAddonConfig) []any {
 	if config == nil {
 		return []any{}
 	}
@@ -623,7 +624,7 @@ func toAzurePolicyAddonConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAzur
 	return []any{data}
 }
 
-func toAutoUpgradeConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAutoUpgradeConfig) []any {
+func toAutoUpgradeConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterAutoUpgradeConfig) []any {
 	if config == nil {
 		return nil
 	}
@@ -634,7 +635,7 @@ func toAutoUpgradeConfigMap(config *VmwareTanzuManageV1alpha1AksclusterAutoUpgra
 	return []any{data}
 }
 
-func toNodePoolList(nodepools []*VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) []any {
+func toNodePoolList(nodepools []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) []any {
 	n := make([]any, 0, len(nodepools))
 	for _, v := range nodepools {
 		n = append(n, ToNodepoolMap(v))

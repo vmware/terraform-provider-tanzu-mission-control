@@ -12,13 +12,16 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/pkg/errors"
+
 	"github.com/stretchr/testify/suite"
+
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
-	. "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
-	. "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
+	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
@@ -40,7 +43,7 @@ func (s *ReadDatasourceTestSuite) SetupTest() {
 		getClusterResp:    aTestCluster(withStatusSuccess),
 	}
 	s.mocks.nodepoolClient = &mockNodepoolClient{
-		nodepoolListResp: []*VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
+		nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
 	}
 	s.config = authctx.TanzuContext{
 		TMCConnection: &client.TanzuMissionControl{
@@ -48,12 +51,12 @@ func (s *ReadDatasourceTestSuite) SetupTest() {
 			AKSNodePoolResourceService: s.mocks.nodepoolClient,
 		},
 	}
-	s.datasource = DataSourceTMCAKSCluster()
-	s.ctx = context.WithValue(context.Background(), RetryInterval, 10*time.Millisecond)
+	s.datasource = akscluster.DataSourceTMCAKSCluster()
+	s.ctx = context.WithValue(context.Background(), akscluster.RetryInterval, 10*time.Millisecond)
 }
 
 func (s *ReadDatasourceTestSuite) Test_datasourceRead() {
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.datasource.ReadContext(s.ctx, d, s.config)
 
@@ -66,7 +69,7 @@ func (s *ReadDatasourceTestSuite) Test_datasourceRead() {
 }
 
 func (s *ReadDatasourceTestSuite) Test_datasourceRead_invalidConfig() {
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.datasource.ReadContext(s.ctx, d, "config")
 
@@ -75,7 +78,7 @@ func (s *ReadDatasourceTestSuite) Test_datasourceRead_invalidConfig() {
 
 func (s *ReadDatasourceTestSuite) Test_datasourceRead_getCluster_Err() {
 	s.mocks.clusterClient.getErr = errors.New("failed to get cluster")
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.datasource.ReadContext(s.ctx, d, s.config)
 
@@ -84,7 +87,7 @@ func (s *ReadDatasourceTestSuite) Test_datasourceRead_getCluster_Err() {
 
 func (s *ReadDatasourceTestSuite) Test_datasourceRead_getCluster_NotFound() {
 	s.mocks.clusterClient.getErr = clienterrors.ErrorWithHTTPCode(http.StatusNotFound, nil)
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.datasource.ReadContext(s.ctx, d, s.config)
 
@@ -94,7 +97,7 @@ func (s *ReadDatasourceTestSuite) Test_datasourceRead_getCluster_NotFound() {
 
 func (s *ReadDatasourceTestSuite) Test_datasourceRead_getNodepools_Err() {
 	s.mocks.nodepoolClient.listErr = errors.New("failed to get nodepools")
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.datasource.ReadContext(s.ctx, d, s.config)
 
@@ -103,7 +106,7 @@ func (s *ReadDatasourceTestSuite) Test_datasourceRead_getNodepools_Err() {
 
 func (s *ReadDatasourceTestSuite) Test_datasourceRead_getNodepools_NotFound() {
 	s.mocks.nodepoolClient.listErr = clienterrors.ErrorWithHTTPCode(http.StatusNotFound, nil)
-	d := schema.TestResourceDataRaw(s.T(), ClusterSchema, aTestClusterDataMap())
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 
 	result := s.datasource.ReadContext(s.ctx, d, s.config)
 

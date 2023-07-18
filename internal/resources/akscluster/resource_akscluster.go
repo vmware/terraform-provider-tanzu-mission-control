@@ -12,12 +12,14 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/pkg/errors"
+
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client"
-	aksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
-	aksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 )
 
 var emptySpec = map[string]any{NameKey: "", nodepoolSpecKey: []any{}}
@@ -123,9 +125,9 @@ func resourceClusterDelete(ctx context.Context, data *schema.ResourceData, confi
 }
 
 // validate returns an error configuration will result in a cluster that will fail to create.
-func validate(nodepools []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) error {
+func validate(nodepools []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) error {
 	for _, n := range nodepools {
-		if *n.Spec.Mode == aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM {
+		if *n.Spec.Mode == models.VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM {
 			return nil
 		}
 	}
@@ -135,9 +137,9 @@ func validate(nodepools []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolN
 
 // createOrUpdateCluster creates an AKS cluster in TMC.  It is possible the cluster already exists in which case the
 // existing cluster is updated with any node pools defined in the configuration.
-func createOrUpdateCluster(data *schema.ResourceData, client aksclusterclient.ClientService) error {
+func createOrUpdateCluster(data *schema.ResourceData, client akscluster.ClientService) error {
 	cluster := ConstructCluster(data)
-	clusterReq := &aksmodel.VmwareTanzuManageV1alpha1AksclusterCreateAksClusterRequest{AksCluster: cluster}
+	clusterReq := &models.VmwareTanzuManageV1alpha1AksclusterCreateAksClusterRequest{AksCluster: cluster}
 	createResp, err := client.AksClusterResourceServiceCreate(clusterReq)
 
 	if clienterrors.IsAlreadyExistsError(err) {
@@ -157,7 +159,7 @@ func createOrUpdateCluster(data *schema.ResourceData, client aksclusterclient.Cl
 	return nil
 }
 
-func getExistingCluster(data *schema.ResourceData, client aksclusterclient.ClientService, clusterReq *aksmodel.VmwareTanzuManageV1alpha1AksclusterCreateAksClusterRequest) error {
+func getExistingCluster(data *schema.ResourceData, client akscluster.ClientService, clusterReq *models.VmwareTanzuManageV1alpha1AksclusterCreateAksClusterRequest) error {
 	getResp, getErr := client.AksClusterResourceServiceGet(clusterReq.AksCluster.FullName)
 	if getErr != nil {
 		return getErr
@@ -168,10 +170,10 @@ func getExistingCluster(data *schema.ResourceData, client aksclusterclient.Clien
 	return nil
 }
 
-func updateClusterConfig(ctx context.Context, data *schema.ResourceData, clusterResp *aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse, tc authctx.TanzuContext) error {
+func updateClusterConfig(ctx context.Context, data *schema.ResourceData, clusterResp *models.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse, tc authctx.TanzuContext) error {
 	cluster := ConstructCluster(data)
 	cluster.Meta = clusterResp.AksCluster.Meta
-	updateReq := &aksmodel.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterRequest{AksCluster: cluster}
+	updateReq := &models.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterRequest{AksCluster: cluster}
 
 	if _, updateErr := tc.TMCConnection.AKSClusterResourceService.AksClusterResourceServiceUpdate(updateReq); updateErr != nil {
 		return errors.Wrapf(updateErr, "Unable to update Tanzu Mission Control AKS cluster entry, name : %s", data.Get(NameKey))
@@ -218,7 +220,7 @@ func pollUntilReady(ctx context.Context, data *schema.ResourceData, mc *client.T
 	}
 }
 
-func pollUntilClusterDeleted(ctx context.Context, data *schema.ResourceData, client aksclusterclient.ClientService, interval time.Duration) error {
+func pollUntilClusterDeleted(ctx context.Context, data *schema.ResourceData, client akscluster.ClientService, interval time.Duration) error {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 

@@ -7,19 +7,20 @@ package akscluster
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
-	. "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 )
 
 // ConstructNodepools extracts all nodepool sections from schema data and converts them to a list of Nodepool Objects.
-func ConstructNodepools(data *schema.ResourceData) []*VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool {
+func ConstructNodepools(data *schema.ResourceData) []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool {
 	cfn := extractClusterFullName(data)
 	specData := extractClusterSpec(data)
 
 	v := specData[nodepoolKey]
 	nodepoolsData := v.([]any)
 
-	nodepools := make([]*VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool, 0, len(nodepoolsData))
+	nodepools := make([]*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool, 0, len(nodepoolsData))
 
 	for _, d := range nodepoolsData {
 		nodepoolData := d.(map[string]any)
@@ -29,8 +30,8 @@ func ConstructNodepools(data *schema.ResourceData) []*VmwareTanzuManageV1alpha1A
 	return nodepools
 }
 
-func constructNodepool(cfn *VmwareTanzuManageV1alpha1AksclusterFullName, data map[string]any) *VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool {
-	nodepool := &VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{}
+func constructNodepool(cfn *models.VmwareTanzuManageV1alpha1AksclusterFullName, data map[string]any) *models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool {
+	nodepool := &models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{}
 
 	nodepool.FullName = constructNodepoolFullName(cfn, data)
 	nodepool.Spec = constructNodepoolSpec(data)
@@ -38,8 +39,8 @@ func constructNodepool(cfn *VmwareTanzuManageV1alpha1AksclusterFullName, data ma
 	return nodepool
 }
 
-func constructNodepoolFullName(cfn *VmwareTanzuManageV1alpha1AksclusterFullName, data map[string]any) *VmwareTanzuManageV1alpha1AksclusterNodepoolFullName {
-	fn := &VmwareTanzuManageV1alpha1AksclusterNodepoolFullName{}
+func constructNodepoolFullName(cfn *models.VmwareTanzuManageV1alpha1AksclusterFullName, data map[string]any) *models.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName {
+	fn := &models.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName{}
 
 	fn.OrgID = cfn.OrgID
 	fn.CredentialName = cfn.CredentialName
@@ -51,17 +52,17 @@ func constructNodepoolFullName(cfn *VmwareTanzuManageV1alpha1AksclusterFullName,
 	return fn
 }
 
-func constructNodepoolSpec(data map[string]any) *VmwareTanzuManageV1alpha1AksclusterNodepoolSpec {
-	npSpec := &VmwareTanzuManageV1alpha1AksclusterNodepoolSpec{}
+func constructNodepoolSpec(data map[string]any) *models.VmwareTanzuManageV1alpha1AksclusterNodepoolSpec {
+	npSpec := &models.VmwareTanzuManageV1alpha1AksclusterNodepoolSpec{}
 	npSpecData := extractNodepoolSpec(data)
 
 	if v, ok := npSpecData[modeKey]; ok {
-		mode := VmwareTanzuManageV1alpha1AksclusterNodepoolMode(v.(string))
+		mode := models.VmwareTanzuManageV1alpha1AksclusterNodepoolMode(v.(string))
 		npSpec.Mode = &mode
 	}
 
 	if v, ok := npSpecData[typeKey]; ok {
-		npType := VmwareTanzuManageV1alpha1AksclusterNodepoolType(v.(string))
+		npType := models.VmwareTanzuManageV1alpha1AksclusterNodepoolType(v.(string))
 		npSpec.Type = &npType
 	}
 
@@ -78,12 +79,12 @@ func constructNodepoolSpec(data map[string]any) *VmwareTanzuManageV1alpha1Aksclu
 	}
 
 	if v, ok := npSpecData[osTypeKey]; ok {
-		osType := VmwareTanzuManageV1alpha1AksclusterNodepoolOsType(v.(string))
+		osType := models.VmwareTanzuManageV1alpha1AksclusterNodepoolOsType(v.(string))
 		npSpec.OsType = &osType
 	}
 
 	if v, ok := npSpecData[osDiskTypeKey]; ok && v != "" {
-		osDiskType := VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskType(v.(string))
+		osDiskType := models.VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskType(v.(string))
 		npSpec.OsDiskType = &osDiskType
 	}
 
@@ -146,24 +147,24 @@ func extractNodepoolSpec(data map[string]any) map[string]any {
 	return dataSpec[0].(map[string]any)
 }
 
-func constructTaints(taintsData []interface{}) []*VmwareTanzuManageV1alpha1AksclusterNodepoolTaint {
-	taints := make([]*VmwareTanzuManageV1alpha1AksclusterNodepoolTaint, 0, len(taintsData))
+func constructTaints(taintsData []interface{}) []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaint {
+	taints := make([]*models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaint, 0, len(taintsData))
 
 	for _, data := range taintsData {
-		taint := &VmwareTanzuManageV1alpha1AksclusterNodepoolTaint{}
+		taint := &models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaint{}
 		tdata, _ := data.(map[string]interface{})
 
 		if v, ok := tdata[effectKey]; ok {
 			data, _ := v.(string)
-			switch VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffect(data) {
-			case VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectEFFECTUNSPECIFIED:
-				taint.Effect = VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectEFFECTUNSPECIFIED.Pointer()
-			case VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOEXECUTE:
-				taint.Effect = VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOEXECUTE.Pointer()
-			case VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOSCHEDULE:
-				taint.Effect = VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOSCHEDULE.Pointer()
-			case VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectPREFERNOSCHEDULE:
-				taint.Effect = VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectPREFERNOSCHEDULE.Pointer()
+			switch models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffect(data) {
+			case models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectEFFECTUNSPECIFIED:
+				taint.Effect = models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectEFFECTUNSPECIFIED.Pointer()
+			case models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOEXECUTE:
+				taint.Effect = models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOEXECUTE.Pointer()
+			case models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOSCHEDULE:
+				taint.Effect = models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOSCHEDULE.Pointer()
+			case models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectPREFERNOSCHEDULE:
+				taint.Effect = models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectPREFERNOSCHEDULE.Pointer()
 			default:
 				panic("unknown taint effect")
 			}
@@ -183,14 +184,14 @@ func constructTaints(taintsData []interface{}) []*VmwareTanzuManageV1alpha1Akscl
 	return taints
 }
 
-func constructAutoscalingConfig(data []interface{}) *VmwareTanzuManageV1alpha1AksclusterNodepoolAutoScalingConfig {
+func constructAutoscalingConfig(data []interface{}) *models.VmwareTanzuManageV1alpha1AksclusterNodepoolAutoScalingConfig {
 	if len(data) < 1 {
 		return nil
 	}
 
 	// AutoscalingConfig schema defines max 1
 	autoScalingData, _ := data[0].(map[string]any)
-	autoscalingConfig := &VmwareTanzuManageV1alpha1AksclusterNodepoolAutoScalingConfig{}
+	autoscalingConfig := &models.VmwareTanzuManageV1alpha1AksclusterNodepoolAutoScalingConfig{}
 
 	if v, ok := autoScalingData[enableKey]; ok {
 		helper.SetPrimitiveValue(v, &autoscalingConfig.Enabled, enableKey)
@@ -205,12 +206,12 @@ func constructAutoscalingConfig(data []interface{}) *VmwareTanzuManageV1alpha1Ak
 	}
 
 	if v, ok := autoScalingData[scaleSetPriorityKey]; ok {
-		scaleSetPriority := VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriority(v.(string))
+		scaleSetPriority := models.VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriority(v.(string))
 		autoscalingConfig.ScaleSetPriority = &scaleSetPriority
 	}
 
 	if v, ok := autoScalingData[scaleSetEvictionPolicyKey]; ok {
-		scaleSetEvictionPolicy := VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicy(v.(string))
+		scaleSetEvictionPolicy := models.VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicy(v.(string))
 		autoscalingConfig.ScaleSetEvictionPolicy = &scaleSetEvictionPolicy
 	}
 
@@ -221,14 +222,14 @@ func constructAutoscalingConfig(data []interface{}) *VmwareTanzuManageV1alpha1Ak
 	return autoscalingConfig
 }
 
-func constructUpgradeConfig(data []interface{}) *VmwareTanzuManageV1alpha1AksclusterNodepoolUpgradeConfig {
+func constructUpgradeConfig(data []interface{}) *models.VmwareTanzuManageV1alpha1AksclusterNodepoolUpgradeConfig {
 	if len(data) < 1 {
 		return nil
 	}
 
 	// UpgradeConfigData schema defines max 1
 	upgradeConfigData, _ := data[0].(map[string]any)
-	upgradeConfig := &VmwareTanzuManageV1alpha1AksclusterNodepoolUpgradeConfig{}
+	upgradeConfig := &models.VmwareTanzuManageV1alpha1AksclusterNodepoolUpgradeConfig{}
 
 	if v, ok := upgradeConfigData[maxSurgeKey]; ok {
 		helper.SetPrimitiveValue(v, &upgradeConfig.MaxSurge, maxSurgeKey)
@@ -237,7 +238,7 @@ func constructUpgradeConfig(data []interface{}) *VmwareTanzuManageV1alpha1Aksclu
 	return upgradeConfig
 }
 
-func ToNodepoolMap(np *VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) map[string]any {
+func ToNodepoolMap(np *models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) map[string]any {
 	if np == nil {
 		return nil
 	}
@@ -249,7 +250,7 @@ func ToNodepoolMap(np *VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) map[
 	return data
 }
 
-func toNodepoolSpecMap(spec *VmwareTanzuManageV1alpha1AksclusterNodepoolSpec) []any {
+func toNodepoolSpecMap(spec *models.VmwareTanzuManageV1alpha1AksclusterNodepoolSpec) []any {
 	data := make(map[string]any)
 	if spec == nil {
 		return []any{data}
@@ -275,7 +276,7 @@ func toNodepoolSpecMap(spec *VmwareTanzuManageV1alpha1AksclusterNodepoolSpec) []
 	return []any{data}
 }
 
-func toTaintList(t []*VmwareTanzuManageV1alpha1AksclusterNodepoolTaint) []any {
+func toTaintList(t []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaint) []any {
 	data := make([]any, 0, len(t))
 	for _, item := range t {
 		data = append(data, toTaintMap(item))
@@ -284,7 +285,7 @@ func toTaintList(t []*VmwareTanzuManageV1alpha1AksclusterNodepoolTaint) []any {
 	return data
 }
 
-func toTaintMap(item *VmwareTanzuManageV1alpha1AksclusterNodepoolTaint) map[string]any {
+func toTaintMap(item *models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaint) map[string]any {
 	data := make(map[string]any)
 	if item == nil {
 		return data
@@ -297,7 +298,7 @@ func toTaintMap(item *VmwareTanzuManageV1alpha1AksclusterNodepoolTaint) map[stri
 	return data
 }
 
-func toAutoscalingConfigMap(config *VmwareTanzuManageV1alpha1AksclusterNodepoolAutoScalingConfig) []any {
+func toAutoscalingConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterNodepoolAutoScalingConfig) []any {
 	if config == nil {
 		return nil
 	}
@@ -313,7 +314,7 @@ func toAutoscalingConfigMap(config *VmwareTanzuManageV1alpha1AksclusterNodepoolA
 	return []any{data}
 }
 
-func toUpgradeConfigMap(config *VmwareTanzuManageV1alpha1AksclusterNodepoolUpgradeConfig) []any {
+func toUpgradeConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterNodepoolUpgradeConfig) []any {
 	if config == nil {
 		return nil
 	}

@@ -12,13 +12,14 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	. "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+
+	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 type retryInterval string
 
-func setResourceState(data *schema.ResourceData, cluster *VmwareTanzuManageV1alpha1AksclusterAksCluster, nodepools []*VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) error {
+func setResourceState(data *schema.ResourceData, cluster *models.VmwareTanzuManageV1alpha1AksclusterAksCluster, nodepools []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) error {
 	data.SetId(cluster.Meta.UID)
 
 	if err := data.Set(common.MetaKey, common.FlattenMeta(cluster.Meta)); err != nil {
@@ -35,39 +36,39 @@ func setResourceState(data *schema.ResourceData, cluster *VmwareTanzuManageV1alp
 	return nil
 }
 
-func clusterIsReady(resp *VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse) bool {
-	if resp == nil || resp.AksCluster == nil || resp.AksCluster.Status == nil || *resp.AksCluster.Status.Phase != VmwareTanzuManageV1alpha1AksclusterPhaseREADY {
+func clusterIsReady(resp *models.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse) bool {
+	if resp == nil || resp.AksCluster == nil || resp.AksCluster.Status == nil || *resp.AksCluster.Status.Phase != models.VmwareTanzuManageV1alpha1AksclusterPhaseREADY {
 		return false
 	}
 
 	return true
 }
 
-func clusterHasFatalError(resp *VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse) bool {
-	if resp == nil || resp.AksCluster == nil || resp.AksCluster.Status == nil || *resp.AksCluster.Status.Phase != VmwareTanzuManageV1alpha1AksclusterPhaseERROR {
+func clusterHasFatalError(resp *models.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse) bool {
+	if resp == nil || resp.AksCluster == nil || resp.AksCluster.Status == nil || *resp.AksCluster.Status.Phase != models.VmwareTanzuManageV1alpha1AksclusterPhaseERROR {
 		return false
 	}
 
 	return true
 }
 
-func nodepoolIsReady(resp *VmwareTanzuManageV1alpha1AksclusterNodepoolGetNodepoolResponse) bool {
-	if resp == nil || resp.Nodepool == nil || resp.Nodepool.Status == nil || *resp.Nodepool.Status.Phase != VmwareTanzuManageV1alpha1AksclusterNodepoolPhaseREADY {
+func nodepoolIsReady(resp *models.VmwareTanzuManageV1alpha1AksclusterNodepoolGetNodepoolResponse) bool {
+	if resp == nil || resp.Nodepool == nil || resp.Nodepool.Status == nil || *resp.Nodepool.Status.Phase != models.VmwareTanzuManageV1alpha1AksclusterNodepoolPhaseREADY {
 		return false
 	}
 
 	return true
 }
 
-func nodepoolHasFatalError(resp *VmwareTanzuManageV1alpha1AksclusterNodepoolGetNodepoolResponse) bool {
-	if resp == nil || resp.Nodepool == nil || resp.Nodepool.Status == nil || *resp.Nodepool.Status.Phase != VmwareTanzuManageV1alpha1AksclusterNodepoolPhaseERROR {
+func nodepoolHasFatalError(resp *models.VmwareTanzuManageV1alpha1AksclusterNodepoolGetNodepoolResponse) bool {
+	if resp == nil || resp.Nodepool == nil || resp.Nodepool.Status == nil || *resp.Nodepool.Status.Phase != models.VmwareTanzuManageV1alpha1AksclusterNodepoolPhaseERROR {
 		return false
 	}
 
 	return true
 }
 
-func getErrorReason(conditions map[string]VmwareTanzuCoreV1alpha1StatusCondition) string {
+func getErrorReason(conditions map[string]models.VmwareTanzuCoreV1alpha1StatusCondition) string {
 	msg, err := json.Marshal(conditions)
 	if err != nil {
 		return "unknown error"
@@ -99,8 +100,8 @@ func getPollInterval(ctx context.Context) time.Duration {
 	return defaultInterval
 }
 
-func extractClusterFullName(d *schema.ResourceData) *VmwareTanzuManageV1alpha1AksclusterFullName {
-	fn := &VmwareTanzuManageV1alpha1AksclusterFullName{}
+func extractClusterFullName(d *schema.ResourceData) *models.VmwareTanzuManageV1alpha1AksclusterFullName {
+	fn := &models.VmwareTanzuManageV1alpha1AksclusterFullName{}
 	fn.CredentialName, _ = d.Get(CredentialNameKey).(string)
 	fn.SubscriptionID, _ = d.Get(SubscriptionIDKey).(string)
 	fn.ResourceGroupName, _ = d.Get(ResourceGroupNameKey).(string)

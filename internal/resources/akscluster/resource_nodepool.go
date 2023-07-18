@@ -12,7 +12,9 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/pkg/errors"
+
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client"
 	aksnodepool "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster/nodepool"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
@@ -171,7 +173,7 @@ func updateNodepool(ctx context.Context, np *aksmodel.VmwareTanzuManageV1alpha1A
 }
 
 // deleteNodepool deletes an existing nodepool and waits until the nodepool has been successfully removed as part of an
-// inplace update flow
+// inplace update flow.
 func deleteNodepool(ctx context.Context, nodepool *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool, client *client.TanzuMissionControl, timeout time.Duration) error {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()

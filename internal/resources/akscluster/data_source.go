@@ -11,10 +11,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
+
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
-	aksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 )
 
 func DataSourceTMCAKSCluster() *schema.Resource {
@@ -53,7 +54,7 @@ func dataSourceTMCAKSClusterRead(ctx context.Context, data *schema.ResourceData,
 	return diag.Diagnostics{}
 }
 
-func getClusterAndNodepools(_ context.Context, data *schema.ResourceData, client *client.TanzuMissionControl) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse, *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse, error) {
+func getClusterAndNodepools(_ context.Context, data *schema.ResourceData, client *client.TanzuMissionControl) (*models.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse, *models.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse, error) {
 	fn := extractClusterFullName(data)
 	clusterResp, err := client.AKSClusterResourceService.AksClusterResourceServiceGet(fn)
 
