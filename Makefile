@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 ifeq ($(VERSION_TAG),)
-	VERSION_TAG := 1.0.0
+	VERSION_TAG := 3.0
 endif
 
 ifeq ($(GOARCH),)
@@ -29,8 +29,8 @@ default: build
 
 build:
 	go build -o bin/terraform-provider-tanzu-mission-control_$(VERSION_TAG)
-	mkdir -p ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/$(VERSION_TAG:v%=%)/$(GOOS)_$(GOARCH)/
-	cp bin/terraform-provider-tanzu-mission-control_$(VERSION_TAG) ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/$(VERSION_TAG:v%=%)/$(GOOS)_$(GOARCH)/
+	mkdir -p ~/.terraform.d/plugins/vmware/devtest/tanzu-mission-control/$(VERSION_TAG:v%=%)/$(GOOS)_$(GOARCH)/
+	cp bin/terraform-provider-tanzu-mission-control_$(VERSION_TAG) ~/.terraform.d/plugins/vmware/devtest/tanzu-mission-control/$(VERSION_TAG:v%=%)/$(GOOS)_$(GOARCH)/
 
 clean-up:
 	rm -rf ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/*

@@ -6,6 +6,7 @@ SPDX-License-Identifier: MPL-2.0
 package client
 
 import (
+	manifestclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/manifest"
 	"net/http"
 	"runtime"
 
@@ -76,6 +77,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		OrganizationPolicyResourceService: policyorganizationclient.New(httpClient),
 		CredentialResourceService:         credentialclient.New(httpClient),
 		IntegrationResourceService:        integrationclient.New(httpClient),
+		ManifestResourceService:           manifestclient.New(httpClient),
 	}
 }
 
@@ -100,4 +102,5 @@ type TanzuMissionControl struct {
 	OrganizationPolicyResourceService policyorganizationclient.ClientService
 	CredentialResourceService         credentialclient.ClientService
 	IntegrationResourceService        integrationclient.ClientService
+	ManifestResourceService           manifestclient.ClientService
 }

@@ -151,6 +151,11 @@ var clusterSpec = &schema.Schema{
 				Description: "Optional proxy name is the name of the Proxy Config to be used for the cluster",
 				Optional:    true,
 			},
+			imageRegistryNameKey: {
+				Type:        schema.TypeString,
+				Description: "Optional proxy name is the name of the Proxy Config to be used for the cluster",
+				Optional:    true,
+			},
 			tkgAWSClusterKey:     tkgaws.TkgAWSClusterSpec,
 			tkgServiceVsphereKey: tkgservicevsphere.TkgServiceVsphere,
 			tkgVsphereClusterKey: tkgvsphere.TkgVsphereClusterSpec,
@@ -184,6 +189,10 @@ func constructSpec(d *schema.ResourceData) (spec *clustermodel.VmwareTanzuManage
 		spec.ProxyName = v.(string)
 	}
 
+	if v, ok := specData[imageRegistryNameKey]; ok {
+		spec.ImageRegistry = v.(string)
+	}
+
 	if v, ok := specData[tkgAWSClusterKey]; ok {
 		if v1, ok := v.([]interface{}); ok {
 			spec.TkgAws = tkgaws.ConstructTKGAWSClusterSpec(v1)
@@ -215,6 +224,8 @@ func flattenSpec(spec *clustermodel.VmwareTanzuManageV1alpha1ClusterSpec) (data 
 	flattenSpecData[clusterGroupKey] = spec.ClusterGroupName
 
 	flattenSpecData[proxyNameKey] = spec.ProxyName
+
+	flattenSpecData[imageRegistryNameKey] = spec.ImageRegistry
 
 	if spec.TkgAws != nil {
 		flattenSpecData[tkgAWSClusterKey] = tkgaws.FlattenTKGAWSClusterSpec(spec.TkgAws)
@@ -270,6 +281,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		k8sclient  *k8sClient.Client
 		err        error
 		kubeConfig interface{}
+		manifests  string
 	)
 
 	if v, ok := d.GetOk(attachClusterKey); ok {
@@ -346,12 +358,25 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 			Summary:  "Kubernetes cluster's kubeconfig provided. Proceeding to attach the cluster TMC",
 		})
 
-		deploymentManifests, err := manifest.GetK8sManifest(clusterResponse.Cluster.Status.InstallerLink)
+		if clusterResponse.Cluster.Spec.ImageRegistry != "" {
+			clusterManifest, err := config.TMCConnection.ManifestResourceService.ClusterManifestHelperGetManifest(constructFullname(d))
+			if err != nil {
+				return diag.FromErr(errors.Wrapf(err, "Unable to get manifest (%s) for cluster entry, name : %s", clusterManifest.Manifest, err))
+			}
+
+			manifests = clusterManifest.Manifest
+		} else {
+			manifests = clusterResponse.Cluster.Status.InstallerLink
+		}
+
+		log.Printf("[INFO] Manifest lir-manifest is %s ", manifests)
+
+		deploymentManifests, err := manifest.GetK8sManifest(manifests)
 		if err != nil {
 			return append(diags, diag.FromErr(err)...)
 		}
 
-		log.Printf("[INFO] Applying %s cluster's deployment link manifest objects on to kubernetes cluster", constructFullname(d).ToString())
+		log.Printf("[INFO] Applying %s cluster's deployment link manifest objects on to kubernetes cluster and manifest is %s", constructFullname(d).ToString(), manifests)
 
 		err = manifest.Create(k8sclient, deploymentManifests, true)
 		if err != nil {
