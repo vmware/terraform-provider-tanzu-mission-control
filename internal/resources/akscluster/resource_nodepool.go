@@ -19,6 +19,15 @@ import (
 	aksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 )
 
+// nodePoolOperations the reconciliation data that will be used to apply nodepool changes.
+type nodePoolOperations struct {
+	created  []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool
+	updated  []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool
+	deleted  []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool
+	existing []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool
+	desired  []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool
+}
+
 // createNodepools sends the create request for the given nodepools as part of cluster creation flow.
 func createNodepools(ctx context.Context, nodepools []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool, client aksnodepool.ClientService) error {
 	for _, np := range nodepools {
@@ -68,24 +77,24 @@ func handleNodepoolChanges(ctx context.Context, existing []*aksmodel.VmwareTanzu
 		}
 	}
 
-	npData := map[string][]*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{
-		"created":  created,
-		"updated":  updated,
-		"deleted":  deleted,
-		"existing": existing,
-		"desired":  ConstructNodepools(data),
+	npData := nodePoolOperations{
+		created:  created,
+		updated:  updated,
+		deleted:  deleted,
+		existing: existing,
+		desired:  ConstructNodepools(data),
 	}
 
 	return applyUpdates(ctx, npData, tc, getTimeOut(data))
 }
 
-func applyUpdates(ctx context.Context, npData map[string][]*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool, tc *client.TanzuMissionControl, timeout time.Duration) error {
-	for _, np := range npData["created"] {
+func applyUpdates(ctx context.Context, npData nodePoolOperations, tc *client.TanzuMissionControl, timeout time.Duration) error {
+	for _, np := range npData.created {
 		// If the node pool already exists it may have been reordered.
-		if old := checkIfNodepoolExists(np, npData["existing"]); old != nil {
+		if old := checkIfNodepoolExists(np, npData.existing); old != nil {
 			if !identical(np, old) {
 				// If the reordered nodepool doesn't match the existing one it is actually an update.
-				npData["updated"] = append(npData["updated"], np)
+				npData.updated = append(npData.updated, np)
 			} else {
 				// No action required nodepool already exists in desired state.
 				continue
@@ -97,10 +106,10 @@ func applyUpdates(ctx context.Context, npData map[string][]*aksmodel.VmwareTanzu
 		}
 	}
 
-	for _, np := range npData["updated"] {
+	for _, np := range npData.updated {
 		// If the node pool already exists it may have been reordered.
-		if existingNp := checkIfNodepoolExists(np, npData["existing"]); existingNp != nil && identical(np, existingNp) {
-			// No action required the nodepool exists in the request config.
+		if existingNp := checkIfNodepoolExists(np, npData.existing); existingNp != nil && identical(np, existingNp) {
+			// No action required the nodepool exists in the desired config.
 			continue
 		}
 
@@ -109,9 +118,9 @@ func applyUpdates(ctx context.Context, npData map[string][]*aksmodel.VmwareTanzu
 		}
 	}
 
-	for _, np := range npData["deleted"] {
-		if desired := checkIfNodepoolExists(np, npData["desired"]); desired != nil {
-			// The nodepool exists in the desired state we should not delete it.
+	for _, np := range npData.deleted {
+		if desired := checkIfNodepoolExists(np, npData.desired); desired != nil {
+			// The nodepool exist as part of the desired state we should not delete it.
 			continue
 		}
 
