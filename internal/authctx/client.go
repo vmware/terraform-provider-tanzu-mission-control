@@ -13,9 +13,16 @@ import (
 )
 
 const (
-	ServerEndpointEnvVar   = "TMC_ENDPOINT"
+	ServerEndpointEnvVar = "TMC_ENDPOINT"
+
+	// TMC SaaS env variables.
 	VMWCloudEndpointEnvVar = "VMW_CLOUD_ENDPOINT"
 	VMWCloudAPITokenEnvVar = "VMW_CLOUD_API_TOKEN"
+
+	// TMC self managed env variables.
+	OIDCIssuerEndpointEnvVar = "OIDC_ISSUER"
+	TmcSMUsernameEnvVar      = "TMC_SM_USERNAME"
+	TmcSMPasswordEnvVar      = "TMC_SM_PASSWORD"
 
 	// Proxy config values.
 	InsecureAllowUnverifiedSSLEnvVar = "INSECURE_ALLOW_UNVERIFIED_SSL"
