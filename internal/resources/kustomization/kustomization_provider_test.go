@@ -27,7 +27,7 @@ func initTestProvider(t *testing.T) *schema.Provider {
 			clustergroup.ResourceName:        clustergroup.ResourceClusterGroup(),
 			gitrepositoryhelper.ResourceName: gitrepositoryhelper.ResourceGitRepository(),
 		},
-		ConfigureContextFunc: authctx.ProviderConfigureContext,
+		ConfigureContextFunc: getConfigureContextFunc(),
 	}
 	if err := testProvider.InternalValidate(); err != nil {
 		require.NoError(t, err)

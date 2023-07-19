@@ -1,17 +1,19 @@
 /*
-Copyright © 2022 VMware, Inc. All Rights Reserved.
+Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
 package kustomization
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -31,10 +33,9 @@ import (
 // nolint: gosec
 const (
 	kustomizationResource      = ResourceName
-	kustomizationResourceVar   = "test_kustomizationy"
-	kustomizationDataSourceVar = "test_data_source_kustomizationy"
+	kustomizationResourceVar   = "test_kustomization"
+	kustomizationDataSourceVar = "test_data_source_kustomization"
 	kustomizationNamePrefix    = "tf-kustomization-test"
-	namespaceName              = "tanzu-continuousdelivery-resources"
 
 	gitRepositoryResource    = gitrepositoryhelper.ResourceName
 	gitRepositoryResourceVar = "test_git_repository"
@@ -51,6 +52,7 @@ type testAcceptanceConfig struct {
 	GitRepositoryResource     string
 	GitRepositoryResourceVar  string
 	GitRepositoryName         string
+	Namespace                 string
 }
 
 func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
@@ -64,11 +66,56 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 		GitRepositoryResource:     gitRepositoryResource,
 		GitRepositoryResourceVar:  gitRepositoryResourceVar,
 		GitRepositoryName:         acctest.RandomWithPrefix(gitRepositoryNamePrefix),
+		Namespace:                 "tanzu-continuousdelivery-resources",
 	}
+}
+
+func getConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	if _, found := os.LookupEnv("ENABLE_KUSTOMIZATION_ENV_TEST"); !found {
+		return authctx.ProviderConfigureContextWithDefaultTransportForTesting
+	}
+
+	return authctx.ProviderConfigureContext
+}
+
+func getSetupConfig(config *authctx.TanzuContext) error {
+	if _, found := os.LookupEnv("ENABLE_KUSTOMIZATION_ENV_TEST"); !found {
+		return config.SetupWithDefaultTransportForTesting()
+	}
+
+	return config.Setup()
 }
 
 func TestAcceptanceForKustomizationResource(t *testing.T) {
 	testConfig := testGetDefaultAcceptanceConfig(t)
+
+	// If the flag to execute kustomization tests is not found, run this as a mock test by setting up an http intercept for each endpoint.
+	_, found := os.LookupEnv("ENABLE_KUSTOMIZATION_ENV_TEST")
+	if !found {
+		os.Setenv("TF_ACC", "true")
+		os.Setenv("TMC_ENDPOINT", "dummy.tmc.mock.vmware.com")
+		os.Setenv("VMW_CLOUD_API_TOKEN", "dummy")
+		os.Setenv("VMW_CLOUD_ENDPOINT", "console.cloud.vmware.com")
+
+		log.Println("Setting up the mock endpoints...")
+
+		testConfig.setupHTTPMocks(t)
+	} else {
+		// Environment variables with non default values required for a successful call to Cluster Config Service.
+		requiredVars := []string{
+			"VMW_CLOUD_ENDPOINT",
+			"TMC_ENDPOINT",
+			"VMW_CLOUD_API_TOKEN",
+			"ORG_ID",
+		}
+
+		// Check if the required environment variables are set.
+		for _, name := range requiredVars {
+			if _, found := os.LookupEnv(name); !found {
+				t.Errorf("required environment variable '%s' missing", name)
+			}
+		}
+	}
 
 	t.Log("start kustomization resource acceptance tests!")
 
@@ -80,7 +127,7 @@ func TestAcceptanceForKustomizationResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
-					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" {
+					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" && found {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped kustomization acceptance test")
 					}
 				},
@@ -88,6 +135,12 @@ func TestAcceptanceForKustomizationResource(t *testing.T) {
 				Check:  testConfig.checkKustomizationResourceAttributes(commonscope.ClusterScope),
 			},
 			{
+				PreConfig: func() {
+					if !found {
+						t.Log("Setting up the updated GET mock responder for cluster scope...")
+						testConfig.setupHTTPMocksUpdate(t, commonscope.ClusterScope)
+					}
+				},
 				Config: testConfig.getTestKustomizationResourceBasicConfigValue(commonscope.ClusterScope, WithPruneEnabled(true), WithInterval("10m")),
 				Check:  testConfig.checkKustomizationResourceAttributes(commonscope.ClusterScope),
 			},
@@ -96,6 +149,12 @@ func TestAcceptanceForKustomizationResource(t *testing.T) {
 				Check:  testConfig.checkKustomizationResourceAttributes(commonscope.ClusterGroupScope),
 			},
 			{
+				PreConfig: func() {
+					if !found {
+						t.Log("Setting up the updated GET mock responder for cluster group scope...")
+						testConfig.setupHTTPMocksUpdate(t, commonscope.ClusterGroupScope)
+					}
+				},
 				Config: testConfig.getTestKustomizationResourceBasicConfigValue(commonscope.ClusterGroupScope, WithPruneEnabled(true), WithInterval("10m")),
 				Check:  testConfig.checkKustomizationResourceAttributes(commonscope.ClusterGroupScope),
 			},
@@ -109,6 +168,49 @@ func TestAcceptanceForKustomizationResource(t *testing.T) {
 func (testConfig *testAcceptanceConfig) getTestKustomizationResourceBasicConfigValue(scope commonscope.Scope, opts ...OperationOption) string {
 	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestResourceHelperAndScope(scope, kustomizationscope.ScopesAllowed[:])
 	kustomizationSpec := getKustomizationspec(opts...)
+
+	if _, found := os.LookupEnv("ENABLE_KUSTOMIZATION_ENV_TEST"); !found {
+		clStr := fmt.Sprintf(`
+	resource "%s" "%s" {
+		name = "%s"
+
+		namespace_name = "%s"
+
+		scope {
+		cluster {
+			name = "%s"
+			management_cluster_name = "attached"
+			provisioner_name = "attached"
+		}
+	 }
+
+		%s
+	}
+	`, testConfig.KustomizationResource, testConfig.KustomizationResourceVar, testConfig.KustomizationName, testConfig.Namespace, testConfig.ScopeHelperResources.Cluster.Name, kustomizationSpec)
+
+		cgStr := fmt.Sprintf(`
+	resource "%s" "%s" {
+		name = "%s"
+
+		namespace_name = "%s"
+
+		 scope {
+		cluster_group {
+			name = "%s"
+		}
+	 }
+
+		%s
+	}
+	`, testConfig.KustomizationResource, testConfig.KustomizationResourceVar, testConfig.KustomizationName, testConfig.Namespace, testConfig.ScopeHelperResources.ClusterGroup.Name, kustomizationSpec)
+
+		switch scope {
+		case commonscope.ClusterScope:
+			return clStr
+		case commonscope.ClusterGroupScope:
+			return cgStr
+		}
+	}
 
 	return fmt.Sprintf(`
 	%s
@@ -137,7 +239,7 @@ func (testConfig *testAcceptanceConfig) getTestKustomizationResourceBasicConfigV
 
 		%s
 	}
-	`, helperBlock, testConfig.GitRepositoryResource, testConfig.GitRepositoryResourceVar, testConfig.GitRepositoryName, namespaceName, scopeBlock, testConfig.KustomizationResource, testConfig.KustomizationResourceVar, testConfig.KustomizationName, namespaceName, scopeBlock, kustomizationSpec)
+	`, helperBlock, testConfig.GitRepositoryResource, testConfig.GitRepositoryResourceVar, testConfig.GitRepositoryName, testConfig.Namespace, scopeBlock, testConfig.KustomizationResource, testConfig.KustomizationResourceVar, testConfig.KustomizationName, testConfig.Namespace, scopeBlock, kustomizationSpec)
 }
 
 type (
@@ -169,6 +271,23 @@ func getKustomizationspec(opts ...OperationOption) string {
 
 	for _, o := range opts {
 		o(cfg)
+	}
+
+	if _, found := os.LookupEnv("ENABLE_KUSTOMIZATION_ENV_TEST"); !found {
+		inputBlock := `
+    spec {
+			path = "manifests/"
+			prune = %t
+			interval = "%s"
+			source {
+				name = "someGitRepository"
+				namespace = "tanzu-continuousdelivery-resources"
+			}
+		}
+`
+		inputBlock = fmt.Sprintf(inputBlock, cfg.pruneEnabled, cfg.interval)
+
+		return inputBlock
 	}
 
 	inputBlock := `
@@ -230,7 +349,7 @@ func (testConfig *testAcceptanceConfig) verifyKustomizationResourceCreation(scop
 			TLSConfig:        &proxy.TLSConfig{},
 		}
 
-		err := config.Setup()
+		err := getSetupConfig(&config)
 		if err != nil {
 			return errors.Wrap(err, "unable to set the context")
 		}
