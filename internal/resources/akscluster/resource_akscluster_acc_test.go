@@ -8,6 +8,7 @@ package akscluster_test
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"testing"
 
@@ -24,7 +25,9 @@ import (
 	aksclients "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster"
 	aksnodepool "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster/nodepool"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 	aksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
@@ -39,7 +42,7 @@ func validateSetup(t *testing.T) {
 	}
 }
 
-func initTestProvider(t *testing.T, clusterClient *mockClusterClient, nodepoolClient *mockNodepoolClient) *schema.Provider {
+func initTestProvider(t *testing.T, clusterClient *mockClusterService, nodepoolClient *mockNodepoolService) *schema.Provider {
 	testAksClusterProvider := &schema.Provider{
 		Schema: authctx.ProviderAuthSchema(),
 		ResourcesMap: map[string]*schema.Resource{
@@ -59,10 +62,10 @@ func initTestProvider(t *testing.T, clusterClient *mockClusterClient, nodepoolCl
 	return testAksClusterProvider
 }
 
-func getConfigContext(clusterClient aksclients.ClientService, nodepoolClient aksnodepool.ClientService) schema.ConfigureContextFunc {
+func getConfigContext(clusterClient *mockClusterService, nodepoolClient *mockNodepoolService) schema.ConfigureContextFunc {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-		if _, found := os.LookupEnv("ENABLE_EKS_ENV_TEST"); found {
-			return &authctx.TanzuContext{
+		if _, found := os.LookupEnv("ENABLE_AKS_ENV_TEST"); !found {
+			return authctx.TanzuContext{
 				TMCConnection: &client.TanzuMissionControl{
 					AKSClusterResourceService:  clusterClient,
 					AKSNodePoolResourceService: nodepoolClient,
@@ -74,15 +77,120 @@ func getConfigContext(clusterClient aksclients.ClientService, nodepoolClient aks
 	}
 }
 
+func getTanzuConfig(clusterClient aksclients.ClientService, nodepoolClient aksnodepool.ClientService) (authctx.TanzuContext, error) {
+	if _, found := os.LookupEnv("ENABLE_AKS_ENV_TEST"); !found {
+		return authctx.TanzuContext{
+			TMCConnection: &client.TanzuMissionControl{
+				AKSClusterResourceService:  clusterClient,
+				AKSNodePoolResourceService: nodepoolClient,
+			},
+		}, nil
+	}
+
+	config := authctx.TanzuContext{
+		ServerEndpoint:   os.Getenv(authctx.ServerEndpointEnvVar),
+		Token:            os.Getenv(authctx.VMWCloudAPITokenEnvVar),
+		VMWCloudEndPoint: os.Getenv(authctx.VMWCloudEndpointEnvVar),
+		TLSConfig:        &proxy.TLSConfig{},
+	}
+
+	err := config.Setup()
+
+	return config, err
+}
+
+func initMocks(clusterClient *mockClusterService, nodepoolClient *mockNodepoolService) {
+	clusterClient.createResponses = []*aksmodel.VmwareTanzuManageV1alpha1AksclusterCreateAksClusterResponse{}
+	clusterClient.updateResponse = []*aksmodel.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterResponse{}
+
+	nodepoolClient.createResponses = []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse{}
+	nodepoolClient.listResponses = []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{}
+	nodepoolClient.getResponses = []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolGetNodepoolResponse{}
+
+	// ===== Mocks for create Cluster ======
+	clusterClient.createResponses = append(clusterClient.createResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterCreateAksClusterResponse{AksCluster: mockCluster()})
+	nodepoolClient.createResponses = append(nodepoolClient.createResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse{Nodepool: mockNodepool(withNodepoolName("systemnp"))})
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster()})
+	nodepoolClient.listResponses = append(nodepoolClient.listResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{Nodepools: []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{mockNodepool(withNodepoolName("systemnp"))}})
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster()})
+	nodepoolClient.listResponses = append(nodepoolClient.listResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{Nodepools: []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{mockNodepool(withNodepoolName("systemnp"))}})
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster()})
+	nodepoolClient.listResponses = append(nodepoolClient.listResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{Nodepools: []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{mockNodepool(withNodepoolName("systemnp"))}})
+
+	// ===== Mocks for update Cluster ======
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster()})
+	nodepoolClient.listResponses = append(nodepoolClient.listResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{Nodepools: []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{mockNodepool(withNodepoolName("systemnp"))}})
+	clusterClient.updateResponse = append(clusterClient.updateResponse, &aksmodel.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterResponse{AksCluster: mockCluster(enableCSI)})
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster(enableCSI)})
+	nodepoolClient.listResponses = append(nodepoolClient.listResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{Nodepools: []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{mockNodepool(withNodepoolName("systemnp"))}})
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster(enableCSI)})
+	nodepoolClient.listResponses = append(nodepoolClient.listResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{Nodepools: []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{mockNodepool(withNodepoolName("systemnp"))}})
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster(enableCSI)})
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster(enableCSI)})
+
+	// Mocks for add Nodepool.
+	// Get initial state.
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster(enableCSI)})
+	nodepoolClient.listResponses = append(nodepoolClient.listResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{Nodepools: []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{mockNodepool(withNodepoolName("systemnp"))}})
+
+	// ===== Mocks for create Nodepool ======
+	// Get initial state.
+	nodepoolClient.createResponses = append(nodepoolClient.createResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse{Nodepool: mockNodepool(withNodepoolName("userpool"))})
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster(enableCSI)})
+
+	// Create nodepool.
+	nodepoolClient.createResponses = append(nodepoolClient.createResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse{Nodepool: mockNodepool(withNodepoolName("userpool"), withUserMode)})
+	nodepoolClient.getResponses = append(nodepoolClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolGetNodepoolResponse{Nodepool: mockNodepool(withNodepoolName("userpool"), withUserMode)})
+
+	// Save new state.
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster(enableCSI)})
+	nodepoolClient.getResponses = append(nodepoolClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolGetNodepoolResponse{Nodepool: mockNodepool(withNodepoolName("userpool"), withUserMode)})
+	nodepoolClient.listResponses = append(nodepoolClient.listResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{Nodepools: []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{mockNodepool(withNodepoolName("systemnp")), mockNodepool(withNodepoolName("userpool"), withUserMode)}})
+
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster(enableCSI)})
+	nodepoolClient.getResponses = append(nodepoolClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolGetNodepoolResponse{Nodepool: mockNodepool(withNodepoolName("userpool"), withUserMode)})
+	nodepoolClient.listResponses = append(nodepoolClient.listResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{Nodepools: []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{mockNodepool(withNodepoolName("systemnp")), mockNodepool(withNodepoolName("userpool"), withUserMode)}})
+
+	// Terraform test state validation.
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster(enableCSI)})
+	nodepoolClient.listResponses = append(nodepoolClient.listResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{Nodepools: []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{mockNodepool(withNodepoolName("systemnp")), mockNodepool(withNodepoolName("userpool"), withUserMode)}})
+
+	// ===== Mocks for delete Nodepool ======
+	// Get initial state.
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster(enableCSI)})
+	nodepoolClient.listResponses = append(nodepoolClient.listResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{Nodepools: []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{mockNodepool(withNodepoolName("systemnp")), mockNodepool(withNodepoolName("userpool"), withUserMode)}})
+
+	// Delete nodepool.
+	nodepoolClient.deleteResponse = append(nodepoolClient.deleteResponse, nil)
+	nodepoolClient.getResponses = append(nodepoolClient.getResponses, nil)
+
+	// Save new state.
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster(enableCSI)})
+	nodepoolClient.listResponses = append(nodepoolClient.listResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{Nodepools: []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{mockNodepool(withNodepoolName("systemnp"))}})
+
+	// Check nodepool does not exist.
+	nodepoolClient.getResponses = append(nodepoolClient.getResponses, nil)
+
+	// Terraform test state validation.
+	clusterClient.getResponses = append(clusterClient.getResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: mockCluster(enableCSI)})
+	nodepoolClient.listResponses = append(nodepoolClient.listResponses, &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse{Nodepools: []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{mockNodepool(withNodepoolName("systemnp"))}})
+
+	// ===== Mocks for cleanup ======
+	// Cleanup.
+	clusterClient.getResponses = append(clusterClient.getResponses, nil) // poll until deleted
+	clusterClient.getResponses = append(clusterClient.getResponses, nil) // verify deleted
+}
+
 func TestAccAksCluster_basics(t *testing.T) {
-	clusterClient := &mockClusterClient{}
-	nodepoolClient := &mockNodepoolClient{}
+	clusterClient := &mockClusterService{}
+	nodepoolClient := &mockNodepoolService{}
+
+	if _, found := os.LookupEnv("ENABLE_AKS_ENV_TEST"); !found {
+		initMocks(clusterClient, nodepoolClient)
+	}
+
 	fn := getFullName()
 	rname := fmt.Sprintf("tanzu-mission-control_akscluster.%v", fn.Name)
-
-	var aksCluster aksmodel.VmwareTanzuManageV1alpha1AksclusterAksCluster
-
-	var aksnodepool aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool
 
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
@@ -91,7 +199,11 @@ func TestAccAksCluster_basics(t *testing.T) {
 		},
 		ProviderFactories: testhelper.GetTestProviderFactories(initTestProvider(t, clusterClient, nodepoolClient)),
 		CheckDestroy: func(state *terraform.State) error {
-			_, err := clusterClient.AksClusterResourceServiceGet(fn)
+			config, err := getTanzuConfig(clusterClient, nodepoolClient)
+			if err != nil {
+				return err
+			}
+			_, err = config.TMCConnection.AKSClusterResourceService.AksClusterResourceServiceGet(fn)
 			if !clienterrors.IsNotFoundError(err) {
 				return err
 			}
@@ -102,13 +214,13 @@ func TestAccAksCluster_basics(t *testing.T) {
 			{
 				Config: testAKSCluster(fn),
 				Check: resource.ComposeTestCheckFunc(
-					testAksClusterExists(rname, fn, clusterClient, &aksCluster),
+					testAksClusterExists(rname, fn, clusterClient),
 				),
 			},
 			{
-				Config: testAKSClusterDisableCSI(fn),
+				Config: testAKSClusterEnableCSI(fn),
 				Check: resource.ComposeTestCheckFunc(
-					testAksClusterExists(rname, fn, clusterClient, &aksCluster),
+					testAksClusterExists(rname, fn, clusterClient),
 					resource.TestCheckResourceAttr(rname, "spec.0.config.0.storage_config.0.enable_disk_csi_driver", "true"),
 					resource.TestCheckResourceAttr(rname, "spec.0.config.0.storage_config.0.enable_file_csi_driver", "true"),
 				),
@@ -116,7 +228,7 @@ func TestAccAksCluster_basics(t *testing.T) {
 			{
 				Config: testAKSClusterAddUserNodepool(fn),
 				Check: resource.ComposeTestCheckFunc(
-					testAksNodepoolExists(getNodepoolFullName(fn, "userpool"), nodepoolClient, &aksnodepool),
+					testAksNodepoolExists(getNodepoolFullName(fn, "userpool"), nodepoolClient),
 					resource.TestCheckResourceAttr(rname, "spec.0.nodepool.#", "2"),
 				),
 			},
@@ -131,28 +243,14 @@ func TestAccAksCluster_basics(t *testing.T) {
 	})
 }
 
-func getFullName() *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName {
-	return &aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName{
-		CredentialName:    os.Getenv("AKS_CREDENTIAL_NAME"),
-		Name:              fmt.Sprintf("tf-acc-test-%s", acctest.RandString(5)),
-		ResourceGroupName: os.Getenv("test-group"),
-		SubscriptionID:    os.Getenv("AKS_SUBSCRIPTION_ID"),
-	}
-}
-
-func getNodepoolFullName(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName, name string) *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName {
-	return &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName{
-		AksClusterName:    fn.Name,
-		CredentialName:    fn.CredentialName,
-		Name:              name,
-		ResourceGroupName: fn.ResourceGroupName,
-		SubscriptionID:    fn.SubscriptionID,
-	}
-}
-
-func testAksNodepoolDoesNotExists(npfn *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName, client aksnodepool.ClientService) resource.TestCheckFunc {
+func testAksNodepoolDoesNotExists(npfn *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName, nodepoolClient aksnodepool.ClientService) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		np, err := client.AksNodePoolResourceServiceGet(npfn)
+		config, err := getTanzuConfig(nil, nodepoolClient)
+		if err != nil {
+			return err
+		}
+
+		np, err := config.TMCConnection.AKSNodePoolResourceService.AksNodePoolResourceServiceGet(npfn)
 		if clienterrors.IsNotFoundError(err) {
 			return nil
 		}
@@ -165,20 +263,23 @@ func testAksNodepoolDoesNotExists(npfn *aksmodel.VmwareTanzuManageV1alpha1Aksclu
 	}
 }
 
-func testAksNodepoolExists(npfn *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName, client aksnodepool.ClientService, a *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) resource.TestCheckFunc {
+func testAksNodepoolExists(npfn *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName, nodepoolClient aksnodepool.ClientService) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		resp, err := client.AksNodePoolResourceServiceGet(npfn)
-		if clienterrors.IsNotFoundError(err) {
+		config, err := getTanzuConfig(nil, nodepoolClient)
+		if err != nil {
 			return err
 		}
 
-		a = resp.Nodepool
+		_, err = config.TMCConnection.AKSNodePoolResourceService.AksNodePoolResourceServiceGet(npfn)
+		if clienterrors.IsNotFoundError(err) {
+			return err
+		}
 
 		return err
 	}
 }
 
-func testAksClusterExists(name string, fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName, clusterClient aksclients.ClientService, cluster *aksmodel.VmwareTanzuManageV1alpha1AksclusterAksCluster) resource.TestCheckFunc {
+func testAksClusterExists(name string, fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName, clusterClient aksclients.ClientService) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		rs, ok := state.RootModule().Resources[name]
 		if !ok {
@@ -189,14 +290,36 @@ func testAksClusterExists(name string, fn *aksmodel.VmwareTanzuManageV1alpha1Aks
 			return fmt.Errorf("Cluster ID not set: %s", fn.Name)
 		}
 
-		resp, err := clusterClient.AksClusterResourceServiceGet(fn)
+		config, err := getTanzuConfig(clusterClient, nil)
 		if err != nil {
 			return err
 		}
 
-		cluster = resp.AksCluster
+		_, err = config.TMCConnection.AKSClusterResourceService.AksClusterResourceServiceGet(fn)
+		if err != nil {
+			return err
+		}
 
 		return nil
+	}
+}
+
+func getFullName() *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName {
+	return &aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName{
+		CredentialName:    os.Getenv("AKS_CREDENTIAL_NAME"),
+		Name:              fmt.Sprintf("tf-acc-test-%s", acctest.RandString(5)),
+		ResourceGroupName: "test-group",
+		SubscriptionID:    os.Getenv("AKS_SUBSCRIPTION_ID"),
+	}
+}
+
+func getNodepoolFullName(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName, name string) *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName {
+	return &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName{
+		AksClusterName:    fn.Name,
+		CredentialName:    fn.CredentialName,
+		Name:              name,
+		ResourceGroupName: fn.ResourceGroupName,
+		SubscriptionID:    fn.SubscriptionID,
 	}
 }
 
@@ -230,7 +353,7 @@ func testAKSCluster(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) st
 }`, fn.Name, fn.CredentialName, fn.SubscriptionID, fn.Name)
 }
 
-func testAKSClusterDisableCSI(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) string {
+func testAKSClusterEnableCSI(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) string {
 	return fmt.Sprintf(`resource "tanzu-mission-control_akscluster" "%s" {
   credential_name = "%s"
   subscription_id = "%s"
@@ -299,5 +422,147 @@ func testAKSClusterAddUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1Aksclus
 }
 
 func testAKSClusterRemoveUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) string {
-	return testAKSClusterDisableCSI(fn)
+	return testAKSClusterEnableCSI(fn)
+}
+
+func mockCluster(w ...clusterWither) *aksmodel.VmwareTanzuManageV1alpha1AksclusterAksCluster {
+	c := &aksmodel.VmwareTanzuManageV1alpha1AksclusterAksCluster{
+		FullName: getFullName(),
+		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
+			UID: "test-uid",
+		},
+		Spec: &aksmodel.VmwareTanzuManageV1alpha1AksclusterSpec{
+			AgentName:        "",
+			ClusterGroupName: "default",
+			Config: &aksmodel.VmwareTanzuManageV1alpha1AksclusterClusterConfig{
+				Location: "eastus",
+				NetworkConfig: &aksmodel.VmwareTanzuManageV1alpha1AksclusterNetworkConfig{
+					DNSPrefix: "dns-tf-test",
+				},
+				StorageConfig: &aksmodel.VmwareTanzuManageV1alpha1AksclusterStorageConfig{
+					EnableDiskCsiDriver: false,
+					EnableFileCsiDriver: false,
+				},
+				Version: "1.24.10",
+			},
+		},
+		Status: &aksmodel.VmwareTanzuManageV1alpha1AksclusterStatus{
+			Phase: aksmodel.VmwareTanzuManageV1alpha1AksclusterPhaseREADY.Pointer(),
+		},
+	}
+
+	for _, f := range w {
+		f(c)
+	}
+
+	return c
+}
+
+func mockNodepool(w ...nodepoolWither) *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool {
+	np := &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{
+		FullName: &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName{},
+		Spec: &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolSpec{
+			Count:      1,
+			Mode:       aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM.Pointer(),
+			OsType:     aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolOsTypeLINUX.Pointer(),
+			VMSize:     "Standard_DS2_v2",
+			NodeLabels: map[string]string{},
+			Tags:       map[string]string{},
+			Type:       aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolTypeVIRTUALMACHINESCALESETS.Pointer(),
+		},
+		Status: &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolStatus{
+			Phase: aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolPhaseREADY.Pointer(),
+		},
+	}
+
+	for _, f := range w {
+		f(np)
+	}
+
+	return np
+}
+
+type mockClusterService struct {
+	createResponses []*aksmodel.VmwareTanzuManageV1alpha1AksclusterCreateAksClusterResponse
+	createCall      int
+	updateResponse  []*aksmodel.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterResponse
+	updateCall      int
+	getResponses    []*aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse
+	getCall         int
+}
+
+func (m *mockClusterService) AksClusterResourceServiceCreate(request *aksmodel.VmwareTanzuManageV1alpha1AksclusterCreateAksClusterRequest) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterCreateAksClusterResponse, error) {
+	resp := m.createResponses[m.createCall]
+	m.createCall += 1
+
+	return resp, nil
+}
+
+func (m *mockClusterService) AksClusterResourceServiceGet(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse, error) {
+	resp := m.getResponses[m.getCall]
+	m.getCall += 1
+
+	if resp == nil {
+		return nil, clienterrors.ErrorWithHTTPCode(http.StatusNotFound, nil)
+	}
+
+	return resp, nil
+}
+
+func (m *mockClusterService) AksClusterResourceServiceUpdate(request *aksmodel.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterRequest) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterResponse, error) {
+	resp := m.updateResponse[m.updateCall]
+	m.updateCall += 1
+
+	return resp, nil
+}
+
+func (m *mockClusterService) AksClusterResourceServiceDelete(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName, force string) error {
+	return nil
+}
+
+type mockNodepoolService struct {
+	createResponses []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse
+	createCall      int
+	listResponses   []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse
+	listCall        int
+	getResponses    []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolGetNodepoolResponse
+	getCall         int
+	deleteResponse  []error
+	deleteCall      int
+}
+
+func (m *mockNodepoolService) AksNodePoolResourceServiceCreate(request *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolRequest) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse, error) {
+	resp := m.createResponses[m.createCall]
+	m.createCall += 1
+
+	return resp, nil
+}
+
+func (m *mockNodepoolService) AksNodePoolResourceServiceList(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse, error) {
+	resp := m.listResponses[m.listCall]
+	m.listCall += 1
+
+	return resp, nil
+}
+
+func (m *mockNodepoolService) AksNodePoolResourceServiceGet(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolGetNodepoolResponse, error) {
+	resp := m.getResponses[m.getCall]
+	m.getCall += 1
+
+	if resp == nil {
+		return nil, clienterrors.ErrorWithHTTPCode(http.StatusNotFound, nil)
+	}
+
+	return resp, nil
+}
+
+func (m *mockNodepoolService) AksNodePoolResourceServiceUpdate(request *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolRequest) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse, error) {
+	return nil, nil
+}
+
+func (m *mockNodepoolService) AksNodePoolResourceServiceDelete(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName) error {
+	resp := m.deleteResponse[m.deleteCall]
+	m.deleteCall += 1
+
+	return resp
 }

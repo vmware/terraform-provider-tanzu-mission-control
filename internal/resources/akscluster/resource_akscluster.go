@@ -62,7 +62,7 @@ func resourceClusterCreate(ctx context.Context, data *schema.ResourceData, confi
 		return diag.FromErr(err)
 	}
 
-	return diag.Diagnostics{}
+	return dataSourceTMCAKSClusterRead(ctx, data, tc)
 }
 
 // resourceClusterRead read state of existing AKS cluster and assigned nodepools.
@@ -95,12 +95,9 @@ func resourceClusterInPlaceUpdate(ctx context.Context, data *schema.ResourceData
 		if npChangeErr := handleNodepoolChanges(ctx, nodepoolResp.Nodepools, data, tc.TMCConnection); npChangeErr != nil {
 			return diag.FromErr(npChangeErr)
 		}
-
-		// Update state after all nodenool operations have been completed.
-		return dataSourceTMCAKSClusterRead(ctx, data, config)
 	}
 
-	return diag.Diagnostics{}
+	return dataSourceTMCAKSClusterRead(ctx, data, config)
 }
 
 // resourceClusterDelete deletes an AKS cluster and all associated node pools.
@@ -208,13 +205,13 @@ func pollUntilReady(ctx context.Context, data *schema.ResourceData, mc *client.T
 			}
 
 			if clusterIsReady(aksClusterResp) {
-				nodepoolResp, npErr := mc.AKSNodePoolResourceService.AksNodePoolResourceServiceList(fn)
+				_, npErr := mc.AKSNodePoolResourceService.AksNodePoolResourceServiceList(fn)
 				if clienterrors.IsNotFoundError(npErr) {
 					return errors.Errorf("Unable to get Tanzu Mission Control AKS nodepools for entry, name : %s", data.Get(NameKey))
 				}
 
 				if npErr == nil {
-					return setResourceState(data, aksClusterResp.AksCluster, nodepoolResp.Nodepools)
+					return nil
 				}
 			}
 		}

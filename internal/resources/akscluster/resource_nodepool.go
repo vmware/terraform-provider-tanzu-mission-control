@@ -216,9 +216,11 @@ func deleteAndRecreateNodepool(ctx context.Context, existingNp *aksmodel.VmwareT
 	if delErr := deleteNodepool(ctx, existingNp, tc, timeout); delErr != nil {
 		return delErr
 	}
+
 	if createErr := addNodepool(ctx, np, tc, timeout); createErr != nil {
 		return createErr
 	}
+
 	return nil
 }
 

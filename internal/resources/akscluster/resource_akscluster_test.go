@@ -423,7 +423,7 @@ func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_nodepoolImmutableCha
 	s.mocks.nodepoolClient.getErr = clienterrors.ErrorWithHTTPCode(http.StatusNotFound, nil)
 
 	originalNodepools := []any{aTestNodepoolDataMap(withName("np1"))}
-	updatedNodepools := []any{aTestNodepoolDataMap(withName("np1"), withNodepoolVmSize("STANDARD_DS2v3"))}
+	updatedNodepools := []any{aTestNodepoolDataMap(withName("np1"), withNodepoolVMSize("STANDARD_DS2v3"))}
 	d := dataDiffFrom(s.T(), aTestClusterDataMap(withNodepools(originalNodepools)), aTestClusterDataMap(withNodepools(updatedNodepools)))
 	expected := aTestNodePool(forCluster(aTestCluster()), withNodepoolName("np1"))
 	expected.Spec.VMSize = "STANDARD_DS2v3"

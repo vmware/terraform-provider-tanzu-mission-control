@@ -210,7 +210,7 @@ func withNodepoolCount(count int) mapWither {
 	}
 }
 
-func withNodepoolVmSize(size string) mapWither {
+func withNodepoolVMSize(size string) mapWither {
 	return func(m map[string]any) {
 		specs := m["spec"].([]any)
 		spec := specs[0].(map[string]any)
