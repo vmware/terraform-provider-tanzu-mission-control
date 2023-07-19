@@ -50,6 +50,17 @@ type VmwareTanzuManageV1alpha1AksclusterNodepoolSpec struct {
 	// The operation system type of the nodepool.
 	OsType *VmwareTanzuManageV1alpha1AksclusterNodepoolOsType `json:"osType,omitempty"`
 
+	// The Virtual Machine Scale Set eviction policy to use.
+	// This cannot be specified unless the scaleSetPriority is 'Spot'.
+	ScaleSetEvictionPolicy *VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicy `json:"scaleSetEvictionPolicy,omitempty"`
+
+	// The Virtual Machine Scale Set priority.
+	ScaleSetPriority *VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriority `json:"scaleSetPriority,omitempty"`
+
+	// The max price (in US Dollars) you are willing to pay for spot instances.
+	// Possible values are any decimal value greater than zero or -1 which indicates default price to be up-to on-demand.
+	SpotMaxPrice float32 `json:"spotMaxPrice,omitempty"`
+
 	// The metadata to apply to the nodepool.
 	Tags map[string]string `json:"tags,omitempty"`
 

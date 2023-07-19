@@ -22,17 +22,6 @@ type VmwareTanzuManageV1alpha1AksclusterNodepoolAutoScalingConfig struct {
 
 	// The minimum number of nodes for auto-scaling.
 	MinCount int32 `json:"minCount,omitempty"`
-
-	// The Virtual Machine Scale Set eviction policy to use.
-	// This cannot be specified unless the scaleSetPriority is 'Spot'.
-	ScaleSetEvictionPolicy *VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicy `json:"scaleSetEvictionPolicy,omitempty"`
-
-	// The Virtual Machine Scale Set priority.
-	ScaleSetPriority *VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriority `json:"scaleSetPriority,omitempty"`
-
-	// The max price (in US Dollars) you are willing to pay for spot instances.
-	// Possible values are any decimal value greater than zero or -1 which indicates default price to be up-to on-demand.
-	SpotMaxPrice float32 `json:"spotMaxPrice,omitempty"`
 }
 
 // MarshalBinary interface implementation.

@@ -35,8 +35,8 @@ var immutableFields = map[string]struct{}{
 	"Spec.OsDiskSizeGb":          {},
 	"Spec.MaxPods":               {},
 	"Spec.VnetSubnetID":          {},
-	"Spec.VmwareTanzuManageV1alpha1AksclusterNodepoolAutoScalingConfig.Enabled":          {},
-	"Spec.VmwareTanzuManageV1alpha1AksclusterNodepoolAutoScalingConfig.ScaleSetPriority": {},
+	"Spec.VmwareTanzuManageV1alpha1AksclusterNodepoolAutoScalingConfig.Enabled": {},
+	"Spec.ScaleSetPriority": {},
 }
 
 // nodePoolOperations the reconciliation data that will be used to apply nodepool changes.

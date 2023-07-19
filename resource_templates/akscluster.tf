@@ -79,7 +79,8 @@ resource "tanzu-mission-control_akscluster" "tf_aks_cluster" {
           "<pod-cidr-1>",
           "<pod-cidr-2>",
         ]
-        service_cidr = [ // Forces Recreate
+        service_cidr = [
+          // Forces Recreate
           "<service-cidr-1>",
           "<service-cidr-2>",
         ]
@@ -129,14 +130,17 @@ resource "tanzu-mission-control_akscluster" "tf_aks_cluster" {
               "<availability-zone-1>",
               "<availability-zone-2>",
             ]
-            count                 = 1 // Required
-            vm_size               = "<vm-size>" // Required // Force Recreate
-            os_type               = "<os-type>"
-            os_disk_type          = "<os-disk-type>"        // Force Recreate
-            os_disk_size_gb       = 60                      // Force Recreate
-            max_pods              = 10                      // Force Recreate
-            enable_node_public_ip = true
-            node_taints           = [
+            count                     = 1 // Required
+            vm_size                   = "<vm-size>" // Required // Force Recreate
+            scale_set_priority        = "<scale-set-priority>"// Force Recreate
+            scale_set_eviction_policy = "<scale-set-eviction-policy>" // Force Recreate
+            spot_max_price            = 1.00
+            os_type                   = "<os-type>"
+            os_disk_type              = "<os-disk-type>"        // Force Recreate
+            os_disk_size_gb           = 60                      // Force Recreate
+            max_pods                  = 10                      // Force Recreate
+            enable_node_public_ip     = true
+            node_taints               = [
               {
                 effect = "<effect>"
                 key    = "<key>"
@@ -148,14 +152,9 @@ resource "tanzu-mission-control_akscluster" "tf_aks_cluster" {
             tags           = { "key" : "value" }
 
             auto_scaling_config = {
-              enable                    = true
-              // Conditional Recreate: enable allowed in place / disable forces recreate
-              min_count                 = 1
-              max_count                 = 5
-              scale_set_priority        = "<scale-set-priority>"
-              // Conditional Recreate: cannot be change after creation / but can be added
-              scale_set_eviction_policy = "<scale-set-eviction-policy>"
-              spot_max_price            = 1.00
+              enable    = true // Force Recreate
+              min_count = 1
+              max_count = 5
             }
 
             upgrade_config = {

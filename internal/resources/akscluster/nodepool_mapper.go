@@ -56,14 +56,12 @@ func constructNodepoolSpec(data map[string]any) *models.VmwareTanzuManageV1alpha
 	npSpec := &models.VmwareTanzuManageV1alpha1AksclusterNodepoolSpec{}
 	npSpecData := extractNodepoolSpec(data)
 
-	if v, ok := npSpecData[modeKey]; ok {
-		mode := models.VmwareTanzuManageV1alpha1AksclusterNodepoolMode(v.(string))
-		npSpec.Mode = &mode
+	if v, ok := npSpecData[modeKey]; ok && v != "" {
+		npSpec.Mode = models.VmwareTanzuManageV1alpha1AksclusterNodepoolMode(v.(string)).Pointer()
 	}
 
-	if v, ok := npSpecData[typeKey]; ok {
-		npType := models.VmwareTanzuManageV1alpha1AksclusterNodepoolType(v.(string))
-		npSpec.Type = &npType
+	if v, ok := npSpecData[typeKey]; ok && v != "" {
+		npSpec.Type = models.VmwareTanzuManageV1alpha1AksclusterNodepoolType(v.(string)).Pointer()
 	}
 
 	if v, ok := npSpecData[availabilityZonesKey]; ok {
@@ -78,14 +76,24 @@ func constructNodepoolSpec(data map[string]any) *models.VmwareTanzuManageV1alpha
 		helper.SetPrimitiveValue(v, &npSpec.VMSize, vmSizeKey)
 	}
 
-	if v, ok := npSpecData[osTypeKey]; ok {
-		osType := models.VmwareTanzuManageV1alpha1AksclusterNodepoolOsType(v.(string))
-		npSpec.OsType = &osType
+	if v, ok := npSpecData[scaleSetPriorityKey]; ok && v != "" {
+		npSpec.ScaleSetPriority = models.VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriority(v.(string)).Pointer()
+	}
+
+	if v, ok := npSpecData[scaleSetEvictionPolicyKey]; ok && v != "" {
+		npSpec.ScaleSetEvictionPolicy = models.VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicy(v.(string)).Pointer()
+	}
+
+	if v, ok := npSpecData[maxSpotPriceKey]; ok {
+		helper.SetPrimitiveValue(v, &npSpec.SpotMaxPrice, maxSpotPriceKey)
+	}
+
+	if v, ok := npSpecData[osTypeKey]; ok && v != "" {
+		npSpec.OsType = models.VmwareTanzuManageV1alpha1AksclusterNodepoolOsType(v.(string)).Pointer()
 	}
 
 	if v, ok := npSpecData[osDiskTypeKey]; ok && v != "" {
-		osDiskType := models.VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskType(v.(string))
-		npSpec.OsDiskType = &osDiskType
+		npSpec.OsDiskType = models.VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskType(v.(string)).Pointer()
 	}
 
 	if v, ok := npSpecData[osDiskSizeKey]; ok {
@@ -209,20 +217,6 @@ func constructAutoscalingConfig(data []interface{}) *models.VmwareTanzuManageV1a
 		helper.SetPrimitiveValue(v, &autoscalingConfig.MaxCount, maxCountKey)
 	}
 
-	if v, ok := autoScalingData[scaleSetPriorityKey]; ok {
-		scaleSetPriority := models.VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriority(v.(string))
-		autoscalingConfig.ScaleSetPriority = &scaleSetPriority
-	}
-
-	if v, ok := autoScalingData[scaleSetEvictionPolicyKey]; ok {
-		scaleSetEvictionPolicy := models.VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicy(v.(string))
-		autoscalingConfig.ScaleSetEvictionPolicy = &scaleSetEvictionPolicy
-	}
-
-	if v, ok := autoScalingData[maxSpotPriceKey]; ok {
-		helper.SetPrimitiveValue(v, &autoscalingConfig.SpotMaxPrice, maxSpotPriceKey)
-	}
-
 	return autoscalingConfig
 }
 
@@ -265,6 +259,9 @@ func toNodepoolSpecMap(spec *models.VmwareTanzuManageV1alpha1AksclusterNodepoolS
 	data[availabilityZonesKey] = toInterfaceArray(spec.AvailabilityZones)
 	data[countKey] = int(spec.Count)
 	data[vmSizeKey] = spec.VMSize
+	data[scaleSetPriorityKey] = helper.PtrString(spec.ScaleSetPriority)
+	data[scaleSetEvictionPolicyKey] = helper.PtrString(spec.ScaleSetEvictionPolicy)
+	data[maxSpotPriceKey] = float64(spec.SpotMaxPrice)
 	data[osTypeKey] = helper.PtrString(spec.OsType)
 	data[osDiskTypeKey] = helper.PtrString(spec.OsDiskType)
 	data[osDiskSizeKey] = int(spec.OsDiskSizeGb)
@@ -311,9 +308,6 @@ func toAutoscalingConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterNo
 	data[enableKey] = config.Enabled
 	data[minCountKey] = int(config.MinCount)
 	data[maxCountKey] = int(config.MaxCount)
-	data[scaleSetPriorityKey] = helper.PtrString(config.ScaleSetPriority)
-	data[scaleSetEvictionPolicyKey] = helper.PtrString(config.ScaleSetEvictionPolicy)
-	data[maxSpotPriceKey] = float64(config.SpotMaxPrice)
 
 	return []any{data}
 }

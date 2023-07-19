@@ -518,6 +518,22 @@ var NodepoolSpecSchema = &schema.Schema{
 				Description: "Virtual Machine Size",
 				Required:    true,
 			},
+			scaleSetPriorityKey: {
+				Type:        schema.TypeString,
+				Description: "Scale set priority",
+				Computed:    true,
+				Optional:    true,
+			},
+			scaleSetEvictionPolicyKey: {
+				Type:        schema.TypeString,
+				Description: "Scale set eviction policy",
+				Optional:    true,
+			},
+			maxSpotPriceKey: {
+				Type:        schema.TypeFloat,
+				Description: "Max spot price",
+				Optional:    true,
+			},
 			osTypeKey: {
 				Type:        schema.TypeString,
 				Description: "The OS type of the nodepool",
@@ -635,21 +651,6 @@ var AutoScaleConfig = &schema.Resource{
 		maxCountKey: {
 			Type:        schema.TypeInt,
 			Description: "Maximum node count",
-			Optional:    true,
-		},
-		scaleSetPriorityKey: {
-			Type:        schema.TypeString,
-			Description: "Scale set priority",
-			Optional:    true,
-		},
-		scaleSetEvictionPolicyKey: {
-			Type:        schema.TypeString,
-			Description: "Scale set eviction policy",
-			Optional:    true,
-		},
-		maxSpotPriceKey: {
-			Type:        schema.TypeFloat,
-			Description: "Max spot price",
 			Optional:    true,
 		},
 	},
