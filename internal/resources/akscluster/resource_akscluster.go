@@ -91,15 +91,16 @@ func resourceClusterInPlaceUpdate(ctx context.Context, data *schema.ResourceData
 	}
 
 	// Make changes to cluster nodepools.
-	nodepoolChanges := data.HasChange("spec.0.nodepool")
-	if nodepoolChanges {
+	if data.HasChange("spec.0.nodepool") {
 		if npChangeErr := handleNodepoolChanges(ctx, nodepoolResp.Nodepools, data, tc.TMCConnection); npChangeErr != nil {
 			return diag.FromErr(npChangeErr)
 		}
+
+		// Update state after all nodenool operations have been completed.
+		return dataSourceTMCAKSClusterRead(ctx, data, config)
 	}
 
-	// after update operation read the new data and set it to the state.
-	return dataSourceTMCAKSClusterRead(ctx, data, config)
+	return diag.Diagnostics{}
 }
 
 // resourceClusterDelete deletes an AKS cluster and all associated node pools.

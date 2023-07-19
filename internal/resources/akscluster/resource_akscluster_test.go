@@ -224,8 +224,8 @@ func (s *UpdateClusterTestSuite) SetupTest() {
 		getClusterResp:    aTestCluster(withStatusSuccess),
 	}
 	s.mocks.nodepoolClient = &mockNodepoolClient{
-		nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
-		nodepoolGetResp:  aTestNodePool(withNodepoolStatusSuccess),
+		nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool(forCluster(aTestCluster()))},
+		nodepoolGetResp:  aTestNodePool(forCluster(aTestCluster()), withNodepoolStatusSuccess),
 	}
 	s.config = authctx.TanzuContext{
 		TMCConnection: &client.TanzuMissionControl{
@@ -413,6 +413,26 @@ func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_nodepoolOrderChange(
 	s.Assert().False(result.HasError())
 	s.Assert().Nil(s.mocks.nodepoolClient.DeleteNodepoolWasCalledWith)
 	s.Assert().Nil(s.mocks.nodepoolClient.CreateNodepoolWasCalledWith)
+	s.Assert().Nil(s.mocks.nodepoolClient.UpdatedNodepoolWasCalledWith)
+}
+
+func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_nodepoolImmutableChange_recreate() {
+	s.mocks.nodepoolClient.nodepoolListResp = []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{
+		aTestNodePool(forCluster(aTestCluster()), withNodepoolName("np1")),
+	}
+	s.mocks.nodepoolClient.getErr = clienterrors.ErrorWithHTTPCode(http.StatusNotFound, nil)
+
+	originalNodepools := []any{aTestNodepoolDataMap(withName("np1"))}
+	updatedNodepools := []any{aTestNodepoolDataMap(withName("np1"), withNodepoolVmSize("STANDARD_DS2v3"))}
+	d := dataDiffFrom(s.T(), aTestClusterDataMap(withNodepools(originalNodepools)), aTestClusterDataMap(withNodepools(updatedNodepools)))
+	expected := aTestNodePool(forCluster(aTestCluster()), withNodepoolName("np1"))
+	expected.Spec.VMSize = "STANDARD_DS2v3"
+
+	result := s.aksClusterResource.UpdateContext(s.ctx, d, s.config)
+
+	s.Assert().True(result.HasError())
+	s.Assert().Equal(s.mocks.nodepoolClient.DeleteNodepoolWasCalledWith, expected.FullName)
+	s.Assert().Equal(s.mocks.nodepoolClient.CreateNodepoolWasCalledWith, expected)
 	s.Assert().Nil(s.mocks.nodepoolClient.UpdatedNodepoolWasCalledWith)
 }
 

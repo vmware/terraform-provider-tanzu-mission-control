@@ -61,6 +61,13 @@ func withStatusError(c *models.VmwareTanzuManageV1alpha1AksclusterAksCluster) {
 	}
 }
 
+func enableCSI(c *models.VmwareTanzuManageV1alpha1AksclusterAksCluster) {
+	c.Spec.Config.StorageConfig = &models.VmwareTanzuManageV1alpha1AksclusterStorageConfig{
+		EnableDiskCsiDriver: true,
+		EnableFileCsiDriver: true,
+	}
+}
+
 func aTestCluster(w ...clusterWither) *models.VmwareTanzuManageV1alpha1AksclusterAksCluster {
 	c := &models.VmwareTanzuManageV1alpha1AksclusterAksCluster{
 		FullName: &models.VmwareTanzuManageV1alpha1AksclusterFullName{
@@ -203,6 +210,14 @@ func withNodepoolCount(count int) mapWither {
 	}
 }
 
+func withNodepoolVmSize(size string) mapWither {
+	return func(m map[string]any) {
+		specs := m["spec"].([]any)
+		spec := specs[0].(map[string]any)
+		spec["vm_size"] = size
+	}
+}
+
 func withNodepoolMode(mode string) mapWither {
 	return func(m map[string]any) {
 		specs := m["spec"].([]any)
@@ -304,6 +319,10 @@ func withNodepoolName(name string) nodepoolWither {
 	return func(np *models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) {
 		np.FullName.Name = name
 	}
+}
+
+func withUserMode(np *models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) {
+	np.Spec.Mode = models.VmwareTanzuManageV1alpha1AksclusterNodepoolModeUSER.Pointer()
 }
 
 func forCluster(c *models.VmwareTanzuManageV1alpha1AksclusterAksCluster) nodepoolWither {

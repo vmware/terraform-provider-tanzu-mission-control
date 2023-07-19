@@ -9,7 +9,10 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
+
+	"github.com/go-test/deep"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -20,6 +23,22 @@ import (
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	aksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 )
+
+var immutableFields = map[string]struct{}{
+	"FullName.AksClusterName":    {},
+	"FullName.CredentialName":    {},
+	"FullName.Name":              {},
+	"FullName.ResourceGroupName": {},
+	"FullName.SubscriptionID":    {},
+	"Spec.Mode":                  {},
+	"Spec.VMSize":                {},
+	"Spec.OsDiskType":            {},
+	"Spec.OsDiskSizeGb":          {},
+	"Spec.MaxPods":               {},
+	"Spec.VnetSubnetID":          {},
+	"Spec.VmwareTanzuManageV1alpha1AksclusterNodepoolAutoScalingConfig.Enabled":          {},
+	"Spec.VmwareTanzuManageV1alpha1AksclusterNodepoolAutoScalingConfig.ScaleSetPriority": {},
+}
 
 // nodePoolOperations the reconciliation data that will be used to apply nodepool changes.
 type nodePoolOperations struct {
@@ -115,6 +134,13 @@ func applyUpdates(ctx context.Context, npData nodePoolOperations, tc *client.Tan
 			continue
 		}
 
+		// If the node pool already exists but a requested change is immutable delete and recreate the nodepool.
+		if existingNp := checkIfNodepoolExists(np, npData.existing); existingNp != nil && hasImmutableChange(np, existingNp) {
+			if err := deleteAndRecreateNodepool(ctx, existingNp, tc, timeout, np); err != nil {
+				return err
+			}
+		}
+
 		if err := updateNodepool(ctx, np, tc, timeout); err != nil {
 			return err
 		}
@@ -185,6 +211,17 @@ func deleteNodepool(ctx context.Context, nodepool *aksmodel.VmwareTanzuManageV1a
 	return pollUntilNodepoolDeleted(ctx, nodepool.FullName, client.AKSNodePoolResourceService, getPollInterval(ctx))
 }
 
+// deleteAndRecreateNodepool delete and recreate a nodepool in the event of an immutable change.
+func deleteAndRecreateNodepool(ctx context.Context, existingNp *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool, tc *client.TanzuMissionControl, timeout time.Duration, np *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) error {
+	if delErr := deleteNodepool(ctx, existingNp, tc, timeout); delErr != nil {
+		return delErr
+	}
+	if createErr := addNodepool(ctx, np, tc, timeout); createErr != nil {
+		return createErr
+	}
+	return nil
+}
+
 // pollUntilNodepoolReady calls get nodepool endpoint based on the provided interval and returns an error the resources
 // is not found, has error conditions, or did not become ready before the expected timeout.
 func pollUntilNodepoolReady(ctx context.Context, npFn *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName, client aksnodepool.ClientService, interval time.Duration) error {
@@ -243,6 +280,19 @@ func checkIfNodepoolExists(new *aksmodel.VmwareTanzuManageV1alpha1AksclusterNode
 
 func identical(new *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool, old *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) bool {
 	return reflect.DeepEqual(new.Spec, old.Spec)
+}
+
+func hasImmutableChange(new *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool, old *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) bool {
+	changes := deep.Equal(new, old)
+	for _, c := range changes {
+		key := strings.Split(c, ":")[0]
+
+		if _, found := immutableFields[key]; found {
+			return true
+		}
+	}
+
+	return false
 }
 
 func changedNodeCount(data *schema.ResourceData) int {
