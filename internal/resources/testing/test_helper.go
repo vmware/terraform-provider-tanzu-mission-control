@@ -17,6 +17,8 @@ type AcceptanceTestType int
 const (
 	AttachClusterType AcceptanceTestType = iota
 	AttachClusterTypeWithKubeConfig
+	AttachClusterTypeWithKubeconfigImageRegistry
+	AttachClusterTypeWithKubeconfigProxy
 	TkgAWSCluster
 	TkgsCluster
 	TkgVsphereCluster
@@ -69,6 +71,8 @@ type TestAcceptanceConfig struct {
 	CredentialName           string
 	OrgID                    string
 	ClusterGroupName         string
+	ImageRegistry            string
+	Proxy                    string
 }
 
 func WithClusterName(name string) TestAcceptanceOption {
@@ -158,6 +162,24 @@ func WithKubeConfig() TestAcceptanceOption {
 		config.KubeConfigPath = os.Getenv("KUBECONFIG")
 		config.AccTestType = AttachClusterTypeWithKubeConfig
 		config.TemplateData = testAttachClusterWithKubeConfigScript
+	}
+}
+
+func WithKubeConfigImageRegistry() TestAcceptanceOption {
+	return func(config *TestAcceptanceConfig) {
+		config.KubeConfigPath = os.Getenv("KUBECONFIG")
+		config.ImageRegistry = os.Getenv("IMAGE_REGISTRY")
+		config.AccTestType = AttachClusterTypeWithKubeconfigImageRegistry
+		config.TemplateData = testAttachClusterWithKubeConfigScriptImageRegistry
+	}
+}
+
+func WithKubeConfigProxy() TestAcceptanceOption {
+	return func(config *TestAcceptanceConfig) {
+		config.KubeConfigPath = os.Getenv("KUBECONFIG")
+		config.Proxy = os.Getenv("PROXY")
+		config.AccTestType = AttachClusterTypeWithKubeconfigProxy
+		config.TemplateData = testAttachClusterWithKubeConfigScriptProxy
 	}
 }
 

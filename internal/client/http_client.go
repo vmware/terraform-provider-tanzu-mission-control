@@ -16,6 +16,7 @@ import (
 	gitrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/gitrepository"
 	iamclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/iam_policy"
 	kustomizationclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/kustomization"
+	manifestclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/manifest"
 	policyclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/policy"
 	sourcesecretclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/sourcesecret"
 	clustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup"
@@ -96,6 +97,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterGroupKustomizationResourceService:      kustomizationclustergroupclient.New(httpClient),
 		ClusterSourcesecretResourceService:            sourcesecretclusterclient.New(httpClient),
 		ClusterGroupSourcesecretResourceService:       sourcesecretclustergroupclient.New(httpClient),
+		ManifestResourceService:                       manifestclient.New(httpClient),
 	}
 }
 
@@ -130,4 +132,5 @@ type TanzuMissionControl struct {
 	ClusterGroupKustomizationResourceService      kustomizationclustergroupclient.ClientService
 	ClusterSourcesecretResourceService            sourcesecretclusterclient.ClientService
 	ClusterGroupSourcesecretResourceService       sourcesecretclustergroupclient.ClientService
+	ManifestResourceService                       manifestclient.ClientService
 }

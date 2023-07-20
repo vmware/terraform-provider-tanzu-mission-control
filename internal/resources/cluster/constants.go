@@ -26,4 +26,5 @@ const (
 	attachedValue                  = "attached"
 	distributionKey                = "distribution"
 	versionKey                     = "version"
+	imageRegistryNameKey           = "image_registry"
 )

@@ -19,14 +19,14 @@ import (
 
 func Create(
 	k8sclient *k8sClient.Client,
-	k8sManifest []byte,
+	k8sManifest string,
 	forceClean bool,
 ) error {
 	if k8sclient == nil {
 		return errors.New("kubernetes client cannot be empty")
 	}
 
-	manifests, err := getManifests(string(k8sManifest))
+	manifests, err := getManifests(k8sManifest)
 	if err != nil {
 		return errors.WithMessage(err, "failure to fetch attach manifests")
 	}

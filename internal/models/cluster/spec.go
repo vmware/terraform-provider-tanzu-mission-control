@@ -25,6 +25,10 @@ type VmwareTanzuManageV1alpha1ClusterSpec struct {
 	// to be used for the cluster.
 	ProxyName string `json:"proxyName,omitempty"`
 
+	// Optional image registry is the name of the Image Registry Config
+	// to be used for the cluster.
+	ImageRegistry string `json:"imageRegistry,omitempty"`
+
 	// TKG AWS cluster spec.
 	TkgAws *tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSpec `json:"tkgAws,omitempty"`
 

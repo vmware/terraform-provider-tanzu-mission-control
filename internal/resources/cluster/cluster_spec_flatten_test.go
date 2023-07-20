@@ -51,6 +51,21 @@ func TestFlattenSpec(t *testing.T) {
 				},
 			},
 		},
+		{
+			description: "normal scenario with cluster group, proxy and image registry",
+			input: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
+				ClusterGroupName: "default",
+				ProxyName:        "proxy",
+				ImageRegistry:    "image-registry",
+			},
+			expected: []interface{}{
+				map[string]interface{}{
+					clusterGroupKey:      "default",
+					proxyNameKey:         "proxy",
+					imageRegistryNameKey: "image-registry",
+				},
+			},
+		},
 	}
 
 	for _, each := range cases {
