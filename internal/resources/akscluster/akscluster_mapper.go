@@ -13,8 +13,8 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
-func ConstructCluster(data *schema.ResourceData) *models.VmwareTanzuManageV1alpha1AksclusterAksCluster {
-	return &models.VmwareTanzuManageV1alpha1AksclusterAksCluster{
+func ConstructCluster(data *schema.ResourceData) *models.VmwareTanzuManageV1alpha1AksCluster {
+	return &models.VmwareTanzuManageV1alpha1AksCluster{
 		FullName: extractClusterFullName(data),
 		Meta:     common.ConstructMeta(data),
 		Spec:     constructAKSClusterSpec(data),
@@ -427,7 +427,7 @@ func constructAutoUpgradeConfig(data []any) *models.VmwareTanzuManageV1alpha1Aks
 	return autoUpgradeConfig
 }
 
-func ToAKSClusterMap(cluster *models.VmwareTanzuManageV1alpha1AksclusterAksCluster, nodepools []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) any {
+func ToAKSClusterMap(cluster *models.VmwareTanzuManageV1alpha1AksCluster, nodepools []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) any {
 	if cluster == nil {
 		return []any{}
 	}

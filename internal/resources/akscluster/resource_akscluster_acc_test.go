@@ -477,8 +477,8 @@ func testAKSClusterRemoveUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1Aksc
 	return testAKSClusterEnableCSI(fn)
 }
 
-func mockCluster(w ...clusterWither) *aksmodel.VmwareTanzuManageV1alpha1AksclusterAksCluster {
-	c := &aksmodel.VmwareTanzuManageV1alpha1AksclusterAksCluster{
+func mockCluster(w ...clusterWither) *aksmodel.VmwareTanzuManageV1alpha1AksCluster {
+	c := &aksmodel.VmwareTanzuManageV1alpha1AksCluster{
 		FullName: getFullName(),
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			UID: "test-uid",
@@ -606,7 +606,7 @@ func (m *mockNodepoolService) AksNodePoolResourceServiceGet(fn *aksmodel.VmwareT
 	return resp, nil
 }
 
-func (m *mockNodepoolService) AksNodePoolResourceServiceUpdate(request *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolRequest) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse, error) {
+func (m *mockNodepoolService) AksNodePoolResourceServiceUpdate(request *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolRequest) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolResponse, error) {
 	return nil, nil
 }
 

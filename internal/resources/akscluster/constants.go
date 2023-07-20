@@ -8,10 +8,10 @@ package akscluster
 import "time"
 
 const (
+	ResourceName                               = "tanzu-mission-control_akscluster"
 	RetryInterval                              = retryInterval("retry-interval")
 	defaultTimeout                             = 30 * time.Minute
 	defaultInterval                            = 10 * time.Second
-	ResourceName                               = "tanzu-mission-control_akscluster"
 	CredentialNameKey                          = "credential_name" //nolint:gosec
 	SubscriptionIDKey                          = "subscription_id"
 	ResourceGroupNameKey                       = "resource_group"

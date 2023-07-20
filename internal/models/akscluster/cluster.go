@@ -11,10 +11,10 @@ import (
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 )
 
-// VmwareTanzuManageV1alpha1AksclusterAksCluster AksCluster is an AKS Kubernetes Cluster.
+// VmwareTanzuManageV1alpha1AksCluster AksCluster is an AKS Kubernetes Cluster.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.akscluster.AksCluster
-type VmwareTanzuManageV1alpha1AksclusterAksCluster struct {
+type VmwareTanzuManageV1alpha1AksCluster struct {
 
 	// Full name for the cluster.
 	FullName *VmwareTanzuManageV1alpha1AksclusterFullName `json:"fullName,omitempty"`
@@ -33,7 +33,7 @@ type VmwareTanzuManageV1alpha1AksclusterAksCluster struct {
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1AksclusterAksCluster) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1AksCluster) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -42,8 +42,8 @@ func (m *VmwareTanzuManageV1alpha1AksclusterAksCluster) MarshalBinary() ([]byte,
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1AksclusterAksCluster) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1AksclusterAksCluster
+func (m *VmwareTanzuManageV1alpha1AksCluster) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1AksCluster
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

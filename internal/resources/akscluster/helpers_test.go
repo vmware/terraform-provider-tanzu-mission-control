@@ -41,9 +41,9 @@ func expectedFullName() *models.VmwareTanzuManageV1alpha1AksclusterFullName {
 	}
 }
 
-type clusterWither func(c *models.VmwareTanzuManageV1alpha1AksclusterAksCluster)
+type clusterWither func(c *models.VmwareTanzuManageV1alpha1AksCluster)
 
-func withStatusSuccess(c *models.VmwareTanzuManageV1alpha1AksclusterAksCluster) {
+func withStatusSuccess(c *models.VmwareTanzuManageV1alpha1AksCluster) {
 	c.Status = &models.VmwareTanzuManageV1alpha1AksclusterStatus{
 		Phase: models.VmwareTanzuManageV1alpha1AksclusterPhaseREADY.Pointer(),
 	}
@@ -55,21 +55,21 @@ func withNodepoolStatusSuccess(c *models.VmwareTanzuManageV1alpha1AksclusterNode
 	}
 }
 
-func withStatusError(c *models.VmwareTanzuManageV1alpha1AksclusterAksCluster) {
+func withStatusError(c *models.VmwareTanzuManageV1alpha1AksCluster) {
 	c.Status = &models.VmwareTanzuManageV1alpha1AksclusterStatus{
 		Phase: models.VmwareTanzuManageV1alpha1AksclusterPhaseERROR.Pointer(),
 	}
 }
 
-func enableCSI(c *models.VmwareTanzuManageV1alpha1AksclusterAksCluster) {
+func enableCSI(c *models.VmwareTanzuManageV1alpha1AksCluster) {
 	c.Spec.Config.StorageConfig = &models.VmwareTanzuManageV1alpha1AksclusterStorageConfig{
 		EnableDiskCsiDriver: true,
 		EnableFileCsiDriver: true,
 	}
 }
 
-func aTestCluster(w ...clusterWither) *models.VmwareTanzuManageV1alpha1AksclusterAksCluster {
-	c := &models.VmwareTanzuManageV1alpha1AksclusterAksCluster{
+func aTestCluster(w ...clusterWither) *models.VmwareTanzuManageV1alpha1AksCluster {
+	c := &models.VmwareTanzuManageV1alpha1AksCluster{
 		FullName: &models.VmwareTanzuManageV1alpha1AksclusterFullName{
 			CredentialName:    "test-cred",
 			ResourceGroupName: "resource-group",
@@ -442,10 +442,10 @@ var _ aksclusterclient.ClientService = &mockClusterClient{}
 
 type mockClusterClient struct {
 	AksClusterResourceServiceGetCalledWith    *models.VmwareTanzuManageV1alpha1AksclusterFullName
-	getClusterResp                            *models.VmwareTanzuManageV1alpha1AksclusterAksCluster
-	createClusterResp                         *models.VmwareTanzuManageV1alpha1AksclusterAksCluster
+	getClusterResp                            *models.VmwareTanzuManageV1alpha1AksCluster
+	createClusterResp                         *models.VmwareTanzuManageV1alpha1AksCluster
 	AksClusterResourceServiceDeleteCalledWith *models.VmwareTanzuManageV1alpha1AksclusterFullName
-	AksUpdateClusterWasCalledWith             *models.VmwareTanzuManageV1alpha1AksclusterAksCluster
+	AksUpdateClusterWasCalledWith             *models.VmwareTanzuManageV1alpha1AksCluster
 	AksClusterResourceServiceGetCallCount     int
 	AksCreateClusterWasCalled                 bool
 	createErr                                 error
@@ -521,7 +521,7 @@ func (m *mockNodepoolClient) AksNodePoolResourceServiceGet(fn *models.VmwareTanz
 	return &models.VmwareTanzuManageV1alpha1AksclusterNodepoolGetNodepoolResponse{Nodepool: m.nodepoolGetResp}, m.getErr
 }
 
-func (m *mockNodepoolClient) AksNodePoolResourceServiceUpdate(req *models.VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolRequest) (*models.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse, error) {
+func (m *mockNodepoolClient) AksNodePoolResourceServiceUpdate(req *models.VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolRequest) (*models.VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolResponse, error) {
 	m.UpdatedNodepoolWasCalledWith = req.Nodepool
 
 	return nil, m.updateErr

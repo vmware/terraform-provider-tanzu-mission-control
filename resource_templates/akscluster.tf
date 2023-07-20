@@ -1,7 +1,7 @@
-// Tanzu Mission Control EKS Cluster Type: AWS EKS clusters.
+// Tanzu Mission Control AKS Cluster Type: Azure AKS clusters.
 // Operations supported : Read, Create, Update & Delete
 
-// Read Tanzu Mission Control AWS EKS cluster : fetch cluster details
+// Read Tanzu Mission Control Azure AKS cluster : fetch cluster details
 data "tanzu-mission-control_akscluster" "tf_aks_cluster" {
   credential_name = "<aws-credential-name>" // Required
   subscription    = "<subscription>"    // Required

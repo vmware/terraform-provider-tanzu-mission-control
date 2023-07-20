@@ -15,7 +15,7 @@ import (
 type VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse struct {
 
 	// AksCluster returned.
-	AksCluster *VmwareTanzuManageV1alpha1AksclusterAksCluster `json:"aksCluster,omitempty"`
+	AksCluster *VmwareTanzuManageV1alpha1AksCluster `json:"aksCluster,omitempty"`
 }
 
 // MarshalBinary interface implementation.

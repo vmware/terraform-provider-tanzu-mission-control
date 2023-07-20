@@ -1,5 +1,5 @@
 /*
-Copyright 2022 VMware, Inc. All Rights Reserved.
+Copyright 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
@@ -45,7 +45,7 @@ type ClientService interface {
 
 	AksNodePoolResourceServiceGet(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolGetNodepoolResponse, error)
 
-	AksNodePoolResourceServiceUpdate(request *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolRequest) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse, error)
+	AksNodePoolResourceServiceUpdate(request *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolRequest) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolResponse, error)
 
 	AksNodePoolResourceServiceDelete(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolFullName) error
 }
@@ -60,7 +60,7 @@ func (c *Client) AksNodePoolResourceServiceCreate(request *aksmodel.VmwareTanzuM
 	return response, err
 }
 
-// AksNodePoolResourceServiceGet implements ClientService.
+// AksNodePoolResourceServiceList implements ClientService.
 func (c *Client) AksNodePoolResourceServiceList(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolListNodepoolsResponse, error) {
 	queryParams := url.Values{}
 
@@ -107,8 +107,8 @@ func (c *Client) AksNodePoolResourceServiceGet(fn *aksmodel.VmwareTanzuManageV1a
 }
 
 // AksNodePoolResourceServiceUpdate implements ClientService.
-func (c *Client) AksNodePoolResourceServiceUpdate(request *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolRequest) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse, error) {
-	response := &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse{}
+func (c *Client) AksNodePoolResourceServiceUpdate(request *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolRequest) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolResponse, error) {
+	response := &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolUpdateNodepoolResponse{}
 	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, request.Nodepool.FullName.AksClusterName, apiNodepoolsPath, request.Nodepool.FullName.Name).String()
 	err := c.Update(requestURL, request, response)
 

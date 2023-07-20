@@ -19,7 +19,7 @@ import (
 
 type retryInterval string
 
-func setResourceState(data *schema.ResourceData, cluster *models.VmwareTanzuManageV1alpha1AksclusterAksCluster, nodepools []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) error {
+func setResourceState(data *schema.ResourceData, cluster *models.VmwareTanzuManageV1alpha1AksCluster, nodepools []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) error {
 	data.SetId(cluster.Meta.UID)
 
 	if err := data.Set(common.MetaKey, common.FlattenMeta(cluster.Meta)); err != nil {

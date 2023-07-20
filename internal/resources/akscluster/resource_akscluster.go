@@ -116,6 +116,8 @@ func resourceClusterDelete(ctx context.Context, data *schema.ResourceData, confi
 		return diag.FromErr(err)
 	}
 
+	data.SetId("") // explicitly delete
+
 	return diag.Diagnostics{}
 }
 
