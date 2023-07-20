@@ -13,13 +13,14 @@ AKS clusters and node pools.
 
 ## Provisioning an AKS Cluster
 
-To use the **Tanzu Mission Control** for creating a new cluster, you must first connect your Microsoft Azure account to
-Tanzu Mission Control.
+To use the **Tanzu Mission Control** for creating a new cluster, you must first log into Azure and set up an Azure AKS 
+credential that allows VMware Tanzu Mission Control to connect to your Azure subscription and manage resources in your 
+Azure account.
+
 
 You must also have the appropriate permissions in Tanzu Mission Control:
 
 - To provision a cluster, you must have `cluster.admin` permissions.
-- You must also have `clustergroup.edit` permissions on the cluster group in which you want to put the new cluster.
 
 [aws-account]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-E4627693-7D1A-4914-A9DF-61E49F97FECC.html
 
@@ -30,9 +31,10 @@ You must also have the appropriate permissions in Tanzu Mission Control:
 ```terraform
 # Read Tanzu Mission Control Microsoft Azure AKS cluster : fetch cluster details
 data "tanzu-mission-control_akscluster" "tf_aks_cluster" {
-credential_name = "test-aks-cred-name" // Required
-region = "us-west-2" // Required
-name = "test-cluster" // Required
+  credential_name = "test-aks-cred-name" // Required
+  subscription    = "test-subscription-id" // Required
+  resource_group = "test-resource-group"  // Required
+  name            = "test-cluster-name"    // Required
 }
 ```
 
@@ -43,21 +45,20 @@ name = "test-cluster" // Required
 ### Required
 
 - `credential_name` (String) Name of the AKS Credential in Tanzu Mission Control
-- `name` (String) Name of this cluster
-- `region` (String) AWS Region of this cluster
+- `subscription` (String) Azure subscription ID of cluster
+- `resource_group` (String) Azure resource group of this cluster
+- `name` (String) Name of cluster
 
 
 ### Optional
 
-- `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
-- `ready_wait_timeout` (String) Wait timeout duration until cluster resource reaches READY state. Accepted timeout
-  duration values like 5s, 45m, or 3h, higher than zero
-- `spec` (Block List, Max: 1) Spec for the cluster (see [below for nested schema](#nestedblock--spec))
+- `meta` (Block List, Max: 2) Metadata for the cluster
+- `spec` (Block List, Max: 1) Spec for the cluster 
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `status` (Map of String) Status of the cluster
+- `admin_group_ids` (Block List of String) The ID of admins
 
 <a id="nestedblock--meta"></a>
 
@@ -65,14 +66,13 @@ name = "test-cluster" // Required
 
 Optional:
 
-- `annotations` (Map of String) Annotations for the resource
 - `description` (String) Description of the resource
 - `labels` (Map of String) Labels for the resource
 
 Read-Only:
 
-- `resource_version` (String) Resource version of the resource
-- `uid` (String) UID of the resource
+- `location` (String) Location of the resource
+- `version` (String) Version of the resource
 
 <a id="nestedblock--spec"></a>
 
@@ -80,10 +80,8 @@ Read-Only:
 
 Required:
 
-- `config` (Block List, Min: 1, Max: 1) EKS config for the cluster control plane (
-  see [below for nested schema](#nestedblock--spec--config))
-- `nodepool` (Block List, Min: 1) Nodepool definitions for the cluster (
-  see [below for nested schema](#nestedblock--spec--nodepool))
+- `access_config` (Block List, Min: 1, Max: 3) AKS access config for the cluster control plane 
+- `nodepool` (Block List, Min: 1) Nodepool definitions for the cluster 
 
 Optional:
 
@@ -97,13 +95,12 @@ Optional:
 Required:
 
 - `kubernetes_version` (String) Kubernetes version of the cluster
-- `role_arn` (String) ARN of the IAM role that provides permissions for the Kubernetes control plane to make calls to
-  AWS API operations
-- `vpc` (Block List, Min: 1, Max: 1) VPC config (see [below for nested schema](#nestedblock--spec--config--vpc))
+- `location` (String) Location of the cluster 
+- `SKU` (Block List, Min: 1, Max: 2) Azure SKU name and tier 
 
 Optional:
 
-- `kubernetes_network_config` (Block List, Max: 1) Kubernetes Network Config (
+- `api_server_access_config` (Block List, Max: 2) Kubernetes Network Config (
   see [below for nested schema](#nestedblock--spec--config--kubernetes_network_config))
 - `logging` (Block List, Max: 1) EKS logging configuration (
   see [below for nested schema](#nestedblock--spec--config--logging))
