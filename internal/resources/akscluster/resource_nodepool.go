@@ -7,7 +7,6 @@ package akscluster
 
 import (
 	"context"
-	"fmt"
 	"reflect"
 	"strings"
 	"time"
@@ -42,9 +41,6 @@ var immutableFields = map[string]struct{}{
 
 // nodePoolOperations the reconciliation data that will be used to apply nodepool changes.
 type nodePoolOperations struct {
-	created  []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool
-	updated  []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool
-	deleted  []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool
 	existing []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool
 	desired  []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool
 }
@@ -62,46 +58,7 @@ func createNodepools(ctx context.Context, nodepools []*aksmodel.VmwareTanzuManag
 
 // handleNodepoolChanges if nodepool changes are detected delegates to the appropriate node pool operation: `Create`, `Update`, `Delete`.
 func handleNodepoolChanges(ctx context.Context, existing []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool, data *schema.ResourceData, tc *client.TanzuMissionControl) error {
-	var created, updated, deleted []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool
-
-	cfn := extractClusterFullName(data)
-	npCount := changedNodeCount(data)
-
-	for i := 0; i <= npCount; i++ {
-		key := fmt.Sprintf("spec.0.nodepool.%v", i)
-		if data.HasChange(key) {
-			oldResource, newResource := data.GetChange(key)
-
-			// The existence of an old and new state signals and update operation.
-			if !isEmpty(oldResource) && !isEmpty(newResource) {
-				np := constructNodepool(cfn, newResource.(map[string]any))
-				updated = append(updated, np)
-
-				continue
-			}
-
-			// If the old resource is empty this signals a new nodepool has been created.
-			if isEmpty(oldResource) {
-				np := constructNodepool(cfn, newResource.(map[string]any))
-				created = append(created, np)
-
-				continue
-			}
-
-			// If the new version is empty this signals a node pool has been deleted.
-			if isEmpty(newResource) {
-				np := constructNodepool(cfn, oldResource.(map[string]any))
-				deleted = append(deleted, np)
-
-				continue
-			}
-		}
-	}
-
 	npData := nodePoolOperations{
-		created:  created,
-		updated:  updated,
-		deleted:  deleted,
 		existing: existing,
 		desired:  ConstructNodepools(data),
 	}
@@ -110,28 +67,18 @@ func handleNodepoolChanges(ctx context.Context, existing []*aksmodel.VmwareTanzu
 }
 
 func applyUpdates(ctx context.Context, npData nodePoolOperations, tc *client.TanzuMissionControl, timeout time.Duration) error {
-	for _, np := range npData.created {
-		// If the node pool already exists it may have been reordered.
-		if old := checkIfNodepoolExists(np, npData.existing); old != nil {
-			if !identical(np, old) {
-				// If the reordered nodepool doesn't match the existing one it is actually an update.
-				npData.updated = append(npData.updated, np)
-			} else {
-				// No action required nodepool already exists in desired state.
-				continue
-			}
-		}
-
-		if err := addNodepool(ctx, np, tc, timeout); err != nil {
-			return err
-		}
-	}
-
-	for _, np := range npData.updated {
-		// If the node pool already exists it may have been reordered.
+	for _, np := range npData.desired {
+		// Ignore any nodepools that already exist in the desired state.
 		if existingNp := checkIfNodepoolExists(np, npData.existing); existingNp != nil && identical(np, existingNp) {
 			// No action required the nodepool exists in the desired config.
 			continue
+		}
+
+		// Create any nodepools that do not exist.
+		if existingNp := checkIfNodepoolExists(np, npData.existing); existingNp == nil && np.FullName.Name != "" {
+			if err := addNodepool(ctx, np, tc, timeout); err != nil {
+				return err
+			}
 		}
 
 		// If the node pool already exists but a requested change is immutable delete and recreate the nodepool.
@@ -141,19 +88,29 @@ func applyUpdates(ctx context.Context, npData nodePoolOperations, tc *client.Tan
 			}
 		}
 
-		if err := updateNodepool(ctx, np, tc, timeout); err != nil {
-			return err
+		// Update the nodepool in place if the change is mutable.
+		if existingNp := checkIfNodepoolExists(np, npData.existing); existingNp != nil && !hasImmutableChange(np, existingNp) {
+			if err := updateNodepool(ctx, np, tc, timeout); err != nil {
+				return err
+			}
+		}
+
+		// delete any existing nodepools that do not appear in the desired state.
+		for _, existing := range npData.existing {
+			if desired := checkIfNodepoolExists(existing, npData.desired); desired == nil {
+				if err := deleteNodepool(ctx, existing, tc, timeout); err != nil {
+					return err
+				}
+			}
 		}
 	}
 
-	for _, np := range npData.deleted {
-		if desired := checkIfNodepoolExists(np, npData.desired); desired != nil {
-			// The nodepool exist as part of the desired state we should not delete it.
-			continue
-		}
-
-		if err := deleteNodepool(ctx, np, tc, timeout); err != nil {
-			return err
+	// delete any existing nodepools that do not appear in the desired state.
+	for _, existing := range npData.existing {
+		if desired := checkIfNodepoolExists(existing, npData.desired); desired == nil {
+			if err := deleteNodepool(ctx, existing, tc, timeout); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -295,19 +252,4 @@ func hasImmutableChange(new *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoo
 	}
 
 	return false
-}
-
-func changedNodeCount(data *schema.ResourceData) int {
-	o, n := data.GetChange("spec.0.nodepool.#")
-	npCount := max(o.(int), n.(int))
-
-	return npCount
-}
-
-func max(x int, y int) int {
-	if x > y {
-		return x
-	}
-
-	return y
 }

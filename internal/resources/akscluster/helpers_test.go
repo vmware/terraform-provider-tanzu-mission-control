@@ -321,16 +321,22 @@ func withNodepoolName(name string) nodepoolWither {
 	}
 }
 
+func withCount(count int32) nodepoolWither {
+	return func(np *models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) {
+		np.Spec.Count = count
+	}
+}
+
 func withUserMode(np *models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) {
 	np.Spec.Mode = models.VmwareTanzuManageV1alpha1AksclusterNodepoolModeUSER.Pointer()
 }
 
-func forCluster(c *models.VmwareTanzuManageV1alpha1AksclusterAksCluster) nodepoolWither {
+func forCluster(c *models.VmwareTanzuManageV1alpha1AksclusterFullName) nodepoolWither {
 	return func(np *models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) {
-		np.FullName.CredentialName = c.FullName.CredentialName
-		np.FullName.SubscriptionID = c.FullName.SubscriptionID
-		np.FullName.ResourceGroupName = c.FullName.ResourceGroupName
-		np.FullName.AksClusterName = c.FullName.Name
+		np.FullName.CredentialName = c.CredentialName
+		np.FullName.SubscriptionID = c.SubscriptionID
+		np.FullName.ResourceGroupName = c.ResourceGroupName
+		np.FullName.AksClusterName = c.Name
 	}
 }
 

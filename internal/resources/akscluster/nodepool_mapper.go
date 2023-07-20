@@ -148,6 +148,10 @@ func extractNodepoolSpec(data map[string]any) map[string]any {
 }
 
 func constructTaints(taintsData []interface{}) []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaint {
+	if len(taintsData) < 1 {
+		return nil
+	}
+
 	taints := make([]*models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaint, 0, len(taintsData))
 
 	for _, data := range taintsData {

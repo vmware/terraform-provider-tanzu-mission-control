@@ -7,7 +7,6 @@ package akscluster
 
 import (
 	"context"
-	"reflect"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -21,8 +20,6 @@ import (
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 )
-
-var emptySpec = map[string]any{NameKey: "", nodepoolSpecKey: []any{}}
 
 func ResourceTMCAKSCluster() *schema.Resource {
 	return &schema.Resource{
@@ -235,8 +232,4 @@ func pollUntilClusterDeleted(ctx context.Context, data *schema.ResourceData, cli
 			}
 		}
 	}
-}
-
-func isEmpty(resource any) bool {
-	return reflect.DeepEqual(resource, map[string]any{}) || reflect.DeepEqual(resource, emptySpec)
 }

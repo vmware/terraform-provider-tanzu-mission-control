@@ -65,7 +65,7 @@ func (s *CreatClusterTestSuite) SetupTest() {
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate() {
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
-	expectedNP := aTestNodePool(forCluster(aTestCluster()))
+	expectedNP := aTestNodePool(forCluster(aTestCluster().FullName))
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
 
@@ -224,8 +224,8 @@ func (s *UpdateClusterTestSuite) SetupTest() {
 		getClusterResp:    aTestCluster(withStatusSuccess),
 	}
 	s.mocks.nodepoolClient = &mockNodepoolClient{
-		nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool(forCluster(aTestCluster()))},
-		nodepoolGetResp:  aTestNodePool(forCluster(aTestCluster()), withNodepoolStatusSuccess),
+		nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool(forCluster(aTestCluster().FullName))},
+		nodepoolGetResp:  aTestNodePool(forCluster(aTestCluster().FullName), withNodepoolStatusSuccess),
 	}
 	s.config = authctx.TanzuContext{
 		TMCConnection: &client.TanzuMissionControl{
@@ -255,7 +255,7 @@ func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_updateNodepool() {
 	originalNodepools := []any{aTestNodepoolDataMap(withNodepoolCount(1))}
 	updatedNodepools := []any{aTestNodepoolDataMap(withNodepoolCount(5))}
 	d := dataDiffFrom(s.T(), aTestClusterDataMap(withNodepools(originalNodepools)), aTestClusterDataMap(withNodepools(updatedNodepools)))
-	expected := aTestNodePool(forCluster(aTestCluster()))
+	expected := aTestNodePool(forCluster(aTestCluster().FullName))
 	expected.Spec.Count = 5
 
 	result := s.aksClusterResource.UpdateContext(s.ctx, d, s.config)
@@ -266,10 +266,13 @@ func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_updateNodepool() {
 }
 
 func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_addNodepool() {
-	originalNodepools := []any{aTestNodepoolDataMap()}
-	updatedNodepools := []any{aTestNodepoolDataMap(), aTestNodepoolDataMap(withName("np2"))}
+	s.mocks.nodepoolClient.nodepoolListResp = []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{
+		aTestNodePool(forCluster(aTestCluster().FullName), withNodepoolName("np1")),
+	}
+	originalNodepools := []any{aTestNodepoolDataMap(withName("np1"))}
+	updatedNodepools := []any{aTestNodepoolDataMap(withName("np1")), aTestNodepoolDataMap(withName("np2"))}
 	d := dataDiffFrom(s.T(), aTestClusterDataMap(withNodepools(originalNodepools)), aTestClusterDataMap(withNodepools(updatedNodepools)))
-	expected := aTestNodePool(forCluster(aTestCluster()), withNodepoolName("np2"))
+	expected := aTestNodePool(forCluster(aTestCluster().FullName), withNodepoolName("np2"))
 
 	result := s.aksClusterResource.UpdateContext(s.ctx, d, s.config)
 
@@ -279,12 +282,15 @@ func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_addNodepool() {
 }
 
 func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_deleteNodepool() {
-	originalNodepools := []any{aTestNodepoolDataMap(), aTestNodepoolDataMap(withName("np2"))}
-	updatedNodepools := []any{aTestNodepoolDataMap(), nil}
+	s.mocks.nodepoolClient.nodepoolListResp = []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{
+		aTestNodePool(forCluster(aTestCluster().FullName), withNodepoolName("np1")),
+		aTestNodePool(forCluster(aTestCluster().FullName), withNodepoolName("np2"))}
+	originalNodepools := []any{aTestNodepoolDataMap(withName("np1")), aTestNodepoolDataMap(withName("np2"))}
+	updatedNodepools := []any{aTestNodepoolDataMap(withName("np1")), nil}
 	s.mocks.nodepoolClient.getErr = clienterrors.ErrorWithHTTPCode(http.StatusNotFound, nil)
+	expected := aTestNodePool(forCluster(aTestCluster().FullName), withNodepoolName("np2")).FullName
 
 	d := dataDiffFrom(s.T(), aTestClusterDataMap(withNodepools(originalNodepools)), aTestClusterDataMap(withNodepools(updatedNodepools)))
-	expected := aTestNodePool(forCluster(aTestCluster()), withNodepoolName("np2")).FullName
 
 	result := s.aksClusterResource.UpdateContext(s.ctx, d, s.config)
 
@@ -324,8 +330,11 @@ func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_updateClusterTimeout
 }
 
 func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_updateNodepoolFails() {
-	originalNodepools := []any{aTestNodepoolDataMap(withNodepoolCount(1))}
-	updatedNodepools := []any{aTestNodepoolDataMap(withNodepoolCount(5))}
+	s.mocks.nodepoolClient.nodepoolListResp = []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{
+		aTestNodePool(forCluster(aTestCluster().FullName), withNodepoolName("np1"), withCount(1)),
+	}
+	originalNodepools := []any{aTestNodepoolDataMap(withName("np1"), withNodepoolCount(1))}
+	updatedNodepools := []any{aTestNodepoolDataMap(withName("np1"), withNodepoolCount(5))}
 	s.mocks.nodepoolClient.updateErr = errors.New("failed to update nodepool")
 	d := dataDiffFrom(s.T(), aTestClusterDataMap(withNodepools(originalNodepools)), aTestClusterDataMap(withNodepools(updatedNodepools)))
 
@@ -335,8 +344,11 @@ func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_updateNodepoolFails(
 }
 
 func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_updateNodepoolTimeout() {
-	originalNodepools := []any{aTestNodepoolDataMap(withNodepoolCount(1))}
-	updatedNodepools := []any{aTestNodepoolDataMap(withNodepoolCount(5))}
+	s.mocks.nodepoolClient.nodepoolListResp = []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{
+		aTestNodePool(forCluster(aTestCluster().FullName), withNodepoolName("np1"), withCount(1)),
+	}
+	originalNodepools := []any{aTestNodepoolDataMap(withName("np1"), withNodepoolCount(1))}
+	updatedNodepools := []any{aTestNodepoolDataMap(withName("np1"), withNodepoolCount(5))}
 	s.mocks.nodepoolClient.nodepoolGetResp = aTestNodePool() // Without success
 	d := dataDiffFrom(s.T(), aTestClusterDataMap(withNodepools(originalNodepools)), aTestClusterDataMap(withNodepools(updatedNodepools), with5msTimeout))
 
@@ -378,8 +390,11 @@ func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_createNodepoolTimeou
 }
 
 func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_deleteNodepoolFails() {
-	originalNodepools := []any{aTestNodepoolDataMap(), aTestNodepoolDataMap(withName("np2"))}
-	updatedNodepools := []any{aTestNodepoolDataMap(), nil}
+	s.mocks.nodepoolClient.nodepoolListResp = []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{
+		aTestNodePool(forCluster(aTestCluster().FullName), withNodepoolName("np1")),
+		aTestNodePool(forCluster(aTestCluster().FullName), withNodepoolName("np2"))}
+	originalNodepools := []any{aTestNodepoolDataMap(withName("np1")), aTestNodepoolDataMap(withName("np2"))}
+	updatedNodepools := []any{aTestNodepoolDataMap(withName("np1")), nil}
 	s.mocks.nodepoolClient.DeleteErr = errors.New("failed to delete nodepool")
 	d := dataDiffFrom(s.T(), aTestClusterDataMap(withNodepools(originalNodepools)), aTestClusterDataMap(withNodepools(updatedNodepools)))
 
@@ -389,8 +404,11 @@ func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_deleteNodepoolFails(
 }
 
 func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_deleteNodepoolTimeout() {
-	originalNodepools := []any{aTestNodepoolDataMap(), aTestNodepoolDataMap(withName("np2"))}
-	updatedNodepools := []any{aTestNodepoolDataMap(), nil}
+	s.mocks.nodepoolClient.nodepoolListResp = []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{
+		aTestNodePool(forCluster(aTestCluster().FullName), withNodepoolName("np1")),
+		aTestNodePool(forCluster(aTestCluster().FullName), withNodepoolName("np2"))}
+	originalNodepools := []any{aTestNodepoolDataMap(withName("np1")), aTestNodepoolDataMap(withName("np2"))}
+	updatedNodepools := []any{aTestNodepoolDataMap(withName("np1")), nil}
 
 	d := dataDiffFrom(s.T(), aTestClusterDataMap(withNodepools(originalNodepools)), aTestClusterDataMap(withNodepools(updatedNodepools), with5msTimeout))
 
@@ -418,14 +436,14 @@ func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_nodepoolOrderChange(
 
 func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_nodepoolImmutableChange_recreate() {
 	s.mocks.nodepoolClient.nodepoolListResp = []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{
-		aTestNodePool(forCluster(aTestCluster()), withNodepoolName("np1")),
+		aTestNodePool(forCluster(aTestCluster().FullName), withNodepoolName("np1")),
 	}
 	s.mocks.nodepoolClient.getErr = clienterrors.ErrorWithHTTPCode(http.StatusNotFound, nil)
 
 	originalNodepools := []any{aTestNodepoolDataMap(withName("np1"))}
 	updatedNodepools := []any{aTestNodepoolDataMap(withName("np1"), withNodepoolVMSize("STANDARD_DS2v3"))}
 	d := dataDiffFrom(s.T(), aTestClusterDataMap(withNodepools(originalNodepools)), aTestClusterDataMap(withNodepools(updatedNodepools)))
-	expected := aTestNodePool(forCluster(aTestCluster()), withNodepoolName("np1"))
+	expected := aTestNodePool(forCluster(aTestCluster().FullName), withNodepoolName("np1"))
 	expected.Spec.VMSize = "STANDARD_DS2v3"
 
 	result := s.aksClusterResource.UpdateContext(s.ctx, d, s.config)

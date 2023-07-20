@@ -667,6 +667,10 @@ func toInterfaceMap(tags map[string]string) any {
 }
 
 func constructStringMap[T any](data map[string]any) map[string]T {
+	if len(data) < 1 {
+		return nil
+	}
+
 	out := make(map[string]T)
 
 	for k, v := range data {
