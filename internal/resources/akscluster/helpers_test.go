@@ -13,6 +13,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
+	"github.com/pkg/errors"
+
 	aksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster"
 	aksnodepool "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster/nodepool"
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
@@ -498,10 +500,14 @@ type mockNodepoolClient struct {
 	updateErr                                error
 	getErr                                   error
 	DeleteErr                                error
+	failSystemPools                          bool
 }
 
 func (m *mockNodepoolClient) AksNodePoolResourceServiceCreate(req *models.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolRequest) (*models.VmwareTanzuManageV1alpha1AksclusterNodepoolCreateNodepoolResponse, error) {
 	m.CreateNodepoolWasCalledWith = req.Nodepool
+	if m.failSystemPools && *req.Nodepool.Spec.Mode == models.VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM {
+		return nil, errors.New("failed to create system nodepool")
+	}
 
 	return nil, m.createErr
 }

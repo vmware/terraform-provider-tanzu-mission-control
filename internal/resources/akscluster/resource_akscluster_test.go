@@ -70,8 +70,8 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate() {
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
 
 	s.Assert().False(result.HasError())
-	s.Assert().True(s.mocks.clusterClient.AksCreateClusterWasCalled, "cluster create was not called")                   //TODO: verify payload
-	s.Assert().Equal(s.mocks.nodepoolClient.CreateNodepoolWasCalledWith, expectedNP, "nodepool create was not called ") //TODO: verify payload
+	s.Assert().True(s.mocks.clusterClient.AksCreateClusterWasCalled, "cluster create was not called")
+	s.Assert().Equal(s.mocks.nodepoolClient.CreateNodepoolWasCalledWith, expectedNP, "nodepool create was not called ")
 	s.Assert().Equal(expectedFullName(), s.mocks.clusterClient.AksClusterResourceServiceGetCalledWith)
 	s.Assert().Equal(expectedFullName(), s.mocks.nodepoolClient.AksNodePoolResourceServiceListCalledWith)
 	s.Assert().Equal("test-uid", d.Id())
@@ -159,6 +159,18 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_succeed
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
 
 	s.Assert().True(result.HasError())
+}
+
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_all_system_pools_fail() {
+	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("USER")), aTestNodepoolDataMap(withNodepoolMode("SYSTEM"))}
+	cluster := aTestClusterDataMap(withNodepools(nodepools))
+	s.mocks.nodepoolClient.failSystemPools = true
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
+
+	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
+
+	s.Assert().True(result.HasError())
+	s.Assert().Equal("no system nodepools were successfully created.", result[0].Summary)
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_no_system_nodepool() {

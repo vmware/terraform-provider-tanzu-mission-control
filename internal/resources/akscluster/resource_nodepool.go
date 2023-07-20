@@ -47,10 +47,16 @@ type nodePoolOperations struct {
 
 // createNodepools sends the create request for the given nodepools as part of cluster creation flow.
 func createNodepools(ctx context.Context, nodepools []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool, client aksnodepool.ClientService) error {
+	var systemPoolsCreated int
+
 	for _, np := range nodepools {
-		if err := createNodepool(ctx, np, client); err != nil {
-			return err
+		if err := createNodepool(ctx, np, client); err == nil && *np.Spec.Mode == aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM {
+			systemPoolsCreated += 1
 		}
+	}
+
+	if systemPoolsCreated < 1 {
+		return errors.New("no system nodepools were successfully created.")
 	}
 
 	return nil
