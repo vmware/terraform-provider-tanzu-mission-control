@@ -1,0 +1,33 @@
+---
+Title: "AKS Cluster Resource"
+Description: |-
+    Create an Azure AKS cluster resource managed by Tanzu Mission Control.
+---
+
+# AKS Cluster
+
+The `tanzu-mission-control_akscluster` resource allows you to provision and manage [Azure AKS](https://azure.microsoft.com/en-us/products/kubernetes-service) through Tanzu Mission Control.
+It allows users to connect Tanzu Mission Control to their Amazon Web Services (AWS) account and create, update/upgrade, and delete EKS clusters and node groups (called node pools in Tanzu).
+
+## Provisioning a AKS Cluster
+
+To use the **Tanzu Mission Control** for creating a new cluster, you must first log into Azure and set up an Azure AKS
+credential that allows VMware Tanzu Mission Control to connect to your Azure subscription and manage resources in your
+Azure account. For more information, see [connecting an Azure account for AKS cluster lifecycle management][aws-account]
+and [create an AKS Cluster][create-cluster].
+
+You must also have the appropriate permissions in Tanzu Mission Control:
+
+- To provision a cluster, you must have `cluster.admin` permissions.
+- You must also have `clustergroup.edit` permissions on the cluster group to detach a cluster.
+
+[aws-account]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-E4627693-7D1A-4914-A9DF-61E49F97FECC.html
+[create-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-208B2A5A-AE08-4CE1-9DC0-EB573E4BA4A8.html?hWord=N4IghgNiBcIKIGkDKIC+Q
+
+__Note__: Fields under the [nested Schema for `spec.nodepool`](#nestedblock--spec--nodepool) which are marked as "immutable" can't be changed. To update those fields, you need to create a new node pool or rename the node pool (which will have the same effect).
+
+## Example Usage
+
+{{ tffile "examples/resources/akscluster/cluster.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}

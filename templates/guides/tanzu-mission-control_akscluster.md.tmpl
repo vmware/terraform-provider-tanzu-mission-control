@@ -5,23 +5,25 @@ Description: |-
 ---
 # EKS Cluster
 
-The `tanzu-mission-control_ekscluster` resource can directly perform cluster lifecycle management operations on EKS clusters (and associated node groups) including create, update, upgrade, and delete through Tanzu Mission Control.
+The `tanzu-mission-control_akscluster` resource can directly perform cluster lifecycle management operations on AKS clusters
+(and associated node groups) including create, update, upgrade, and delete through Tanzu Mission Control.
 
 ## Prerequisites
 
-To manage the lifecycle of EKS clusters, you need the following prerequisites.
+To manage the lifecycle of AKS clusters, you need the following prerequisites.
 
-- Onboard the AWS account onto Tanzu Mission Control under which the EKS Clusters will be provisioned. Please refer [connecting an AWS account for EKS cluster lifecycle management][aws-account] guide for detailed steps. You can also use `tanzu-mission-control_credential` Terraform resource for this purpose. The name of the EKS AWS credential in Tanzu Mission Control will be reffered to as `credential_name` in this guide.
+- Set up a credential that allows VMware Tanzu Mission Control to connect to your Azure subscription and manage resources in your Azure account. Please refer [connecting an AWS account for EKS cluster lifecycle management][aws-account] guide for detailed steps.
+You can also use `tanzu-mission-control_credential` Terraform resource for this purpose. The name of the Azure AKS credential in Tanzu Mission Control will be referred to as `credential_name` in this guide.
 
-- Create the required VPC with subnets in the desired region. Please refer to Tanzu documentation on how to [create a VPC with Subnets for EKS cluster lifecycle management][tanzu-vpc-guide] and AWS guide for [creating a VPC for your Amazon EKS cluster][aws-vpc-guied].
+- Create a Service Principal with Contributor role on each Azure subscription it has access to. Select either Azure CLI or Azure Portal UI and follow the instructions for the selected method. Please refer to Tanzu documentation on how to [create a Service Principal for AKS cluster lifecycle management][tanzu-vpc-guide] .
 
 - Ensure the CSP token used in initialising the terraform provider has the right set of permissions to create a workload cluster.
 
 [tanzu-vpc-guide]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-5708F04E-7EA3-495D-A484-FD6DB7AA8356.html
-[aws-vpc-guide]: https://docs.aws.amazon.com/eks/latest/userguide/creating-a-vpc.html
+[aws-account]: https://docs.aws.amazon.com/eks/latest/userguide/creating-a-vpc.html
 
 ## Provisioning the cluster
 
-You can use the following template as reference to write your own `tanzu-mission-control_ekscluster` resource in the terraform scripts. 
+You can use the following template as reference to write your own `tanzu-mission-control_akscluster` resource in the terraform scripts.
 
-{{ tffile "resource_templates/ekscluster.tf" }}
+{{ tffile "resource_templates/akscluster.tf" }}
