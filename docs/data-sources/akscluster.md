@@ -102,62 +102,38 @@ Optional:
 
 - `api_server_access_config` (Block List, Max: 2) Kubernetes Network Config (
   see [below for nested schema](#nestedblock--spec--config--kubernetes_network_config))
-- `logging` (Block List, Max: 1) EKS logging configuration (
-  see [below for nested schema](#nestedblock--spec--config--logging))
-- `tags` (Map of String) The metadata to apply to the cluster to assist with categorization and organization
-
-<a id="nestedblock--spec--config--vpc"></a>
-
-### Nested Schema for `spec.config.vpc`
+- `linux_config` (Block List, Max: 2) Admin username
+- `auto_upgrade_config` (Block List, Max: 1) Upgrade channel
 
 Required:
 
-- `subnet_ids` (Set of String) Subnet ids used by the cluster (
-  see [Amazon EKS VPC and subnet requirements and considerations](https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#network-requirements-subnets))
+- `ssh_keys` (Set of String) ssh keys used by the cluster 
 
 Optional:
 
-- `enable_private_access` (Boolean) Enable Kubernetes API requests within your cluster's VPC (such as node to control
-  plane communication) use the private VPC endpoint (
-  see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))
-- `enable_public_access` (Boolean) Enable cluster API server access from the internet. You can, optionally, limit the
-  CIDR blocks that can access the public endpoint using public_access_cidrs (
-  see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))
-- `public_access_cidrs` (Set of String) Specify which addresses from the internet can communicate to the public
-  endpoint, if public endpoint is enabled (
-  see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))
-- `security_groups` (Set of String) Security groups for the cluster VMs
-
-<a id="nestedblock--spec--config--kubernetes_network_config"></a>
-
-### Nested Schema for `spec.config.kubernetes_network_config`
+- `enable_rbac` (Boolean) Enable Role Based Access Control to Kubernetes APIs requests
+- `disable_local_accounts` (Boolean) Disable local accounts 
+- `aad_config` (Block List, Max: 3) Azure Active Directory configurations
+- `enable_azure_rbac` (Boolean) Enable Role Based Access Control to Azure APIs requests
 
 Required:
 
-- `service_cidr` (String) Service CIDR for Kubernetes services
-
-<a id="nestedblock--spec--config--logging"></a>
-
-### Nested Schema for `spec.config.logging`
+- `tier` (String) Azure SKU pricing tier for Kubernetes services
 
 Optional:
 
-- `api_server` (Boolean) Enable API server logs
-- `audit` (Boolean) Enable audit logs
-- `authenticator` (Boolean) Enable authenticator logs
-- `controller_manager` (Boolean) Enable controller manager logs
-- `scheduler` (Boolean) Enable scheduler logs
-
-<a id="nestedblock--spec--nodepool"></a>
+- `managed` (Boolean) Enable API server logs
+- `enable_private_cluster` (Boolean) Enable audit logs
+- `enable_http_application_routing` (Boolean) Enable authenticator logs
+- `enable_secret_rotation` (Boolean) Enable controller manager logs
 
 ### Nested Schema for `spec.nodepool`
 
 Required:
 
-- `info` (Block List, Min: 1, Max: 1) Info for the nodepool (
-  see [below for nested schema](#nestedblock--spec--nodepool--info))
-- `spec` (Block List, Min: 1, Max: 1) Spec for the cluster (
-  see [below for nested schema](#nestedblock--spec--nodepool--spec))
+- `name` (String) Name for the nodepool 
+- `spec` (Block List, Min: 1, Max: 1) Spec for the node pool 
+- `upgrade_config` (Block List, Min: 1, Max: 1) Upgrade config
 
 <a id="nestedblock--spec--nodepool--info"></a>
 
@@ -165,7 +141,8 @@ Required:
 
 Required:
 
-- `name` (String) Name of the nodepool, immutable
+- `mode` (String) Mode of the node pool
+- `count` (Integer) Number of node pools
 
 Optional:
 
