@@ -12,7 +12,9 @@ For more information, please refer [What is Tanzu Mission Control][vmware-tanzu-
 
 [vmware-tanzu-tmc]: https://tanzu.vmware.com/mission-control
 
-To use the **Tanzu Mission Control provider** for Terraform, you must have access to Tanzu Mission Control through an VMware Cloud services organization.
+# Tanzu Mission Control SaaS offering
+
+To use the **Tanzu Mission Control provider** for Terraform, you must have access to Tanzu Mission Control SaaS offering through an VMware Cloud services organization.
 Prior to initializing this provider in Terraform, make sure you have the following information:
 
 - The endpoint for your Tanzu Mission Control organization.
@@ -37,6 +39,29 @@ To gather this information, you need to do the following:
 3. On the My Account page of the VMware Cloud Services console, click the **API Tokens** tab.
 
 From this page, you can generate a new API token, and then copy it to use for the Tanzu Mission Control provider in Terraform.
+
+~> **Note:**
+Current version of Tanzu Mission Control provider does not support when API tokens are secured using [multi-factor authentication][mfa-for-api-token].
+
+[mfa-for-api-token]: https://docs.vmware.com/en/VMware-Cloud-services/services/Using-VMware-Cloud-Services/GUID-38D09558-D468-4A21-95BD-581940119FA7.html
+
+# Tanzu Mission Control Self-Managed
+
+The Tanzu Mission Control provider also facilitates the provisioning of resources that you can use to manage Tanzu Kubernetes Grid workload clusters in Tanzu Mission Control Self-Managed.
+Similar to SaaS offering, Tanzu Mission Control Self-Managed provides a single point of control that allows you to securely manage the infrastructure and apps for your Kubernetes footprint. However, Tanzu Mission Control Self-Managed runs as a service deployed to a Kubernetes cluster running in your own data center.
+For more information, please refer [What is Tanzu Mission Control Self-Managed][vmware-tanzu-tmc-self-managed] in VMware Tanzu Mission Control Concepts.
+
+[vmware-tanzu-tmc-self-managed]: https://tanzu.vmware.com/content/blog/vmware-tanzu-mission-control-self-managed-announcement
+
+To use the **Tanzu Mission Control provider** for Tanzu Mission Control Self-Managed prior to initializing this provider in Terraform, make sure you have the following information of the deployed Tanzu Mission Control Self-Managed instance:
+
+- The endpoint URL of your Tanzu Mission Control Self-Managed deployment.
+- IDP credentials. To log in to the Tanzu Mission Control console in a self-managed deployment, you must be a user enrolled in the IDP associated to Tanzu Mission Control Self-Managed. For more information, see the section on setting up authentication in [Preparing your cluster for Tanzu Mission Control Self-Managed][prepapre-cluster-for-tmc-sm].
+
+[prepapre-cluster-for-tmc-sm]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/1.0/tanzumc-sm-install/prepare-cluster.html
+
+-> **Note:**
+Tanzu Mission Control Provider supports Tanzu Mission Control Self-Managed from **v1.1.9** onwards.
 
 ## Example Usage
 
