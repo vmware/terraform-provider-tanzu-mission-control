@@ -31,7 +31,7 @@ Only one scope per resource is allowed.
 ```terraform
 # Create Tanzu Mission Control kustomization with attached set as default value.
 resource "tanzu-mission-control_kustomization" "create_cluster_group_kustomization" {
-  name = "tf-kustomizationy-name" # Required
+  name = "tf-kustomization-name" # Required
 
   namespace_name = "tf-namespace" #Required
 
@@ -66,7 +66,7 @@ resource "tanzu-mission-control_kustomization" "create_cluster_group_kustomizati
 ```terraform
 # Create Tanzu Mission Control kustomization with attached set as default value.
 resource "tanzu-mission-control_kustomization" "create_cluster_kustomization" {
-  name = "tf-kustomizationy-name" # Required
+  name = "tf-kustomization-name" # Required
 
   namespace_name = "tf-namespace" #Required
 

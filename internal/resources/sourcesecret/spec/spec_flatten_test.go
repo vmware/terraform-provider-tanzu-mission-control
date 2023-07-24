@@ -60,8 +60,8 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 				SourceSecretType: sourcesecretclustermodel.NewVmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretType(sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretTypeSSH),
 				Data: &sourcesecretclustermodel.VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpec{
 					Data: map[string]strfmt.Base64{
-						IdentityKey:   []byte("someidentity"),
-						KnownhostsKey: []byte(""),
+						IdentityKey:   []byte(""),
+						KnownhostsKey: []byte("someknownhostvalue"),
 					},
 				},
 			},
@@ -71,8 +71,8 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 						map[string]interface{}{
 							SSHKey: []interface{}{
 								map[string]interface{}{
-									IdentityKey:   "someidentity",
-									KnownhostsKey: "somevalue",
+									IdentityKey:   "somevalue",
+									KnownhostsKey: "someknownhostvalue",
 								},
 							},
 						},
@@ -139,8 +139,8 @@ func TestFlattenStatusForClusterGroupScope(t *testing.T) {
 					SourceSecretType: sourcesecretclustermodel.NewVmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretType(sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretTypeSSH),
 					Data: &sourcesecretclustermodel.VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpec{
 						Data: map[string]strfmt.Base64{
-							IdentityKey:   []byte("someidentity"),
-							KnownhostsKey: []byte(""),
+							IdentityKey:   []byte(""),
+							KnownhostsKey: []byte("someknownhostvalue"),
 						},
 					},
 				},
@@ -151,8 +151,8 @@ func TestFlattenStatusForClusterGroupScope(t *testing.T) {
 						map[string]interface{}{
 							SSHKey: []interface{}{
 								map[string]interface{}{
-									IdentityKey:   "someidentity",
-									KnownhostsKey: "somevalue",
+									IdentityKey:   "somevalue",
+									KnownhostsKey: "someknownhostvalue",
 								},
 							},
 						},
