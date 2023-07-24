@@ -28,7 +28,10 @@ func ResourceTMCAKSCluster() *schema.Resource {
 		ReadContext:   resourceClusterRead,
 		UpdateContext: resourceClusterInPlaceUpdate,
 		DeleteContext: resourceClusterDelete,
-		Description:   "Tanzu Mission Control AKS Cluster Resource",
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceClusterImporter,
+		},
+		Description: "Tanzu Mission Control AKS Cluster Resource",
 	}
 }
 
@@ -119,6 +122,50 @@ func resourceClusterDelete(ctx context.Context, data *schema.ResourceData, confi
 	data.SetId("") // explicitly delete
 
 	return diag.Diagnostics{}
+}
+
+func resourceClusterImporter(_ context.Context, data *schema.ResourceData, config any) ([]*schema.ResourceData, error) {
+	tc, ok := config.(authctx.TanzuContext)
+	if !ok {
+		return nil, errors.New("error while retrieving Tanzu auth config")
+	}
+
+	id := data.Id()
+	if id == "" {
+		return nil, errors.New("ID is needed to import an TMC AKS cluster")
+	}
+
+	resp, err := tc.TMCConnection.AKSClusterResourceService.AksClusterResourceServiceGetByID(id)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Unable to get Tanzu Mission Control AKS cluster entry for id %s", id)
+	}
+
+	npresp, err := tc.TMCConnection.AKSNodePoolResourceService.AksNodePoolResourceServiceList(resp.AksCluster.FullName)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Unable to get Tanzu Mission Control AKS nodepools for cluster %s", resp.AksCluster.FullName.Name)
+	}
+
+	if err = data.Set(CredentialNameKey, resp.AksCluster.FullName.CredentialName); err != nil {
+		return nil, errors.Wrapf(err, "Failed to set credential name for the cluster %s", resp.AksCluster.FullName.Name)
+	}
+
+	if err = data.Set(SubscriptionIDKey, resp.AksCluster.FullName.SubscriptionID); err != nil {
+		return nil, errors.Wrapf(err, "Failed to set subscription for the cluster %s", resp.AksCluster.FullName.Name)
+	}
+
+	if err = data.Set(ResourceGroupNameKey, resp.AksCluster.FullName.ResourceGroupName); err != nil {
+		return nil, errors.Wrapf(err, "Failed to set resource group for the cluster %s", resp.AksCluster.FullName.Name)
+	}
+
+	if err = data.Set(NameKey, resp.AksCluster.FullName.Name); err != nil {
+		return nil, errors.Wrapf(err, "Failed to set name for the cluster %s", resp.AksCluster.FullName.Name)
+	}
+
+	if err = setResourceState(data, resp.AksCluster, npresp.Nodepools); err != nil {
+		return nil, err
+	}
+
+	return []*schema.ResourceData{data}, nil
 }
 
 // validate returns an error configuration will result in a cluster that will fail to create.

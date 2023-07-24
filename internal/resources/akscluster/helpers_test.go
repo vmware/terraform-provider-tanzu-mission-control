@@ -448,6 +448,7 @@ type mockClusterClient struct {
 	createClusterResp                         *models.VmwareTanzuManageV1alpha1AksCluster
 	AksClusterResourceServiceDeleteCalledWith *models.VmwareTanzuManageV1alpha1AksclusterFullName
 	AksUpdateClusterWasCalledWith             *models.VmwareTanzuManageV1alpha1AksCluster
+	getClusterByIDResp                        *models.VmwareTanzuManageV1alpha1AksCluster
 	AksClusterResourceServiceGetCallCount     int
 	AksCreateClusterWasCalled                 bool
 	createErr                                 error
@@ -471,6 +472,10 @@ func (m *mockClusterClient) AksClusterResourceServiceGet(fn *models.VmwareTanzuM
 	return &models.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{
 		AksCluster: m.getClusterResp,
 	}, m.getErr
+}
+
+func (m *mockClusterClient) AksClusterResourceServiceGetByID(id string) (*models.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse, error) {
+	return &models.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{AksCluster: m.getClusterByIDResp}, m.getErr
 }
 
 func (m *mockClusterClient) AksClusterResourceServiceUpdate(ucr *models.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterRequest) (*models.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterResponse, error) {

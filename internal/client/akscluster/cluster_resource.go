@@ -6,8 +6,12 @@ SPDX-License-Identifier: MPL-2.0
 package akscluster
 
 import (
+	"errors"
+	"fmt"
+	"net/http"
 	"net/url"
 
+	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	aksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
@@ -38,6 +42,8 @@ type ClientService interface {
 	AksClusterResourceServiceCreate(request *aksmodel.VmwareTanzuManageV1alpha1AksclusterCreateAksClusterRequest) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterCreateAksClusterResponse, error)
 
 	AksClusterResourceServiceGet(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse, error)
+
+	AksClusterResourceServiceGetByID(id string) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse, error)
 
 	AksClusterResourceServiceUpdate(request *aksmodel.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterRequest) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterResponse, error)
 
@@ -77,6 +83,34 @@ func (c *Client) AksClusterResourceServiceGet(fn *aksmodel.VmwareTanzuManageV1al
 	err := c.Get(requestURL, clusterResponse)
 
 	return clusterResponse, err
+}
+
+// AksClusterResourceServiceGetByID gets an aks cluster by ID used to import existing clusters to terraform state.
+func (c *Client) AksClusterResourceServiceGetByID(id string) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse, error) {
+	queryParams := url.Values{
+		"query": []string{fmt.Sprintf("uid=\"%s\"", id)},
+	}
+
+	requestURL := helper.ConstructRequestURL(apiVersionAndGroup).AppendQueryParams(queryParams).String()
+	clusterListResponse := &aksmodel.VmwareTanzuManageV1alpha1AksclusterListAksClustersResponse{}
+
+	err := c.Get(requestURL, clusterListResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(clusterListResponse.AksClusters) == 0 {
+		return nil, clienterrors.ErrorWithHTTPCode(http.StatusNotFound, errors.New("cluster list by ID was empty"))
+	}
+
+	if len(clusterListResponse.AksClusters) > 1 {
+		return nil, clienterrors.ErrorWithHTTPCode(http.StatusExpectationFailed, errors.New("cluster list by ID returned more than one cluster"))
+	}
+
+	clusterResponse := &aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{}
+	clusterResponse.AksCluster = clusterListResponse.AksClusters[0]
+
+	return clusterResponse, nil
 }
 
 /*

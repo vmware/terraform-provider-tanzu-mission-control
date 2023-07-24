@@ -559,6 +559,10 @@ func (m *mockClusterService) AksClusterResourceServiceGet(fn *aksmodel.VmwareTan
 	return resp, nil
 }
 
+func (m *mockClusterService) AksClusterResourceServiceGetByID(id string) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse, error) {
+	panic("not implemented")
+}
+
 func (m *mockClusterService) AksClusterResourceServiceUpdate(request *aksmodel.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterRequest) (*aksmodel.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterResponse, error) {
 	resp := m.updateResponse[m.updateCall]
 	m.updateCall += 1
