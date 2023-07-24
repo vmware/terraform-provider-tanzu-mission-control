@@ -16,3 +16,6 @@ variable "username" {
 
 variable "password" {
 }
+
+variable "ca_file" {
+}
