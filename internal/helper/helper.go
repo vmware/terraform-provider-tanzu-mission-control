@@ -119,10 +119,37 @@ func SetPrimitiveValue(input, model interface{}, key string) {
 	}
 }
 
+func SetPrimitiveList[T any](data any) []T {
+	list, ok := data.([]any)
+	if !ok || len(list) < 1 {
+		return nil
+	}
+
+	out := make([]T, 0, len(list))
+
+	for _, v := range list {
+		var value T
+
+		SetPrimitiveValue(v, &value, "")
+
+		out = append(out, value)
+	}
+
+	return out
+}
+
 func BoolPointer(b bool) *bool {
 	return &b
 }
 
 func StringPointer(s string) *string {
 	return &s
+}
+
+func PtrString[T ~string](val *T) string {
+	if val == nil {
+		return ""
+	}
+
+	return (string)(*val)
 }
