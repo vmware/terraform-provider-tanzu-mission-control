@@ -35,6 +35,7 @@ func TestAKSClusterResource(t *testing.T) {
 	suite.Run(t, &ReadClusterTestSuite{})
 	suite.Run(t, &UpdateClusterTestSuite{})
 	suite.Run(t, &DeleteClusterTestSuite{})
+	suite.Run(t, &ImportClusterTestSuite{})
 }
 
 type CreatClusterTestSuite struct {
@@ -523,4 +524,66 @@ func (s *DeleteClusterTestSuite) Test_resourceClusterDelete_timeout() {
 
 	s.Assert().True(result.HasError())
 	s.Assert().Equal(expectedFullName(), s.mocks.clusterClient.AksClusterResourceServiceDeleteCalledWith)
+}
+
+type ImportClusterTestSuite struct {
+	suite.Suite
+	ctx                context.Context
+	mocks              mocks
+	aksClusterResource *schema.Resource
+	config             authctx.TanzuContext
+}
+
+func (s *ImportClusterTestSuite) SetupTest() {
+	s.mocks.clusterClient = &mockClusterClient{
+		getClusterByIDResp: aTestCluster(withStatusSuccess),
+	}
+	s.mocks.nodepoolClient = &mockNodepoolClient{
+		nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool(forCluster(aTestCluster().FullName))},
+	}
+	s.config = authctx.TanzuContext{
+		TMCConnection: &client.TanzuMissionControl{
+			AKSClusterResourceService:  s.mocks.clusterClient,
+			AKSNodePoolResourceService: s.mocks.nodepoolClient,
+		},
+	}
+	s.aksClusterResource = akscluster.ResourceTMCAKSCluster()
+	s.ctx = context.WithValue(context.Background(), akscluster.RetryInterval, 10*time.Millisecond)
+}
+
+func (s *ImportClusterTestSuite) Test_resourceClusterImport() {
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, nil)
+	d.SetId("test-id")
+
+	result, err := s.aksClusterResource.Importer.StateContext(s.ctx, d, s.config)
+
+	s.Assert().NoError(err)
+	s.Assert().Len(result, 1)
+	cluster := akscluster.ConstructCluster(result[0])
+	s.Assert().Equal(cluster.FullName.Name, "test-cluster")
+	s.Assert().Equal(cluster.FullName.CredentialName, "test-cred")
+	s.Assert().Equal(cluster.FullName.SubscriptionID, "sub-id")
+	s.Assert().Equal(cluster.FullName.ResourceGroupName, "resource-group")
+	s.Assert().NotNil(cluster.Spec)
+	s.Assert().NotNil(cluster.Meta)
+}
+
+func (s *ImportClusterTestSuite) Test_resourceClusterImport_GetClusterFails() {
+	s.mocks.clusterClient.getErr = errors.New("failed to get cluster by ID")
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, nil)
+	d.SetId("test-id")
+
+	_, err := s.aksClusterResource.Importer.StateContext(s.ctx, d, s.config)
+
+	s.Assert().Error(err)
+}
+
+func (s *ImportClusterTestSuite) Test_resourceClusterImport_GetNodepoolsFails() {
+	s.mocks.nodepoolClient.listErr = errors.New("failed to get nodepools")
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, nil)
+	d.SetId("test-id")
+
+	_, err := s.aksClusterResource.Importer.StateContext(s.ctx, d, s.config)
+
+	s.Assert().Error(err)
 }
