@@ -357,6 +357,7 @@ func aTestNodePool(w ...nodepoolWither) *models.VmwareTanzuManageV1alpha1Aksclus
 		},
 		Spec: &models.VmwareTanzuManageV1alpha1AksclusterNodepoolSpec{
 			Mode:                   models.VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM.Pointer(),
+			NodeImageVersion:       "v1",
 			Type:                   models.VmwareTanzuManageV1alpha1AksclusterNodepoolTypeVIRTUALMACHINESCALESETS.Pointer(),
 			AvailabilityZones:      []string{"1", "2", "3"},
 			Count:                  1,
@@ -400,6 +401,7 @@ func aTestNodepoolDataMap(w ...mapWither) map[string]any {
 		"name": "system-np",
 		"spec": []any{map[string]any{
 			"mode":                      "SYSTEM",
+			"node_image_version":        "v1",
 			"type":                      "VIRTUAL_MACHINE_SCALE_SETS",
 			"availability_zones":        []any{"1", "2", "3"},
 			"count":                     1,

@@ -75,6 +75,7 @@ const (
 	skuTierKey                                 = "tier"
 	infoKey                                    = "info"
 	modeKey                                    = "mode"
+	nodeImageVersionKey                        = "node_image_version"
 	typeKey                                    = "type"
 	availabilityZonesKey                       = "availability_zones"
 	countKey                                   = "count"

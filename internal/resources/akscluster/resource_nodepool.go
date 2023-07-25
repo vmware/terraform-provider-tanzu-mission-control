@@ -24,19 +24,22 @@ import (
 )
 
 var immutableFields = map[string]struct{}{
-	"FullName.AksClusterName":    {},
-	"FullName.CredentialName":    {},
-	"FullName.Name":              {},
-	"FullName.ResourceGroupName": {},
-	"FullName.SubscriptionID":    {},
-	"Spec.Mode":                  {},
-	"Spec.VMSize":                {},
-	"Spec.OsDiskType":            {},
-	"Spec.OsDiskSizeGb":          {},
-	"Spec.MaxPods":               {},
-	"Spec.VnetSubnetID":          {},
-	"Spec.VmwareTanzuManageV1alpha1AksclusterNodepoolAutoScalingConfig.Enabled": {},
-	"Spec.ScaleSetPriority": {},
+	"FullName.AksClusterName":     {},
+	"FullName.CredentialName":     {},
+	"FullName.Name":               {},
+	"FullName.ResourceGroupName":  {},
+	"FullName.SubscriptionID":     {},
+	"Spec.Type":                   {},
+	"Spec.OsType":                 {},
+	"Spec.VMSize":                 {},
+	"Spec.OsDiskType":             {},
+	"Spec.OsDiskSizeGb":           {},
+	"Spec.MaxPods":                {},
+	"Spec.VnetSubnetID":           {},
+	"Spec.ScaleSetPriority":       {},
+	"Spec.ScaleSetEvictionPolicy": {},
+	"Spec.SpotMaxPrice":           {},
+	"Spec.EnableNodePublicIP":     {},
 }
 
 // nodePoolOperations the reconciliation data that will be used to apply nodepool changes.
