@@ -14,7 +14,7 @@ import (
 
 var ClusterFullname = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "The schema for cluster iam policy full name",
+	Description: "The schema for cluster full name",
 	Optional:    true,
 	ForceNew:    true,
 	MaxItems:    1,
