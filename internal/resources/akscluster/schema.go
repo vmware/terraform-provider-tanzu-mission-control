@@ -493,6 +493,12 @@ var NodepoolSpecSchema = &schema.Schema{
 				Description: "The mode of the nodepool SYSTEM or USER. A cluster must have at least one 'SYSTEM' nodepool at all times.",
 				Required:    true,
 			},
+			nodeImageVersionKey: {
+				Type:        schema.TypeString,
+				Description: "The node image version of the nodepool.",
+				Computed:    true,
+				Optional:    true,
+			},
 			typeKey: {
 				Type:        schema.TypeString,
 				Description: "Nodepool type",

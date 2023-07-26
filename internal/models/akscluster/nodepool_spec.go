@@ -34,6 +34,9 @@ type VmwareTanzuManageV1alpha1AksclusterNodepoolSpec struct {
 	// A cluster must have at least one 'System' nodepool at all times.
 	Mode *VmwareTanzuManageV1alpha1AksclusterNodepoolMode `json:"mode,omitempty"`
 
+	// The node image version of the nodepool.
+	NodeImageVersion string `json:"nodeImageVersion,omitempty"`
+
 	// The node labels to be persisted across all nodes in nodepool.
 	NodeLabels map[string]string `json:"nodeLabels,omitempty"`
 

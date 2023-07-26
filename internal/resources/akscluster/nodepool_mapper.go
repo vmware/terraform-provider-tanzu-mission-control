@@ -60,6 +60,10 @@ func constructNodepoolSpec(data map[string]any) *models.VmwareTanzuManageV1alpha
 		npSpec.Mode = models.VmwareTanzuManageV1alpha1AksclusterNodepoolMode(v.(string)).Pointer()
 	}
 
+	if v, ok := npSpecData[nodeImageVersionKey]; ok && v != "" {
+		helper.SetPrimitiveValue(v, &npSpec.NodeImageVersion, nodeImageVersionKey)
+	}
+
 	if v, ok := npSpecData[typeKey]; ok && v != "" {
 		npSpec.Type = models.VmwareTanzuManageV1alpha1AksclusterNodepoolType(v.(string)).Pointer()
 	}
@@ -255,6 +259,7 @@ func toNodepoolSpecMap(spec *models.VmwareTanzuManageV1alpha1AksclusterNodepoolS
 	}
 
 	data[modeKey] = helper.PtrString(spec.Mode)
+	data[nodeImageVersionKey] = spec.NodeImageVersion
 	data[typeKey] = helper.PtrString(spec.Type)
 	data[availabilityZonesKey] = toInterfaceArray(spec.AvailabilityZones)
 	data[countKey] = int(spec.Count)
