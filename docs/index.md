@@ -12,7 +12,9 @@ For more information, please refer [What is Tanzu Mission Control][vmware-tanzu-
 
 [vmware-tanzu-tmc]: https://tanzu.vmware.com/mission-control
 
-To use the **Tanzu Mission Control provider** for Terraform, you must have access to Tanzu Mission Control through an VMware Cloud services organization.
+# Tanzu Mission Control SaaS offering
+
+To use the **Tanzu Mission Control provider** for Terraform, you must have access to Tanzu Mission Control SaaS offering through an VMware Cloud services organization.
 Prior to initializing this provider in Terraform, make sure you have the following information:
 
 - The endpoint for your Tanzu Mission Control organization.
@@ -38,9 +40,33 @@ To gather this information, you need to do the following:
 
 From this page, you can generate a new API token, and then copy it to use for the Tanzu Mission Control provider in Terraform.
 
+~> **Note:**
+Current version of Tanzu Mission Control provider does not support when API tokens are secured using [multi-factor authentication][mfa-for-api-token].
+
+[mfa-for-api-token]: https://docs.vmware.com/en/VMware-Cloud-services/services/Using-VMware-Cloud-Services/GUID-38D09558-D468-4A21-95BD-581940119FA7.html
+
+# Tanzu Mission Control Self-Managed
+
+The Tanzu Mission Control provider also facilitates the provisioning of resources that you can use to manage Tanzu Kubernetes Grid workload clusters in Tanzu Mission Control Self-Managed.
+Similar to SaaS offering, Tanzu Mission Control Self-Managed provides a single point of control that allows you to securely manage the infrastructure and apps for your Kubernetes footprint. However, Tanzu Mission Control Self-Managed runs as a service deployed to a Kubernetes cluster running in your own data center.
+For more information, please refer [What is Tanzu Mission Control Self-Managed][vmware-tanzu-tmc-self-managed] in VMware Tanzu Mission Control Concepts.
+
+[vmware-tanzu-tmc-self-managed]: https://tanzu.vmware.com/content/blog/vmware-tanzu-mission-control-self-managed-announcement
+
+To use the **Tanzu Mission Control provider** for Tanzu Mission Control Self-Managed prior to initializing this provider in Terraform, make sure you have the following information of the deployed Tanzu Mission Control Self-Managed instance:
+
+- The endpoint URL of your Tanzu Mission Control Self-Managed deployment.
+- IDP credentials. To log in to the Tanzu Mission Control console in a self-managed deployment, you must be a user enrolled in the IDP associated to Tanzu Mission Control Self-Managed. For more information, see the section on setting up authentication in [Preparing your cluster for Tanzu Mission Control Self-Managed][prepapre-cluster-for-tmc-sm].
+
+[prepapre-cluster-for-tmc-sm]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/1.0/tanzumc-sm-install/prepare-cluster.html
+
+-> **Note:**
+Tanzu Mission Control Provider supports Tanzu Mission Control Self-Managed from **v1.1.9** onwards.
+
 ## Example Usage
 
 ```terraform
+# Provider configuration for TMC SaaS
 provider "tanzu-mission-control" {
   endpoint            = var.endpoint            # optionally use TMC_ENDPOINT env var
   vmw_cloud_api_token = var.vmw_cloud_api_token # optionally use VMW_CLOUD_API_TOKEN env var
@@ -48,6 +74,18 @@ provider "tanzu-mission-control" {
   # if you are using dev or different csp endpoint, change the default value below
   # for production environments the vmw_cloud_endpoint is console.cloud.vmware.com
   # vmw_cloud_endpoint = "console.cloud.vmware.com" or optionally use VMW_CLOUD_ENDPOINT env var
+}
+
+# Provider configuration for TMC Self-Managed
+provider "tanzu-mission-control" {
+  endpoint = var.endpoint               # optionally use TMC_ENDPOINT env var
+
+  self_managed {
+    oidc_issuer   = var.oidc_issuer        # optionally use OIDC_ISSUER env var,  Ex: export OIDC_ISSUER=pinniped-supervisor.example.local-dev.tmc.com
+    username      = var.username           # optionally use TMC_SM_USERNAME env var
+    password      = var.password           # optionally use TMC_SM_PASSWORD env var
+  }
+  ca_file = var.ca_file                    # Path to Host's root ca set. The certificates issued by the issuer should be trusted by the host accessing TMC Self-Managed via TMC terraform provider.
 }
 ```
 
@@ -64,5 +102,15 @@ provider "tanzu-mission-control" {
 - `client_auth_key_file` (String)
 - `endpoint` (String)
 - `insecure_allow_unverified_ssl` (Boolean)
+- `self_managed` (Block List, Max: 1) (see [below for nested schema](#nestedblock--self_managed))
 - `vmw_cloud_api_token` (String, Sensitive)
 - `vmw_cloud_endpoint` (String)
+
+<a id="nestedblock--self_managed"></a>
+### Nested Schema for `self_managed`
+
+Optional:
+
+- `oidc_issuer` (String) URL of the OpenID Connect (OIDC) issuer configured with self-managed Taznu mission control instance
+- `password` (String, Sensitive) Password for the above mentioned Username field configured in the OIDC
+- `username` (String) Username configured in the OIDC

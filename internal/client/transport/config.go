@@ -26,14 +26,18 @@ func DefaultTransportConfig() *Config {
 		Host:     DefaultHost,
 		BasePath: DefaultBasePath,
 		Headers:  http.Header{},
+		RefreshAuthCtx: func() (map[string]string, error) {
+			return map[string]string{}, nil
+		},
 	}
 }
 
 // Config contains the transport related info.
 type Config struct {
-	Host     string
-	BasePath string
-	Headers  http.Header
+	Host           string
+	BasePath       string
+	Headers        http.Header
+	RefreshAuthCtx func() (map[string]string, error)
 }
 
 // WithHost overrides the default host.
@@ -66,5 +70,11 @@ func (cfg *Config) AddHeaders(header http.Header) *Config {
 		cfg.Headers[key] = value
 	}
 
+	return cfg
+}
+
+// WithRefreshAuthCtx overrides the default RefreshAuthCtx.
+func (cfg *Config) WithRefreshAuthCtx(refresh func() (map[string]string, error)) *Config {
+	cfg.RefreshAuthCtx = refresh
 	return cfg
 }
