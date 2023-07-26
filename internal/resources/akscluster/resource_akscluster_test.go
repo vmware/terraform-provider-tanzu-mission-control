@@ -264,6 +264,20 @@ func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_updateClusterConfig(
 	s.Assert().Nil(s.mocks.nodepoolClient.UpdatedNodepoolWasCalledWith)
 }
 
+func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_updateClusterMetadata() {
+	originalCluster := aTestClusterDataMap(withLabels("label", "value1"))
+	updatedCluster := aTestClusterDataMap(withLabels("label", "value2"))
+	d := dataDiffFrom(s.T(), originalCluster, updatedCluster)
+	expected := aTestCluster()
+	expected.Meta.Labels = map[string]string{"label": "value2"}
+
+	result := s.aksClusterResource.UpdateContext(s.ctx, d, s.config)
+
+	s.Assert().False(result.HasError())
+	s.Assert().Equal(expected, s.mocks.clusterClient.AksUpdateClusterWasCalledWith)
+	s.Assert().Nil(s.mocks.nodepoolClient.UpdatedNodepoolWasCalledWith)
+}
+
 func (s *UpdateClusterTestSuite) Test_resourceClusterUpdate_updateNodepool() {
 	originalNodepools := []any{aTestNodepoolDataMap(withNodepoolCount(1))}
 	updatedNodepools := []any{aTestNodepoolDataMap(withNodepoolCount(5))}

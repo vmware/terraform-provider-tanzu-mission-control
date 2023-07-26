@@ -10,6 +10,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-openapi/strfmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
@@ -79,7 +81,11 @@ func aTestCluster(w ...clusterWither) *models.VmwareTanzuManageV1alpha1AksCluste
 			Name:              "test-cluster",
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
-			UID: "test-uid",
+			Annotations:  map[string]string{},
+			CreationTime: strfmt.DateTime{},
+			Labels:       map[string]string{"label": "value"},
+			UID:          "test-uid",
+			UpdateTime:   strfmt.DateTime{},
 		},
 		Spec: &models.VmwareTanzuManageV1alpha1AksclusterSpec{
 			ClusterGroupName: "my-cluster-group",
@@ -190,6 +196,14 @@ func withDNSPrefix(prefix string) mapWither {
 	}
 }
 
+func withLabels(label, value string) mapWither {
+	return func(m map[string]any) {
+		metadatas := m["meta"].([]any)
+		metadata := metadatas[0].(map[string]any)
+		metadata["labels"] = map[string]any{label: value}
+	}
+}
+
 func withNodepools(nps []any) mapWither {
 	return func(m map[string]any) {
 		specs := m["spec"].([]any)
@@ -234,6 +248,12 @@ func aTestClusterDataMap(w ...mapWither) map[string]any {
 		"subscription_id": "sub-id",
 		"resource_group":  "resource-group",
 		"name":            "test-cluster",
+		"meta": []any{map[string]any{
+			"uid": "test-uid",
+			"labels": map[string]any{
+				"label": "value",
+			},
+		}},
 		"spec": []any{map[string]any{
 			"cluster_group": "my-cluster-group",
 			"proxy":         "my-proxy",

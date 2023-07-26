@@ -19,6 +19,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 func ResourceTMCAKSCluster() *schema.Resource {
@@ -84,8 +85,8 @@ func resourceClusterInPlaceUpdate(ctx context.Context, data *schema.ResourceData
 	}
 
 	// Make changes to the cluster config.
-	if clusterChange := data.HasChange("spec.0.config.0"); clusterChange {
-		if updateErr := updateClusterConfig(ctx, data, clusterResp, tc); updateErr != nil {
+	if data.HasChange("spec.0.config.0") || data.HasChange("meta") {
+		if updateErr := updateClusterConfig(ctx, data, tc); updateErr != nil {
 			return diag.FromErr(updateErr)
 		}
 	}
@@ -214,9 +215,9 @@ func getExistingCluster(data *schema.ResourceData, client akscluster.ClientServi
 	return nil
 }
 
-func updateClusterConfig(ctx context.Context, data *schema.ResourceData, clusterResp *models.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse, tc authctx.TanzuContext) error {
+func updateClusterConfig(ctx context.Context, data *schema.ResourceData, tc authctx.TanzuContext) error {
 	cluster := ConstructCluster(data)
-	cluster.Meta = clusterResp.AksCluster.Meta
+	cluster.Meta = common.ConstructMeta(data)
 	updateReq := &models.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterRequest{AksCluster: cluster}
 
 	if _, updateErr := tc.TMCConnection.AKSClusterResourceService.AksClusterResourceServiceUpdate(updateReq); updateErr != nil {
