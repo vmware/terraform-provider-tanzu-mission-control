@@ -1,0 +1,31 @@
+---
+Title: "AKS Cluster Resource"
+Description: |-
+    Reading the AKS cluster resource managed by Tanzu Mission Control.
+---
+
+# AKS Cluster
+
+The `tanzu-mission-control_akscluster` resource allows you to provision and manage [Azure AKS](https://azure.microsoft.com/en-us/products/kubernetes-service) through Tanzu Mission Control.
+It allows users to connect Tanzu Mission Control to their Microsoft Azure account and create, update/upgrade, and delete AKS clusters and node groups (called node pools in Tanzu).
+
+## Provisioning an AKS Cluster
+
+To use the **Tanzu Mission Control** for creating a new cluster, you must first log into Azure and set up an Azure AKS
+credential that allows VMware Tanzu Mission Control to connect to your Azure subscription and manage resources in your
+Azure account. For more information, see [connecting an Azure account for AKS cluster lifecycle management][azure-account]
+and [create an AKS Cluster][create-cluster].
+
+You must also have the appropriate permissions in Tanzu Mission Control:
+
+- To provision a cluster, you must have `cluster.admin` permissions.
+- You must also have `clustergroup.edit` permissions on the cluster group to detach a cluster.
+
+[azure-account]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-2CA6A21A-1D33-4852-B8F2-86BB3A1337E4.html
+[create-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-90ED8C73-8A40-46FF-85AE-A8DAA9048AA9.html
+
+## Example Usage
+
+{{ tffile "examples/data-sources/akscluster/cluster.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
