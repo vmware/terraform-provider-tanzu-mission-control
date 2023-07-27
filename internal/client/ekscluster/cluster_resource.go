@@ -6,8 +6,13 @@ SPDX-License-Identifier: MPL-2.0
 package ekscluster
 
 import (
+	"fmt"
+	"net/http"
 	"net/url"
 
+	"github.com/pkg/errors"
+
+	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	eksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/ekscluster"
@@ -39,6 +44,8 @@ type ClientService interface {
 	EksClusterResourceServiceDelete(fn *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName, force string) error
 
 	EksClusterResourceServiceGet(fn *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName) (*eksmodel.VmwareTanzuManageV1alpha1EksclusterGetEksClusterResponse, error)
+
+	EksClusterResourceServiceGetByID(id string) (*eksmodel.VmwareTanzuManageV1alpha1EksclusterGetEksClusterResponse, error)
 
 	EksClusterResourceServiceUpdate(request *eksmodel.VmwareTanzuManageV1alpha1EksclusterCreateUpdateEksClusterRequest) (*eksmodel.VmwareTanzuManageV1alpha1EksclusterCreateUpdateEksClusterResponse, error)
 }
@@ -92,6 +99,36 @@ func (c *Client) EksClusterResourceServiceGet(fn *eksmodel.VmwareTanzuManageV1al
 	err := c.Get(requestURL, clusterResponse)
 
 	return clusterResponse, err
+}
+
+/*
+EksClusterResourceServiceGetByID gets an eks cluster by its ID.
+*/
+func (c *Client) EksClusterResourceServiceGetByID(id string) (*eksmodel.VmwareTanzuManageV1alpha1EksclusterGetEksClusterResponse, error) {
+	queryParams := url.Values{
+		"query": []string{fmt.Sprintf("uid=\"%s\"", id)},
+	}
+
+	requestURL := helper.ConstructRequestURL(apiVersionAndGroup).AppendQueryParams(queryParams).String()
+	clusterListResponse := &eksmodel.VmwareTanzuManageV1alpha1EksclusterListEksClustersResponse{}
+
+	err := c.Get(requestURL, clusterListResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(clusterListResponse.EksClusters) == 0 {
+		return nil, clienterrors.ErrorWithHTTPCode(http.StatusNotFound, errors.New("cluster list by ID was empty"))
+	}
+
+	if len(clusterListResponse.EksClusters) > 1 {
+		return nil, clienterrors.ErrorWithHTTPCode(http.StatusExpectationFailed, errors.New("cluster list by ID returned more than one cluster"))
+	}
+
+	clusterResponse := &eksmodel.VmwareTanzuManageV1alpha1EksclusterGetEksClusterResponse{}
+	clusterResponse.EksCluster = clusterListResponse.EksClusters[0]
+
+	return clusterResponse, nil
 }
 
 /*

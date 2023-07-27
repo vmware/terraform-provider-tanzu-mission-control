@@ -115,18 +115,27 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 	// always run
 	d.SetId(resp.EksCluster.Meta.UID)
 
+	err = setResourceData(d, resp.EksCluster, npresp.Nodepools)
+	if err != nil {
+		return diag.FromErr(errors.Wrap(err, "failed to set resource data for cluster read"))
+	}
+
+	return diags
+}
+
+func setResourceData(d *schema.ResourceData, eksCluster *eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster, remoteNodepools []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool) error {
 	status := map[string]interface{}{
 		// TODO: add condition
-		"platform_version": resp.EksCluster.Status.PlatformVersion,
-		"phase":            resp.EksCluster.Status.Phase,
+		"platform_version": eksCluster.Status.PlatformVersion,
+		"phase":            eksCluster.Status.Phase,
 	}
 
 	if err := d.Set(StatusKey, status); err != nil {
-		return diag.FromErr(err)
+		return errors.Wrapf(err, "Failed to set status for the cluster %s", eksCluster.FullName.Name)
 	}
 
-	if err := d.Set(common.MetaKey, common.FlattenMeta(resp.EksCluster.Meta)); err != nil {
-		return diag.FromErr(err)
+	if err := d.Set(common.MetaKey, common.FlattenMeta(eksCluster.Meta)); err != nil {
+		return errors.Wrap(err, "Failed to set meta for the cluster")
 	}
 
 	_, tfNodepools := constructEksClusterSpec(d)
@@ -136,7 +145,7 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 
 	nodepools := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition, len(tfNodepools))
 
-	for _, np := range npresp.Nodepools {
+	for _, np := range remoteNodepools {
 		npDef := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{
 			Info: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolInfo{
 				Description: np.Meta.Description,
@@ -159,11 +168,11 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 		}
 	}
 
-	if err := d.Set(specKey, flattenClusterSpec(resp.EksCluster.Spec, nodepools)); err != nil {
-		return diag.FromErr(err)
+	if err := d.Set(specKey, flattenClusterSpec(eksCluster.Spec, nodepools)); err != nil {
+		return errors.Wrapf(err, "Failed to set the spec for cluster %s", eksCluster.FullName.Name)
 	}
 
-	return diags
+	return nil
 }
 
 // Returns mapping of nodepool names to their positions in the array.
