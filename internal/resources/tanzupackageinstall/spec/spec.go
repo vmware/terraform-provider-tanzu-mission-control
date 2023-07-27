@@ -6,13 +6,9 @@ SPDX-License-Identifier: MPL-2.0
 package spec
 
 import (
-	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
-	packageinstallmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzupackageinstall"
 )
 
 var (
@@ -28,20 +24,13 @@ var (
 				RoleBindingScopeKey: {
 					Type:        schema.TypeString,
 					Description: "Role binding scope for service account which will be used by Package Install.",
-					Optional:    true,
-					Default:     fmt.Sprint(packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScopeCLUSTER),
-					ValidateFunc: validation.StringInSlice([]string{
-						fmt.Sprint(packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScopeUNSPECIFIED),
-						fmt.Sprint(packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScopeCLUSTER),
-						fmt.Sprint(packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScopeNAMESPACE),
-					}, false),
+					Computed:    true,
 				},
 				InlineValuesKey: {
 					Type:        schema.TypeMap,
 					Description: "Inline values to configure the Package Install.",
-					Sensitive:   true,
 					Optional:    true,
-					Elem:        &schema.Schema{Type: schema.TypeString},
+					Sensitive:   true,
 				},
 			},
 		},
