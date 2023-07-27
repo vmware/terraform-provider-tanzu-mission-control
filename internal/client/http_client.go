@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"runtime"
 
+	aksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster"
+	aksnodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster/nodepool"
 	clusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster"
 	continuousdeliveryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/continuousdelivery"
 	gitrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/gitrepository"
@@ -69,6 +71,8 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterResourceService:                        clusterclient.New(httpClient),
 		EKSClusterResourceService:                     eksclusterclient.New(httpClient),
 		EKSNodePoolResourceService:                    eksnodepoolclient.New(httpClient),
+		AKSClusterResourceService:                     aksclusterclient.New(httpClient),
+		AKSNodePoolResourceService:                    aksnodepoolclient.New(httpClient),
 		WorkspaceResourceService:                      workspaceclient.New(httpClient),
 		NamespaceResourceService:                      namespaceclient.New(httpClient),
 		ClusterGroupResourceService:                   clustergroupclient.New(httpClient),
@@ -101,6 +105,8 @@ type TanzuMissionControl struct {
 	ClusterResourceService                        clusterclient.ClientService
 	EKSClusterResourceService                     eksclusterclient.ClientService
 	EKSNodePoolResourceService                    eksnodepoolclient.ClientService
+	AKSClusterResourceService                     aksclusterclient.ClientService
+	AKSNodePoolResourceService                    aksnodepoolclient.ClientService
 	WorkspaceResourceService                      workspaceclient.ClientService
 	NamespaceResourceService                      namespaceclient.ClientService
 	ClusterGroupResourceService                   clustergroupclient.ClientService

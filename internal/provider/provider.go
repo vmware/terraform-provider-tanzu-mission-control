@@ -7,8 +7,8 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/integration"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/nodepools"
@@ -40,6 +40,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:        cluster.ResourceTMCCluster(),
 			ekscluster.ResourceName:     ekscluster.ResourceTMCEKSCluster(),
+			akscluster.ResourceName:     akscluster.ResourceTMCAKSCluster(),
 			workspace.ResourceName:      workspace.ResourceWorkspace(),
 			namespace.ResourceName:      namespace.ResourceNamespace(),
 			clustergroup.ResourceName:   clustergroup.ResourceClusterGroup(),
@@ -59,6 +60,7 @@ func Provider() *schema.Provider {
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:       cluster.DataSourceTMCCluster(),
 			ekscluster.ResourceName:    ekscluster.DataSourceTMCEKSCluster(),
+			akscluster.ResourceName:    akscluster.DataSourceTMCAKSCluster(),
 			workspace.ResourceName:     workspace.DataSourceWorkspace(),
 			namespace.ResourceName:     namespace.DataSourceNamespace(),
 			clustergroup.ResourceName:  clustergroup.DataSourceClusterGroup(),
