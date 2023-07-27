@@ -29,17 +29,17 @@ var (
 		commonscope.WithScopes(ScopesAllowed[:]))
 )
 
-func ConstructScope(d *schema.ResourceData, name, namespace string) (scopedFullnameData *ScopedFullname) {
+func ConstructScope(d *schema.ResourceData, name, namespace string) (scopedFullnameData *ScopedFullname, scopesFound []string) {
 	value, ok := d.GetOk(commonscope.ScopeKey)
 
 	if !ok {
-		return scopedFullnameData
+		return scopedFullnameData, scopesFound
 	}
 
 	data, _ := value.([]interface{})
 
 	if len(data) == 0 || data[0] == nil {
-		return scopedFullnameData
+		return scopedFullnameData, scopesFound
 	}
 
 	scopeData := data[0].(map[string]interface{})
@@ -50,10 +50,12 @@ func ConstructScope(d *schema.ResourceData, name, namespace string) (scopedFulln
 				Scope:           commonscope.ClusterScope,
 				FullnameCluster: ConstructClusterPackageInstallFullname(clusterValue, name, namespace),
 			}
+
+			scopesFound = append(scopesFound, commonscope.ClusterKey)
 		}
 	}
 
-	return scopedFullnameData
+	return scopedFullnameData, scopesFound
 }
 
 func FlattenScope(scopedFullname *ScopedFullname) (data []interface{}, name, namespace string) {

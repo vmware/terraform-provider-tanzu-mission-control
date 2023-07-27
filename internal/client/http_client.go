@@ -38,6 +38,7 @@ import (
 	policyorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/policy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 	tanzupackageclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackage"
+	pkginstallclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackageinstall"
 	pkgrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository"
 	pkgrepoavailabilityclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository/packagerepositoryavailability"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
@@ -106,6 +107,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterPackageRepositoryAvailabilityService:   pkgrepoavailabilityclusterclient.New(httpClient),
 		ClusterTanzuPackageService:                    tanzupackageclusterclient.New(httpClient),
 		TanzupackageResourceService:                   packageclusterclient.New(httpClient),
+		PackageInstallResourceService:                 pkginstallclusterclient.New(httpClient),
 	}
 }
 
@@ -145,4 +147,5 @@ type TanzuMissionControl struct {
 	ClusterPackageRepositoryAvailabilityService   pkgrepoavailabilityclusterclient.ClientService
 	ClusterTanzuPackageService                    tanzupackageclusterclient.ClientService
 	TanzupackageResourceService                   packageclusterclient.ClientService
+	PackageInstallResourceService                 pkginstallclusterclient.ClientService
 }
