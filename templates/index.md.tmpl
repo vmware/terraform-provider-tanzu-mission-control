@@ -61,7 +61,7 @@ To use the **Tanzu Mission Control provider** for Tanzu Mission Control Self-Man
 [prepapre-cluster-for-tmc-sm]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/1.0/tanzumc-sm-install/prepare-cluster.html
 
 -> **Note:**
-Tanzu Mission Control Provider supports Tanzu Mission Control Self-Managed from **v1.1.9** onwards.
+Tanzu Mission Control Terraform Provider v1.2.0 onwards required for usage with Tanzu Mission Control Self-Managed v1.0 onwards.
 
 ## Example Usage
 
