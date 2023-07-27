@@ -102,7 +102,7 @@ $ make test
 ```
 
 ## Acceptance Tests
-
+**NOTE:** This block is applicable only for Tanzu Mission Control SaaS offering.
 ### Configuring Environment Variables:
 Set the environment variables in your IDE configurations or Terminal.
 Environment variables that are required to be set universally are `TMC_ENDPOINT`, `VMW_CLOUD_ENDPOINT` and `VMW_CLOUD_API_TOKEN`.

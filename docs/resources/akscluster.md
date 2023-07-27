@@ -397,6 +397,7 @@ Optional:
 - `availability_zones` (List of String) The list of Availability zones to use for nodepool. This can only be specified if the type of the nodepool is AvailabilitySet.
 - `enable_node_public_ip` (Boolean) Whether each node is allocated its own public IP
 - `max_pods` (Number) The maximum number of pods that can run on a node
+- `node_image_version` (String) The node image version of the nodepool.
 - `node_labels` (Map of String) The node labels to be persisted across all nodes in nodepool
 - `os_disk_size_gb` (Number) OS Disk Size in GB to be used to specify the disk size for every machine in the nodepool. If you specify 0, it will apply the default osDisk size according to the vmSize specified
 - `os_disk_type` (String) OS Disk Type
