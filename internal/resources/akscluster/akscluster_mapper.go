@@ -437,6 +437,7 @@ func ToAKSClusterMap(cluster *models.VmwareTanzuManageV1alpha1AksCluster, nodepo
 	data[SubscriptionIDKey] = cluster.FullName.SubscriptionID
 	data[ResourceGroupNameKey] = cluster.FullName.ResourceGroupName
 	data[NameKey] = cluster.FullName.Name
+	data[common.MetaKey] = cluster.Meta
 	data[clusterSpecKey] = toClusterSpecMap(cluster.Spec, nodepools)
 
 	return data

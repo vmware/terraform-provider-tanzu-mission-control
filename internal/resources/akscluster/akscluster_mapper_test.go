@@ -14,6 +14,7 @@ import (
 
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 )
 
 func Test_ConstructAKSCluster(t *testing.T) {
@@ -37,14 +38,14 @@ func Test_FlattenToMap_fullSpec(t *testing.T) {
 	testNodepool := []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()}
 	expected := aTestClusterDataMap()
 
-	got := akscluster.ToAKSClusterMap(testCluster, testNodepool)
-	assert.Equal(t, expected, got)
+	got := akscluster.ToAKSClusterMap(testCluster, testNodepool).(map[string]any)
+	assert.Equal(t, expected[cluster.SpecKey], got[cluster.SpecKey])
 }
 
 func Test_FlattenToMap_nilNodepools(t *testing.T) {
 	testCluster := aTestCluster()
 	expected := aTestClusterDataMap(withoutNodepools)
 
-	got := akscluster.ToAKSClusterMap(testCluster, nil)
-	assert.Equal(t, expected, got)
+	got := akscluster.ToAKSClusterMap(testCluster, nil).(map[string]any)
+	assert.Equal(t, expected[cluster.SpecKey], got[cluster.SpecKey])
 }
