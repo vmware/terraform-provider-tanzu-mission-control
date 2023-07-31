@@ -48,6 +48,9 @@ var ClusterSchema = map[string]*schema.Schema{
 		Description: "Wait timeout duration until cluster resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero.  The default duration is 30m",
 		Default:     "default",
 		Optional:    true,
+		DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+			return true
+		},
 	},
 }
 
