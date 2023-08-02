@@ -135,7 +135,6 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_proxy" {
 }
 ```
 
-
 ## Tanzu Kubernetes Grid Service Workload Cluster
 
 To use the **Tanzu Mission Control provider** for creating a new cluster, you must have access to an existing Tanzu Kubernetes Grid management cluster with a provisioner namespace wherein the cluster needs to be created.
