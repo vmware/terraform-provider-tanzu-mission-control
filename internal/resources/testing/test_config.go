@@ -168,6 +168,50 @@ const testAttachClusterWithKubeConfigScript = `
 	}
 `
 
+const testAttachClusterWithKubeConfigScriptImageRegistry = `
+	resource {{.ResourceName}} {{.ResourceNameVar}} {
+		management_cluster_name = "attached"
+		provisioner_name        = "attached"
+		name                    = "{{.Name}}"
+
+		attach_k8s_cluster {
+			kubeconfig_file = "{{.KubeConfigPath}}"
+			description     = "optional description about the kube-config provided"
+		}
+
+		{{.Meta}}
+
+		spec {
+			cluster_group = "default"
+			image_registry = "{{.ImageRegistry}}"
+		}
+
+		ready_wait_timeout = "3m"
+	}
+`
+
+const testAttachClusterWithKubeConfigScriptProxy = `
+	resource {{.ResourceName}} {{.ResourceNameVar}} {
+		management_cluster_name = "attached"
+		provisioner_name        = "attached"
+		name                    = "{{.Name}}"
+
+		attach_k8s_cluster {
+			kubeconfig_file = "{{.KubeConfigPath}}"
+			description     = "optional description about the kube-config provided"
+		}
+
+		{{.Meta}}
+
+		spec {
+			cluster_group = "default"
+			proxy         = "{{.Proxy}}"
+		}
+
+		ready_wait_timeout = "3m"
+	}
+`
+
 const testDataSourceAttachClusterScript = `
 	resource {{.ResourceName}} {{.ResourceNameVar}} {
 		management_cluster_name = "attached"

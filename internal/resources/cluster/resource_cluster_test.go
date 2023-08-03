@@ -25,11 +25,13 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 	var provider = initTestProvider(t)
 
 	clusterConfig := map[string][]testhelper.TestAcceptanceOption{
-		"attach":               {testhelper.WithClusterName("tf-attach-test")},
-		"attachWithKubeConfig": {testhelper.WithKubeConfig(), testhelper.WithClusterName("tf-attach-kf-test")},
-		"tkgAWS":               {testhelper.WithClusterName("tf-tkgm-aws-test"), testhelper.WithTKGmAWSCluster()},
-		"tkgs":                 {testhelper.WithClusterName("tf-tkgs-test"), testhelper.WithTKGsCluster()},
-		"tkgVsphere":           {testhelper.WithClusterName("tf-tkgm-vsphere-test"), testhelper.WithTKGmVsphereCluster()},
+		"attach":                            {testhelper.WithClusterName("tf-attach-test")},
+		"attachWithKubeConfig":              {testhelper.WithKubeConfig(), testhelper.WithClusterName("tf-attach-kf-test")},
+		"attachWithKubeConfigImageRegistry": {testhelper.WithClusterName("tf-attach-img-reg"), testhelper.WithKubeConfigImageRegistry()},
+		"attachWithKubeConfigProxy":         {testhelper.WithClusterName("tf-attach-proxy"), testhelper.WithKubeConfigProxy()},
+		"tkgAWS":                            {testhelper.WithClusterName("tf-tkgm-aws-test"), testhelper.WithTKGmAWSCluster()},
+		"tkgs":                              {testhelper.WithClusterName("tf-tkgs-test"), testhelper.WithTKGsCluster()},
+		"tkgVsphere":                        {testhelper.WithClusterName("tf-tkgm-vsphere-test"), testhelper.WithTKGmVsphereCluster()},
 	}
 
 	resource.Test(t, resource.TestCase{
@@ -47,6 +49,18 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 				Config: testGetResourceClusterDefinition(t, clusterConfig["attachWithKubeConfig"]...),
 				Check: resource.ComposeTestCheckFunc(
 					checkResourceAttributes(provider, clusterConfig["attachWithKubeConfig"]...),
+				),
+			},
+			{
+				Config: testGetResourceClusterDefinition(t, clusterConfig["attachWithKubeConfigImageRegistry"]...),
+				Check: resource.ComposeTestCheckFunc(
+					checkResourceAttributes(provider, clusterConfig["attachWithKubeConfigImageRegistry"]...),
+				),
+			},
+			{
+				Config: testGetResourceClusterDefinition(t, clusterConfig["attachWithKubeConfigProxy"]...),
+				Check: resource.ComposeTestCheckFunc(
+					checkResourceAttributes(provider, clusterConfig["attachWithKubeConfigProxy"]...),
 				),
 			},
 			{
@@ -82,6 +96,16 @@ func testGetResourceClusterDefinition(t *testing.T, opts ...testhelper.TestAccep
 	case testhelper.AttachClusterTypeWithKubeConfig:
 		if templateConfig.KubeConfigPath == "" {
 			t.Skipf("KUBECONFIG env var is not set: %s", templateConfig.KubeConfigPath)
+		}
+
+	case testhelper.AttachClusterTypeWithKubeconfigImageRegistry:
+		if templateConfig.KubeConfigPath == "" || templateConfig.ImageRegistry == "" {
+			t.Skipf("KUBECONFIG or IMAGE_REGISTRY env var is not set")
+		}
+
+	case testhelper.AttachClusterTypeWithKubeconfigProxy:
+		if templateConfig.KubeConfigPath == "" || templateConfig.Proxy == "" {
+			t.Skipf("KUBECONFIG or PROXY env var is not set")
 		}
 
 	case testhelper.TkgAWSCluster:
@@ -120,7 +144,8 @@ func checkResourceAttributes(provider *schema.Provider, opts ...testhelper.TestA
 		resource.TestCheckResourceAttr(testhelper.ClusterResourceName, helper.GetFirstElementOf("spec", "cluster_group"), "default"),
 	}
 
-	if testConfig.AccTestType == testhelper.AttachClusterType || testConfig.AccTestType == testhelper.AttachClusterTypeWithKubeConfig {
+	if testConfig.AccTestType == testhelper.AttachClusterType || testConfig.AccTestType == testhelper.AttachClusterTypeWithKubeConfig ||
+		testConfig.AccTestType == testhelper.AttachClusterTypeWithKubeconfigProxy || testConfig.AccTestType == testhelper.AttachClusterTypeWithKubeconfigImageRegistry {
 		check = append(check, testhelper.MetaResourceAttributeCheck(testhelper.ClusterResourceName)...)
 	}
 
