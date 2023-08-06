@@ -56,6 +56,10 @@ type VmwareTanzuManageV1alpha1EksclusterNodepoolSpec struct {
 
 	// Update config for the nodepool.
 	UpdateConfig *VmwareTanzuManageV1alpha1EksclusterNodepoolUpdateConfig `json:"updateConfig,omitempty"`
+
+	// AMI release version. This field is used to update the AMI release version for that k8s version.
+	// This field should not be specfied for cluster CREATE as TMC uses the latest ami release version for it.
+	ReleaseVersion string `json:"release_version,omitempty"`
 }
 
 // MarshalBinary interface implementation.

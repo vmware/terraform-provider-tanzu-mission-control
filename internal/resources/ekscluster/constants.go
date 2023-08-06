@@ -63,7 +63,7 @@ const (
 	keyKey                      = "key"
 	valueKey                    = "value"
 	instanceTypesKey            = "instance_types"
-
-	readyCondition = "Ready"
-	errorSeverity  = "ERROR"
+	releaseVersionKey           = "release_version"
+	readyCondition              = "Ready"
+	errorSeverity               = "ERROR"
 )

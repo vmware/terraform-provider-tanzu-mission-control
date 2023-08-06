@@ -146,6 +146,7 @@ func TestFlattenCluterSpec(t *testing.T) {
 											"max_unavailable_percentage": "12",
 										},
 									},
+									"release_version": "1.26.4-20230703",
 								},
 							},
 						},
