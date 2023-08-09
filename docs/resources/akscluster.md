@@ -26,164 +26,52 @@ You must also have the appropriate permissions in Tanzu Mission Control:
 
 __Note__: Fields under the [nested Schema for `spec.nodepool`](#nestedblock--spec--nodepool) which are marked as "immutable" can't be changed. To update those fields, you need to create a new node pool or rename the node pool (which will have the same effect).
 
-## Example Usage
+## Minimal Example Usage
+
+All keys other than those under 'meta' are required.
 
 ```terraform
-// Create Tanzu Mission Control Azure AKS workload cluster entry
-resource "tanzu-mission-control_akscluster" "tf_aks_cluster" {
-  credential_name = "aks-test-credential" // Required
-  subscription    = "azure-test-subscription"    // Required
-  resource_group  = "azure-test-resource-group"  // Required
-  name            = "tf-aks-cluster"    // Required
+terraform {
+  required_providers {
+    tanzu-mission-control = {
+      source = "vmware/dev/tanzu-mission-control"
+    }
+  }
+}
 
+terraform {
+  backend "local" {
+    path = "./terraform.tfstate"
+  }
+}
+
+provider "tanzu-mission-control" {
+}
+
+resource "tanzu-mission-control_akscluster" "demo_AKS_cluster" {
+  credential_name = "azure-credential-name"
+  subscription_id = "azure-subscription-id"
+  resource_group  = "azure-resource-group"
+  name            = "azure-cluster-name"
   meta {
     description = "aks test cluster"
     labels      = { "key1" : "value1" }
   }
-
   spec {
-    cluster_group = "test-cluster-group" // Default: default
-    proxy         = "tmc-proxy"
-
-    azure_AKS {
-      location                 = "westus2" // Required     // Force Recreate
-      version                  = "1.23"  // Required
-      node_resource_group_name = "test-aks-resource-group>" // Force Recreate
-      disk_encryption_set      = "test-aks-disk-encryption-set-name"      // Force Recreate
-      tags                     = { "tagkey" : "tagvalue" }
-
-      sku {
-        name = "test-aks-sku-name"
-        tier = "Premium" // Required
-      }
-
-      access_config {
-        enable_rbac            = true
-        disable_local_accounts = true
-        aad_config {
-          managed         = true
-          tenantId        = "1325478f-9gg7-1376-e473-6kek13986365"
-          admin_group_ids = [
-            "5d241325-8rr4-9104-j598-9d14afa27aed",
-            "2k907631-t454-w335-p132-7e25nmz98brf",
-          ]
-          enable_azure_rbac = true
-        }
-      }
-
-      api_server_access_config {
-        authorized_ip_ranges = [
-          "73.140.245.0/24",
-          "71.952.241.0/32",
-        ]
-        enable_private_cluster = true // Forces Recreate
-      }
-
-      linux_config {
-        // Force Recreate
-        admin_username = "test-admin-username"
-        ssh_keys       = [
-          "test-ssh-key-1",
-          "test-ssh-key-2",
-        ]
-      }
-
+    config {
+      location = "eastus"
+      kubernetes_version = "1.24.10"
       network_config {
-        // Required
-        load_balancer_sku  = "standard"  // Forces Recreate
-        network_plugin     = "azure"     // Forces Recreate
-        network_policy     = "azure"     // Forces Recreate
-        dns_service_ip     = "10.2.0.10"     // Forces Recreate
-        docker_bridge_cidr = "172.17.0.1/16" // Forces Recreate
-        pod_cidr           = [
-          // Forces Recreate
-          "10.244.0.0/16",
-          "10.246.0.0/16",
-        ]
-        service_cidr = [
-          // Forces Recreate
-          "10.100.0.0/24",
-          "10.101.0.0/24",
-        ]
-        dns_prefix                      = "testdnsprefix" // Required
-        enable_http_application_routing = true
+        dns_prefix = "dns-tf-test"
       }
-
-      storage_config {
-        enable_disk_csi_driver     = true
-        enable_file_csi_driver     = true
-        enable_snapshot_controller = true
+    }
+    nodepool {
+      name = "systemnp"
+      spec {
+        count = 1
+        mode = "SYSTEM"
+        vm_size = "Standard_DS2_v2"
       }
-
-      addons_config {
-        azure_keyvault_secrets_provider_addon_config {
-          enable = true
-          keyvault_secrets_provider_config {
-            enable_secret_rotation = true
-            rotation_poll_interval = "5m"
-          }
-        }
-
-        monitor_addon_config {
-          enable                     = true
-          log_analytics_workspace_id = "test-log-analytics-workspace-id"
-        }
-
-        azure_policy_addon_config {
-          enable = true
-        }
-      }
-
-      auto_upgrade_config {
-        upgrade_channel = "stable"
-      }
-
-      nodepools = [
-        {
-          info = {
-            name = "third-np"
-          }
-
-          spec = {
-            mode              = "System" // Required
-            type              = "Microsoft.ContainerService/managedClusters/agentPools"
-            availabilityZones = [
-              "West US 2",
-              "West US 3",
-            ]
-            count                     = 1 // Required
-            vm_size                   = "Standard_DS2_v2" // Required // Force Recreate
-            scale_set_priority        = "Regular"// Force Recreate
-            scale_set_eviction_policy = "Delete" // Force Recreate
-            spot_max_price            = 1.00
-            os_type                   = "Linux"
-            os_disk_type              = "Ephemeral"        // Force Recreate
-            os_disk_size_gb           = 60                      // Force Recreate
-            max_pods                  = 10                      // Force Recreate
-            enable_node_public_ip     = true
-            node_taints               = [
-              {
-                effect = "NoSchedule"
-                key    = "randomkey"
-                value  = "randomvalue"
-              }
-            ]
-            vnet_subnet_id = "test-vnet-subnet-id" // Force Recreate
-            node_labels    = { "nplabelkey" : "nplabelvalue" }
-            tags           = { "nptagkey" : "nptagvalue3" }
-
-            auto_scaling_config = {
-              enable    = true // Force Recreate
-              min_count = 1
-              max_count = 5
-            }
-
-            upgrade_config = {
-              max_surge = "30%"
-            }
-          }
-        }
-      ]
     }
   }
 }
@@ -339,7 +227,7 @@ Optional:
 
 Optional:
 
-- `upgrade_channel` (String) Upgrade Channel
+- `upgrade_channel` (String) Upgrade Channel. Allowed values include: NONE, PATCH, STABLE, RAPID or NODE_IMAGE
 
 
 <a id="nestedblock--spec--config--linux_config"></a>
@@ -359,8 +247,8 @@ Optional:
 
 Optional:
 
-- `name` (String) Name of the cluster SKU
-- `tier` (String) Tier of the cluster SKU
+- `name` (String) Name of the cluster SKU. Allowed values include: BASIC.
+- `tier` (String) Tier of the cluster SKU. Allowed values include: FREE or PAID.
 
 
 <a id="nestedblock--spec--config--storage_config"></a>
@@ -388,7 +276,7 @@ Required:
 Required:
 
 - `count` (Number) Count is the number of nodes
-- `mode` (String) The mode of the nodepool SYSTEM or USER. A cluster must have at least one 'SYSTEM' nodepool at all times.
+- `mode` (String) The mode of the nodepool. Allowed values include: SYSTEM or USER. A cluster must have at least one 'SYSTEM' nodepool at all times.
 - `vm_size` (String) Virtual Machine Size
 
 Optional:
@@ -400,14 +288,14 @@ Optional:
 - `node_image_version` (String) The node image version of the nodepool.
 - `node_labels` (Map of String) The node labels to be persisted across all nodes in nodepool
 - `os_disk_size_gb` (Number) OS Disk Size in GB to be used to specify the disk size for every machine in the nodepool. If you specify 0, it will apply the default osDisk size according to the vmSize specified
-- `os_disk_type` (String) OS Disk Type
-- `os_type` (String) The OS type of the nodepool
-- `scale_set_eviction_policy` (String) Scale set eviction policy
-- `scale_set_priority` (String) Scale set priority
+- `os_disk_type` (String) OS Disk Type. Allowed values include: EPHEMERAL or MANAGED.
+- `os_type` (String) The OS type of the nodepool. Allowed values include: LINUX.
+- `scale_set_eviction_policy` (String) Scale set eviction policy, Allowed values include: DELETE or DEALLOCATE.
+- `scale_set_priority` (String) Scale set priority. Allowed values include: REGULAR or SPOT.
 - `spot_max_price` (Number) Max spot price
 - `tags` (Map of String) AKS specific node tags
 - `taints` (Block List) The taints added to new nodes during nodepool create and scale (see [below for nested schema](#nestedblock--spec--nodepool--spec--taints))
-- `type` (String) Nodepool type
+- `type` (String) The Nodepool type. Allowed values include: VIRTUAL_MACHINE_SCALE_SETS or AVAILABILITY_SET.
 - `upgrade_config` (Block List, Max: 1) upgrade config (see [below for nested schema](#nestedblock--spec--nodepool--spec--upgrade_config))
 - `vnet_subnet_id` (String) If this is not specified, a VNET and subnet will be generated and used. If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to just nodes
 

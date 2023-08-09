@@ -32,7 +32,7 @@ data "tanzu-mission-control_akscluster" "tf_aks_cluster" {
   credential_name = "test-azure-credential" // Required
   subscription    = "test-azure-subscription"    // Required
   resource_group  = "test-azure-resource-group"  // Required
-  name            = "test-aks-cluster>"    // Required
+  name            = "test-aks-cluster"    // Required
 }
 ```
 
@@ -186,7 +186,7 @@ Optional:
 
 Optional:
 
-- `upgrade_channel` (String) Upgrade Channel
+- `upgrade_channel` (String) Upgrade Channel. Allowed values include: NONE, PATCH, STABLE, RAPID or NODE_IMAGE
 
 
 <a id="nestedblock--spec--config--linux_config"></a>
@@ -206,8 +206,8 @@ Optional:
 
 Optional:
 
-- `name` (String) Name of the cluster SKU
-- `tier` (String) Tier of the cluster SKU
+- `name` (String) Name of the cluster SKU. Allowed values include: BASIC.
+- `tier` (String) Tier of the cluster SKU. Allowed values include: FREE or PAID.
 
 
 <a id="nestedblock--spec--config--storage_config"></a>
@@ -235,7 +235,7 @@ Required:
 Required:
 
 - `count` (Number) Count is the number of nodes
-- `mode` (String) The mode of the nodepool SYSTEM or USER. A cluster must have at least one 'SYSTEM' nodepool at all times.
+- `mode` (String) The mode of the nodepool. Allowed values include: SYSTEM or USER. A cluster must have at least one 'SYSTEM' nodepool at all times.
 - `vm_size` (String) Virtual Machine Size
 
 Optional:
@@ -247,14 +247,14 @@ Optional:
 - `node_image_version` (String) The node image version of the nodepool.
 - `node_labels` (Map of String) The node labels to be persisted across all nodes in nodepool
 - `os_disk_size_gb` (Number) OS Disk Size in GB to be used to specify the disk size for every machine in the nodepool. If you specify 0, it will apply the default osDisk size according to the vmSize specified
-- `os_disk_type` (String) OS Disk Type
-- `os_type` (String) The OS type of the nodepool
-- `scale_set_eviction_policy` (String) Scale set eviction policy
-- `scale_set_priority` (String) Scale set priority
+- `os_disk_type` (String) OS Disk Type. Allowed values include: EPHEMERAL or MANAGED.
+- `os_type` (String) The OS type of the nodepool. Allowed values include: LINUX.
+- `scale_set_eviction_policy` (String) Scale set eviction policy, Allowed values include: DELETE or DEALLOCATE.
+- `scale_set_priority` (String) Scale set priority. Allowed values include: REGULAR or SPOT.
 - `spot_max_price` (Number) Max spot price
 - `tags` (Map of String) AKS specific node tags
 - `taints` (Block List) The taints added to new nodes during nodepool create and scale (see [below for nested schema](#nestedblock--spec--nodepool--spec--taints))
-- `type` (String) Nodepool type
+- `type` (String) The Nodepool type. Allowed values include: VIRTUAL_MACHINE_SCALE_SETS or AVAILABILITY_SET.
 - `upgrade_config` (Block List, Max: 1) upgrade config (see [below for nested schema](#nestedblock--spec--nodepool--spec--upgrade_config))
 - `vnet_subnet_id` (String) If this is not specified, a VNET and subnet will be generated and used. If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to just nodes
 
