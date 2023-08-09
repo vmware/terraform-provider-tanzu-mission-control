@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"sort"
@@ -267,6 +268,12 @@ func TestAcceptanceForMkpClusterResource(t *testing.T) {
 
 	// If the flag to execute EKS tests is not found, run this as a unit test by setting up an http intercept for each endpoint
 	if _, found := os.LookupEnv("ENABLE_EKS_ENV_TEST"); !found {
+		os.Setenv("TF_ACC", "true")
+		os.Setenv("TMC_ENDPOINT", "dummy.tmc.mock.vmware.com")
+		os.Setenv("VMW_CLOUD_API_TOKEN", "dummy")
+		os.Setenv("VMW_CLOUD_ENDPOINT", "console.cloud.vmware.com")
+
+		log.Println("Setting up the mock endpoints...")
 		setupHTTPMocks(t, clusterName)
 	} else {
 		// Environment variables with non default values required for a successful call to MKP
