@@ -43,6 +43,10 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 	config := testhelper.TestGetDefaultEksAcceptanceConfig()
 	endpoint := os.Getenv("TMC_ENDPOINT")
 
+	if endpoint == "" {
+		t.Skip("environmental variables not set")
+	}
+
 	// POST Cluster mock setup
 	clusterSpec, nps := getMockEksClusterSpec(config.AWSAccountNumber, config.CloudFormationTemplateID)
 	postRequestModel := &eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster{
