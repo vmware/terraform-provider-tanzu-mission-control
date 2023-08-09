@@ -33,8 +33,9 @@ func TestFlattenSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					clusterGroupKey: "default",
-					proxyNameKey:    "",
+					clusterGroupKey:      "default",
+					proxyNameKey:         "",
+					imageRegistryNameKey: "",
 				},
 			},
 		},
@@ -46,8 +47,9 @@ func TestFlattenSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					clusterGroupKey: "default",
-					proxyNameKey:    "proxy",
+					clusterGroupKey:      "default",
+					proxyNameKey:         "proxy",
+					imageRegistryNameKey: "",
 				},
 			},
 		},
