@@ -52,14 +52,19 @@ type nodePoolOperations struct {
 func createNodepools(ctx context.Context, nodepools []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool, client aksnodepool.ClientService) error {
 	var systemPoolsCreated int
 
+	var systemNodePoolError []error
+
 	for _, np := range nodepools {
-		if err := createNodepool(ctx, np, client); err == nil && *np.Spec.Mode == aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM {
+		var err = createNodepool(ctx, np, client)
+		if err == nil && *np.Spec.Mode == aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM {
 			systemPoolsCreated += 1
+		} else if err != nil && *np.Spec.Mode == aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM {
+			systemNodePoolError = append(systemNodePoolError, err)
 		}
 	}
 
 	if systemPoolsCreated < 1 {
-		return errors.New("no system nodepools were successfully created.")
+		return errors.Errorf("no system nodepools were successfully created. %v", systemNodePoolError)
 	}
 
 	return nil

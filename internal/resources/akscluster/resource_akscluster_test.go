@@ -171,7 +171,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_all_sys
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
 
 	s.Assert().True(result.HasError())
-	s.Assert().Equal("no system nodepools were successfully created.", result[0].Summary)
+	s.Assert().Equal("no system nodepools were successfully created. [failed to create system nodepool]", result[0].Summary)
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_no_system_nodepool() {
