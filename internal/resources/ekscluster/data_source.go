@@ -99,8 +99,9 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 	default:
 		timeoutDuration, parseErr := time.ParseDuration(timeoutValueData)
 		if parseErr != nil {
-			log.Printf("[INFO] unable to prase the duration value for the key %s. Defaulting to 5 minutes(5m)"+
-				" Please refer to 'https://pkg.go.dev/time#ParseDuration' for providing the right value", waitKey)
+			defaultTimeoutInMinutes := defaultTimeout / time.Minute
+			log.Printf("[INFO] unable to parse the duration value for the key %s. Defaulting to %d minutes(%dm)"+
+				" Please refer to 'https://pkg.go.dev/time#ParseDuration' for providing the right value", waitKey, defaultTimeoutInMinutes, defaultTimeoutInMinutes)
 
 			timeoutDuration = defaultTimeout
 		}

@@ -31,7 +31,7 @@ type (
 
 var ignoredTagsPrefix = "tmc.cloud.vmware.com/"
 
-const defaultTimeout = 3 * time.Minute
+const defaultTimeout = 30 * time.Minute
 
 func ResourceTMCEKSCluster() *schema.Resource {
 	return &schema.Resource{
