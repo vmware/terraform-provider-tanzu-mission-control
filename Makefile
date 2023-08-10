@@ -21,9 +21,7 @@ ifeq ($(TEST_FLAGS),)
 	TEST_FLAGS := -cover
 endif
 
-
 .PHONY: build clean-up test gofmt vet lint acc-test website-lint website-lint-fix
-
 
 default: build
 

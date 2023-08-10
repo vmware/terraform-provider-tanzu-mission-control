@@ -8,6 +8,7 @@ package akscluster_test
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"testing"
@@ -241,6 +242,11 @@ func TestAccAksCluster_basics(t *testing.T) {
 	rname := fmt.Sprintf("tanzu-mission-control_akscluster.%v", fn.Name)
 
 	if _, found := os.LookupEnv("ENABLE_AKS_ENV_TEST"); !found {
+		os.Setenv("TF_ACC", "true")
+		os.Setenv("AKS_CREDENTIAL_NAME", "dummy-cred")
+		os.Setenv("AKS_SUBSCRIPTION_ID", "dummy-id")
+
+		log.Println("Setting up the mock...")
 		initMocks(fn, clusterClient, nodepoolClient)
 	}
 
