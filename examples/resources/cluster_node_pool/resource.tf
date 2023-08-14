@@ -18,9 +18,13 @@ resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
 
     tkg_service_vsphere  {
       class = "best-effort-xsmall"
-      storage_class = "gc-storage-profile"
+      storage_class = "tkgs-k8s-obj-policy"
+      volumes {
+        capacity          = 4
+        mount_path        = "/var/lib/etcd"
+        name              = "etcd-0"
+        pvc_storage_class = "tkgs-k8s-obj-policy"
+      }
     }
-
   }
-
 }
