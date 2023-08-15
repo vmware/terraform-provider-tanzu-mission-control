@@ -143,13 +143,13 @@ Required:
 
 Optional:
 
-- `dns_service_ip` (String) IP address assigned to the Kubernetes DNS service
+- `dns_service_ip` (String) IP address assigned to the Kubernetes DNS service. This key can only be set when the network_config.network_plugin key is set to 'azure'.
 - `docker_bridge_cidr` (String) A CIDR notation IP range assigned to the Docker bridge network
 - `load_balancer_sku` (String) Load balancer SKU
-- `network_plugin` (String) Network plugin
+- `network_plugin` (String) Network plugin. Set the value of this key to 'azure' if you want to specify values for network_config.dns_service_ip and/or network_config.service_cidr.
 - `network_policy` (String) Network policy
 - `pod_cidr` (List of String) CIDR notation IP ranges from which to assign pod IPs
-- `service_cidr` (List of String) CIDR notation IP ranges from which to assign service cluster IP
+- `service_cidr` (List of String) CIDR notation IP ranges from which to assign service cluster IP. This key can only be set when the network_config.network_plugin key is set to 'azure'.
 
 
 <a id="nestedblock--spec--config--access_config"></a>

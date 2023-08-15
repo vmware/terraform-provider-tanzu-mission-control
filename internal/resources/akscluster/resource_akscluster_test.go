@@ -559,7 +559,7 @@ func (s *ImportClusterTestSuite) Test_resourceClusterImport() {
 
 	s.Assert().NoError(err)
 	s.Assert().Len(result, 1)
-	cluster := akscluster.ConstructCluster(result[0])
+	cluster, _ := akscluster.ConstructCluster(result[0])
 	s.Assert().Equal(cluster.FullName.Name, "test-cluster")
 	s.Assert().Equal(cluster.FullName.CredentialName, "test-cred")
 	s.Assert().Equal(cluster.FullName.SubscriptionID, "sub-id")
