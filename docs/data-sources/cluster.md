@@ -123,6 +123,7 @@ Read-Only:
 Optional:
 
 - `cluster_group` (String) Name of the cluster group to which this cluster belongs
+- `image_registry` (String) Optional image registry name is the name of the image registry to be used for the cluster
 - `proxy` (String) Optional proxy name is the name of the Proxy Config to be used for the cluster
 - `tkg_aws` (Block List, Max: 1) The Tanzu Kubernetes Grid (TKGm) AWS cluster spec (see [below for nested schema](#nestedblock--spec--tkg_aws))
 - `tkg_service_vsphere` (Block List, Max: 1) The Tanzu Kubernetes Grid Service (TKGs) cluster spec (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere))

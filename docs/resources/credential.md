@@ -51,7 +51,7 @@ resource "tanzu-mission-control_credential" "img_reg_cred" {
       "key1" : "value1",
     }
     annotations = {
-      "repository-path" : "something"
+      "repository-namespace" : "something"
     }
   }
 
