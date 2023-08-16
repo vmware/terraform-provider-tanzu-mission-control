@@ -135,17 +135,6 @@ func getSaaSUserAuthCtx(vmCloudEndPoint, cspToken string, proxyConfig *proxy.TLS
 	return md, nil
 }
 
-var RefreshUserAuthContext = func(config *TanzuContext, refreshCondition func(error) bool, err error) {
-	if config.IsSelfManaged() {
-		// For self-managed the refresh happens before every request is made
-		return
-	}
-
-	if refreshCondition(err) {
-		refreshSaaSUserAuthCtx(config)
-	}
-}
-
 func refreshSaaSUserAuthCtx(config *TanzuContext) {
 	md, _ := getSaaSUserAuthCtx(config.VMWCloudEndPoint, config.Token, config.TLSConfig)
 	for key, value := range md {

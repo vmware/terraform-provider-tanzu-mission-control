@@ -111,6 +111,16 @@ var selfManagedAuthSchema = &schema.Schema{
 	},
 }
 
+var RefreshUserAuthContext = func(config *TanzuContext, refreshCondition func(error) bool, err error) {
+	if refreshCondition(err) {
+		if config.IsSelfManaged() {
+			refreshSMUserAuthCtx(config)
+			return
+		}
+		refreshSaaSUserAuthCtx(config)
+	}
+}
+
 func ProviderConfigureContext(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := TanzuContext{
 		TLSConfig:   &proxy.TLSConfig{},
