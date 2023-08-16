@@ -26,8 +26,10 @@ You must also have the appropriate permissions in Tanzu Mission Control:
 
 __Note__: Fields under the [nested Schema for `spec.nodepool`](#nestedblock--spec--nodepool) which are marked as "immutable" can't be changed. To update those fields, you need to create a new node pool or rename the node pool (which will have the same effect).
 
-## Example Usage
+## Minimal Example Usage
 
-{{ tffile "examples/resources/akscluster/cluster.tf" }}
+All keys other than those under 'meta' are required.
+
+{{ tffile "examples/resources/akscluster/minimal_cluster.tf" }}
 
 {{ .SchemaMarkdown | trimspace }}

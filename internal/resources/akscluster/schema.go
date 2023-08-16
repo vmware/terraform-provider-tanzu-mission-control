@@ -200,13 +200,13 @@ var SKU = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		skuNameKey: {
 			Type:        schema.TypeString,
-			Description: "Name of the cluster SKU",
+			Description: "Name of the cluster SKU. Allowed values include: BASIC.",
 			Optional:    true,
 			Computed:    true,
 		},
 		skuTierKey: {
 			Type:        schema.TypeString,
-			Description: "Tier of the cluster SKU",
+			Description: "Tier of the cluster SKU. Allowed values include: FREE or PAID.",
 			Optional:    true,
 			Computed:    true,
 		},
@@ -459,7 +459,7 @@ var AutoUpgradeConfig = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		upgradeChannelKey: {
 			Type:        schema.TypeString,
-			Description: "Upgrade Channel",
+			Description: "Upgrade Channel. Allowed values include: NONE, PATCH, STABLE, RAPID or NODE_IMAGE",
 			Optional:    true,
 		},
 	},
@@ -490,7 +490,7 @@ var NodepoolSpecSchema = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			modeKey: {
 				Type:        schema.TypeString,
-				Description: "The mode of the nodepool SYSTEM or USER. A cluster must have at least one 'SYSTEM' nodepool at all times.",
+				Description: "The mode of the nodepool. Allowed values include: SYSTEM or USER. A cluster must have at least one 'SYSTEM' nodepool at all times.",
 				Required:    true,
 			},
 			nodeImageVersionKey: {
@@ -501,7 +501,7 @@ var NodepoolSpecSchema = &schema.Schema{
 			},
 			typeKey: {
 				Type:        schema.TypeString,
-				Description: "Nodepool type",
+				Description: "The Nodepool type. Allowed values include: VIRTUAL_MACHINE_SCALE_SETS or AVAILABILITY_SET.",
 				Default:     aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolTypeVIRTUALMACHINESCALESETS,
 				Optional:    true,
 			},
@@ -526,13 +526,13 @@ var NodepoolSpecSchema = &schema.Schema{
 			},
 			scaleSetPriorityKey: {
 				Type:        schema.TypeString,
-				Description: "Scale set priority",
+				Description: "Scale set priority. Allowed values include: REGULAR or SPOT.",
 				Computed:    true,
 				Optional:    true,
 			},
 			scaleSetEvictionPolicyKey: {
 				Type:        schema.TypeString,
-				Description: "Scale set eviction policy",
+				Description: "Scale set eviction policy, Allowed values include: DELETE or DEALLOCATE.",
 				Optional:    true,
 			},
 			maxSpotPriceKey: {
@@ -542,13 +542,13 @@ var NodepoolSpecSchema = &schema.Schema{
 			},
 			osTypeKey: {
 				Type:        schema.TypeString,
-				Description: "The OS type of the nodepool",
+				Description: "The OS type of the nodepool. Allowed values include: LINUX.",
 				Default:     aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolOsTypeLINUX,
 				Optional:    true,
 			},
 			osDiskTypeKey: {
 				Type:        schema.TypeString,
-				Description: "OS Disk Type",
+				Description: "OS Disk Type. Allowed values include: EPHEMERAL or MANAGED.",
 				Optional:    true,
 				Computed:    true,
 			},
