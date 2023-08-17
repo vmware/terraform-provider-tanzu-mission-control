@@ -34,11 +34,15 @@ resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
 
     tkg_service_vsphere  {
       class = "best-effort-xsmall"
-      storage_class = "gc-storage-profile"
+      storage_class = "tkgs-k8s-obj-policy"
+      volumes {
+        capacity          = 4
+        mount_path        = "/var/lib/etcd"
+        name              = "etcd-0"
+        pvc_storage_class = "tkgs-k8s-obj-policy"
+      }
     }
-
   }
-
 }
 ```
 
@@ -109,6 +113,22 @@ Required:
 
 - `class` (String) Nodepool instance type
 - `storage_class` (String) Storage Class to be used for storage of the disks which store the root filesystem of the nodes
+
+Optional:
+
+- `failure_domain` (String) Configure the failure domain of node pool. The potential values could be found using cluster:options api. This parameter will be ignored by the backend if the TKG service vsphere cluster doesn't support.
+- `volumes` (Block List) Configurable volumes for nodepool nodes (see [below for nested schema](#nestedblock--spec--tkg_service_vsphere--volumes))
+
+<a id="nestedblock--spec--tkg_service_vsphere--volumes"></a>
+### Nested Schema for `spec.tkg_service_vsphere.volumes`
+
+Optional:
+
+- `capacity` (Number) Volume capacity is in gib
+- `mount_path` (String) It is the directory where the volume device is to be mounted
+- `name` (String) It is the volume name
+- `pvc_storage_class` (String) This is the storage class for PVC which in case omitted, default storage class will be used for the disks
+
 
 
 <a id="nestedblock--spec--tkg_vsphere"></a>
