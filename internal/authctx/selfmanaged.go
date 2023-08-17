@@ -229,3 +229,10 @@ func (s *smSession) getAuthCodeURL() string {
 
 	return s.sharedOauthConfig.AuthCodeURL(s.stateVal.String(), opts...)
 }
+
+func refreshSMUserAuthCtx(config *TanzuContext) {
+	md, _ := getSMUserAuthCtx(config.VMWCloudEndPoint, config.SMUsername, config.Token)
+	for key, value := range md {
+		config.TMCConnection.Headers.Set(key, value)
+	}
+}
