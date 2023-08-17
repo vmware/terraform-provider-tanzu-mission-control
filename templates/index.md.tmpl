@@ -10,6 +10,8 @@ Manage your Kubernetes clusters in Tanzu Mission Control using this Terraform pr
 The Tanzu Mission Control provider facilitates the provisioning of resources that you can use to manage Tanzu Kubernetes Grid workload clusters (and other conformant Kubernetes clusters) in Tanzu Mission Control.
 For more information, please refer [What is Tanzu Mission Control][vmware-tanzu-tmc] in VMware Tanzu Mission Control Concepts.
 
+To know more about existing issues, please refer to known issues section under guides.
+
 [vmware-tanzu-tmc]: https://tanzu.vmware.com/mission-control
 
 # Tanzu Mission Control SaaS offering
