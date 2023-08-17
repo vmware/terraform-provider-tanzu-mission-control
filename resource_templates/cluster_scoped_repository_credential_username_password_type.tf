@@ -11,16 +11,16 @@ data "tanzu-mission-control_repository_credential" "test_repository_credential" 
     cluster {
       management_cluster_name = "<existing-management-cluster>" // Default: attached
 
-      provisioner_name        = "<existing-prov-name>"          // Default: attached
+      provisioner_name = "<existing-prov-name>" // Default: attached
 
-      name                    = "<existing-cluster_name>"       // Required
+      name = "<existing-cluster_name>" // Required
     }
   }
 }
 
 
 resource "tanzu-mission-control_repository_credential" "test_repository_credential" {
-  name = "test" 
+  name = "test"
 
   org_id = "test" // optional
 
@@ -28,9 +28,9 @@ resource "tanzu-mission-control_repository_credential" "test_repository_credenti
     cluster {
       management_cluster_name = "test"
 
-      provisioner_name        = "test"
+      provisioner_name = "test"
 
-      name                    = "test"
+      name = "test"
     }
   }
 

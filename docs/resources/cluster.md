@@ -87,7 +87,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
 
   attach_k8s_cluster {
     kubeconfig_raw = var.kubeconfig # Required
-    description     = "optional description about the kube-config provided"
+    description    = "optional description about the kube-config provided"
   }
 
   meta {
@@ -142,8 +142,8 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_proxy" {
 ```terraform
 # Create Tanzu Mission Control image registry credential and attach cluster entry with the same credential.
 resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
-  management_cluster_name = "attached"     // Default: attached
-  provisioner_name        = "attached"     // Default: attached
+  management_cluster_name = "attached" // Default: attached
+  provisioner_name        = "attached" // Default: attached
   name                    = "demo-lir" // Required
 
   attach_k8s_cluster {
@@ -174,7 +174,7 @@ resource "tanzu-mission-control_credential" "img_reg_cred" {
       "key1" : "value1",
     }
     annotations = {
-      "registry-namespace": "tmc"
+      "registry-namespace" : "tmc"
     }
   }
 
@@ -272,8 +272,8 @@ resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
             }
 
             tkg_service_vsphere {
-              class         = "best-effort-xsmall"
-              storage_class = "gc-storage-profile"
+              class          = "best-effort-xsmall"
+              storage_class  = "gc-storage-profile"
               failure_domain = "domain-c50"
               # storage class is either `wcpglobal-storage-profile` or `gc-storage-profile`
               volumes {
@@ -329,7 +329,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
     cluster_group = "default" # Default: default
     tkg_vsphere {
       advanced_configs {
-        key = "AVI_LABELS"
+        key   = "AVI_LABELS"
         value = "test"
       }
       settings {
@@ -346,7 +346,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
             ]
           }
 
-          api_server_port = 6443
+          api_server_port         = 6443
           control_plane_end_point = "10.191.249.39" # optional for AVI enabled option
         }
 
@@ -356,10 +356,10 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
       }
 
       distribution {
-        os_arch = "amd64"
-        os_name = "photon"
+        os_arch    = "amd64"
+        os_name    = "photon"
         os_version = "3"
-        version = "v1.20.5+vmware.2-tkg.1"
+        version    = "v1.20.5+vmware.2-tkg.1"
 
         workspace {
           datacenter        = "/dc0"
@@ -444,7 +444,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
     cluster_group = "default" // Default: default
     tkg_aws {
       advanced_configs {
-        key = "AWS_SECURITY_GROUP_BASTION"
+        key   = "AWS_SECURITY_GROUP_BASTION"
         value = "sg-01376425482384"
       }
       settings {
@@ -481,11 +481,11 @@ resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
       }
 
       distribution {
-        os_arch = "amd64"
-        os_name = "photon"
+        os_arch    = "amd64"
+        os_name    = "photon"
         os_version = "3"
-        region  = "us-west-2"              // Required
-        version = "v1.21.2+vmware.1-tkg.2" // Required
+        region     = "us-west-2"              // Required
+        version    = "v1.21.2+vmware.1-tkg.2" // Required
       }
 
       topology {

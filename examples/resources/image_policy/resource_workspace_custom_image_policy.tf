@@ -17,13 +17,13 @@ resource "tanzu-mission-control_image_policy" "workspace_scoped_custom_image_pol
       custom {
         audit = true
         rules {
-          hostname = "foo"
-          imagename = "bar"
-          port = "80"
+          hostname      = "foo"
+          imagename     = "bar"
+          port          = "80"
           requiredigest = false
           tag {
             negate = false
-            value = "test"
+            value  = "test"
           }
         }
       }

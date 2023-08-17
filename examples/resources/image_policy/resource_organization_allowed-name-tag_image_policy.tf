@@ -20,7 +20,7 @@ resource "tanzu-mission-control_image_policy" "organization_scoped_allowed-name-
           imagename = "bar"
           tag {
             negate = true
-            value = "test"
+            value  = "test"
           }
         }
       }

@@ -33,7 +33,7 @@ build:
 clean-up:
 	rm -rf ~/.terraform.d/plugins/vmware/dev/tanzu-mission-control/*
 
-test: gofmt vet lint
+test: gofmt terraform-fmt vet lint
 	go mod tidy
 	go test $(TEST_PKGS) $(TEST_FLAGS)
 
@@ -41,6 +41,9 @@ test: gofmt vet lint
 gofmt:
 	@echo Checking code is gofmted
 	go fmt $(TEST_PKGS)
+
+terraform-fmt:
+	terraform fmt -recursive
 
 # Run go vet against code
 vet:

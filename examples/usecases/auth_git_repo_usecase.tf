@@ -46,9 +46,9 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
 
   scope {
     cluster {
-      cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name # Required
-      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name    # Default: attached
-      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name    # Default: attached
+      cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
+      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name        # Default: attached
+      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name # Default: attached
     }
   }
 
@@ -73,9 +73,9 @@ resource "tanzu-mission-control_git_repository" "create_cluster_git_repository" 
 
   scope {
     cluster {
-      cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name # Required
-      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name    # Default: attached
-      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name    # Default: attached
+      cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
+      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name        # Default: attached
+      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name # Default: attached
     }
   }
 
@@ -85,16 +85,16 @@ resource "tanzu-mission-control_git_repository" "create_cluster_git_repository" 
   }
 
   spec {
-    url = "testGitRepositoryURL" # Required
-    secret_ref = tanzu-mission-control_repository_credential.create_cluster_source_secret_username_password.name
-    interval = "10m" # Default: 5m
+    url                = "testGitRepositoryURL" # Required
+    secret_ref         = tanzu-mission-control_repository_credential.create_cluster_source_secret_username_password.name
+    interval           = "10m"    # Default: 5m
     git_implementation = "GO_GIT" # Default: GO_GIT
     ref {
-      branch = "testBranchName" 
-      tag = "testTag"
+      branch = "testBranchName"
+      tag    = "testTag"
       semver = "testSemver"
       commit = "testCommit"
-    } 
+    }
   }
 }
 
@@ -106,9 +106,9 @@ resource "tanzu-mission-control_kustomization" "create_cluster_kustomization" {
 
   scope {
     cluster {
-      cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name # Required
-      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name    # Default: attached
-      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name    # Default: attached
+      cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
+      provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name        # Default: attached
+      management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name # Default: attached
     }
   }
 
@@ -118,13 +118,13 @@ resource "tanzu-mission-control_kustomization" "create_cluster_kustomization" {
   }
 
   spec {
-    path = "/" # Required
-    prune = "test"
-    interval = "10m" # Default: 5m
+    path             = "/" # Required
+    prune            = "test"
+    interval         = "10m" # Default: 5m
     target_namespace = "testTargetNamespace"
     source {
-        name = tanzu-mission-control_git_repository.create_cluster_git_repository.name # Required
-        namespace = tanzu-mission-control_git_repository.create_cluster_git_repository.namespace_name # Required
+      name      = tanzu-mission-control_git_repository.create_cluster_git_repository.name           # Required
+      namespace = tanzu-mission-control_git_repository.create_cluster_git_repository.namespace_name # Required
     }
   }
 }

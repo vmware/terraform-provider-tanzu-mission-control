@@ -46,16 +46,16 @@ resource "tanzu-mission-control_git_repository" "create_cluster_group_git_reposi
   }
 
   spec {
-    url = "testGitRepositoryURL" # Required
-    secret_ref = "testSourceSecret"
-    interval = "10m" # Default: 5m
+    url                = "testGitRepositoryURL" # Required
+    secret_ref         = "testSourceSecret"
+    interval           = "10m"    # Default: 5m
     git_implementation = "GO_GIT" # Default: GO_GIT
     ref {
-      branch = "testBranchName" 
-      tag = "testTag"
+      branch = "testBranchName"
+      tag    = "testTag"
       semver = "testSemver"
       commit = "testCommit"
-    } 
+    }
   }
 }
 ```
@@ -85,16 +85,16 @@ resource "tanzu-mission-control_git_repository" "create_cluster_git_repository" 
   }
 
   spec {
-    url = "testGitRepositoryURL" # Required
-    secret_ref = "testSourceSecret"
-    interval = "10m" # Default: 5m
+    url                = "testGitRepositoryURL" # Required
+    secret_ref         = "testSourceSecret"
+    interval           = "10m"    # Default: 5m
     git_implementation = "GO_GIT" # Default: GO_GIT
     ref {
-      branch = "testBranchName" 
-      tag = "testTag"
+      branch = "testBranchName"
+      tag    = "testTag"
       semver = "testSemver"
       commit = "testCommit"
-    } 
+    }
   }
 }
 ```

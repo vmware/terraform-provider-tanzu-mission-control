@@ -8,15 +8,15 @@ resource "tanzu-mission-control_credential" "tanzu_observability_cred" {
       "key1" : "value1",
     }
     annotations = {
-      "wavefront.url":"url pointing to your wavefront instance"
+      "wavefront.url" : "url pointing to your wavefront instance"
     }
   }
 
   spec {
     capability = "TANZU_OBSERVABILITY"
-    provider = "GENERIC_KEY_VALUE"
+    provider   = "GENERIC_KEY_VALUE"
     data {
-      key_value{
+      key_value {
         data = {
           "wavefront.token" = "wavefront api token"
         }

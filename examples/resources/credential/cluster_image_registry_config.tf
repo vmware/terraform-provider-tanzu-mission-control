@@ -14,12 +14,12 @@ resource "tanzu-mission-control_credential" "img_reg_cred" {
 
   spec {
     capability = "IMAGE_REGISTRY"
-    provider = "GENERIC_KEY_VALUE"
+    provider   = "GENERIC_KEY_VALUE"
     data {
-      key_value{
-        data  = {
+      key_value {
+        data = {
           "registry-url" = "somethingnew"
-          "ca-cert"  = "ca bundle"
+          "ca-cert"      = "ca bundle"
         }
       }
     }

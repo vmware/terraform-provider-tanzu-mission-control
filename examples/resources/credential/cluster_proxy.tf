@@ -8,17 +8,17 @@ resource "tanzu-mission-control_credential" "proxy_cred" {
       "key1" : "value1",
     }
     annotations = {
-      "httpProxy"  :"http://sfsdf.com:123",
-      "httpsProxy" :"http://sfsdf.com:123",
-      "noProxyList":"http://noproxy.com,http://something.com"
+      "httpProxy" : "http://sfsdf.com:123",
+      "httpsProxy" : "http://sfsdf.com:123",
+      "noProxyList" : "http://noproxy.com,http://something.com"
     }
   }
 
   spec {
     capability = "PROXY_CONFIG"
-    provider = "GENERIC_KEY_VALUE"
+    provider   = "GENERIC_KEY_VALUE"
     data {
-      key_value{
+      key_value {
         data = {
           "httpUserName"  = "username"
           "httpPassword"  = "password"
