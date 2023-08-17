@@ -119,11 +119,52 @@ var NodePoolTkgServiceVsphere = &schema.Schema{
 				Type:        schema.TypeString,
 				Description: "Nodepool instance type",
 				Required:    true,
+				ForceNew:    true,
 			},
 			storageClassKey: {
 				Type:        schema.TypeString,
 				Description: "Storage Class to be used for storage of the disks which store the root filesystem of the nodes",
 				Required:    true,
+				ForceNew:    true,
+			},
+			failureDomainKey: {
+				Type:        schema.TypeString,
+				Description: "Configure the failure domain of node pool. The potential values could be found using cluster:options api. This parameter will be ignored by the backend if the TKG service vsphere cluster doesn't support.",
+				Optional:    true,
+				Default:     "",
+				ForceNew:    true,
+			},
+			volumesKey: tkgServiceVolumes,
+		},
+	},
+}
+
+var tkgServiceVolumes = &schema.Schema{
+	Type:        schema.TypeList,
+	Description: "Configurable volumes for nodepool nodes",
+	Optional:    true,
+	ForceNew:    true,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			capacityKey: {
+				Type:        schema.TypeFloat,
+				Description: "Volume capacity is in gib",
+				Optional:    true,
+			},
+			mountPathKey: {
+				Type:        schema.TypeString,
+				Description: "It is the directory where the volume device is to be mounted",
+				Optional:    true,
+			},
+			volumeNameKey: {
+				Type:        schema.TypeString,
+				Description: "It is the volume name",
+				Optional:    true,
+			},
+			pvcStorageClassKey: {
+				Type:        schema.TypeString,
+				Description: "This is the storage class for PVC which in case omitted, default storage class will be used for the disks",
+				Optional:    true,
 			},
 		},
 	},
@@ -373,7 +414,45 @@ func constructTkgServiceVsphere(data []interface{}) (tkgServiceVsphere *nodepool
 		tkgServiceVsphere.StorageClass, _ = v.(string)
 	}
 
+	if v, ok := lookUpTkgServiceVsphere[failureDomainKey]; ok {
+		tkgServiceVsphere.FailureDomain, _ = v.(string)
+	}
+
+	if v, ok := lookUpTkgServiceVsphere[volumesKey]; ok {
+		volumes, _ := v.([]interface{})
+		for _, volume := range volumes {
+			tkgServiceVsphere.Volumes = append(tkgServiceVsphere.Volumes, constructTKGSVolumes(volume))
+		}
+	}
+
 	return tkgServiceVsphere
+}
+
+func constructTKGSVolumes(data interface{}) (volume *nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume) {
+	if data == nil {
+		return volume
+	}
+
+	lookUpVolumes, _ := data.(map[string]interface{})
+	volume = &nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{}
+
+	if v, ok := lookUpVolumes[capacityKey]; ok {
+		helper.SetPrimitiveValue(v, &volume.Capacity, capacityKey)
+	}
+
+	if v, ok := lookUpVolumes[mountPathKey]; ok {
+		volume.MountPath, _ = v.(string)
+	}
+
+	if v, ok := lookUpVolumes[volumeNameKey]; ok {
+		volume.Name, _ = v.(string)
+	}
+
+	if v, ok := lookUpVolumes[pvcStorageClassKey]; ok {
+		volume.StorageClass, _ = v.(string)
+	}
+
+	return volume
 }
 
 func flattenSpec(spec *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec) (data []interface{}) {
@@ -467,8 +546,31 @@ func flattenTkgServiceVsphere(tkgServiceVsphere *nodepoolmodel.VmwareTanzuManage
 
 	flattenTkgServiceVsphereData[classKey] = tkgServiceVsphere.Class
 	flattenTkgServiceVsphereData[storageClassKey] = tkgServiceVsphere.StorageClass
+	flattenTkgServiceVsphereData[failureDomainKey] = tkgServiceVsphere.FailureDomain
+
+	vls := make([]interface{}, 0)
+	for _, vl := range tkgServiceVsphere.Volumes {
+		vls = append(vls, flattenTKGSVolumes(vl))
+	}
+
+	flattenTkgServiceVsphereData[volumesKey] = vls
 
 	return []interface{}{flattenTkgServiceVsphereData}
+}
+
+func flattenTKGSVolumes(volume *nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume) (data interface{}) {
+	flattenVolumes := make(map[string]interface{})
+
+	if volume == nil {
+		return nil
+	}
+
+	flattenVolumes[capacityKey] = volume.Capacity
+	flattenVolumes[mountPathKey] = volume.MountPath
+	flattenVolumes[volumeNameKey] = volume.Name
+	flattenVolumes[pvcStorageClassKey] = volume.StorageClass
+
+	return flattenVolumes
 }
 
 func resourceNodePoolCreate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {

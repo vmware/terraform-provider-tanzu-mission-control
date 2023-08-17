@@ -22,7 +22,7 @@ func TestFlattenNodePoolSpec(t *testing.T) {
 		expected    []interface{}
 	}{
 		{
-			description: "check for nil TKGs spec",
+			description: "check for nil TKGs/TKGm vsphere spec",
 			input:       nil,
 			expected:    nil,
 		},
@@ -36,8 +36,17 @@ func TestFlattenNodePoolSpec(t *testing.T) {
 					"key": "value",
 				},
 				TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
-					Class:        "class",
-					StorageClass: "storage_class",
+					Class:         "class",
+					StorageClass:  "storage_class",
+					FailureDomain: "failure_domain",
+					Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
+						{
+							Capacity:     4,
+							MountPath:    "/a/b/c/d",
+							Name:         "volume1",
+							StorageClass: "pv_storage_class",
+						},
+					},
 				},
 				TkgVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGVsphereNodepool{
 					VMConfig: &nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGVsphereVMConfig{
@@ -59,8 +68,17 @@ func TestFlattenNodePoolSpec(t *testing.T) {
 					workerNodeCountKey: "1",
 					tkgServiceVsphereKey: []interface{}{
 						map[string]interface{}{
-							classKey:        "class",
-							storageClassKey: "storage_class",
+							classKey:         "class",
+							storageClassKey:  "storage_class",
+							failureDomainKey: "failure_domain",
+							volumesKey: []interface{}{
+								map[string]interface{}{
+									capacityKey:        float32(4),
+									mountPathKey:       "/a/b/c/d",
+									volumeNameKey:      "volume1",
+									pvcStorageClassKey: "pv_storage_class",
+								},
+							},
 						},
 					},
 					tkgVsphereKey: []interface{}{
@@ -159,8 +177,17 @@ func TestFlattenNodePoolSpec(t *testing.T) {
 					"key": "value",
 				},
 				TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
-					Class:        "class",
-					StorageClass: "storage_class",
+					Class:         "class",
+					StorageClass:  "storage_class",
+					FailureDomain: "failure_domain",
+					Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
+						{
+							Capacity:     4,
+							MountPath:    "/a/b/c/d",
+							Name:         "volume1",
+							StorageClass: "pv_storage_class",
+						},
+					},
 				},
 				TkgVsphere:      nil,
 				WorkerNodeCount: "1",
@@ -176,8 +203,17 @@ func TestFlattenNodePoolSpec(t *testing.T) {
 					workerNodeCountKey: "1",
 					tkgServiceVsphereKey: []interface{}{
 						map[string]interface{}{
-							classKey:        "class",
-							storageClassKey: "storage_class",
+							classKey:         "class",
+							storageClassKey:  "storage_class",
+							failureDomainKey: "failure_domain",
+							volumesKey: []interface{}{
+								map[string]interface{}{
+									capacityKey:        float32(4),
+									mountPathKey:       "/a/b/c/d",
+									volumeNameKey:      "volume1",
+									pvcStorageClassKey: "pv_storage_class",
+								},
+							},
 						},
 					},
 				},
