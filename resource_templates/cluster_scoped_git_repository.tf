@@ -13,9 +13,9 @@ data "tanzu-mission-control_git_repository" "test_repository" {
     cluster {
       management_cluster_name = "<existing-management-cluster>" // Default: attached
 
-      provisioner_name        = "<existing-prov-name>"          // Default: attached
+      provisioner_name = "<existing-prov-name>" // Default: attached
 
-      name                    = "<existing-cluster_name>"       // Required
+      name = "<existing-cluster_name>" // Required
     }
   }
 }
@@ -32,9 +32,9 @@ resource "tanzu-mission-control_git_repository" "test_repository" {
     cluster {
       management_cluster_name = "test"
 
-      provisioner_name        = "test"
+      provisioner_name = "test"
 
-      name                    = "test"
+      name = "test"
     }
   }
 

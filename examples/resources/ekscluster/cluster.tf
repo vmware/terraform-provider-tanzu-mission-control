@@ -58,7 +58,7 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
       }
 
       spec {
-        role_arn       = "arn:aws:iam::000000000000:role/worker.1234567890123467890.eks.tmc.cloud.vmware.com" // Required
+        role_arn = "arn:aws:iam::000000000000:role/worker.1234567890123467890.eks.tmc.cloud.vmware.com" // Required
 
         ami_type       = "CUSTOM"
         capacity_type  = "ON_DEMAND"
@@ -74,11 +74,11 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
         ]
 
         ami_info {
-          ami_id = "ami-2qu8409oisdfj0qw"
+          ami_id                 = "ami-2qu8409oisdfj0qw"
           override_bootstrap_cmd = "#!/bin/bash\n/etc/eks/bootstrap.sh tf2-eks-cluster-2"
         }
 
-       remote_access {
+        remote_access {
           ssh_key = "test-key" // Required (if remote access is specified)
 
           security_groups = [

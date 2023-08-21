@@ -59,7 +59,7 @@ resource "tanzu-mission-control_akscluster" "demo_AKS_cluster" {
   }
   spec {
     config {
-      location = "eastus"
+      location           = "eastus"
       kubernetes_version = "1.24.10"
       network_config {
         dns_prefix = "dns-tf-test"
@@ -68,8 +68,8 @@ resource "tanzu-mission-control_akscluster" "demo_AKS_cluster" {
     nodepool {
       name = "systemnp"
       spec {
-        count = 1
-        mode = "SYSTEM"
+        count   = 1
+        mode    = "SYSTEM"
         vm_size = "Standard_DS2_v2"
       }
     }

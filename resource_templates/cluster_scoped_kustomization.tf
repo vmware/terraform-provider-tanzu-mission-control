@@ -10,9 +10,9 @@ resource "tanzu-mission-control_kustomization" "test_kustomization" {
     cluster {
       management_cluster_name = "test"
 
-      provisioner_name        = "test"
+      provisioner_name = "test"
 
-      name                    = "test"
+      name = "test"
     }
   }
 

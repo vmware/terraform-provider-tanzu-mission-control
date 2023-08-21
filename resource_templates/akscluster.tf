@@ -4,9 +4,9 @@
 // Read Tanzu Mission Control Azure AKS cluster : fetch cluster details
 data "tanzu-mission-control_akscluster" "tf_aks_cluster" {
   credential_name = "<aws-credential-name>" // Required
-  subscription    = "<subscription>"    // Required
-  resource_group  = "<resource-group>"  // Required
-  name            = "<cluster-name>"    // Required
+  subscription    = "<subscription>"        // Required
+  resource_group  = "<resource-group>"      // Required
+  name            = "<cluster-name>"        // Required
 }
 
 resource "tanzu-mission-control_akscluster" "tf_aks_cluster" {
@@ -25,8 +25,8 @@ resource "tanzu-mission-control_akscluster" "tf_aks_cluster" {
     proxy         = "<proxy>"
 
     azure_AKS {
-      location                 = "<location>" // Required     // Force Recreate
-      version                  = "<version>"  // Required
+      location                 = "<location>"                 // Required     // Force Recreate
+      version                  = "<version>"                  // Required
       node_resource_group_name = "<node-resource-group-name>" // Force Recreate
       disk_encryption_set      = "<disk-encryption-set>"      // Force Recreate
       tags                     = { "key" : "value" }
@@ -40,8 +40,8 @@ resource "tanzu-mission-control_akscluster" "tf_aks_cluster" {
         enable_rbac            = true
         disable_local_accounts = true
         aad_config {
-          managed         = true
-          tenantId        = "<tenant-id>"
+          managed  = true
+          tenantId = "<tenant-id>"
           admin_group_ids = [
             "<admin-group-id-1>",
             "<admin-group-id-2>",
@@ -61,7 +61,7 @@ resource "tanzu-mission-control_akscluster" "tf_aks_cluster" {
       linux_config {
         // Force Recreate
         admin_username = "<admin-username>"
-        ssh_keys       = [
+        ssh_keys = [
           "<ssh-key-1>",
           "<ssh-key-2>",
         ]
@@ -74,7 +74,7 @@ resource "tanzu-mission-control_akscluster" "tf_aks_cluster" {
         network_policy     = "<network-policy>"     // Forces Recreate
         dns_service_ip     = "<dns-service-ip>"     // Forces Recreate
         docker_bridge_cidr = "<docker-bridge-cidr>" // Forces Recreate
-        pod_cidr           = [
+        pod_cidr = [
           // Forces Recreate
           "<pod-cidr-1>",
           "<pod-cidr-2>",
@@ -124,23 +124,23 @@ resource "tanzu-mission-control_akscluster" "tf_aks_cluster" {
           }
 
           spec = {
-            mode              = "<mode>" // Required
-            type              = "<type>"
+            mode = "<mode>" // Required
+            type = "<type>"
             availabilityZones = [
               "<availability-zone-1>",
               "<availability-zone-2>",
             ]
-            count                     = 1 // Required
-            vm_size                   = "<vm-size>" // Required // Force Recreate
-            scale_set_priority        = "<scale-set-priority>"// Force Recreate
+            count                     = 1                             // Required
+            vm_size                   = "<vm-size>"                   // Required // Force Recreate
+            scale_set_priority        = "<scale-set-priority>"        // Force Recreate
             scale_set_eviction_policy = "<scale-set-eviction-policy>" // Force Recreate
             spot_max_price            = 1.00
             os_type                   = "<os-type>"
-            os_disk_type              = "<os-disk-type>"        // Force Recreate
-            os_disk_size_gb           = 60                      // Force Recreate
-            max_pods                  = 10                      // Force Recreate
+            os_disk_type              = "<os-disk-type>" // Force Recreate
+            os_disk_size_gb           = 60               // Force Recreate
+            max_pods                  = 10               // Force Recreate
             enable_node_public_ip     = true
-            node_taints               = [
+            node_taints = [
               {
                 effect = "<effect>"
                 key    = "<key>"

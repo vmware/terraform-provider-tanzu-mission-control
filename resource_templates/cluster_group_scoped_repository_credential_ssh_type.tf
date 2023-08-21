@@ -16,7 +16,7 @@ data "tanzu-mission-control_repository_credential" "test_repository_credential" 
 
 
 resource "tanzu-mission-control_repository_credential" "test_repository_credential" {
-  name = "test" 
+  name = "test"
 
   org_id = "test" // optional
 
@@ -28,7 +28,7 @@ resource "tanzu-mission-control_repository_credential" "test_repository_credenti
 
   spec {
     ssh_key {
-      identity    = "test"   
+      identity = "test"
 
       known_hosts = "test"
     }

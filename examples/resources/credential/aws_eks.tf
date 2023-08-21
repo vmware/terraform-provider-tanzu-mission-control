@@ -11,13 +11,13 @@ resource "tanzu-mission-control_credential" "aws_eks_cred" {
 
   spec {
     capability = "MANAGED_K8S_PROVIDER"
-    provider = "AWS_EKS"
+    provider   = "AWS_EKS"
     data {
       aws_credential {
         account_id = "account-id"
-        iam_role{
-          arn = "arn:aws:iam::4987398738934:role/clusterlifecycle-test.tmc.cloud.vmware.com"
-          ext_id =""
+        iam_role {
+          arn    = "arn:aws:iam::4987398738934:role/clusterlifecycle-test.tmc.cloud.vmware.com"
+          ext_id = ""
         }
       }
     }

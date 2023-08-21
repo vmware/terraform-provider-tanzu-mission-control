@@ -13,7 +13,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
     cluster_group = "default" # Default: default
     tkg_vsphere {
       advanced_configs {
-        key = "AVI_LABELS"
+        key   = "AVI_LABELS"
         value = "test"
       }
       settings {
@@ -30,7 +30,7 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
             ]
           }
 
-          api_server_port = 6443
+          api_server_port         = 6443
           control_plane_end_point = "10.191.249.39" # optional for AVI enabled option
         }
 
@@ -40,10 +40,10 @@ resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
       }
 
       distribution {
-        os_arch = "amd64"
-        os_name = "photon"
+        os_arch    = "amd64"
+        os_name    = "photon"
         os_version = "3"
-        version = "v1.20.5+vmware.2-tkg.1"
+        version    = "v1.20.5+vmware.2-tkg.1"
 
         workspace {
           datacenter        = "/dc0"

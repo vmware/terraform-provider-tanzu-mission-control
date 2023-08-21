@@ -1,7 +1,7 @@
 # Create Tanzu Mission Control image registry credential and attach cluster entry with the same credential.
 resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
-  management_cluster_name = "attached"     // Default: attached
-  provisioner_name        = "attached"     // Default: attached
+  management_cluster_name = "attached" // Default: attached
+  provisioner_name        = "attached" // Default: attached
   name                    = "demo-lir" // Required
 
   attach_k8s_cluster {
@@ -32,7 +32,7 @@ resource "tanzu-mission-control_credential" "img_reg_cred" {
       "key1" : "value1",
     }
     annotations = {
-      "registry-namespace": "tmc"
+      "registry-namespace" : "tmc"
     }
   }
 

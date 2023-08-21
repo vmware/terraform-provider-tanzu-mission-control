@@ -20,7 +20,7 @@ resource "tanzu-mission-control_image_policy" "workspace_scoped_allowed-name-tag
           imagename = "bar"
           tag {
             negate = true
-            value = "test"
+            value  = "test"
           }
         }
       }

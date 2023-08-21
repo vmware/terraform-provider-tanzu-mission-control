@@ -22,13 +22,13 @@ resource "tanzu-mission-control_credential" "aws_eks_cred" {
 
   spec {
     capability = "MANAGED_K8S_PROVIDER"
-    provider = "AWS_EKS"
+    provider   = "AWS_EKS"
     data {
       aws_credential {
         account_id = "account-id"
-        iam_role{
-          arn = "arn:aws:iam::4987398738934:role/clusterlifecycle-test.tmc.cloud.vmware.com"
-          ext_id =""
+        iam_role {
+          arn    = "arn:aws:iam::4987398738934:role/clusterlifecycle-test.tmc.cloud.vmware.com"
+          ext_id = ""
         }
       }
     }
@@ -57,12 +57,12 @@ resource "tanzu-mission-control_credential" "img_reg_cred" {
 
   spec {
     capability = "IMAGE_REGISTRY"
-    provider = "GENERIC_KEY_VALUE"
+    provider   = "GENERIC_KEY_VALUE"
     data {
-      key_value{
-        data  = {
+      key_value {
+        data = {
           "registry-url" = "somethingnew"
-          "ca-cert"  = "ca bundle"
+          "ca-cert"      = "ca bundle"
         }
       }
     }
@@ -85,17 +85,17 @@ resource "tanzu-mission-control_credential" "proxy_cred" {
       "key1" : "value1",
     }
     annotations = {
-      "httpProxy"  :"http://sfsdf.com:123",
-      "httpsProxy" :"http://sfsdf.com:123",
-      "noProxyList":"http://noproxy.com,http://something.com"
+      "httpProxy" : "http://sfsdf.com:123",
+      "httpsProxy" : "http://sfsdf.com:123",
+      "noProxyList" : "http://noproxy.com,http://something.com"
     }
   }
 
   spec {
     capability = "PROXY_CONFIG"
-    provider = "GENERIC_KEY_VALUE"
+    provider   = "GENERIC_KEY_VALUE"
     data {
-      key_value{
+      key_value {
         data = {
           "httpUserName"  = "username"
           "httpPassword"  = "password"
@@ -127,10 +127,10 @@ resource "tanzu-mission-control_credential" "tmc_provisioned_aws_s3_cred" {
 
   spec {
     capability = "DATA_PROTECTION"
-    provider = "AWS_EC2"
+    provider   = "AWS_EC2"
     data {
       aws_credential {
-        iam_role{
+        iam_role {
           arn = "arn:aws:iam::4987398738934:role/clusterlifecycle-test.tmc.cloud.vmware.com"
         }
       }
@@ -154,15 +154,15 @@ resource "tanzu-mission-control_credential" "tanzu_observability_cred" {
       "key1" : "value1",
     }
     annotations = {
-      "wavefront.url":"url pointing to your wavefront instance"
+      "wavefront.url" : "url pointing to your wavefront instance"
     }
   }
 
   spec {
     capability = "TANZU_OBSERVABILITY"
-    provider = "GENERIC_KEY_VALUE"
+    provider   = "GENERIC_KEY_VALUE"
     data {
-      key_value{
+      key_value {
         data = {
           "wavefront.token" = "wavefront api token"
         }

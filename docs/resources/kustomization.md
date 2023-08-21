@@ -47,13 +47,13 @@ resource "tanzu-mission-control_kustomization" "create_cluster_group_kustomizati
   }
 
   spec {
-    path = "testPath" # Required
-    prune = "testPrune"
-    interval = "10m" # Default: 5m
+    path             = "testPath" # Required
+    prune            = "testPrune"
+    interval         = "10m" # Default: 5m
     target_namespace = "testTargetNamespace"
     source {
-        name = "testGitRepositoryName" # Required
-        namespace = "testGitRepositoryNamespace" # Required
+      name      = "testGitRepositoryName"      # Required
+      namespace = "testGitRepositoryNamespace" # Required
     }
   }
 }
@@ -84,13 +84,13 @@ resource "tanzu-mission-control_kustomization" "create_cluster_kustomization" {
   }
 
   spec {
-    path = "testPath" # Required
-    prune = "testPrune"
-    interval = "10m" # Default: 5m
+    path             = "testPath" # Required
+    prune            = "testPrune"
+    interval         = "10m" # Default: 5m
     target_namespace = "testTargetNamespace"
     source {
-        name = "testGitRepositoryName" # Required
-        namespace = "testGitRepositoryNamespace" # Required
+      name      = "testGitRepositoryName"      # Required
+      namespace = "testGitRepositoryNamespace" # Required
     }
   }
 }
