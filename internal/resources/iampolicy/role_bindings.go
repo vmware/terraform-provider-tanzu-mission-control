@@ -45,7 +45,7 @@ var roleBinding = &schema.Schema{
 							Type:         schema.TypeString,
 							Description:  "Subject type, having one of the subject types: USER or GROUP",
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"USER", "GROUP"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"USER", "GROUP", "K8S_SERVICEACCOUNT"}, false),
 						},
 					},
 				},

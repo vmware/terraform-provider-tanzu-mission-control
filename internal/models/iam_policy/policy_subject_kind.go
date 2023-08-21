@@ -36,8 +36,8 @@ const (
 	// VmwareTanzuCoreV1alpha1PolicySubjectKindGROUP captures enum value "GROUP".
 	VmwareTanzuCoreV1alpha1PolicySubjectKindGROUP VmwareTanzuCoreV1alpha1PolicySubjectKind = "GROUP"
 
-	// VmwareTanzuCoreV1alpha1PolicySubjectKindSERVICEACCOUNT captures enum value "SERVICEACCOUNT".
-	VmwareTanzuCoreV1alpha1PolicySubjectKindSERVICEACCOUNT VmwareTanzuCoreV1alpha1PolicySubjectKind = "SERVICEACCOUNT"
+	// VmwareTanzuCoreV1alpha1PolicySubjectKindK8SSERVICEACCOUNT captures enum value "K8S_SERVICEACCOUNT".
+	VmwareTanzuCoreV1alpha1PolicySubjectKindK8SSERVICEACCOUNT VmwareTanzuCoreV1alpha1PolicySubjectKind = "K8S_SERVICEACCOUNT"
 
 	// VmwareTanzuCoreV1alpha1PolicySubjectKindUSER captures enum value "USER".
 	VmwareTanzuCoreV1alpha1PolicySubjectKindUSER VmwareTanzuCoreV1alpha1PolicySubjectKind = "USER"
@@ -48,7 +48,7 @@ var vmwareTanzuCoreV1alpha1PolicySubjectKindEnum []interface{}
 
 func init() {
 	var res []VmwareTanzuCoreV1alpha1PolicySubjectKind
-	if err := json.Unmarshal([]byte(`["KIND_UNSPECIFIED","GROUP","SERVICEACCOUNT","USER"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["KIND_UNSPECIFIED","GROUP","K8S_SERVICEACCOUNT","USER"]`), &res); err != nil {
 		panic(err)
 	}
 
