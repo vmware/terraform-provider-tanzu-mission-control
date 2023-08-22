@@ -39,6 +39,9 @@ const (
 	// VmwareTanzuCoreV1alpha1PolicySubjectKindK8SSERVICEACCOUNT captures enum value "K8S_SERVICEACCOUNT".
 	VmwareTanzuCoreV1alpha1PolicySubjectKindK8SSERVICEACCOUNT VmwareTanzuCoreV1alpha1PolicySubjectKind = "K8S_SERVICEACCOUNT"
 
+	// VmwareTanzuCoreV1alpha1PolicySubjectKindSERVICEACCOUNT captures enum value "SERVICEACCOUNT".
+	VmwareTanzuCoreV1alpha1PolicySubjectKindSERVICEACCOUNT VmwareTanzuCoreV1alpha1PolicySubjectKind = "SERVICEACCOUNT"
+
 	// VmwareTanzuCoreV1alpha1PolicySubjectKindUSER captures enum value "USER".
 	VmwareTanzuCoreV1alpha1PolicySubjectKindUSER VmwareTanzuCoreV1alpha1PolicySubjectKind = "USER"
 )
