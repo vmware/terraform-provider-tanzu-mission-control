@@ -235,7 +235,7 @@ Required:
 
 Required:
 
-- `kind` (String) Subject type, having one of the subject types: USER or GROUP
+- `kind` (String) Subject type, having one of the subject types: USER, GROUP, or K8S_SERVICEACCOUNT
 - `name` (String) Subject name: allow max characters for email - 320 characters.
 
 
