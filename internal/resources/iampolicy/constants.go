@@ -33,4 +33,4 @@ const (
 	namespaceScope
 )
 
-const roleSubjectDelimiter = ","
+const roleSubjectDelimiter = ";"
