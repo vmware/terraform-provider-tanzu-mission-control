@@ -20,7 +20,7 @@ type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetescluster
 	Name string `json:"name,omitempty"`
 
 	// ID of Organization.
-	OrgId string `json:"orgId,omitempty"`
+	OrgID string `json:"orgId,omitempty"`
 
 	// Provisioner of the cluster.
 	ProvisionerName string `json:"provisionerName,omitempty"`
