@@ -34,6 +34,7 @@ const (
 	PkgRepoResourceVar   = "test_pkg_repository"
 	pkgRepoDataSourceVar = "test_data_source_pkg_repository"
 	pkgRepoNamePrefix    = "tf-pkg-repository-test"
+	globalRepoNamespace  = "tanzu-package-repo-global"
 
 	imageURL        = "extensions.aws-usw2.tmc-dev.cloud.vmware.com/packages/standard/repo:v2.2.0_update.2"
 	updatedImageURL = "extensions.aws-usw2.tmc-dev.cloud.vmware.com/packages/standard/repo:v2.2.0_update.1"
@@ -48,7 +49,6 @@ type testAcceptanceConfig struct {
 	PkgRepoDataSourceVar        string
 	PkgRepositoryDataSourceName string
 	ScopeHelperResources        *commonscope.ScopeHelperResources
-	Namespace                   string
 }
 
 func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
@@ -59,7 +59,6 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 		PkgRepoResourceName:         fmt.Sprintf("%s.%s", PkgRepoResource, PkgRepoResourceVar),
 		PkgRepoName:                 acctest.RandomWithPrefix(pkgRepoNamePrefix),
 		ScopeHelperResources:        commonscope.NewScopeHelperResources(),
-		Namespace:                   globalRepoNamespace,
 		PkgRepoDataSourceVar:        pkgRepoDataSourceVar,
 		PkgRepositoryDataSourceName: fmt.Sprintf("data.%s.%s", ResourceName, pkgRepoDataSourceVar),
 	}
@@ -159,8 +158,6 @@ func (testConfig *testAcceptanceConfig) getTestPackageRepositoryResourceBasicCon
 	resource "%s" "%s" {
 		name = "%s"
 
-		namespace_name = "%s"
-
 		disabled = %t
 
 		 scope {
@@ -178,7 +175,7 @@ func (testConfig *testAcceptanceConfig) getTestPackageRepositoryResourceBasicCon
 			}
 		}
 	}
-	`, testConfig.PkgRepoResource, testConfig.PkgRepoResourceVar, testConfig.PkgRepoName, testConfig.Namespace, disabled, testConfig.ScopeHelperResources.Cluster.Name, imageURL)
+	`, testConfig.PkgRepoResource, testConfig.PkgRepoResourceVar, testConfig.PkgRepoName, disabled, testConfig.ScopeHelperResources.Cluster.Name, imageURL)
 	}
 
 	return fmt.Sprintf(`
@@ -193,8 +190,6 @@ func (testConfig *testAcceptanceConfig) getTestPackageRepositoryResourceBasicCon
 
 	resource "%s" "%s" {
 		name = "%s"
-
-		namespace_name = "%s"
 
 		disabled = %t
 
@@ -212,7 +207,7 @@ func (testConfig *testAcceptanceConfig) getTestPackageRepositoryResourceBasicCon
 
 		depends_on = [time_sleep.wait_for_3m]
 	}
-	`, helperBlock, testConfig.PkgRepoResource, testConfig.PkgRepoResourceVar, testConfig.PkgRepoName, testConfig.Namespace, disabled, imageURL)
+	`, helperBlock, testConfig.PkgRepoResource, testConfig.PkgRepoResourceVar, testConfig.PkgRepoName, disabled, imageURL)
 }
 
 // checkPackageRepositoryResourceAttributes checks for packagerepository creation along with meta attributes.
@@ -269,7 +264,7 @@ func (testConfig *testAcceptanceConfig) verifyPackageRepositoryResourceCreation(
 				ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 				ManagementClusterName: commonscope.AttachedValue,
 				Name:                  testConfig.PkgRepoName,
-				NamespaceName:         testConfig.Namespace,
+				NamespaceName:         globalRepoNamespace,
 				ProvisionerName:       commonscope.AttachedValue,
 			}
 
