@@ -65,7 +65,7 @@ func TestRoleBindingListToUpdate(t *testing.T) {
 		{
 			description: "check for normal scenario of an entry in map",
 			input: &map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin_test_USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
+				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
 			},
 			expected: []*iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDelta{
 				{
@@ -113,11 +113,11 @@ func TestRBOpForUpdate(t *testing.T) {
 				},
 			},
 			inputMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin_test_USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
+				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
 			},
 			action: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeOPTYPEUNSPECIFIED,
 			expectedMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin_test_USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeOPTYPEUNSPECIFIED,
+				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeOPTYPEUNSPECIFIED,
 			},
 		},
 		{
@@ -134,11 +134,11 @@ func TestRBOpForUpdate(t *testing.T) {
 				},
 			},
 			inputMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin_test_USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
+				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
 			},
 			action: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeDELETE,
 			expectedMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin_test_USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeDELETE,
+				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeDELETE,
 			},
 		},
 		{
@@ -155,11 +155,11 @@ func TestRBOpForUpdate(t *testing.T) {
 				},
 			},
 			inputMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin_test_USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
+				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
 			},
 			action: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
 			expectedMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin_test_USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
+				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
 			},
 		},
 		{
@@ -176,11 +176,11 @@ func TestRBOpForUpdate(t *testing.T) {
 				},
 			},
 			inputMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin_test_USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeDELETE,
+				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeDELETE,
 			},
 			action: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
 			expectedMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin_test_USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeOPTYPEUNSPECIFIED,
+				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeOPTYPEUNSPECIFIED,
 			},
 		},
 	}
