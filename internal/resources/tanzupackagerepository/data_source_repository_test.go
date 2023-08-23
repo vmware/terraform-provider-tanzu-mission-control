@@ -97,8 +97,6 @@ func (testConfig *testAcceptanceConfig) getTestPackageRepositoryDataSourceBasicC
 	resource "%s" "%s" {
 		name = "%s"
 
-		namespace_name = "%s"
-
 		disabled = %t
 
 		 scope {
@@ -127,7 +125,7 @@ func (testConfig *testAcceptanceConfig) getTestPackageRepositoryDataSourceBasicC
 			}
 		}
 	}
-	`, testConfig.PkgRepoResource, testConfig.PkgRepoResourceVar, testConfig.PkgRepoName, testConfig.Namespace, disabled, testConfig.ScopeHelperResources.Cluster.Name, imageURL, testConfig.PkgRepoResource, testConfig.PkgRepoDataSourceVar, testConfig.ScopeHelperResources.Cluster.Name)
+	`, testConfig.PkgRepoResource, testConfig.PkgRepoResourceVar, testConfig.PkgRepoName, disabled, testConfig.ScopeHelperResources.Cluster.Name, imageURL, testConfig.PkgRepoResource, testConfig.PkgRepoDataSourceVar, testConfig.ScopeHelperResources.Cluster.Name)
 	}
 
 	return fmt.Sprintf(`
@@ -142,8 +140,6 @@ func (testConfig *testAcceptanceConfig) getTestPackageRepositoryDataSourceBasicC
 
 	resource "%s" "%s" {
 		name = "%s"
-
-		namespace_name = "%s"
 
 		disabled = %t
 
@@ -171,7 +167,7 @@ func (testConfig *testAcceptanceConfig) getTestPackageRepositoryDataSourceBasicC
 			}
 		}
 	}
-	`, helperBlock, testConfig.PkgRepoResource, testConfig.PkgRepoResourceVar, testConfig.PkgRepoName, testConfig.Namespace, disabled, imageURL, testConfig.PkgRepoResource, testConfig.PkgRepoDataSourceVar)
+	`, helperBlock, testConfig.PkgRepoResource, testConfig.PkgRepoResourceVar, testConfig.PkgRepoName, disabled, imageURL, testConfig.PkgRepoResource, testConfig.PkgRepoDataSourceVar)
 }
 
 // checkPkgRepositoryDataSourceAttributes checks to get git repository creation.

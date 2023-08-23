@@ -19,6 +19,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 	statusmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/status"
+	tanzupakageclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzupackage"
 	pkgrepositoryclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzupackagerepository"
 )
 
@@ -108,7 +109,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocksUpdate(t *testing.T) {
 			Name:                  testConfig.PkgRepoName,
 			OrgID:                 OrgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-			NamespaceName:         testConfig.Namespace,
+			NamespaceName:         globalRepoNamespace,
 			ProvisionerName:       "attached",
 			ManagementClusterName: "attached",
 		},
@@ -143,7 +144,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocksUpdate(t *testing.T) {
 		Repository: getModel,
 	}
 
-	getPkgRepoEndpoint := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, apiSubGroup, testConfig.Namespace, apiKind, testConfig.PkgRepoName)).String()
+	getPkgRepoEndpoint := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, apiSubGroup, globalRepoNamespace, apiKind, testConfig.PkgRepoName)).String()
 
 	httpmock.RegisterResponder("GET", getPkgRepoEndpoint,
 		bodyInspectingResponder(t, nil, 200, getResponse))
@@ -165,7 +166,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 	referenceArray = append(referenceArray, &reference)
 
 	// cluster level package repository resource.
-	postRequest, postResponse, getResponse, postContinuousDeliveryRequest, postContinuousDeliveryResponse := testConfig.getClRequestResponse(OrgID, referenceArray)
+	postRequest, postResponse, getResponse, postAvailabilityRequestRequest, postAvailabilityResponse := testConfig.getClRequestResponse(OrgID, referenceArray)
 
 	putRequest := &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositoryRequest{
 		Repository: &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepository{
@@ -201,14 +202,36 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 		},
 	}
 
-	postEndpoint := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, apiSubGroup, testConfig.Namespace, apiKind)).String()
-	getPkgRepoEndpoint := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, apiSubGroup, testConfig.Namespace, apiKind, testConfig.PkgRepoName)).String()
+	getTanzuPackageResponse := &tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageListTanzuPackagesResponse{
+		TanzuPackages: []*tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageTanzuPackage{
+			{
+				FullName: &tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageFullName{
+					ClusterName:           postRequest.Repository.FullName.ClusterName,
+					ManagementClusterName: postRequest.Repository.FullName.ManagementClusterName,
+					ProvisionerName:       postRequest.Repository.FullName.ProvisionerName,
+					OrgID:                 postRequest.Repository.FullName.OrgID,
+				},
+				Status: &tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageStatus{
+					Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
+						"Ready": {
+							Reason: "made successfully",
+						},
+					},
+					PackageRepositoryGlobalNamespace: globalRepoNamespace,
+				},
+			},
+		},
+	}
+
+	postEndpoint := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, apiSubGroup, globalRepoNamespace, apiKind)).String()
+	getTanzuPackageEndpoint := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, "tanzupackage")).String()
+	getPkgRepoEndpoint := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, apiSubGroup, globalRepoNamespace, apiKind, testConfig.PkgRepoName)).String()
 	deleteEndpoint := getPkgRepoEndpoint
 
-	postContinuousDeliveryEndpoint := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, availabilityAPIKind)).String()
+	postAvailabilityRequestEndpoint := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, availabilityAPIKind)).String()
 
-	httpmock.RegisterResponder("POST", postContinuousDeliveryEndpoint,
-		bodyInspectingResponder(t, postContinuousDeliveryRequest, 200, postContinuousDeliveryResponse))
+	httpmock.RegisterResponder("POST", postAvailabilityRequestEndpoint,
+		bodyInspectingResponder(t, postAvailabilityRequestRequest, 200, postAvailabilityResponse))
 
 	httpmock.RegisterResponder("POST", postEndpoint,
 		bodyInspectingResponder(t, postRequest, 200, postResponse))
@@ -218,6 +241,9 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 
 	httpmock.RegisterResponder("GET", getPkgRepoEndpoint,
 		bodyInspectingResponder(t, nil, 200, getResponse))
+
+	httpmock.RegisterResponder("GET", getTanzuPackageEndpoint,
+		bodyInspectingResponder(t, nil, 200, getTanzuPackageResponse))
 
 	httpmock.RegisterResponder("DELETE", deleteEndpoint, changeStateResponder(
 		// Set up the get to return 404 after the package repository has been 'deleted'.
@@ -246,7 +272,7 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			Name:                  testConfig.PkgRepoName,
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-			NamespaceName:         testConfig.Namespace,
+			NamespaceName:         globalRepoNamespace,
 			ProvisionerName:       "attached",
 			ManagementClusterName: "attached",
 		},
@@ -268,7 +294,7 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			Name:                  testConfig.PkgRepoName,
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-			NamespaceName:         testConfig.Namespace,
+			NamespaceName:         globalRepoNamespace,
 			ProvisionerName:       "attached",
 			ManagementClusterName: "attached",
 		},
@@ -308,7 +334,7 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			Name:                  testConfig.PkgRepoName,
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-			NamespaceName:         testConfig.Namespace,
+			NamespaceName:         globalRepoNamespace,
 			ProvisionerName:       "attached",
 			ManagementClusterName: "attached",
 		},
@@ -345,7 +371,7 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			Name:                  testConfig.PkgRepoName,
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-			NamespaceName:         testConfig.Namespace,
+			NamespaceName:         globalRepoNamespace,
 			ProvisionerName:       "attached",
 			ManagementClusterName: "attached",
 		},
@@ -357,7 +383,7 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 				Name:                  testConfig.PkgRepoName,
 				OrgID:                 orgID,
 				ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-				NamespaceName:         testConfig.Namespace,
+				NamespaceName:         globalRepoNamespace,
 				ProvisionerName:       "attached",
 				ManagementClusterName: "attached",
 			},
