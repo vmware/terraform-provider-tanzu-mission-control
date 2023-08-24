@@ -7,17 +7,18 @@ package tanzupackagerepository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
+	tanzupakageclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzupackage"
 	pkgrepositoryclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzupackagerepository"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
@@ -67,11 +68,7 @@ func getPkgRepoSchema(isDataSource bool) map[string]*schema.Schema {
 		NamespaceKey: {
 			Type:        schema.TypeString,
 			Description: "Name of Namespace where package repository will be created.",
-			Default:     globalRepoNamespace,
-			Optional:    true,
-			ValidateFunc: validation.StringInSlice([]string{
-				globalRepoNamespace,
-			}, false),
+			Computed:    true,
 		},
 		disabledKey: {
 			Type:        schema.TypeBool,
@@ -107,15 +104,15 @@ func resourcePackageRepositoryCreate(ctx context.Context, d *schema.ResourceData
 		return diag.Errorf("Unable to read package repository name")
 	}
 
-	packageRepositoryNamespace, ok := d.Get(NamespaceKey).(string)
-	if !ok {
-		return diag.Errorf("Unable to read package repository name")
-	}
-
-	scopedFullnameData := scope.ConstructScope(d, packageRepositoryName, packageRepositoryNamespace)
+	scopedFullnameData := scope.ConstructScope(d, packageRepositoryName)
 
 	if scopedFullnameData == nil {
 		return diag.Errorf("Unable to create Tanzu Mission Control package repository entry; Scope full name is empty")
+	}
+
+	_, err := GetGlobalNamespace(config, scopedFullnameData, d)
+	if err != nil {
+		return diag.Errorf("failed to get package repository global namespace for cluster: %v", err)
 	}
 
 	packageRepositoryReq := &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositoryRequest{
@@ -164,16 +161,18 @@ func resourcePackageRepositoryDelete(ctx context.Context, d *schema.ResourceData
 		return diag.Errorf("Unable to read package repository name")
 	}
 
-	packageRepositoryNamespace, ok := d.Get(NamespaceKey).(string)
-	if !ok {
-		return diag.Errorf("Unable to read package repository name")
-	}
-
-	scopedFullnameData := scope.ConstructScope(d, packageRepositoryName, packageRepositoryNamespace)
+	scopedFullnameData := scope.ConstructScope(d, packageRepositoryName)
 
 	if scopedFullnameData == nil {
 		return diag.Errorf("Unable to create Tanzu Mission Control package repository entry; Scope full name is empty")
 	}
+
+	packageRepositoryNamespacename, ok := d.Get(NamespaceKey).(string)
+	if !ok {
+		return diag.Errorf("Unable to read package repository name")
+	}
+
+	scopedFullnameData.FullnameCluster.NamespaceName = packageRepositoryNamespacename
 
 	err := config.TMCConnection.ClusterPackageRepositoryService.RepositoryResourceServiceDelete(scopedFullnameData.FullnameCluster)
 	if err != nil && !clienterrors.IsNotFoundError(err) {
@@ -195,16 +194,18 @@ func resourcePackageRepositoryInPlaceUpdate(ctx context.Context, d *schema.Resou
 		return diag.Errorf("Unable to read package repository name")
 	}
 
-	packageRepositoryNamespace, ok := d.Get(NamespaceKey).(string)
-	if !ok {
-		return diag.Errorf("Unable to read package repository name")
-	}
-
-	scopedFullnameData := scope.ConstructScope(d, packageRepositoryName, packageRepositoryNamespace)
+	scopedFullnameData := scope.ConstructScope(d, packageRepositoryName)
 
 	if scopedFullnameData == nil {
 		return diag.Errorf("Unable to create Tanzu Mission Control package repository entry; Scope full name is empty")
 	}
+
+	packageRepositoryNamespacename, ok := d.Get(NamespaceKey).(string)
+	if !ok {
+		return diag.Errorf("Unable to read package repository name")
+	}
+
+	scopedFullnameData.FullnameCluster.NamespaceName = packageRepositoryNamespacename
 
 	pkgRepoDataFromServer, err := retrievePackageRepositoryUIDMetaAndSpecFromServer(config, scopedFullnameData, d)
 	if err != nil {
@@ -314,4 +315,35 @@ func updateCheckForSpec(d *schema.ResourceData, repoSpec *pkgrepositoryclustermo
 	repoSpec.ImgpkgBundle.Image = updatedRepoSpec.ImgpkgBundle.Image
 
 	return true
+}
+
+func GetGlobalNamespace(config authctx.TanzuContext, scopedFullnameData *scope.ScopedFullname, d *schema.ResourceData) (string, error) {
+	ss := &tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageSearchScope{
+		ClusterName:           scopedFullnameData.FullnameCluster.ClusterName,
+		ManagementClusterName: scopedFullnameData.FullnameCluster.ManagementClusterName,
+		ProvisionerName:       scopedFullnameData.FullnameCluster.ProvisionerName,
+	}
+
+	response, err := config.TMCConnection.ClusterTanzuPackageService.TanzuPackageResourceServiceList(ss)
+	if err != nil {
+		return "", err
+	}
+
+	if len(response.TanzuPackages) == 0 {
+		return "", fmt.Errorf("cluster not found")
+	}
+
+	globalNs := (response.TanzuPackages[0]).Status.PackageRepositoryGlobalNamespace
+
+	if globalNs == "" {
+		return "", fmt.Errorf("global namespace not set for cluster")
+	}
+
+	scopedFullnameData.FullnameCluster.NamespaceName = globalNs
+
+	if err := d.Set(NamespaceKey, globalNs); err != nil {
+		return "", err
+	}
+
+	return globalNs, nil
 }
