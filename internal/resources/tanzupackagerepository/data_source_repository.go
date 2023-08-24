@@ -37,15 +37,15 @@ func dataPackageRepositoryRead(ctx context.Context, d *schema.ResourceData, m in
 		return diag.Errorf("Unable to read package repository name")
 	}
 
-	packageRepositoryNamespace, ok := d.Get(NamespaceKey).(string)
-	if !ok {
-		return diag.Errorf("Unable to read package repository name")
-	}
-
-	scopedFullnameData := scope.ConstructScope(d, packageRepositoryName, packageRepositoryNamespace)
+	scopedFullnameData := scope.ConstructScope(d, packageRepositoryName)
 
 	if scopedFullnameData == nil {
 		return diag.Errorf("Unable to create Tanzu Mission Control package repository entry; Scope full name is empty")
+	}
+
+	_, err := GetGlobalNamespace(config, scopedFullnameData, d)
+	if err != nil {
+		return diag.Errorf("failed to get package repository global namespace for cluster: %v", err)
 	}
 
 	pkgRepoDataFromServer, err := retrievePackageRepositoryUIDMetaAndSpecFromServer(config, scopedFullnameData, d)
