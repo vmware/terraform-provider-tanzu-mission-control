@@ -1,3 +1,6 @@
+//go:build sourcesecret
+// +build sourcesecret
+
 /*
 Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
@@ -6,17 +9,14 @@ SPDX-License-Identifier: MPL-2.0
 package sourcesecret
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
 
@@ -30,25 +30,6 @@ import (
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
-// nolint: gosec
-const (
-	sourceSecretResource      = ResourceName
-	sourceSecretResourceVar   = "test_source_secret"
-	sourceSecretDataSourceVar = "test_data_source_source_secret"
-	sourceSecretNamePrefix    = "tf-ss-test"
-)
-
-type testAcceptanceConfig struct {
-	Provider                   *schema.Provider
-	SourceSecretResource       string
-	SourceSecretResourceVar    string
-	SourceSecretResourceName   string
-	SourceSecretName           string
-	ScopeHelperResources       *ScopeHelperResources
-	SourceSecretDataSourceVar  string
-	SourceSecretDataSourceName string
-}
-
 func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 	return &testAcceptanceConfig{
 		Provider:                   initTestProvider(t),
@@ -60,14 +41,6 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 		SourceSecretDataSourceVar:  sourceSecretDataSourceVar,
 		SourceSecretDataSourceName: fmt.Sprintf("data.%s.%s", ResourceName, sourceSecretDataSourceVar),
 	}
-}
-
-func getConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	if _, found := os.LookupEnv("ENABLE_REPOCRED_ENV_TEST"); !found {
-		return authctx.ProviderConfigureContextWithDefaultTransportForTesting
-	}
-
-	return authctx.ProviderConfigureContext
 }
 
 func getSetupConfig(config *authctx.TanzuContext) error {

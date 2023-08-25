@@ -1,3 +1,6 @@
+//go:build sourcesecret
+// +build sourcesecret
+
 /*
 Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0

@@ -126,6 +126,20 @@ Run the command:
 $ make acc-test
 ```
 
+To run the acceptance test specific to a resource make use of the build-tags.
+Build tag name is equivalent to the corresponding resource name.
+
+`
+Running acceptance test without explicitly setting `BUILD_TAGS` runs all the acceptance test by default.
+ To specifically run acceptances test of a resouces, set `BUILD_TAGS` value to correponding resource name.
+`
+
+For instance to run acceptance test for cluster-group and namespace resource
+```sh
+$ export BUILD_TAGS = "clustergroup namespace"
+$ make acc-test
+```
+
 ### Test provider changes locally
 Please make use of a unique path as provided in the `Makefile` while building the provider with changes 
 and kindly use the same path in the source while using the provider to test the local changes.

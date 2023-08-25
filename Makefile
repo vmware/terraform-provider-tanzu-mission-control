@@ -21,6 +21,10 @@ ifeq ($(TEST_FLAGS),)
 	TEST_FLAGS := -cover
 endif
 
+ifeq ($(BUILD_TAGS),)
+	BUILD_TAGS := 'akscluster cluster clustergroup credential ekscluster gitrepository iampolicy kustomization namespace custompolicy imagepolicy networkpolicy quotapolicy securitypolicy sourcesecret workspace'
+endif
+
 .PHONY: build clean-up test gofmt vet lint acc-test website-lint website-lint-fix
 
 default: build
@@ -54,7 +58,8 @@ lint: gofmt
 	golangci-lint run -c ./.golangci.yml ./internal/... .
 
 acc-test: export TF_ACC = true
-acc-test: test
+acc-test:
+	go test $(TEST_PKGS) -tags $(BUILD_TAGS)
 
 website-lint:
 	@echo "==> Checking website against linters..."
