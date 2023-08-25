@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	aksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
@@ -203,12 +204,19 @@ var SKU = &schema.Resource{
 			Description: "Name of the cluster SKU. Allowed values include: BASIC.",
 			Optional:    true,
 			Computed:    true,
+			ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+				string(aksmodel.VmwareTanzuManageV1alpha1AksclusterClusterSKUNameBASIC),
+			}, false)),
 		},
 		skuTierKey: {
 			Type:        schema.TypeString,
 			Description: "Tier of the cluster SKU. Allowed values include: FREE or PAID.",
 			Optional:    true,
 			Computed:    true,
+			ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+				string(aksmodel.VmwareTanzuManageV1alpha1AksclusterTierFREE),
+				string(aksmodel.VmwareTanzuManageV1alpha1AksclusterTierPAID),
+			}, false)),
 		},
 	},
 }
@@ -461,6 +469,13 @@ var AutoUpgradeConfig = &schema.Resource{
 			Type:        schema.TypeString,
 			Description: "Upgrade Channel. Allowed values include: NONE, PATCH, STABLE, RAPID or NODE_IMAGE",
 			Optional:    true,
+			ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+				string(aksmodel.VmwareTanzuManageV1alpha1AksclusterChannelNONE),
+				string(aksmodel.VmwareTanzuManageV1alpha1AksclusterChannelPATCH),
+				string(aksmodel.VmwareTanzuManageV1alpha1AksclusterChannelSTABLE),
+				string(aksmodel.VmwareTanzuManageV1alpha1AksclusterChannelRAPID),
+				string(aksmodel.VmwareTanzuManageV1alpha1AksclusterChannelNODEIMAGE),
+			}, false)),
 		},
 	},
 }
@@ -492,6 +507,10 @@ var NodepoolSpecSchema = &schema.Schema{
 				Type:        schema.TypeString,
 				Description: "The mode of the nodepool. Allowed values include: SYSTEM or USER. A cluster must have at least one 'SYSTEM' nodepool at all times.",
 				Required:    true,
+				ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+					string(aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolModeUSER),
+					string(aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM),
+				}, false)),
 			},
 			nodeImageVersionKey: {
 				Type:        schema.TypeString,
@@ -504,6 +523,10 @@ var NodepoolSpecSchema = &schema.Schema{
 				Description: "The Nodepool type. Allowed values include: VIRTUAL_MACHINE_SCALE_SETS or AVAILABILITY_SET.",
 				Default:     aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolTypeVIRTUALMACHINESCALESETS,
 				Optional:    true,
+				ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+					string(aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolTypeVIRTUALMACHINESCALESETS),
+					string(aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolTypeAVAILABILITYSET),
+				}, false)),
 			},
 			availabilityZonesKey: {
 				Type:        schema.TypeList,
@@ -529,11 +552,19 @@ var NodepoolSpecSchema = &schema.Schema{
 				Description: "Scale set priority. Allowed values include: REGULAR or SPOT.",
 				Computed:    true,
 				Optional:    true,
+				ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+					string(aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPriorityREGULAR),
+					string(aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetPrioritySPOT),
+				}, false)),
 			},
 			scaleSetEvictionPolicyKey: {
 				Type:        schema.TypeString,
 				Description: "Scale set eviction policy, Allowed values include: DELETE or DEALLOCATE.",
 				Optional:    true,
+				ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+					string(aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicyDELETE),
+					string(aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolScaleSetEvictionPolicyDEALLOCATE),
+				}, false)),
 			},
 			maxSpotPriceKey: {
 				Type:        schema.TypeFloat,
@@ -545,12 +576,19 @@ var NodepoolSpecSchema = &schema.Schema{
 				Description: "The OS type of the nodepool. Allowed values include: LINUX.",
 				Default:     aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolOsTypeLINUX,
 				Optional:    true,
+				ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+					string(aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolOsTypeLINUX),
+				}, false)),
 			},
 			osDiskTypeKey: {
 				Type:        schema.TypeString,
 				Description: "OS Disk Type. Allowed values include: EPHEMERAL or MANAGED.",
 				Optional:    true,
 				Computed:    true,
+				ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+					string(aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskTypeEPHEMERAL),
+					string(aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskTypeMANAGED),
+				}, false)),
 			},
 			osDiskSizeKey: {
 				Type:        schema.TypeInt,
@@ -650,14 +688,16 @@ var AutoScaleConfig = &schema.Resource{
 			Optional:    true,
 		},
 		minCountKey: {
-			Type:        schema.TypeInt,
-			Description: "Minimum node count",
-			Optional:    true,
+			Type:             schema.TypeInt,
+			Description:      "Minimum node count",
+			Optional:         true,
+			ValidateDiagFunc: validation.ToDiagFunc(validation.IntAtLeast(1)),
 		},
 		maxCountKey: {
-			Type:        schema.TypeInt,
-			Description: "Maximum node count",
-			Optional:    true,
+			Type:             schema.TypeInt,
+			Description:      "Maximum node count",
+			Optional:         true,
+			ValidateDiagFunc: validation.ToDiagFunc(validation.IntAtLeast(1)),
 		},
 	},
 }
