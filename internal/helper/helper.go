@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 const DEV = "DEV"
@@ -125,4 +127,15 @@ func BoolPointer(b bool) *bool {
 
 func StringPointer(s string) *string {
 	return &s
+}
+
+func UpdateDataSourceSchema(d *schema.Schema) *schema.Schema {
+	dv := &schema.Schema{
+		Type:        d.Type,
+		Description: d.Description,
+		Computed:    true,
+		Elem:        d.Elem,
+	}
+
+	return dv
 }

@@ -25,7 +25,9 @@ func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *pkgrepositorycl
 
 	specData := data[0].(map[string]interface{})
 
-	spec = &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositorySpec{}
+	spec = &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositorySpec{
+		ImgpkgBundle: &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositoryImgPkgBundleSpec{},
+	}
 
 	if data, ok := specData[ImgpkgBundleKey]; ok {
 		if v1, ok := data.([]interface{}); ok && len(v1) != 0 {

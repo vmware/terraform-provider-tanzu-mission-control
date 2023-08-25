@@ -11,7 +11,7 @@ import (
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 )
 
-func ConstructClusterPackageRepositoryFullname(data []interface{}, name, namespace string) (fullname *packagerepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositoryFullName) {
+func ConstructClusterPackageRepositoryFullname(data []interface{}, name string) (fullname *packagerepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositoryFullName) {
 	if len(data) == 0 || data[0] == nil {
 		return fullname
 	}
@@ -33,7 +33,6 @@ func ConstructClusterPackageRepositoryFullname(data []interface{}, name, namespa
 	}
 
 	fullname.Name = name
-	fullname.NamespaceName = namespace
 
 	return fullname
 }

@@ -29,7 +29,7 @@ var (
 		commonscope.WithScopes(ScopesAllowed[:]))
 )
 
-func ConstructScope(d *schema.ResourceData, name, namespace string) (scopedFullnameData *ScopedFullname) {
+func ConstructScope(d *schema.ResourceData, name string) (scopedFullnameData *ScopedFullname) {
 	value, ok := d.GetOk(commonscope.ScopeKey)
 
 	if !ok {
@@ -48,7 +48,7 @@ func ConstructScope(d *schema.ResourceData, name, namespace string) (scopedFulln
 		if clusterValue, ok := clusterData.([]interface{}); ok && len(clusterValue) != 0 {
 			scopedFullnameData = &ScopedFullname{
 				Scope:           commonscope.ClusterScope,
-				FullnameCluster: ConstructClusterPackageRepositoryFullname(clusterValue, name, namespace),
+				FullnameCluster: ConstructClusterPackageRepositoryFullname(clusterValue, name),
 			}
 		}
 	}

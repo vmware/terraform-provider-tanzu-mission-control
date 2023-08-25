@@ -25,6 +25,9 @@ import (
 	iamorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/iam_policy"
 	policyorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/policy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
+	tanzupackageclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackage"
+	pkgrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository"
+	pkgrepoavailabilityclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository/packagerepositoryavailability"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	workspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace"
 	iamworkspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace/iam_policy"
@@ -57,47 +60,53 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 	httpClient.AddHeaders(headers)
 
 	return &TanzuMissionControl{
-		Client:                            httpClient,
-		ClusterResourceService:            clusterclient.New(httpClient),
-		EKSClusterResourceService:         eksclusterclient.New(httpClient),
-		EKSNodePoolResourceService:        eksnodepoolclient.New(httpClient),
-		WorkspaceResourceService:          workspaceclient.New(httpClient),
-		NamespaceResourceService:          namespaceclient.New(httpClient),
-		ClusterGroupResourceService:       clustergroupclient.New(httpClient),
-		NodePoolResourceService:           nodepoolclient.New(httpClient),
-		OrganizationIAMResourceService:    iamorganizationclient.New(httpClient),
-		ClusterGroupIAMResourceService:    iamclustergroupclient.New(httpClient),
-		ClusterIAMResourceService:         iamclusterclient.New(httpClient),
-		WorkspaceIAMResourceService:       iamworkspaceclient.New(httpClient),
-		NamespaceIAMResourceService:       iamnamespaceclient.New(httpClient),
-		ClusterPolicyResourceService:      policyclusterclient.New(httpClient),
-		ClusterGroupPolicyResourceService: policyclustergroupclient.New(httpClient),
-		WorkspacePolicyResourceService:    policyworkspaceclient.New(httpClient),
-		OrganizationPolicyResourceService: policyorganizationclient.New(httpClient),
-		CredentialResourceService:         credentialclient.New(httpClient),
-		IntegrationResourceService:        integrationclient.New(httpClient),
+		Client:                                      httpClient,
+		ClusterResourceService:                      clusterclient.New(httpClient),
+		EKSClusterResourceService:                   eksclusterclient.New(httpClient),
+		EKSNodePoolResourceService:                  eksnodepoolclient.New(httpClient),
+		WorkspaceResourceService:                    workspaceclient.New(httpClient),
+		NamespaceResourceService:                    namespaceclient.New(httpClient),
+		ClusterGroupResourceService:                 clustergroupclient.New(httpClient),
+		NodePoolResourceService:                     nodepoolclient.New(httpClient),
+		OrganizationIAMResourceService:              iamorganizationclient.New(httpClient),
+		ClusterGroupIAMResourceService:              iamclustergroupclient.New(httpClient),
+		ClusterIAMResourceService:                   iamclusterclient.New(httpClient),
+		WorkspaceIAMResourceService:                 iamworkspaceclient.New(httpClient),
+		NamespaceIAMResourceService:                 iamnamespaceclient.New(httpClient),
+		ClusterPolicyResourceService:                policyclusterclient.New(httpClient),
+		ClusterGroupPolicyResourceService:           policyclustergroupclient.New(httpClient),
+		WorkspacePolicyResourceService:              policyworkspaceclient.New(httpClient),
+		OrganizationPolicyResourceService:           policyorganizationclient.New(httpClient),
+		CredentialResourceService:                   credentialclient.New(httpClient),
+		IntegrationResourceService:                  integrationclient.New(httpClient),
+		ClusterPackageRepositoryService:             pkgrepositoryclusterclient.New(httpClient),
+		ClusterPackageRepositoryAvailabilityService: pkgrepoavailabilityclusterclient.New(httpClient),
+		ClusterTanzuPackageService:                  tanzupackageclusterclient.New(httpClient),
 	}
 }
 
 // TanzuMissionControl is a client for tanzu mission control.
 type TanzuMissionControl struct {
 	*transport.Client
-	ClusterResourceService            clusterclient.ClientService
-	EKSClusterResourceService         eksclusterclient.ClientService
-	EKSNodePoolResourceService        eksnodepoolclient.ClientService
-	WorkspaceResourceService          workspaceclient.ClientService
-	NamespaceResourceService          namespaceclient.ClientService
-	ClusterGroupResourceService       clustergroupclient.ClientService
-	NodePoolResourceService           nodepoolclient.ClientService
-	OrganizationIAMResourceService    iamorganizationclient.ClientService
-	ClusterGroupIAMResourceService    iamclustergroupclient.ClientService
-	ClusterIAMResourceService         iamclusterclient.ClientService
-	WorkspaceIAMResourceService       iamworkspaceclient.ClientService
-	NamespaceIAMResourceService       iamnamespaceclient.ClientService
-	ClusterPolicyResourceService      policyclusterclient.ClientService
-	ClusterGroupPolicyResourceService policyclustergroupclient.ClientService
-	WorkspacePolicyResourceService    policyworkspaceclient.ClientService
-	OrganizationPolicyResourceService policyorganizationclient.ClientService
-	CredentialResourceService         credentialclient.ClientService
-	IntegrationResourceService        integrationclient.ClientService
+	ClusterResourceService                      clusterclient.ClientService
+	EKSClusterResourceService                   eksclusterclient.ClientService
+	EKSNodePoolResourceService                  eksnodepoolclient.ClientService
+	WorkspaceResourceService                    workspaceclient.ClientService
+	NamespaceResourceService                    namespaceclient.ClientService
+	ClusterGroupResourceService                 clustergroupclient.ClientService
+	NodePoolResourceService                     nodepoolclient.ClientService
+	OrganizationIAMResourceService              iamorganizationclient.ClientService
+	ClusterGroupIAMResourceService              iamclustergroupclient.ClientService
+	ClusterIAMResourceService                   iamclusterclient.ClientService
+	WorkspaceIAMResourceService                 iamworkspaceclient.ClientService
+	NamespaceIAMResourceService                 iamnamespaceclient.ClientService
+	ClusterPolicyResourceService                policyclusterclient.ClientService
+	ClusterGroupPolicyResourceService           policyclustergroupclient.ClientService
+	WorkspacePolicyResourceService              policyworkspaceclient.ClientService
+	OrganizationPolicyResourceService           policyorganizationclient.ClientService
+	CredentialResourceService                   credentialclient.ClientService
+	IntegrationResourceService                  integrationclient.ClientService
+	ClusterPackageRepositoryService             pkgrepositoryclusterclient.ClientService
+	ClusterPackageRepositoryAvailabilityService pkgrepoavailabilityclusterclient.ClientService
+	ClusterTanzuPackageService                  tanzupackageclusterclient.ClientService
 }
