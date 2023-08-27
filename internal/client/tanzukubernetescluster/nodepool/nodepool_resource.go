@@ -15,12 +15,17 @@ import (
 )
 
 const (
-	apiVersionAndGroup      = "/v1alpha1/managementclusters"
-	apiNodepoolsPath        = "nodepools"
-	provisioners            = "provisioners"
-	queryParamKeySortBy     = "sortBy"
-	tanzukubernetesclusters = "tanzukubernetesclusters"
+	apiVersionAndGroup           = "/v1alpha1/managementclusters"
+	apiNodepoolsPath             = "nodepools"
+	provisioners                 = "provisioners"
+	tanzukubernetesclusters      = "tanzukubernetesclusters"
+	queryParamKeySearchScopeName = "searchScope.name"
+	queryParamKeyOrgID           = "fullName.orgId"
 )
+
+func getBaseReqURL(mgmtClsName string, provisionerName string, tanzuK8ClsName string) helper.RequestURL {
+	return helper.ConstructRequestURL(apiVersionAndGroup, mgmtClsName, provisioners, provisionerName, tanzukubernetesclusters, tanzuK8ClsName, apiNodepoolsPath)
+}
 
 // New creates a new tanzu kubernetes cluster node pool resource service API client.
 func New(transport *transport.Client) ClientService {
@@ -51,7 +56,12 @@ type ClientService interface {
 func (c *Client) TanzuKubernetesNodePoolResourceServiceGet(fn *tkcnodepool.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolFullName) (*tkcnodepool.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolAPIResponse, error) {
 	queryParams := url.Values{}
 
-	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, fn.ManagementClusterName, provisioners, fn.ProvisionerName, tanzukubernetesclusters, fn.TanzuKubernetesClusterName, apiNodepoolsPath, fn.Name).AppendQueryParams(queryParams).String()
+	if fn.OrgID != "" {
+		queryParams.Add(queryParamKeyOrgID, fn.OrgID)
+	}
+
+	requestURL := getBaseReqURL(fn.ManagementClusterName, fn.ProvisionerName, fn.TanzuKubernetesClusterName).String()
+	requestURL = helper.ConstructRequestURL(requestURL, fn.Name).AppendQueryParams(queryParams).String()
 	response := &tkcnodepool.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolAPIResponse{}
 
 	err := c.Get(requestURL, response)
@@ -63,7 +73,7 @@ func (c *Client) TanzuKubernetesNodePoolResourceServiceGet(fn *tkcnodepool.Vmwar
 func (c *Client) TanzuKubernetesNodePoolResourceServiceCreate(request *tkcnodepool.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolAPIRequest) (*tkcnodepool.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolAPIResponse, error) {
 	response := &tkcnodepool.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolAPIResponse{}
 
-	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, request.Nodepool.FullName.ManagementClusterName, provisioners, request.Nodepool.FullName.ProvisionerName, tanzukubernetesclusters, request.Nodepool.FullName.TanzuKubernetesClusterName, apiNodepoolsPath).String()
+	requestURL := getBaseReqURL(request.Nodepool.FullName.ManagementClusterName, request.Nodepool.FullName.ProvisionerName, request.Nodepool.FullName.TanzuKubernetesClusterName).String()
 
 	err := c.Create(requestURL, request, response)
 
@@ -74,7 +84,12 @@ func (c *Client) TanzuKubernetesNodePoolResourceServiceCreate(request *tkcnodepo
 func (c *Client) TanzuKubernetesNodePoolResourceServiceDelete(fn *tkcnodepool.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolFullName) error {
 	queryParams := url.Values{}
 
-	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, fn.ManagementClusterName, provisioners, fn.ProvisionerName, tanzukubernetesclusters, fn.TanzuKubernetesClusterName, apiNodepoolsPath, fn.Name).AppendQueryParams(queryParams).String()
+	if fn.OrgID != "" {
+		queryParams.Add(queryParamKeyOrgID, fn.OrgID)
+	}
+
+	requestURL := getBaseReqURL(fn.ManagementClusterName, fn.ProvisionerName, fn.TanzuKubernetesClusterName).String()
+	requestURL = helper.ConstructRequestURL(requestURL, fn.Name).AppendQueryParams(queryParams).String()
 
 	return c.Delete(requestURL)
 }
@@ -83,10 +98,11 @@ func (c *Client) TanzuKubernetesNodePoolResourceServiceDelete(fn *tkcnodepool.Vm
 func (c *Client) TanzuKubernetesNodePoolResourceServiceList(cluster *tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterFullName) (*tkcnodepool.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolListNodepoolsResponse, error) {
 	queryParams := url.Values{}
 
-	// for stability of the results
-	queryParams.Add(queryParamKeySortBy, "createTime")
+	if cluster.Name != "" {
+		queryParams.Add(queryParamKeySearchScopeName, cluster.Name)
+	}
 
-	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, cluster.ManagementClusterName, provisioners, cluster.ProvisionerName, tanzukubernetesclusters, cluster.Name, apiNodepoolsPath).AppendQueryParams(queryParams).String()
+	requestURL := getBaseReqURL(cluster.ManagementClusterName, cluster.ProvisionerName, cluster.Name).AppendQueryParams(queryParams).String()
 	clusterNodePoolsResponse := &tkcnodepool.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolListNodepoolsResponse{}
 	err := c.Get(requestURL, clusterNodePoolsResponse)
 
@@ -96,7 +112,8 @@ func (c *Client) TanzuKubernetesNodePoolResourceServiceList(cluster *tkcmodels.V
 // TanzuKubernetesNodePoolResourceServiceUpdate implements ClientService.
 func (c *Client) TanzuKubernetesNodePoolResourceServiceUpdate(request *tkcnodepool.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolAPIRequest) (*tkcnodepool.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolAPIResponse, error) {
 	response := &tkcnodepool.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolAPIResponse{}
-	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, request.Nodepool.FullName.ManagementClusterName, provisioners, request.Nodepool.FullName.ProvisionerName, tanzukubernetesclusters, request.Nodepool.FullName.TanzuKubernetesClusterName, apiNodepoolsPath, request.Nodepool.FullName.Name).String()
+	requestURL := getBaseReqURL(request.Nodepool.FullName.ManagementClusterName, request.Nodepool.FullName.ProvisionerName, request.Nodepool.FullName.TanzuKubernetesClusterName).String()
+	requestURL = helper.ConstructRequestURL(requestURL, request.Nodepool.FullName.Name).String()
 	err := c.Update(requestURL, request, response)
 
 	return response, err
