@@ -23,8 +23,8 @@ const (
 	queryParamKeyOrgID           = "fullName.orgId"
 )
 
-func getBaseReqURL(mgmtClsName string, provisionerName string, tanzuK8ClsName string) helper.RequestURL {
-	return helper.ConstructRequestURL(apiVersionAndGroup, mgmtClsName, provisioners, provisionerName, tanzukubernetesclusters, tanzuK8ClsName, apiNodepoolsPath)
+func getBaseReqURL(mgmtClsName string, provisionerName string, tkcClsName string) helper.RequestURL {
+	return helper.ConstructRequestURL(apiVersionAndGroup, mgmtClsName, provisioners, provisionerName, tanzukubernetesclusters, tkcClsName, apiNodepoolsPath)
 }
 
 // New creates a new tanzu kubernetes cluster node pool resource service API client.
