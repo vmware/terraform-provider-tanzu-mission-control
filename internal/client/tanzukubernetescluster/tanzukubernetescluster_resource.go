@@ -20,7 +20,7 @@ const (
 	queryParamKeyForce      = "force"
 )
 
-func getBaseReqURL(mgmtClsName, provisionerName string) helper.RequestURL {
+func getBaseReqURL(mgmtClsName string, provisionerName string) helper.RequestURL {
 	return helper.ConstructRequestURL(apiVersionAndGroup, mgmtClsName, provisioners, provisionerName, tanzukubernetesclusters)
 }
 
@@ -53,15 +53,9 @@ TanzuKubernetesClusterResourceServiceCreate creates a tanzu kubernetes cluster.
 func (c *Client) TanzuKubernetesClusterResourceServiceCreate(req *tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterRequest) (*tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse, error) {
 	response := &tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse{}
 
-	var reqURL helper.RequestURL
+	requestURL := getBaseReqURL(req.TanzuKubernetesCluster.FullName.ManagementClusterName, req.TanzuKubernetesCluster.FullName.ProvisionerName).String()
 
-	if req.TanzuKubernetesCluster.FullName != nil {
-		if req.TanzuKubernetesCluster.FullName.ManagementClusterName != "" && req.TanzuKubernetesCluster.FullName.ProvisionerName != "" {
-			reqURL = getBaseReqURL(req.TanzuKubernetesCluster.FullName.ManagementClusterName, req.TanzuKubernetesCluster.FullName.ProvisionerName)
-		}
-	}
-
-	err := c.Create(reqURL.String(), req, response)
+	err := c.Create(requestURL, req, response)
 
 	return response, err
 }
@@ -70,21 +64,14 @@ func (c *Client) TanzuKubernetesClusterResourceServiceCreate(req *tkcmodels.Vmwa
 TanzuKubernetesClusterResourceServiceDelete deletes a tanzu kubernetes cluster.
 */
 func (c *Client) TanzuKubernetesClusterResourceServiceDelete(fn *tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterFullName, force string) error {
-	var reqURL helper.RequestURL
-
 	queryParams := url.Values{
 		queryParamKeyForce: []string{force},
 	}
 
-	if fn.ManagementClusterName != "" && fn.ProvisionerName != "" {
-		reqURL = getBaseReqURL(fn.ManagementClusterName, fn.ProvisionerName)
-	}
+	requestURL := getBaseReqURL(fn.ManagementClusterName, fn.ProvisionerName).String()
+	requestURL = helper.ConstructRequestURL(requestURL, fn.Name).AppendQueryParams(queryParams).String()
 
-	if fn.Name != "" {
-		reqURL = helper.ConstructRequestURL(reqURL.String(), fn.Name).AppendQueryParams(queryParams)
-	}
-
-	err := c.Delete(reqURL.String())
+	err := c.Delete(requestURL)
 
 	return err
 }
@@ -95,17 +82,10 @@ TanzuKubernetesClusterResourceServiceGet gets a tanzu kubernetes cluster.
 func (c *Client) TanzuKubernetesClusterResourceServiceGet(fn *tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterFullName) (*tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterGetTanzuKubernetesClusterResponse, error) {
 	response := &tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterGetTanzuKubernetesClusterResponse{}
 
-	var reqURL helper.RequestURL
+	requestURL := getBaseReqURL(fn.ManagementClusterName, fn.ProvisionerName).String()
+	requestURL = helper.ConstructRequestURL(requestURL, fn.Name).String()
 
-	if fn.ManagementClusterName != "" && fn.ProvisionerName != "" {
-		reqURL = getBaseReqURL(fn.ManagementClusterName, fn.ProvisionerName)
-	}
-
-	if fn.Name != "" {
-		reqURL = helper.ConstructRequestURL(reqURL.String(), fn.Name)
-	}
-
-	err := c.Get(reqURL.String(), response)
+	err := c.Get(requestURL, response)
 
 	return response, err
 }
@@ -117,19 +97,10 @@ func (c *Client) TanzuKubernetesClusterResourceServiceUpdate(
 	req *tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterRequest) (*tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse, error) {
 	response := &tkcmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse{}
 
-	var reqURL helper.RequestURL
+	requestURL := getBaseReqURL(req.TanzuKubernetesCluster.FullName.ManagementClusterName, req.TanzuKubernetesCluster.FullName.ProvisionerName).String()
+	requestURL = helper.ConstructRequestURL(requestURL, req.TanzuKubernetesCluster.FullName.Name).String()
 
-	if req.TanzuKubernetesCluster.FullName != nil {
-		if req.TanzuKubernetesCluster.FullName.ManagementClusterName != "" && req.TanzuKubernetesCluster.FullName.ProvisionerName != "" {
-			getBaseReqURL(req.TanzuKubernetesCluster.FullName.ManagementClusterName, req.TanzuKubernetesCluster.FullName.ProvisionerName)
-		}
-
-		if req.TanzuKubernetesCluster.FullName.Name != "" {
-			reqURL = helper.ConstructRequestURL(reqURL.String(), req.TanzuKubernetesCluster.FullName.Name)
-		}
-	}
-
-	err := c.Update(reqURL.String(), req, response)
+	err := c.Update(requestURL, req, response)
 
 	return response, err
 }
