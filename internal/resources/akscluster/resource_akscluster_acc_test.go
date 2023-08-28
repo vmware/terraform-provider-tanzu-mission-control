@@ -390,7 +390,7 @@ func testAKSCluster(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) st
   spec {
     config {
       location = "eastus"
-      kubernetes_version = "1.24.10"
+      kubernetes_version = "1.25.11"
       network_config {
         dns_prefix = "dns-tf-test"
       }
@@ -420,7 +420,7 @@ func testAKSClusterEnableCSI(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFul
   spec {
     config {
       location = "eastus"
-      kubernetes_version = "1.24.10"
+      kubernetes_version = "1.25.11"
       network_config {
         dns_prefix = "dns-tf-test"
       }
@@ -450,7 +450,7 @@ func testAKSClusterAddUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1Aksclus
   spec {
     config {
       location = "eastus"
-      kubernetes_version = "1.24.10"
+      kubernetes_version = "1.25.11"
       network_config {
         dns_prefix = "dns-tf-test"
       }
@@ -501,7 +501,7 @@ func mockCluster(w ...clusterWither) *aksmodel.VmwareTanzuManageV1alpha1AksClust
 					EnableDiskCsiDriver: false,
 					EnableFileCsiDriver: false,
 				},
-				Version: "1.24.10",
+				Version: "1.25.11",
 			},
 		},
 		Status: &aksmodel.VmwareTanzuManageV1alpha1AksclusterStatus{
