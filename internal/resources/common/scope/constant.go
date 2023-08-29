@@ -17,6 +17,7 @@ const (
 	ProvisionerNameKey       = "provisioner_name"
 	NameKey                  = "name"
 	ScopeKey                 = "scope"
+	AttachedValue            = "attached"
 	ClusterKey               = "cluster"
 	ClusterGroupKey          = "cluster_group"
 )
@@ -26,6 +27,7 @@ const (
 	UnknownScope Scope = iota
 	ClusterScope
 	ClusterGroupScope
+	WorkspaceScope
 )
 
 func getSchemaForScope() func(string) *schema.Schema {
