@@ -33,6 +33,7 @@ resource "tanzu-mission-control_credential" "aws_eks_cred" {
       }
     }
   }
+  ready_wait_timeout = "2m" // Wait time for credential create operations to finish (default: 3m).
 }
 ```
 
@@ -182,6 +183,7 @@ resource "tanzu-mission-control_credential" "tanzu_observability_cred" {
 ### Optional
 
 - `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
+- `ready_wait_timeout` (String) Wait timeout duration until credential resource reaches VALID state. Accepted timeout duration values like 5s, 5m, or 1h, higher than zero.
 - `spec` (Block List, Max: 1) Spec of credential resource (see [below for nested schema](#nestedblock--spec))
 
 ### Read-Only

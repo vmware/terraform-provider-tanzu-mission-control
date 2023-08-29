@@ -6,6 +6,8 @@ SPDX-License-Identifier: MPL-2.0
 package credential
 
 const (
+	ResourceName = "tanzu-mission-control_credential"
+
 	NameKey              = "name"
 	specKey              = "spec"
 	statusKey            = "status"
@@ -21,5 +23,5 @@ const (
 	iamRoleARNKey    = "arn"
 	iamRoleExtIDKey  = "ext_id"
 	typeKey          = "type"
-	ResourceName     = "tanzu-mission-control_credential"
+	waitKey          = "ready_wait_timeout"
 )

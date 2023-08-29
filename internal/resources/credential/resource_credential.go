@@ -14,6 +14,7 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	credentialsmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/credential"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
@@ -42,6 +43,12 @@ var credentialSchema = map[string]*schema.Schema{
 		Description: "Status of credential resource",
 		Computed:    true,
 		Elem:        &schema.Schema{Type: schema.TypeString},
+	},
+	waitKey: {
+		Type:        schema.TypeString,
+		Description: "Wait timeout duration until credential resource reaches VALID state. Accepted timeout duration values like 5s, 5m, or 1h, higher than zero.",
+		Default:     defaultWaitTimeout.String(),
+		Optional:    true,
 	},
 }
 
@@ -106,7 +113,7 @@ func resourceCredentialCreate(ctx context.Context, d *schema.ResourceData, m int
 
 	d.SetId(response.Credential.Meta.UID)
 
-	return dataSourceCredentialRead(ctx, d, m)
+	return dataSourceCredentialRead(helper.GetContextWithCaller(ctx, helper.CreateState), d, m)
 }
 
 func resourceCredentialDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

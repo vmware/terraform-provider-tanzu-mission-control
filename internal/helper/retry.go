@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+const DoNotRetry = "do_not_retry"
+
 // Retryable is a simple function which can be retried, returns (retry[yes/no], error).
 type Retryable func() (bool, error)
 

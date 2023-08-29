@@ -25,6 +25,7 @@ data "tanzu-mission-control_credential" "test_cred" {
 ### Optional
 
 - `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
+- `ready_wait_timeout` (String) Wait timeout duration until credential resource reaches VALID state. Accepted timeout duration values like 5s, 5m, or 1h, higher than zero.
 - `spec` (Block List, Max: 1) Spec of credential resource (see [below for nested schema](#nestedblock--spec))
 
 ### Read-Only
