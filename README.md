@@ -165,7 +165,8 @@ Please refer to `examples` folder to perform CRUD operations with Tanzu Mission 
 # Support
 
 The Tanzu Mission Control Terraform provider is now VMware supported as well as community supported. For bugs and feature requests please open a Github Issue and label it appropriately or contact VMware support.
-
+Dummy changes ti test pipeline on new github PR
+Update doc
 # License
 
 Copyright © 2015-2022 VMware, Inc. All Rights Reserved.
