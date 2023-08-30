@@ -11,6 +11,7 @@ import (
 
 	clusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster"
 	iamclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/iam_policy"
+	packageclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/package"
 	policyclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/policy"
 	clustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup"
 	iamclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/iam_policy"
@@ -82,6 +83,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterPackageRepositoryService:             pkgrepositoryclusterclient.New(httpClient),
 		ClusterPackageRepositoryAvailabilityService: pkgrepoavailabilityclusterclient.New(httpClient),
 		ClusterTanzuPackageService:                  tanzupackageclusterclient.New(httpClient),
+		TanzupackageResourceService:                 packageclusterclient.New(httpClient),
 	}
 }
 
@@ -109,4 +111,5 @@ type TanzuMissionControl struct {
 	ClusterPackageRepositoryService             pkgrepositoryclusterclient.ClientService
 	ClusterPackageRepositoryAvailabilityService pkgrepoavailabilityclusterclient.ClientService
 	ClusterTanzuPackageService                  tanzupackageclusterclient.ClientService
+	TanzupackageResourceService                 packageclusterclient.ClientService
 }

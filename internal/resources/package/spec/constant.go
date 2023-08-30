@@ -13,5 +13,6 @@ const (
 	ReleaseNotesKey                    = "release_notes"
 	ValuesSchemaKey                    = "values_schema"
 	TemplateKey                        = "template"
+	RepositoryNameKey                  = "repository_name"
 	RawKey                             = "raw"
 )

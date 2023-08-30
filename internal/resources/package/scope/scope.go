@@ -29,17 +29,17 @@ var (
 		commonscope.WithScopes(ScopeAllowed[:]))
 )
 
-func ConstructScope(d *schema.ResourceData, name, metadataName, namespace string) (scopedFullnameData *ScopedFullname) {
+func ConstructScope(d *schema.ResourceData) (scopedFullnameData *ScopedFullname, scopesFound []string) {
 	value, ok := d.GetOk(commonscope.ScopeKey)
 
 	if !ok {
-		return scopedFullnameData
+		return scopedFullnameData, scopesFound
 	}
 
 	data, _ := value.([]interface{})
 
 	if len(data) == 0 || data[0] == nil {
-		return scopedFullnameData
+		return scopedFullnameData, scopesFound
 	}
 
 	scopeData := data[0].(map[string]interface{})
@@ -48,17 +48,19 @@ func ConstructScope(d *schema.ResourceData, name, metadataName, namespace string
 		if clusterValue, ok := clusterData.([]interface{}); ok && len(clusterValue) != 0 {
 			scopedFullnameData = &ScopedFullname{
 				Scope:           commonscope.ClusterScope,
-				FullnameCluster: ConstructClusterPackageFullname(clusterValue, name, metadataName, namespace),
+				FullnameCluster: ConstructClusterPackageFullname(clusterValue),
 			}
+
+			scopesFound = append(scopesFound, commonscope.ClusterKey)
 		}
 	}
 
-	return scopedFullnameData
+	return scopedFullnameData, scopesFound
 }
 
-func FlattenScope(scopedFullname *ScopedFullname) (data []interface{}, name, metadata, namespace string) {
+func FlattenScope(scopedFullname *ScopedFullname) (data []interface{}) {
 	if scopedFullname == nil {
-		return data, name, metadata, namespace
+		return data
 	}
 
 	flattenScopeData := make(map[string]interface{})
@@ -66,14 +68,11 @@ func FlattenScope(scopedFullname *ScopedFullname) (data []interface{}, name, met
 	switch scopedFullname.Scope {
 	case commonscope.ClusterScope:
 		if slices.Contains(ScopeAllowed[:], commonscope.ClusterKey) {
-			name = scopedFullname.FullnameCluster.Name
-			metadata = scopedFullname.FullnameCluster.MetadataName
-			namespace = scopedFullname.FullnameCluster.NamespaceName
 			flattenScopeData[commonscope.ClusterKey] = FlattenClusterPackageFullname(scopedFullname.FullnameCluster)
 		}
 	case commonscope.UnknownScope:
 		fmt.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(ScopeAllowed[:], `, `))
 	}
 
-	return []interface{}{flattenScopeData}, name, metadata, namespace
+	return []interface{}{flattenScopeData}
 }
