@@ -92,7 +92,7 @@ func resourcePackageRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 	scopedFullnameData.FullnameCluster.NamespaceName = globalNs
 
-	UID, meta, atomicSpec, err := retrieveSourcesecretUIDMetaAndSpecFromServer(config, scopedFullnameData, d)
+	UID, meta, atomicSpec, err := retrievePackaageUIDMetaAndSpecFromServer(config, scopedFullnameData, d)
 	if err != nil {
 		if clienterrors.IsNotFoundError(err) {
 			_ = schema.RemoveFromState(d, m)
@@ -119,7 +119,7 @@ func resourcePackageRead(ctx context.Context, d *schema.ResourceData, m interfac
 	return diags
 }
 
-func retrieveSourcesecretUIDMetaAndSpecFromServer(config authctx.TanzuContext, scopedFullnameData *scope.ScopedFullname, d *schema.ResourceData) (
+func retrievePackaageUIDMetaAndSpecFromServer(config authctx.TanzuContext, scopedFullnameData *scope.ScopedFullname, d *schema.ResourceData) (
 	string,
 	*objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta,
 	*tanzupackagemodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageSpec,
