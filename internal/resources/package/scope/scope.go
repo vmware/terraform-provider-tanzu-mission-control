@@ -16,7 +16,7 @@ import (
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 )
 
-// ScopedFullname is a struct for all types of source secret full names.
+// ScopedFullname is a struct for all types of package full names.
 type ScopedFullname struct {
 	Scope           commonscope.Scope
 	FullnameCluster *packageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageFullName
@@ -25,7 +25,7 @@ type ScopedFullname struct {
 var (
 	ScopeAllowed = [...]string{commonscope.ClusterKey}
 	ScopeSchema  = commonscope.GetScopeSchema(
-		commonscope.WithDescription(fmt.Sprintf("Scope for the source secret, having one of the valid scopes: %v.", strings.Join(ScopeAllowed[:], `, `))),
+		commonscope.WithDescription(fmt.Sprintf("Scope for the data source, having one of the valid scopes: %v.", strings.Join(ScopeAllowed[:], `, `))),
 		commonscope.WithScopes(ScopeAllowed[:]))
 )
 

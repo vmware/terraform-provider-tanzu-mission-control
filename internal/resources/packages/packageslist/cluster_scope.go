@@ -7,7 +7,6 @@ package listpackages
 
 import (
 	packageclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/package/cluster"
-
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/package/spec"
 )
 

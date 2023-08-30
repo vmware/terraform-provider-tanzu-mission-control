@@ -23,7 +23,7 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 		expected    []interface{}
 	}{
 		{
-			description: "check for nil cluster source secret spec",
+			description: "check for nil cluster package spec",
 			input:       nil,
 			expected:    nil,
 		},

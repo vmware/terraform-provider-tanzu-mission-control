@@ -207,7 +207,7 @@ func (testConfig *testAcceptanceConfig) verifyPkgDataSourceCreation(name string)
 	return func(s *terraform.State) error {
 		_, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("root module does not have source secret resource %s", name)
+			return fmt.Errorf("root module does not have package resource %s", name)
 		}
 
 		return nil
