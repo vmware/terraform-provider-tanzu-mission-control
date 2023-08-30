@@ -55,9 +55,9 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 						},
 					},
 					RoleBindingScopeKey: fmt.Sprint(packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScopeCLUSTER),
-					InlineValuesKey: map[string]interface{}{
+					InlineValuesKey: map[string]string{
 						"namespace": "cert-manager",
-						"some":      91,
+						"some":      "91",
 					},
 				},
 			},
