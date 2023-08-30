@@ -39,7 +39,7 @@ var (
 	PackageRefKeySpec = &schema.Schema{
 		Type:        schema.TypeList,
 		Description: "Reference to the Package which will be installed.",
-		Optional:    true,
+		Required:    true,
 		MaxItems:    1,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
@@ -57,7 +57,7 @@ var (
 	versionSelectionSpec = &schema.Schema{
 		Type:        schema.TypeList,
 		Description: "Version Selection of the Package.",
-		Optional:    true,
+		Required:    true,
 		MaxItems:    1,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
