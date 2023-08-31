@@ -6,10 +6,13 @@ SPDX-License-Identifier: MPL-2.0
 package spec
 
 import (
+	"strconv"
+
+	valid "github.com/asaskevich/govalidator"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	packageinstallmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzupackageinstall"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
+	common "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec) {
@@ -60,13 +63,35 @@ func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *packageinstallm
 		}
 	}
 
-	if roleBindingScopeValue, ok := specData[RoleBindingScopeKey]; ok {
-		spec.RoleBindingScope = packageinstallmodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScope(packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScope(roleBindingScopeValue.(string)))
-	}
+	spec.RoleBindingScope = packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScopeCLUSTER.Pointer()
 
 	if v, ok := specData[InlineValuesKey]; ok {
 		if v1, ok := v.(map[string]interface{}); ok {
-			spec.InlineValues = common.GetTypeStringMapData(v1)
+			for key, value := range v1 {
+				switch {
+				case valid.IsInt(value.(string)):
+					number, err := strconv.ParseUint(value.(string), 10, 32)
+					if err != nil {
+						v1[key] = value.(string)
+						break
+					}
+
+					finalIntNum := int(number) // Convert uint64 To int
+					v1[key] = finalIntNum
+				case valid.IsFloat(value.(string)):
+					floatNum, err := strconv.ParseFloat(value.(string), 64)
+					if err != nil {
+						v1[key] = value.(string)
+						break
+					}
+
+					v1[key] = floatNum
+				default:
+					v1[key] = value.(string)
+				}
+			}
+
+			spec.InlineValues = v1
 		}
 	}
 
@@ -94,7 +119,12 @@ func FlattenSpecForClusterScope(spec *packageinstallmodel.VmwareTanzuManageV1alp
 	pkgRefSpec[PackageMetadataNameKey] = pkgMetadataName
 	pkgRefSpec[VersionSelectionKey] = versionSelectionSpec
 
-	flattenSpecData[InlineValuesKey] = spec.InlineValues
+	if v1, ok := spec.InlineValues.(map[string]interface{}); ok {
+		inline := common.GetTypeStringMapData(v1)
+		flattenSpecData[InlineValuesKey] = inline
+	} else {
+		flattenSpecData[InlineValuesKey] = spec.InlineValues
+	}
 
 	flattenSpecData[RoleBindingScopeKey] = string(*spec.RoleBindingScope)
 
