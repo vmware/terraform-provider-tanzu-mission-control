@@ -1,3 +1,6 @@
+//go:build kustomization
+// +build kustomization
+
 /*
 Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
@@ -6,17 +9,14 @@ SPDX-License-Identifier: MPL-2.0
 package kustomization
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
 
@@ -25,35 +25,9 @@ import (
 	kustomizationclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kustomization/cluster"
 	kustomizationclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kustomization/clustergroup"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
-	gitrepositoryhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/gitrepository"
 	kustomizationscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kustomization/scope"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
-
-// nolint: gosec
-const (
-	kustomizationResource      = ResourceName
-	kustomizationResourceVar   = "test_kustomization"
-	kustomizationDataSourceVar = "test_data_source_kustomization"
-	kustomizationNamePrefix    = "tf-kustomization-test"
-
-	gitRepositoryResource    = gitrepositoryhelper.ResourceName
-	gitRepositoryResourceVar = "test_git_repository"
-	gitRepositoryNamePrefix  = "tf-gr-test"
-)
-
-type testAcceptanceConfig struct {
-	Provider                  *schema.Provider
-	KustomizationResource     string
-	KustomizationResourceVar  string
-	KustomizationResourceName string
-	KustomizationName         string
-	ScopeHelperResources      *commonscope.ScopeHelperResources
-	GitRepositoryResource     string
-	GitRepositoryResourceVar  string
-	GitRepositoryName         string
-	Namespace                 string
-}
 
 func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 	return &testAcceptanceConfig{
@@ -68,14 +42,6 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 		GitRepositoryName:         acctest.RandomWithPrefix(gitRepositoryNamePrefix),
 		Namespace:                 "tanzu-continuousdelivery-resources",
 	}
-}
-
-func getConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	if _, found := os.LookupEnv("ENABLE_KUSTOMIZATION_ENV_TEST"); !found {
-		return authctx.ProviderConfigureContextWithDefaultTransportForTesting
-	}
-
-	return authctx.ProviderConfigureContext
 }
 
 func getSetupConfig(config *authctx.TanzuContext) error {
