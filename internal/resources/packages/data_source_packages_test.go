@@ -1,3 +1,6 @@
+//go:build tanzupackages
+// +build tanzupackages
+
 /*
 Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
@@ -6,40 +9,18 @@ SPDX-License-Identifier: MPL-2.0
 package tanzupackages
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 	packagescope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/package/scope"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
-
-// nolint: gosec
-const (
-	PkgsResource        = ResourceName
-	pkgsDataSourceVar   = "test_data_source_pkgs"
-	pkgsMetadataName    = "pkg.test.carvel.dev"
-	globalRepoNamespace = "tanzu-package-repo-global"
-
-	imageURL = "projects.registry.vmware.com/tmc/build-integrations/package/repository/e2e-test-unauth-repo@sha256:87a5f7e0c44523fbc35a9432c657bebce246138bbd0f16d57f5615933ceef632"
-)
-
-type testAcceptanceConfig struct {
-	Provider             *schema.Provider
-	PkgsResource         string
-	PkgsDataSourceVar    string
-	PkgsDataSourceName   string
-	ScopeHelperResources *commonscope.ScopeHelperResources
-}
 
 func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 	return &testAcceptanceConfig{
@@ -49,14 +30,6 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 		PkgsDataSourceVar:    pkgsDataSourceVar,
 		PkgsDataSourceName:   fmt.Sprintf("data.%s.%s", ResourceName, pkgsDataSourceVar),
 	}
-}
-
-func getConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	if _, found := os.LookupEnv("ENABLE_PKGS_ENV_TEST"); !found {
-		return authctx.ProviderConfigureContextWithDefaultTransportForTesting
-	}
-
-	return authctx.ProviderConfigureContext
 }
 
 func TestAcceptanceForPackagesDataSource(t *testing.T) {

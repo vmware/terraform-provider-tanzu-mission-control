@@ -24,7 +24,7 @@ resource "tanzu-mission-control_package_repository" "create_cluster_pkg_reposito
 
   scope {
     cluster {
-      cluster_name            = "testcluster" # Required
+      name            = "testcluster" # Required
       provisioner_name        = "attached"    # Default: attached
       management_cluster_name = "attached"    # Default: attached
     }
@@ -67,7 +67,7 @@ resource "tanzu-mission-control_package_repository" "create_cluster_pkg_reposito
 
 Optional:
 
-- `cluster` (Block List, Max: 1) The schema for cluster iam policy full name (see [below for nested schema](#nestedblock--scope--cluster))
+- `cluster` (Block List, Max: 1) The schema for cluster full name (see [below for nested schema](#nestedblock--scope--cluster))
 
 <a id="nestedblock--scope--cluster"></a>
 ### Nested Schema for `scope.cluster`

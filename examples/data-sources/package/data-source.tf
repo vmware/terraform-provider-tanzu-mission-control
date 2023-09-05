@@ -6,7 +6,7 @@ data "tanzu-mission-control_package" "get_cluster_package" {
 
   scope {
     cluster {
-      cluster_name            = "testcluster" # Required
+      name            = "testcluster" # Required
       provisioner_name        = "attached"    # Default: attached
       management_cluster_name = "attached"    # Default: attached
     }

@@ -90,9 +90,6 @@ func (m *VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageVal
 type K8sIoApimachineryPkgRuntimeRawExtension struct {
 
 	// Raw is the underlying serialization of this object.
-	//
-	// TODO: Determine how to detect ContentType and ContentEncoding of 'Raw' data.
-	// Format: byte
 	Raw strfmt.Base64 `json:"raw,omitempty"`
 }
 
