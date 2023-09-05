@@ -21,7 +21,7 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
 
   scope {
     cluster_group {
-      cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name
+      name = tanzu-mission-control_cluster_group.create_cluster_group.name
     }
   }
 
@@ -31,9 +31,11 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
   }
 
   spec {
-    ssh_key {
-      identity    = "testidentity"    # Required
-      known_hosts = "testknown_hosts" # Required
+    data {
+        ssh_key {
+          identity    = "testidentity"    # Required
+          known_hosts = "testknown_hosts" # Required
+      }
     }
   }
 }

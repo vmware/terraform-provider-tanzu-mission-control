@@ -23,7 +23,7 @@ resource "tanzu-mission-control_git_repository" "create_cluster_git_repository" 
 
   scope {
     cluster_group {
-      cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name
+      name = tanzu-mission-control_cluster_group.create_cluster_group.name
     }
   }
 
@@ -53,7 +53,7 @@ resource "tanzu-mission-control_kustomization" "create_cluster_kustomization" {
 
   scope {
     cluster_group {
-      cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name
+      name = tanzu-mission-control_cluster_group.create_cluster_group.name
     }
   }
 

@@ -72,7 +72,7 @@ resource "tanzu-mission-control_kustomization" "create_cluster_kustomization" {
 
   scope {
     cluster {
-      cluster_name            = "testcluster" # Required
+      name            = "testcluster" # Required
       provisioner_name        = "attached"    # Default: attached
       management_cluster_name = "attached"    # Default: attached
     }

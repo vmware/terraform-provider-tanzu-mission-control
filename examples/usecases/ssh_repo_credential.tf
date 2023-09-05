@@ -46,7 +46,7 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
 
   scope {
     cluster {
-      cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
+      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
       provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name        # Default: attached
       management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name # Default: attached
     }
@@ -58,9 +58,11 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
   }
 
   spec {
-    ssh_key {
-      identity    = "testidentity"    # Required
-      known_hosts = "testknown_hosts" # Required
+    data {
+        ssh_key {
+          identity    = "testidentity"    # Required
+          known_hosts = "testknown_hosts" # Required
+      }
     }
   }
 }

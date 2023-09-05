@@ -48,7 +48,7 @@ resource "tanzu-mission-control_git_repository" "create_cluster_git_repository" 
 
   scope {
     cluster {
-      cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
+      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
       provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name        # Default: attached
       management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name # Default: attached
     }
@@ -80,7 +80,7 @@ resource "tanzu-mission-control_kustomization" "create_cluster_kustomization" {
 
   scope {
     cluster {
-      cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
+      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
       provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name        # Default: attached
       management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name # Default: attached
     }

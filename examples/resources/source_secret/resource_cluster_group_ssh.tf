@@ -14,9 +14,11 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_group_sou
   }
 
   spec {
-    ssh_key {
-      identity    = "testidentity"    # Required
-      known_hosts = "testknown_hosts" # Required
+    data {
+        ssh_key {
+        identity    = "testidentity"    # Required
+        known_hosts = "testknown_hosts" # Required
+      }
     }
   }
 }

@@ -4,7 +4,7 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
 
   scope {
     cluster {
-      cluster_name            = "testcluster" # Required
+      name                    = "testcluster" # Required
       provisioner_name        = "attached"    # Default: attached
       management_cluster_name = "attached"    # Default: attached
     }
@@ -16,9 +16,11 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
   }
 
   spec {
-    ssh_key {
-      identity    = "testidentity"    # Required
-      known_hosts = "testknown_hosts" # Required
+    data {
+        ssh_key {
+        identity    = "testidentity"    # Required
+        known_hosts = "testknown_hosts" # Required
+      }
     }
   }
 }
