@@ -22,4 +22,5 @@ resource "tanzu-mission-control_credential" "aws_eks_cred" {
       }
     }
   }
+  ready_wait_timeout = "2m" // Wait time for credential create operations to finish (default: 3m).
 }
