@@ -80,6 +80,10 @@ run:
     - securitypolicy
     - sourcesecret
     - workspace
+    - packageinstall
+    - packagerepository
+    - tanzupackages
+    - tanzupackage
 
 linters-settings:
   funlen:

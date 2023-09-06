@@ -1,0 +1,21 @@
+---
+Title: "Packages Data Source"
+Description: |-
+    Read the Packages from TMC.
+---
+
+# Package Repository
+
+This resource allows you to get list of Packages from a cluster through Tanzu Mission Control.
+
+The Available tab on the Catalog page in the Tanzu Mission Control console shows the packages that are available to be installed, including those that are in the Tanzu Standard package repository and other repositories that you have associated with a cluster.
+
+[packages]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-4B45987F-D5A0-4283-8B4E-139F38DCBFD9.html
+
+
+## Cluster scoped Package
+
+### Example Usage
+
+{{ tffile "examples/data-sources/packages/data-source.tf" }}
+{{ .SchemaMarkdown | trimspace }}

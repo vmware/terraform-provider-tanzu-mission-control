@@ -1,0 +1,25 @@
+---
+Title: "Package Install Resource"
+Description: |-
+    Creating the Package Install resource.
+---
+
+# Package Install
+
+This resource allows you to add, update, and delete package install to a cluster through Tanzu Mission Control.
+
+To install an available package on a cluster, you must be associated with the .admin role on that cluster.
+
+Use the Catalog page of the Tanzu Mission Control console to install a package from your repository to your Kubernetes cluster.
+
+The Available tab on the Catalog page in the Tanzu Mission Control console shows the packages that are available to be installed, including those that are in the Tanzu Standard package repository and other repositories that you have associated with a cluster.
+
+[package-install]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-E0168103-7A6F-4C07-8768-19D9B1EB4EFA.html
+
+
+## Cluster scoped Package install
+
+### Example Usage
+
+{{ tffile "examples/resources/packageinstall/resource.tf" }}
+{{ .SchemaMarkdown | trimspace }}
