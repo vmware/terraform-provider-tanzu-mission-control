@@ -46,7 +46,7 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
 
   scope {
     cluster {
-      cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
+      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
       provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name        # Default: attached
       management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name # Default: attached
     }
@@ -58,9 +58,11 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
   }
 
   spec {
-    username_password {
-      username = "testusername" # Required
-      password = "testpassword" # Required
+    data {
+        username_password {
+          username = "testusername" # Required
+          password = "testpassword" # Required
+      }
     }
   }
 }
@@ -73,7 +75,7 @@ resource "tanzu-mission-control_git_repository" "create_cluster_git_repository" 
 
   scope {
     cluster {
-      cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
+      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
       provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name        # Default: attached
       management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name # Default: attached
     }
@@ -106,7 +108,7 @@ resource "tanzu-mission-control_kustomization" "create_cluster_kustomization" {
 
   scope {
     cluster {
-      cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
+      name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
       provisioner_name        = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.provisioner_name        # Default: attached
       management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name # Default: attached
     }

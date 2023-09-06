@@ -14,9 +14,11 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_group_sou
   }
 
   spec {
-    username_password {
-      username = "testusername" # Required
-      password = "testpassword" # Required
+    data {
+        username_password {
+        username = "testusername" # Required
+        password = "testpassword" # Required
+      }
     }
   }
 }

@@ -4,7 +4,7 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
 
   scope {
     cluster {
-      cluster_name            = "testcluster" # Required
+      name                    = "testcluster" # Required
       provisioner_name        = "attached"    # Default: attached
       management_cluster_name = "attached"    # Default: attached
     }
@@ -16,9 +16,11 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
   }
 
   spec {
-    username_password {
-      username = "testusername" # Required
-      password = "testpassword" # Required
+    data {
+        username_password {
+          username = "testusername" # Required
+          password = "testpassword" # Required
+      }
     }
   }
 }
