@@ -878,6 +878,10 @@ func fillTMCSetValues(tmcNpSpec *eksmodel.VmwareTanzuManageV1alpha1EksclusterNod
 	if npSpec.CapacityType == "" {
 		npSpec.CapacityType = tmcNpSpec.CapacityType
 	}
+
+	if npSpec.ReleaseVersion == "" {
+		npSpec.ReleaseVersion = tmcNpSpec.ReleaseVersion
+	}
 }
 
 func handleNodepoolCreates(config authctx.TanzuContext, opsRetryTimeout time.Duration, clusterFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName, nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
