@@ -318,7 +318,7 @@ var NetworkConfig = &schema.Resource{
 		},
 		networkPluginKey: {
 			Type:        schema.TypeString,
-			Description: "Network plugin",
+			Description: "Network plugin. Set the value of this key to 'azure' if you want to specify values for network_config.dns_service_ip and/or network_config.service_cidr.",
 			ForceNew:    true,
 			Optional:    true,
 			Computed:    true,
@@ -331,7 +331,7 @@ var NetworkConfig = &schema.Resource{
 		},
 		dnsServiceIPKey: {
 			Type:        schema.TypeString,
-			Description: "IP address assigned to the Kubernetes DNS service",
+			Description: "IP address assigned to the Kubernetes DNS service. This key can only be set when the network_config.network_plugin key is set to 'azure'.",
 			ForceNew:    true,
 			Optional:    true,
 			Computed:    true,
@@ -355,7 +355,7 @@ var NetworkConfig = &schema.Resource{
 		},
 		serviceCidrKey: {
 			Type:        schema.TypeList,
-			Description: "CIDR notation IP ranges from which to assign service cluster IP",
+			Description: "CIDR notation IP ranges from which to assign service cluster IP. This key can only be set when the network_config.network_plugin key is set to 'azure'.",
 			ForceNew:    true,
 			Optional:    true,
 			Computed:    true,

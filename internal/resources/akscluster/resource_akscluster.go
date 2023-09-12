@@ -182,7 +182,11 @@ func validate(nodepools []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNod
 // createOrUpdateCluster creates an AKS cluster in TMC.  It is possible the cluster already exists in which case the
 // existing cluster is updated with any node pools defined in the configuration.
 func createOrUpdateCluster(data *schema.ResourceData, client akscluster.ClientService) error {
-	cluster := ConstructCluster(data)
+	cluster, cErr := ConstructCluster(data)
+	if cErr != nil {
+		return cErr
+	}
+
 	clusterReq := &models.VmwareTanzuManageV1alpha1AksclusterCreateAksClusterRequest{AksCluster: cluster}
 	createResp, err := client.AksClusterResourceServiceCreate(clusterReq)
 
@@ -215,7 +219,11 @@ func getExistingCluster(data *schema.ResourceData, client akscluster.ClientServi
 }
 
 func updateClusterConfig(ctx context.Context, data *schema.ResourceData, clusterResp *models.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse, tc authctx.TanzuContext) error {
-	cluster := ConstructCluster(data)
+	cluster, cErr := ConstructCluster(data)
+	if cErr != nil {
+		return cErr
+	}
+
 	cluster.Meta = clusterResp.AksCluster.Meta
 	updateReq := &models.VmwareTanzuManageV1alpha1AksclusterUpdateAksClusterRequest{AksCluster: cluster}
 

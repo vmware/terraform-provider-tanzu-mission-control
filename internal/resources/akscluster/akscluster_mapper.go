@@ -6,6 +6,8 @@ SPDX-License-Identifier: MPL-2.0
 package akscluster
 
 import (
+	"errors"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
@@ -13,15 +15,20 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
-func ConstructCluster(data *schema.ResourceData) *models.VmwareTanzuManageV1alpha1AksCluster {
+func ConstructCluster(data *schema.ResourceData) (*models.VmwareTanzuManageV1alpha1AksCluster, error) {
+	spec, err := constructAKSClusterSpec(data)
+	if err != nil {
+		return nil, err
+	}
+
 	return &models.VmwareTanzuManageV1alpha1AksCluster{
 		FullName: extractClusterFullName(data),
 		Meta:     common.ConstructMeta(data),
-		Spec:     constructAKSClusterSpec(data),
-	}
+		Spec:     spec,
+	}, nil
 }
 
-func constructAKSClusterSpec(data *schema.ResourceData) *models.VmwareTanzuManageV1alpha1AksclusterSpec {
+func constructAKSClusterSpec(data *schema.ResourceData) (*models.VmwareTanzuManageV1alpha1AksclusterSpec, error) {
 	specData := extractClusterSpec(data)
 
 	spec := &models.VmwareTanzuManageV1alpha1AksclusterSpec{}
@@ -35,7 +42,13 @@ func constructAKSClusterSpec(data *schema.ResourceData) *models.VmwareTanzuManag
 
 	if v, ok := specData[configKey]; ok {
 		configData, _ := v.([]any)
-		spec.Config = constructConfig(configData)
+		v, err := constructConfig(configData)
+
+		if err != nil {
+			return nil, err
+		} else {
+			spec.Config = v
+		}
 	}
 
 	if v, ok := specData[agentNameKey]; ok {
@@ -46,7 +59,7 @@ func constructAKSClusterSpec(data *schema.ResourceData) *models.VmwareTanzuManag
 		helper.SetPrimitiveValue(v, &spec.ResourceID, resourceIDKey)
 	}
 
-	return spec
+	return spec, nil
 }
 
 func extractClusterSpec(data *schema.ResourceData) map[string]any {
@@ -64,9 +77,9 @@ func extractClusterSpec(data *schema.ResourceData) map[string]any {
 	return dataSpec[0].(map[string]any)
 }
 
-func constructConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterClusterConfig {
+func constructConfig(data []any) (*models.VmwareTanzuManageV1alpha1AksclusterClusterConfig, error) {
 	if len(data) < 1 {
-		return nil
+		return nil, nil
 	}
 
 	// Config schema defines max 1
@@ -121,7 +134,13 @@ func constructConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterClus
 
 	if v, ok := configData[networkConfigKey]; ok {
 		data, _ := v.([]any)
-		config.NetworkConfig = constructNetworkConfig(data)
+		v, err := constructNetworkConfig(data)
+
+		if err != nil {
+			return nil, err
+		} else {
+			config.NetworkConfig = v
+		}
 	}
 
 	if v, ok := configData[skuKey]; ok {
@@ -138,7 +157,7 @@ func constructConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterClus
 		helper.SetPrimitiveValue(v, &config.NodeResourceGroupName, nodeResourceGroupNameKey)
 	}
 
-	return config
+	return config, nil
 }
 
 func constructSku(data []any) *models.VmwareTanzuManageV1alpha1AksclusterClusterSKU {
@@ -228,9 +247,9 @@ func constructLinuxConfig(data []any) *models.VmwareTanzuManageV1alpha1Akscluste
 	return linuxConfig
 }
 
-func constructNetworkConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterNetworkConfig {
+func constructNetworkConfig(data []any) (*models.VmwareTanzuManageV1alpha1AksclusterNetworkConfig, error) {
 	if len(data) < 1 {
-		return nil
+		return nil, nil
 	}
 
 	// NetworkConfig schema defines max 1
@@ -269,7 +288,11 @@ func constructNetworkConfig(data []any) *models.VmwareTanzuManageV1alpha1Aksclus
 		networkConfig.PodCidrs = helper.SetPrimitiveList[string](v.([]any))
 	}
 
-	return networkConfig
+	if networkConfig.NetworkPlugin == "kubenet" && (networkConfig.DNSServiceIP != "" || networkConfig.ServiceCidrs != nil) {
+		return networkConfig, errors.New("can not set network_config.dns_service_ip or network_config.service_cidr when network_config.network_plugin is set to kubenet")
+	}
+
+	return networkConfig, nil
 }
 
 func constructStorageConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterStorageConfig {

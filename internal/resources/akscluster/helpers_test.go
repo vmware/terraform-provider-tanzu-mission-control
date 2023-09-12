@@ -190,6 +190,38 @@ func withDNSPrefix(prefix string) mapWither {
 	}
 }
 
+func withNetworkPlugin(plugin string) mapWither {
+	return func(m map[string]any) {
+		specs := m["spec"].([]any)
+		spec := specs[0].(map[string]any)
+		configs := spec["config"].([]any)
+		config := configs[0].(map[string]any)
+		networks := config["network_config"].([]any)
+		network := networks[0].(map[string]any)
+		network["network_plugin"] = plugin
+	}
+}
+
+func withoutNetworkDNSServiceIP(m map[string]any) {
+	specs := m["spec"].([]any)
+	spec := specs[0].(map[string]any)
+	configs := spec["config"].([]any)
+	config := configs[0].(map[string]any)
+	networks := config["network_config"].([]any)
+	network := networks[0].(map[string]any)
+	delete(network, "dns_service_ip")
+}
+
+func withoutNetworkServiceCIDR(m map[string]any) {
+	specs := m["spec"].([]any)
+	spec := specs[0].(map[string]any)
+	configs := spec["config"].([]any)
+	config := configs[0].(map[string]any)
+	networks := config["network_config"].([]any)
+	network := networks[0].(map[string]any)
+	delete(network, "service_cidr")
+}
+
 func withNodepools(nps []any) mapWither {
 	return func(m map[string]any) {
 		specs := m["spec"].([]any)
