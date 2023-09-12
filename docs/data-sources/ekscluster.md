@@ -169,6 +169,7 @@ Optional:
 - `instance_types` (Set of String) Nodepool instance types, immutable
 - `launch_template` (Block List, Max: 1) Launch template for the nodepool (see [below for nested schema](#nestedblock--spec--nodepool--spec--launch_template))
 - `node_labels` (Map of String) Kubernetes node labels
+- `release_version` (String) AMI release version
 - `remote_access` (Block List, Max: 1) Remote access to worker nodes, immutable (see [below for nested schema](#nestedblock--spec--nodepool--spec--remote_access))
 - `root_disk_size` (Number) Root disk size in GiB, immutable
 - `scaling_config` (Block List, Max: 1) Nodepool scaling config (see [below for nested schema](#nestedblock--spec--nodepool--spec--scaling_config))

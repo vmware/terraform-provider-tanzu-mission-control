@@ -309,6 +309,14 @@ func TestNodepoolSpecEqual(t *testing.T) {
 			},
 			result: false,
 		},
+		{
+			name:        "ami release versions are not equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {},
+			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {
+				spec2.ReleaseVersion = "1.26.4-20230728"
+			},
+			result: false,
+		},
 	}
 
 	for _, test := range tests {
@@ -640,5 +648,6 @@ func getNodepoolSpec() *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec
 			MaxUnavailableNodes:      "10",
 			MaxUnavailablePercentage: "12",
 		},
+		ReleaseVersion: "1.26.4-20230703",
 	}
 }

@@ -251,6 +251,12 @@ var nodepoolSpecSchema = &schema.Schema{
 					Type: schema.TypeString,
 				},
 			},
+			releaseVersionKey: {
+				Type:        schema.TypeString,
+				Description: "AMI release version",
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	},
 }
@@ -353,6 +359,10 @@ func flattenSpec(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec)
 
 	if item.UpdateConfig != nil {
 		data[updateConfigKey] = flattenUpdateConfig(item.UpdateConfig)
+	}
+
+	if item.ReleaseVersion != "" {
+		data[releaseVersionKey] = item.ReleaseVersion
 	}
 
 	return []interface{}{data}
@@ -584,6 +594,10 @@ func constructNodepoolSpec(data []interface{}) *eksmodel.VmwareTanzuManageV1alph
 		if data, ok := v.(*schema.Set); ok {
 			spec.InstanceTypes = constructStringList(data.List())
 		}
+	}
+
+	if v, ok := specData[releaseVersionKey]; ok {
+		helper.SetPrimitiveValue(v, &spec.ReleaseVersion, releaseVersionKey)
 	}
 
 	return spec
@@ -864,6 +878,10 @@ func fillTMCSetValues(tmcNpSpec *eksmodel.VmwareTanzuManageV1alpha1EksclusterNod
 	if npSpec.CapacityType == "" {
 		npSpec.CapacityType = tmcNpSpec.CapacityType
 	}
+
+	if npSpec.ReleaseVersion == "" {
+		npSpec.ReleaseVersion = tmcNpSpec.ReleaseVersion
+	}
 }
 
 func handleNodepoolCreates(config authctx.TanzuContext, opsRetryTimeout time.Duration, clusterFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName, nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
@@ -894,6 +912,11 @@ func handleNodepoolCreates(config authctx.TanzuContext, opsRetryTimeout time.Dur
 
 func createNodepools(config authctx.TanzuContext, clusterFn *eksmodel.VmwareTanzuManageV1alpha1EksclusterFullName, nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) error {
 	for _, np := range nps {
+		// Nodepools are created with the default release version, this field is only used for nodepool update
+		if np.Spec.ReleaseVersion != "" {
+			return errors.New("AMI release version of nodepool is not allowed to be set during Create")
+		}
+
 		npFn := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolFullName{
 			OrgID:          clusterFn.OrgID,
 			CredentialName: clusterFn.CredentialName,

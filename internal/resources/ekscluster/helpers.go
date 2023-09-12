@@ -23,7 +23,8 @@ func nodepoolSpecEqual(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepo
 		setEquality(spec1.SubnetIds, spec2.SubnetIds) &&
 		mapEqual(spec1.Tags, spec2.Tags) &&
 		nodepoolTaintsEqual(spec1.Taints, spec2.Taints) &&
-		structEqual(spec1.UpdateConfig, spec2.UpdateConfig)
+		structEqual(spec1.UpdateConfig, spec2.UpdateConfig) &&
+		spec1.ReleaseVersion == spec2.ReleaseVersion
 }
 
 func clusterSpecEqual(spec1, spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) bool {

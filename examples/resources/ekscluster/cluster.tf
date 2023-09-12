@@ -142,6 +142,10 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
           key    = "randomkey"
           value  = "randomvalue"
         }
+
+        // This field is only used for cluster UPDATE, to update the ami release version.
+        // Do not use this field for cluster CREATE
+        release_version = "1.26.6-20230728"
       }
     }
   }
