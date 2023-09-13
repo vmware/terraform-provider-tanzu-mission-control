@@ -11,6 +11,11 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/integration"
 )
 
+const (
+	enableNamespaceExclusionsSpecKey = "enableNamespaceExclusions"
+	namespaceExclusionsSpecKey       = "namespaceExclusions"
+)
+
 func TestFlattenSpec(t *testing.T) {
 	type testCase struct {
 		given  *integration.VmwareTanzuManageV1alpha1ClusterIntegrationSpec
