@@ -4,6 +4,10 @@ on:
   push:
     tags:
       - 'v*'
+
+env:
+  BUILD_TAGS: 'akscluster cluster clustergroup credential ekscluster gitrepository iampolicy kustomization namespace custompolicy imagepolicy networkpolicy quotapolicy securitypolicy sourcesecret workspace tanzupackage tanzupackages packagerepository packageinstall clustersecret integration'
+
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
@@ -31,6 +35,11 @@ jobs:
         name: unit-test
         run: |
           go test -v ./... -cover
+
+      -
+        name: mock-test
+        run: |
+          go test -v ./... -tags $BUILD_TAGS
 
       -
         name: Import GPG key
