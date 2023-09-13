@@ -1,3 +1,6 @@
+//go:build integration
+// +build integration
+
 /*
 Copyright © 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
@@ -20,11 +23,6 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/integration"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
-)
-
-const (
-	enableNamespaceExclusionsSpecKey = "enableNamespaceExclusions"
-	namespaceExclusionsSpecKey       = "namespaceExclusions"
 )
 
 func TestGenerate(t *testing.T) {
