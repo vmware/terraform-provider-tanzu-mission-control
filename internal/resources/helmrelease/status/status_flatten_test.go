@@ -25,12 +25,12 @@ func TestFlattenStatusForClusterScope(t *testing.T) {
 		expected    interface{}
 	}{
 		{
-			description: "check for nil cluster git repository status",
+			description: "check for nil cluster helm release status",
 			input:       nil,
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with complete cluster git repository status",
+			description: "normal scenario with complete cluster helm release status",
 			input: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseStatus{
 				Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
 					conditionReady: {
@@ -78,12 +78,12 @@ func TestFlattenStatusForClusterGroupScope(t *testing.T) {
 		expected    interface{}
 	}{
 		{
-			description: "check for nil cluster group git repository status",
+			description: "check for nil cluster group helm release status",
 			input:       nil,
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with complete cluster group git repository status",
+			description: "normal scenario with complete cluster group helm release status",
 			input: &releaseclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdHelmReleaseStatus{
 				Phase: statusmodel.VmwareTanzuManageV1alpha1CommonBatchPhaseAPPLIED.Pointer(),
 				Details: &statusmodel.VmwareTanzuManageV1alpha1CommonBatchDetails{

@@ -7,21 +7,22 @@ package spec
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/pkg/errors"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	releaseclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/helmrelease/cluster"
 )
 
-func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseSpec) {
+func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseSpec, err error) {
 	value, ok := d.GetOk(SpecKey)
 	if !ok {
-		return spec
+		return spec, nil
 	}
 
 	data, _ := value.([]interface{})
 
 	if len(data) == 0 || data[0] == nil {
-		return spec
+		return spec, nil
 	}
 
 	specData := data[0].(map[string]interface{})
@@ -29,7 +30,14 @@ func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *releaseclusterm
 	spec = &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseSpec{}
 
 	if inlineConfigValueFile, ok := specData[InlineConfigKey]; ok {
-		helper.SetPrimitiveValue(inlineConfigValueFile, &spec.InlineConfiguration, InlineConfigKey)
+		if !(fileExists(inlineConfigValueFile.(string))) {
+			return spec, errors.Errorf("File %s does not exists.", inlineConfigValueFile)
+		}
+
+		spec.InlineConfiguration, err = readYamlFile(inlineConfigValueFile.(string))
+		if err != nil {
+			return spec, nil
+		}
 	}
 
 	if targerNamespaceName, ok := specData[TargetNamespaceKey]; ok {
@@ -46,7 +54,7 @@ func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *releaseclusterm
 		}
 	}
 
-	return spec
+	return spec, nil
 }
 
 func FlattenSpecForClusterScope(spec *releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseSpec) (data []interface{}) {

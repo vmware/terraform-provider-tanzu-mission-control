@@ -90,6 +90,7 @@ func Provider() *schema.Provider {
 			tanzupackages.ResourceName:       tanzupackages.DataSourceTanzuPackages(),
 			tanzupackageinstall.ResourceName: tanzupackageinstall.DataSourcePackageInstall(),
 			kubernetessecret.ResourceName:    kubernetessecret.DataSourceSecret(),
+			helmfeature.ResourceName:         helmfeature.DataSourceHelm(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
