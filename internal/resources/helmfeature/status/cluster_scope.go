@@ -23,13 +23,9 @@ func FlattenStatusForClusterScope(status *helmclustermodel.VmwareTanzuManageV1al
 		return data
 	}
 
-	if condition.Status == nil {
-		return data
-	}
-
 	flattenStatusData := make(map[string]interface{})
 
-	flattenStatusData[stateKey] = string(*condition.Status)
+	flattenStatusData[stateKey] = condition.Reason
 
 	return flattenStatusData
 }
