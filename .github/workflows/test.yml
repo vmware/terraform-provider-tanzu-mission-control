@@ -2,6 +2,9 @@ name: Test and coverage
 
 on: [pull_request, push]
 
+env:
+  BUILD_TAGS: 'akscluster cluster clustergroup credential ekscluster gitrepository iampolicy kustomization namespace custompolicy imagepolicy networkpolicy quotapolicy securitypolicy sourcesecret workspace tanzupackage tanzupackages packagerepository packageinstall clustersecret integration'
+
 jobs:
   build:
     name: Test and coverage
@@ -18,9 +21,13 @@ jobs:
         run: |
           go build -v ./...
 
-      - name: Test
+      - name: Unit Test
         run: |
           go test $(go list ./... | grep -v /internal/client | grep -v /internal/models) -coverprofile=coverage.out -covermode=atomic
+
+      - name: Mock Test
+        run: |
+          go test $(go list ./... | grep -v /internal/client | grep -v /internal/models) -tags $BUILD_TAGS
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
