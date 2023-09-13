@@ -11,22 +11,22 @@ import (
 	releaseclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/helmrelease/clustergroup"
 )
 
-func ConstructSpecForClusterGroupScope(d *schema.ResourceData) (spec *releaseclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdHelmReleaseSpec) {
+func ConstructSpecForClusterGroupScope(d *schema.ResourceData) (spec *releaseclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdHelmReleaseSpec, err error) {
 	value, ok := d.GetOk(SpecKey)
 	if !ok {
-		return spec
+		return spec, nil
 	}
 
 	data, _ := value.([]interface{})
 
 	if len(data) == 0 || data[0] == nil {
-		return spec
+		return spec, nil
 	}
 
 	spec = &releaseclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdHelmReleaseSpec{}
-	spec.AtomicSpec = ConstructSpecForClusterScope(d)
+	spec.AtomicSpec, err = ConstructSpecForClusterScope(d)
 
-	return spec
+	return spec, err
 }
 
 func FlattenSpecForClusterGroupScope(spec *releaseclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdHelmReleaseSpec) (data []interface{}) {

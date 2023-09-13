@@ -6,9 +6,16 @@ SPDX-License-Identifier: MPL-2.0
 package spec
 
 import (
+	"bytes"
+	"fmt"
+	"io"
+	"log"
+	"os"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	releaseclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/helmrelease/cluster"
@@ -40,6 +47,14 @@ var SpecSchema = &schema.Schema{
 				Type:        schema.TypeString,
 				Description: "Inline values in yaml format.",
 				Optional:    true,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					newInlineConfig, err := readYamlFile(new)
+					if err != nil {
+						return false
+					}
+
+					return old == newInlineConfig
+				},
 			},
 			TargetNamespaceKey: {
 				Type:        schema.TypeString,
@@ -219,6 +234,12 @@ func HasSpecChanged(d *schema.ResourceData) bool {
 	updateRequired := false
 
 	switch {
+	case d.HasChange(helper.GetFirstElementOf(SpecKey, IntervalKey)):
+		fallthrough
+	case d.HasChange(helper.GetFirstElementOf(SpecKey, InlineConfigKey)):
+		fallthrough
+	case d.HasChange(helper.GetFirstElementOf(SpecKey, TargetNamespaceKey)):
+		fallthrough
 	case d.HasChange(helper.GetFirstElementOf(SpecKey, ChartRefKey, GitRepositoryKey, RepositoryNameKey)):
 		fallthrough
 	case d.HasChange(helper.GetFirstElementOf(SpecKey, ChartRefKey, GitRepositoryKey, RepositoryNamespaceNameKey)):
@@ -236,4 +257,38 @@ func HasSpecChanged(d *schema.ResourceData) bool {
 	}
 
 	return updateRequired
+}
+
+func readYamlFile(fileName string) (string, error) {
+	inputFile, err := os.Open(fileName)
+	if err != nil {
+		return "", errors.WithMessage(err, fmt.Sprintf("Error opening the %s file.", fileName))
+	}
+
+	defer inputFile.Close()
+
+	buf := bytes.NewBuffer(nil)
+	_, err = io.Copy(buf, inputFile)
+
+	if err != nil {
+		return "", err
+	}
+
+	_, err = yaml.Marshal(buf.String())
+	if err != nil {
+		return "", err
+	}
+
+	return buf.String(), nil
+}
+
+func fileExists(filepath string) bool {
+	fileinfo, err := os.Stat(filepath)
+
+	if os.IsNotExist(err) {
+		log.Println("[ERROR] file does not exists.")
+		return false
+	}
+
+	return !fileinfo.IsDir()
 }
