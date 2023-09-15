@@ -402,18 +402,27 @@ var AddonConfig = &schema.Resource{
 			Description: "Keyvault secrets provider addon",
 			Optional:    true,
 			Elem:        AzureKeyvaulSecretsProviderConfig,
+			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+				return suppressConfig(k, d)
+			},
 		},
 		monitorAddonConfigKey: {
 			Type:        schema.TypeList,
 			Description: "Monitor addon",
 			Optional:    true,
 			Elem:        MonitorAddonConfig,
+			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+				return suppressConfig(k, d)
+			},
 		},
 		azurePolicyAddonConfigKey: {
 			Type:        schema.TypeList,
 			Description: "Azure policy addon",
 			Optional:    true,
 			Elem:        AzurePolicyAddonConfig,
+			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+				return suppressConfig(k, d)
+			},
 		},
 	},
 }
@@ -640,6 +649,9 @@ var NodepoolSpecSchema = &schema.Schema{
 				Optional:    true,
 				MaxItems:    1,
 				Elem:        AutoScaleConfig,
+				DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+					return suppressConfig(k, d)
+				},
 			},
 			upgradeConfigKey: {
 				Type:        schema.TypeList,
@@ -700,4 +712,15 @@ var AutoScaleConfig = &schema.Resource{
 			ValidateDiagFunc: validation.ToDiagFunc(validation.IntAtLeast(1)),
 		},
 	},
+}
+
+func suppressConfig(key string, resourceData *schema.ResourceData) bool {
+	lastDotIndex := strings.LastIndex(key, ".")
+	if lastDotIndex == -1 {
+		return false
+	}
+
+	key = key[:lastDotIndex]
+
+	return resourceData.Get(key+".enable") == false
 }
