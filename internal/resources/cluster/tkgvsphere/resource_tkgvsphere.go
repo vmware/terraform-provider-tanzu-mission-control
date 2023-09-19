@@ -230,10 +230,10 @@ func expandTKGVsphereNetworkSettings(data []interface{}) (network *tkgvspheremod
 	}
 
 	if v, ok := lookUpNetwork[apiServerPortKey]; ok {
-		// TODO: Use SetPrimitive funcs
-		helper.SetPrimitiveValue(v, &network.APIServerPort, "network.APIServerPort")
 		// apiServerPort := v.(int)
 		// network.APIServerPort = int32(apiServerPort)
+		// TODO: Use SetPrimitive funcs
+		helper.SetPrimitiveValue(v, &network.APIServerPort, "network.APIServerPort")
 	}
 
 	if v, ok := lookUpNetwork[controlPlaneEndPointKey]; ok {
