@@ -565,6 +565,7 @@ func flattenTKGSVolumes(volume *nodepoolmodel.VmwareTanzuManageV1alpha1CommonClu
 		return nil
 	}
 
+	// helper.SetPrimitiveValue(volume.Capacity, flattenVolumes[capacityKey], "YYY")
 	flattenVolumes[capacityKey] = volume.Capacity
 	flattenVolumes[mountPathKey] = volume.MountPath
 	flattenVolumes[volumeNameKey] = volume.Name
