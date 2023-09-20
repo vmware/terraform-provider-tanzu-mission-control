@@ -144,6 +144,10 @@ func BoolPointer(b bool) *bool {
 	return &b
 }
 
+func Float64Pointer(f float64) *float64 {
+	return &f
+}
+
 func StringPointer(s string) *string {
 	return &s
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	policyrecipecustommodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom"
 	policyrecipecustomcommonmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom/common"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/common"
 )
 
 var TMCBlockRolebindingSubjects = &schema.Schema{
@@ -60,7 +61,7 @@ var TMCBlockRolebindingSubjects = &schema.Schema{
 					},
 				},
 			},
-			TargetKubernetesResourcesKey: targetKubernetesResources,
+			TargetKubernetesResourcesKey: common.TargetKubernetesResourcesSchema,
 		},
 	},
 }
@@ -90,7 +91,7 @@ func ConstructTMCBlockRolebindingSubjects(data []interface{}) (roleBindingSubjec
 				roleBindingSubjects.TargetKubernetesResources = make([]*policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources, 0)
 
 				for _, raw := range vs {
-					roleBindingSubjects.TargetKubernetesResources = append(roleBindingSubjects.TargetKubernetesResources, expandTargetKubernetesResources(raw))
+					roleBindingSubjects.TargetKubernetesResources = append(roleBindingSubjects.TargetKubernetesResources, common.ExpandTargetKubernetesResources(raw))
 				}
 			}
 		}
@@ -166,7 +167,7 @@ func FlattenTMCBlockRolebindingSubjects(roleBindingSubjects *policyrecipecustomm
 		var tkrs []interface{}
 
 		for _, tkr := range roleBindingSubjects.TargetKubernetesResources {
-			tkrs = append(tkrs, flattenTargetKubernetesResources(tkr))
+			tkrs = append(tkrs, common.FlattenTargetKubernetesResources(tkr))
 		}
 
 		flattenRoleBindingSubjects[TargetKubernetesResourcesKey] = tkrs

@@ -9,6 +9,7 @@ package recipe
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/common"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	policyrecipecustommodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom"
@@ -44,7 +45,7 @@ var TMCExternalIps = &schema.Schema{
 					},
 				},
 			},
-			TargetKubernetesResourcesKey: targetKubernetesResources,
+			TargetKubernetesResourcesKey: common.TargetKubernetesResourcesSchema,
 		},
 	},
 }
@@ -74,7 +75,7 @@ func ConstructTMCExternalIPS(data []interface{}) (externalIPs *policyrecipecusto
 				externalIPs.TargetKubernetesResources = make([]*policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources, 0)
 
 				for _, raw := range vs {
-					externalIPs.TargetKubernetesResources = append(externalIPs.TargetKubernetesResources, expandTargetKubernetesResources(raw))
+					externalIPs.TargetKubernetesResources = append(externalIPs.TargetKubernetesResources, common.ExpandTargetKubernetesResources(raw))
 				}
 			}
 		}
@@ -122,7 +123,7 @@ func FlattenTMCExternalIPS(externalIPs *policyrecipecustommodel.VmwareTanzuManag
 		var tkrs []interface{}
 
 		for _, tkr := range externalIPs.TargetKubernetesResources {
-			tkrs = append(tkrs, flattenTargetKubernetesResources(tkr))
+			tkrs = append(tkrs, common.FlattenTargetKubernetesResources(tkr))
 		}
 
 		flattenExternalIPs[TargetKubernetesResourcesKey] = tkrs

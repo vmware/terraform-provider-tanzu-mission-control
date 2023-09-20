@@ -9,6 +9,7 @@ package recipe
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/common"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	policyrecipecustommodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom"
@@ -29,7 +30,7 @@ var TMCBlockNodeportService = &schema.Schema{
 				Optional:    true,
 				Default:     false,
 			},
-			TargetKubernetesResourcesKey: targetKubernetesResources,
+			TargetKubernetesResourcesKey: common.TargetKubernetesResourcesSchema,
 		},
 	},
 }
@@ -48,7 +49,7 @@ var TMCBlockResources = &schema.Schema{
 				Optional:    true,
 				Default:     false,
 			},
-			TargetKubernetesResourcesKey: targetKubernetesResources,
+			TargetKubernetesResourcesKey: common.TargetKubernetesResourcesSchema,
 		},
 	},
 }
@@ -67,53 +68,53 @@ var TMCHTTPSIngress = &schema.Schema{
 				Optional:    true,
 				Default:     false,
 			},
-			TargetKubernetesResourcesKey: targetKubernetesResources,
+			TargetKubernetesResourcesKey: common.TargetKubernetesResourcesSchema,
 		},
 	},
 }
 
-func ConstructTMCCommonRecipe(data []interface{}) (common *policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCCommonRecipe) {
+func ConstructTMCCommonRecipe(data []interface{}) (commonRecipe *policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCCommonRecipe) {
 	if len(data) == 0 || data[0] == nil {
-		return common
+		return commonRecipe
 	}
 
 	commonRecipeData, _ := data[0].(map[string]interface{})
 
-	common = &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCCommonRecipe{}
+	commonRecipe = &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCCommonRecipe{}
 
 	if v, ok := commonRecipeData[AuditKey]; ok {
-		helper.SetPrimitiveValue(v, &common.Audit, AuditKey)
+		helper.SetPrimitiveValue(v, &commonRecipe.Audit, AuditKey)
 	}
 
 	if v, ok := commonRecipeData[TargetKubernetesResourcesKey]; ok {
 		if vs, ok := v.([]interface{}); ok {
 			if len(vs) != 0 && vs[0] != nil {
-				common.TargetKubernetesResources = make([]*policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources, 0)
+				commonRecipe.TargetKubernetesResources = make([]*policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources, 0)
 
 				for _, raw := range vs {
-					common.TargetKubernetesResources = append(common.TargetKubernetesResources, expandTargetKubernetesResources(raw))
+					commonRecipe.TargetKubernetesResources = append(commonRecipe.TargetKubernetesResources, common.ExpandTargetKubernetesResources(raw))
 				}
 			}
 		}
 	}
 
-	return common
+	return commonRecipe
 }
 
-func FlattenTMCCommonRecipe(common *policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCCommonRecipe) (data []interface{}) {
-	if common == nil {
+func FlattenTMCCommonRecipe(commonRecipe *policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCCommonRecipe) (data []interface{}) {
+	if commonRecipe == nil {
 		return data
 	}
 
 	flattenCommonRecipe := make(map[string]interface{})
 
-	flattenCommonRecipe[AuditKey] = common.Audit
+	flattenCommonRecipe[AuditKey] = commonRecipe.Audit
 
-	if common.TargetKubernetesResources != nil {
+	if commonRecipe.TargetKubernetesResources != nil {
 		var tkrs []interface{}
 
-		for _, tkr := range common.TargetKubernetesResources {
-			tkrs = append(tkrs, flattenTargetKubernetesResources(tkr))
+		for _, tkr := range commonRecipe.TargetKubernetesResources {
+			tkrs = append(tkrs, common.FlattenTargetKubernetesResources(tkr))
 		}
 
 		flattenCommonRecipe[TargetKubernetesResourcesKey] = tkrs
