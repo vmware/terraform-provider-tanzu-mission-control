@@ -130,12 +130,15 @@ func FlattenCustom(custom *policyrecipequotamodel.VmwareTanzuManageV1alpha1Commo
 
 	flattenCustom[LimitsCPUKey] = custom.LimitsCPU
 	flattenCustom[LimitsMemoryKey] = custom.LimitsMemory
+	// TODO: int64
 	flattenCustom[PersistentVolumeClaimsKey] = custom.Persistentvolumeclaims
+	// TODO: int
 	flattenCustom[PersistentVolumeClaimsPerClassKey] = custom.PersistentvolumeclaimsPerClass
 	flattenCustom[RequestsCPUKey] = custom.RequestsCPU
 	flattenCustom[RequestsMemoryKey] = custom.RequestsMemory
 	flattenCustom[RequestsStorageKey] = custom.RequestsStorage
 	flattenCustom[RequestsStoragePerClassKey] = custom.RequestsStoragePerClass
+	// TODO: int
 	flattenCustom[ResourceCountsKey] = custom.ResourceCounts
 
 	return []interface{}{flattenCustom}
