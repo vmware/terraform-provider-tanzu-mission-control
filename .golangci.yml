@@ -85,6 +85,8 @@ run:
     - tanzupackages
     - tanzupackage
     - clustersecret
+    - helmfeature
+    - helmrelease
 
 linters-settings:
   funlen:

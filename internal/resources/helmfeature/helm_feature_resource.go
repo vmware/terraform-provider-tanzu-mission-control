@@ -26,7 +26,8 @@ import (
 const (
 	ResourceName = "tanzu-mission-control_helm_feature"
 
-	statusKey = "status"
+	statusKey   = "status"
+	disabledKey = "Disabled"
 )
 
 func ResourceHelm() *schema.Resource {

@@ -20,5 +20,5 @@ func FlattenStatusForClusterGroupScope(status *releaseclustergroupmodel.VmwareTa
 
 	flattenStatusData[phaseKey] = string(*status.Phase)
 
-	return flattenStatusData
+	return []interface{}{flattenStatusData}
 }
