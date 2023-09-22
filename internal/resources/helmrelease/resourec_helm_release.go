@@ -18,6 +18,7 @@ import (
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	helmclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/helmfeature/cluster"
+	helmclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/helmfeature/clustergroup"
 	releaseclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/helmrelease/cluster"
 	releaseclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/helmrelease/clustergroup"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
@@ -66,7 +67,7 @@ func getHelmReleaseSchema(isDataSource bool) map[string]*schema.Schema {
 		featureRefKey: {
 			Type:        schema.TypeString,
 			Description: "Name of Namespace.",
-			Required:    true,
+			Optional:    true,
 		},
 		commonscope.ScopeKey: scope.ScopeSchema,
 		common.MetaKey:       common.Meta,
@@ -240,7 +241,7 @@ func resourceHelmReleaseInPlaceUpdate(ctx context.Context, d *schema.ResourceDat
 
 	err := checkHelmFeature(config, scopedFullnameData)
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster helm release entry, name : %s", helmReleaseName))
+		return diag.FromErr(errors.Wrapf(err, "Unable to Update, Tanzu Mission Control cluster helm release entry, name : %s", helmReleaseName))
 	}
 
 	helmReleaseDataFromServer, err := retrieveHelmReleaseDataFromServer(config, scopedFullnameData, d)
@@ -371,26 +372,49 @@ func updateCheckForSpec(d *schema.ResourceData, atomicSpec *releaseclustermodel.
 }
 
 func checkHelmFeature(config authctx.TanzuContext, scopedFullnameData *scope.ScopedFullname) error {
-	resp, err := config.TMCConnection.ClusterHelmResourceService.VmwareTanzuManageV1alpha1ClusterHelmResourceServiceList(
-		&helmclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdHelmListHelmRequestParameters{
-			SearchScope: &helmclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdHelmSearchScope{
-				ClusterName:           scopedFullnameData.FullnameCluster.ClusterName,
-				ManagementClusterName: scopedFullnameData.FullnameCluster.ManagementClusterName,
-				ProvisionerName:       scopedFullnameData.FullnameCluster.ProvisionerName,
+	switch scopedFullnameData.Scope {
+	case commonscope.ClusterScope:
+		resp, err := config.TMCConnection.ClusterHelmResourceService.VmwareTanzuManageV1alpha1ClusterHelmResourceServiceList(
+			&helmclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdHelmListHelmRequestParameters{
+				SearchScope: &helmclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdHelmSearchScope{
+					ClusterName:           scopedFullnameData.FullnameCluster.ClusterName,
+					ManagementClusterName: scopedFullnameData.FullnameCluster.ManagementClusterName,
+					ProvisionerName:       scopedFullnameData.FullnameCluster.ProvisionerName,
+				},
 			},
-		},
-	)
+		)
 
-	if err != nil {
-		return err
-	}
+		if err != nil {
+			return err
+		}
 
-	if len(resp.Helms) == 0 {
-		return errors.Errorf("Tanzu mission control helm feature is disable on cluster, name: %s", scopedFullnameData.FullnameCluster.ClusterName)
-	}
+		if len(resp.Helms) == 0 {
+			return errors.Errorf("Tanzu mission control helm feature is disable on cluster, name: %s", scopedFullnameData.FullnameCluster.ClusterName)
+		}
 
-	if _, ok := resp.Helms[0].Status.Conditions[disabledKey]; ok {
-		return errors.Errorf("Tanzu mission control helm feature is disable on cluster, name: %s", scopedFullnameData.FullnameCluster.ClusterName)
+		if _, ok := resp.Helms[0].Status.Conditions[disabledKey]; ok {
+			return errors.Errorf("Tanzu mission control helm feature is disable on cluster, name: %s", scopedFullnameData.FullnameCluster.ClusterName)
+		}
+	case commonscope.ClusterGroupScope:
+		resp, err := config.TMCConnection.ClusterGroupHelmResourceService.VmwareTanzuManageV1alpha1ClustergroupHelmResourceServiceList(
+			&helmclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupHelmListHelmRequestParameters{
+				SearchScope: &helmclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFluxcdHelmSearchScope{
+					ClusterGroupName: scopedFullnameData.FullnameClusterGroup.ClusterGroupName,
+				},
+			},
+		)
+
+		if err != nil {
+			return err
+		}
+
+		if len(resp.Helms) == 0 {
+			return errors.Errorf("Tanzu mission control helm feature is disable on cluster group, name: %s", scopedFullnameData.FullnameCluster.ClusterName)
+		}
+
+		if resp.Helms[0].Status.Phase == nil {
+			return errors.Errorf("Tanzu mission control helm feature is disable on cluster group, name: %s", scopedFullnameData.FullnameCluster.ClusterName)
+		}
 	}
 
 	return nil
