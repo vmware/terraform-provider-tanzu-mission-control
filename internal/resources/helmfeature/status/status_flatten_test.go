@@ -43,7 +43,7 @@ func TestFlattenStatusForClusterScope(t *testing.T) {
 				},
 			},
 			expected: map[string]interface{}{
-				stateKey: conditionEnabled,
+				phaseKey: conditionEnabled,
 			},
 		},
 	}

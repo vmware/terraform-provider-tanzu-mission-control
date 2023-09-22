@@ -9,7 +9,7 @@ import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 var StatusSchema = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "status for package install.",
+	Description: "status for helm release.",
 	Computed:    true,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -25,23 +25,23 @@ var StatusSchema = &schema.Schema{
 
 var generatedResourcesStatus = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "Kuberenetes RBAC resources and service account created on the cluster by TMC for Package Install.",
+	Description: "Kuberenetes RBAC resources and service account created on the cluster by TMC for helm release.",
 	Computed:    true,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			clusterRoleNameKey: {
 				Type:        schema.TypeString,
-				Description: "Name of the cluster role used for Package Install.",
+				Description: "Name of the cluster role used for helm release.",
 				Computed:    true,
 			},
 			serviceAccountNameKey: {
 				Type:        schema.TypeString,
-				Description: "Name of the role binding used for Package Install.",
+				Description: "Name of the service account used for helm release.",
 				Computed:    true,
 			},
 			roleBindingNameKey: {
 				Type:        schema.TypeString,
-				Description: "Name of the service account used for Package Install.",
+				Description: "Name of the role binding used for helm release.",
 				Computed:    true,
 			},
 		},

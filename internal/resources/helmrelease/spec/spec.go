@@ -45,7 +45,7 @@ var SpecSchema = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			InlineConfigKey: {
 				Type:        schema.TypeString,
-				Description: "Inline values in yaml format.",
+				Description: "File to read inline values from (in yaml format).User need to specify the file path for inline config",
 				Optional:    true,
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					newInlineConfig, err := readYamlFile(new)
@@ -58,7 +58,7 @@ var SpecSchema = &schema.Schema{
 			},
 			TargetNamespaceKey: {
 				Type:        schema.TypeString,
-				Description: "Name of target namespace.",
+				Description: "TargetNamespace sets or overrides the namespaces of resources yaml while applying on cluster.",
 				Optional:    true,
 			},
 			IntervalKey: {
@@ -100,19 +100,19 @@ var refSchema = &schema.Schema{
 
 var gitRepoSchema = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "Git repository type.",
+	Description: "Git repository type spec.",
 	Optional:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			RepositoryNameKey: {
 				Type:        schema.TypeString,
-				Description: "Repository name.",
+				Description: "Name of the Git repository.",
 				Required:    true,
 			},
 			RepositoryNamespaceNameKey: {
 				Type:        schema.TypeString,
-				Description: "Repository namespace.",
+				Description: "Namespace Name for the Git repository.",
 				Required:    true,
 			},
 			ChartPathKey: {
@@ -126,19 +126,19 @@ var gitRepoSchema = &schema.Schema{
 
 var helmRepoSchema = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "Helm repository type.",
+	Description: "Helm repository type Spec.",
 	Optional:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			RepositoryNameKey: {
 				Type:        schema.TypeString,
-				Description: "Repository name.",
+				Description: "Name of the Helm repository.",
 				Required:    true,
 			},
 			RepositoryNamespaceNameKey: {
 				Type:        schema.TypeString,
-				Description: "Repository namespace.",
+				Description: "Namespace Name for the Helm repository.",
 				Required:    true,
 			},
 			ChartNameKey: {
