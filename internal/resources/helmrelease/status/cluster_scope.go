@@ -33,5 +33,5 @@ func FlattenStatusForClusterScope(status *releaseclustermodel.VmwareTanzuManageV
 		},
 	}
 
-	return flattenStatusData
+	return []interface{}{flattenStatusData}
 }

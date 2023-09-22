@@ -47,13 +47,15 @@ func TestFlattenStatusForClusterScope(t *testing.T) {
 					ServiceAccountName: "testserviceaccount",
 				},
 			},
-			expected: map[string]interface{}{
-				phaseKey: conditionEnabled,
-				generatedResourcesKey: []interface{}{
-					map[string]interface{}{
-						clusterRoleNameKey:    "testclusterrole",
-						roleBindingNameKey:    "testrolebinding",
-						serviceAccountNameKey: "testserviceaccount",
+			expected: []interface{}{
+				map[string]interface{}{
+					phaseKey: conditionEnabled,
+					generatedResourcesKey: []interface{}{
+						map[string]interface{}{
+							clusterRoleNameKey:    "testclusterrole",
+							roleBindingNameKey:    "testrolebinding",
+							serviceAccountNameKey: "testserviceaccount",
+						},
 					},
 				},
 			},
@@ -92,8 +94,10 @@ func TestFlattenStatusForClusterGroupScope(t *testing.T) {
 					AvailableTargets: 3,
 				},
 			},
-			expected: map[string]interface{}{
-				phaseKey: fmt.Sprint(statusmodel.VmwareTanzuManageV1alpha1CommonBatchPhaseAPPLIED),
+			expected: []interface{}{
+				map[string]interface{}{
+					phaseKey: fmt.Sprint(statusmodel.VmwareTanzuManageV1alpha1CommonBatchPhaseAPPLIED),
+				},
 			},
 		},
 	}
