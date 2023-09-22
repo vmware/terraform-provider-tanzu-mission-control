@@ -66,7 +66,7 @@ func getHelmReleaseSchema(isDataSource bool) map[string]*schema.Schema {
 		},
 		featureRefKey: {
 			Type:        schema.TypeString,
-			Description: "Name of Namespace.",
+			Description: "when specified, ensures clean up of this Terraform resource from the state file by creating a dependency on the Helm feature when the Helm feature is disabled",
 			Optional:    true,
 		},
 		commonscope.ScopeKey: scope.ScopeSchema,

@@ -17,7 +17,6 @@ import (
 	helm "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmfeature"
 )
 
-// nolint: gosec
 const (
 	helmReleaseResource      = ResourceName
 	helmReleaseResourceVar   = "test_helm_rel"

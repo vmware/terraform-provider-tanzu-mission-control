@@ -303,7 +303,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 		bodyInspectingResponder(t, nil, 200, getResponse))
 
 	httpmock.RegisterResponder("DELETE", deleteEndpoint, changeStateResponder(
-		// Set up the get to return 404 after the Secret has been 'deleted'.
+		// Set up the get to return 404 after the release has been 'deleted'.
 		func() {
 			httpmock.RegisterResponder("GET", getHelmReleaseEndpoint,
 				httpmock.NewStringResponder(404, "Not found"))
@@ -384,7 +384,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 		bodyInspectingResponder(t, nil, 200, getCGResponse))
 
 	httpmock.RegisterResponder("DELETE", deleteCGEndpoint, changeStateResponder(
-		// Set up the get to return 404 after the Secret has been 'deleted'.
+		// Set up the get to return 404 after the release has been 'deleted'.
 		func() {
 			httpmock.RegisterResponder("GET", getCGHelmReleaseEndpoint,
 				httpmock.NewStringResponder(404, "Not found"))

@@ -11,7 +11,7 @@ import (
 
 var StatusSchema = &schema.Schema{
 	Type:        schema.TypeMap,
-	Description: "Status for the Repository.",
+	Description: "Status for the helm feature.",
 	Computed:    true,
 	Elem:        &schema.Schema{Type: schema.TypeString},
 }
