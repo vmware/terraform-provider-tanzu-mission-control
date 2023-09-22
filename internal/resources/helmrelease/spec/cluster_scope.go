@@ -30,13 +30,15 @@ func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *releaseclusterm
 	spec = &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseSpec{}
 
 	if inlineConfigValueFile, ok := specData[InlineConfigKey]; ok {
-		if !(fileExists(inlineConfigValueFile.(string))) {
-			return spec, errors.Errorf("File %s does not exists.", inlineConfigValueFile)
-		}
+		if (inlineConfigValueFile.(string)) != "" {
+			if !(fileExists(inlineConfigValueFile.(string))) {
+				return spec, errors.Errorf("File %s does not exists.", inlineConfigValueFile.(string))
+			}
 
-		spec.InlineConfiguration, err = readYamlFile(inlineConfigValueFile.(string))
-		if err != nil {
-			return spec, nil
+			spec.InlineConfiguration, err = readYamlFile(inlineConfigValueFile.(string))
+			if err != nil {
+				return spec, err
+			}
 		}
 	}
 

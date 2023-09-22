@@ -23,12 +23,12 @@ func TestFlattenClusterGroupHelmReleaseFullname(t *testing.T) {
 		expected    []interface{}
 	}{
 		{
-			description: "check for nil cluster group git repository full name",
+			description: "check for nil cluster group helm release full name",
 			input:       nil,
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with complete cluster group git repository full name",
+			description: "normal scenario with complete cluster group helm release full name",
 			input: &releaseclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdHelmReleaseFullName{
 				ClusterGroupName: "c",
 			},
