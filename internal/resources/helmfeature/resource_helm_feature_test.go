@@ -58,6 +58,7 @@ func TestAcceptanceForHelmFeatureResource(t *testing.T) {
 		os.Setenv("TMC_ENDPOINT", "dummy.tmc.mock.vmware.com")
 		os.Setenv("VMW_CLOUD_API_TOKEN", "dummy")
 		os.Setenv("VMW_CLOUD_ENDPOINT", "console.cloud.vmware.com")
+		os.Setenv("ORG_ID", "bc27608b-4809-4cac-9e04-778803963da2")
 
 		log.Println("Setting up the mock endpoints...")
 
