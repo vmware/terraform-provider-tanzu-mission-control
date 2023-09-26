@@ -36,7 +36,7 @@ The Helm service must already be enabled to be able to install Helm releases on 
 resource "tanzu-mission-control_helm_release" "create_cg_helm_release" {
   name = "test-helm-release-name" # Required
 
-  namespace = "test-namespace-name" # Required
+  namespace_name = "test-namespace-name" # Required
 
   scope {
     cluster_group {
@@ -78,7 +78,7 @@ resource "tanzu-mission-control_helm_release" "create_cg_helm_release" {
 resource "tanzu-mission-control_helm_release" "create_cl_helm_release_gitrepo_type" {
   name = "test-helm-release-name" # Required
 
-  namespace = "test-namespace-name" # Required
+  namespace_name = "test-namespace-name" # Required
 
   scope {
     cluster {
@@ -127,7 +127,7 @@ The Helm service must already be enabled to be able to install Helm releases on 
 resource "tanzu-mission-control_helm_release" "create_cl_helm_release_helm_type" {
   name = "test-helm-release-name" # Required
 
-  namespace = "test-namespace-name" # Required
+  namespace_name = "test-namespace-name" # Required
 
   scope {
     cluster {
