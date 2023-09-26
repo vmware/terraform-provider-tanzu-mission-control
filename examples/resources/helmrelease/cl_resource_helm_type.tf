@@ -2,7 +2,7 @@
 resource "tanzu-mission-control_helm_release" "create_cl_helm_release_helm_type" {
   name = "test-helm-release-name" # Required
 
-  namespace = "test-namespace-name" # Required
+  namespace_name = "test-namespace-name" # Required
 
   scope {
     cluster {
