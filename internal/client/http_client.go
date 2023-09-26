@@ -16,6 +16,7 @@ import (
 	gitrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/gitrepository"
 	helmfeatureclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/helmfeature"
 	helmreleaseclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/helmrelease"
+	helmrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/helmrepository"
 	iamclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/iam_policy"
 	kustomizationclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/kustomization"
 	manifestclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/manifest"
@@ -41,6 +42,7 @@ import (
 	namespaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/namespace"
 	iamnamespaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/namespace/iam_policy"
 	nodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/nodepool"
+	helmchartsorgclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/helmcharts"
 	iamorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/iam_policy"
 	policyorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/policy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
@@ -121,6 +123,8 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterGroupHelmReleaseResourceService:        helmreleaseclustergroupclient.New(httpClient),
 		ClusterHelmResourceService:                    helmfeatureclusterclient.New(httpClient),
 		ClusterGroupHelmResourceService:               helmfeatureclustergroupclient.New(httpClient),
+		ClusterHelmRepositoryResourceService:          helmrepositoryclusterclient.New(httpClient),
+		OrganizationHelmChartsResourceService:         helmchartsorgclient.New(httpClient),
 		KubeConfigResourceService:                     kubeconfigclient.New(httpClient),
 	}
 }
@@ -168,5 +172,7 @@ type TanzuMissionControl struct {
 	ClusterHelmReleaseResourceService             helmreleaseclusterclient.ClientService
 	ClusterHelmResourceService                    helmfeatureclusterclient.ClientService
 	ClusterGroupHelmResourceService               helmfeatureclustergroupclient.ClientService
+	ClusterHelmRepositoryResourceService          helmrepositoryclusterclient.ClientService
+	OrganizationHelmChartsResourceService         helmchartsorgclient.ClientService
 	KubeConfigResourceService                     kubeconfigclient.ClientService
 }
