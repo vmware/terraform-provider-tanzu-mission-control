@@ -6,6 +6,8 @@ SPDX-License-Identifier: MPL-2.0
 package tkcmodels
 
 import (
+	"fmt"
+
 	"github.com/go-openapi/swag"
 )
 
@@ -47,4 +49,12 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclu
 	*m = res
 
 	return nil
+}
+
+func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterFullName) ToString() string {
+	if m == nil {
+		return ""
+	}
+
+	return fmt.Sprintf("%s:%s:%s:%s", m.OrgID, m.ManagementClusterName, m.ProvisionerName, m.Name)
 }

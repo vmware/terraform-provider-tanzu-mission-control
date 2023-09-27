@@ -9,17 +9,17 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterRequest Request to create a TanzuKubernetesCluster.
+// VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateUpdateTanzuKubernetesClusterRequest Request to create a TanzuKubernetesCluster.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.managementcluster.provisioner.tanzukubernetescluster.CreateTanzuKubernetesClusterRequest
-type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterRequest struct {
+type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateUpdateTanzuKubernetesClusterRequest struct {
 
 	// TanzuKubernetesCluster to create.
 	TanzuKubernetesCluster *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterTanzuKubernetesCluster `json:"tanzuKubernetesCluster,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterRequest) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateUpdateTanzuKubernetesClusterRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -28,8 +28,8 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclu
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterRequest) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterRequest
+func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateUpdateTanzuKubernetesClusterRequest) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateUpdateTanzuKubernetesClusterRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -39,17 +39,17 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclu
 	return nil
 }
 
-// VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse Response from creating a TanzuKubernetesCluster.
+// VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateUpdateTanzuKubernetesClusterResponse Response from creating a TanzuKubernetesCluster.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.managementcluster.provisioner.tanzukubernetescluster.CreateTanzuKubernetesClusterResponse
-type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse struct {
+type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateUpdateTanzuKubernetesClusterResponse struct {
 
 	// TanzuKubernetesCluster created.
 	TanzuKubernetesCluster *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterTanzuKubernetesCluster `json:"tanzuKubernetesCluster,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateUpdateTanzuKubernetesClusterResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -58,8 +58,8 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclu
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse
+func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateUpdateTanzuKubernetesClusterResponse) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateUpdateTanzuKubernetesClusterResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

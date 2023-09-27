@@ -36,6 +36,7 @@ import (
 	iamorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/iam_policy"
 	policyorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/policy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
+	tkcclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzukubernetescluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	workspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace"
 	iamworkspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace/iam_policy"
@@ -72,6 +73,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterResourceService:                        clusterclient.New(httpClient),
 		EKSClusterResourceService:                     eksclusterclient.New(httpClient),
 		EKSNodePoolResourceService:                    eksnodepoolclient.New(httpClient),
+		TKCClusterResourceService:                     tkcclusterclient.New(httpClient),
 		AKSClusterResourceService:                     aksclusterclient.New(httpClient),
 		AKSNodePoolResourceService:                    aksnodepoolclient.New(httpClient),
 		WorkspaceResourceService:                      workspaceclient.New(httpClient),
@@ -107,6 +109,7 @@ type TanzuMissionControl struct {
 	ClusterResourceService                        clusterclient.ClientService
 	EKSClusterResourceService                     eksclusterclient.ClientService
 	EKSNodePoolResourceService                    eksnodepoolclient.ClientService
+	TKCClusterResourceService                     tkcclusterclient.ClientService
 	AKSClusterResourceService                     aksclusterclient.ClientService
 	AKSNodePoolResourceService                    aksnodepoolclient.ClientService
 	WorkspaceResourceService                      workspaceclient.ClientService
