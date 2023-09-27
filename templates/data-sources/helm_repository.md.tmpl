@@ -1,0 +1,21 @@
+---
+Title: "Helm Repository Data Source"
+Description: |-
+    Read the Helm Repository from TMC.
+---
+
+# Helm Repository
+
+This resource allows you to read Helm Repository from a cluster through Tanzu Mission Control.
+
+The Available tab on the Catalog page in the Tanzu Mission Control console shows the Helm repositories that are available.
+
+[Helm]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-2602A6A3-1FDA-4270-A76F-047FBD039ADF.html
+
+
+## Cluster scoped Helm Repository
+
+### Example Usage
+
+{{ tffile "examples/data-sources/helmrepository/data_source.tf" }}
+{{ .SchemaMarkdown | trimspace }}
