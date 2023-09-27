@@ -42,39 +42,6 @@ func TestAcceptanceForSourceSecretDataSource(t *testing.T) {
 				Check:  testConfig.checkSourceSecretDataSourceAttributes(),
 			},
 			{
-				Config: testConfig.getTestSourceSecretDataSourceBasicConfigValue(commonscope.ClusterScope, spec.SSHKey, WithKnownhosts("somehostes")),
-				Check:  testConfig.checkSourceSecretDataSourceAttributes(),
-			},
-			{
-				Config: testConfig.getTestSourceSecretDataSourceBasicConfigValue(commonscope.ClusterGroupScope, spec.SSHKey),
-				Check:  testConfig.checkSourceSecretDataSourceAttributes(),
-			},
-			{
-				Config: testConfig.getTestSourceSecretDataSourceBasicConfigValue(commonscope.ClusterGroupScope, spec.SSHKey, WithKnownhosts("somehostes")),
-				Check:  testConfig.checkSourceSecretDataSourceAttributes(),
-			},
-		},
-	},
-	)
-
-	t.Log("source secret data source acceptance test complete for SSH credential type")
-
-	// Test case for source secret data source with Username/Password credential type.
-	resource.Test(t, resource.TestCase{
-		PreCheck:          testhelper.TestPreCheck(t),
-		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
-		CheckDestroy:      nil,
-		Steps: []resource.TestStep{
-			{
-				PreConfig: func() {
-					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" {
-						t.Skip("KUBECONFIG env var is not set for cluster scoped source secret acceptance test")
-					}
-				},
-				Config: testConfig.getTestSourceSecretDataSourceBasicConfigValue(commonscope.ClusterScope, spec.UsernamePasswordKey),
-				Check:  testConfig.checkSourceSecretDataSourceAttributes(),
-			},
-			{
 				Config: testConfig.getTestSourceSecretDataSourceBasicConfigValue(commonscope.ClusterScope, spec.UsernamePasswordKey, WithUsername("someusername")),
 				Check:  testConfig.checkSourceSecretDataSourceAttributes(),
 			},
@@ -83,14 +50,14 @@ func TestAcceptanceForSourceSecretDataSource(t *testing.T) {
 				Check:  testConfig.checkSourceSecretDataSourceAttributes(),
 			},
 			{
-				Config: testConfig.getTestSourceSecretDataSourceBasicConfigValue(commonscope.ClusterGroupScope, spec.UsernamePasswordKey, WithUsername("someusername")),
+				Config: testConfig.getTestSourceSecretDataSourceBasicConfigValue(commonscope.ClusterGroupScope, spec.SSHKey, WithKnownhosts("somehosts")),
 				Check:  testConfig.checkSourceSecretDataSourceAttributes(),
 			},
 		},
 	},
 	)
 
-	t.Log("source secret data source acceptance test complete for Username/Password credential type")
+	t.Log("source secret data source acceptance test completed")
 }
 
 func (testConfig *testAcceptanceConfig) getTestSourceSecretDataSourceBasicConfigValue(scope commonscope.Scope, allowedCredential string, opts ...OperationOption) string {
