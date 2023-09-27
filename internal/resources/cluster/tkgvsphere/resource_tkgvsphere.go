@@ -233,6 +233,7 @@ func expandTKGVsphereNetworkSettings(data []interface{}) (network *tkgvspheremod
 		helper.SetPrimitiveValue(v, &network.APIServerPort, "network.APIServerPort")
 	}
 
+	// control_plane_end_point is only set when AVI is enabled in management cluster
 	if v, ok := lookUpNetwork[controlPlaneEndPointKey]; ok {
 		network.ControlPlaneEndpoint, _ = v.(string)
 	}
