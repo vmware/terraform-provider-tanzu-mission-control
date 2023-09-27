@@ -25,8 +25,6 @@ func TestFlattenLabel(t *testing.T) {
 	}{
 		{
 			description: "check for nil mutation label",
-			input:       nil,
-			expected:    nil,
 		},
 		{
 			description: "flatten normal label mutation policy struct",

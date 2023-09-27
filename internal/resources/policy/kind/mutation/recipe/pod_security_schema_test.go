@@ -24,8 +24,6 @@ func TestFlattenPodSecurity(t *testing.T) {
 	}{
 		{
 			description: "check for nil mutation label",
-			input:       nil,
-			expected:    nil,
 		},
 		{
 			description: "flatten pod security mutation policy struct",

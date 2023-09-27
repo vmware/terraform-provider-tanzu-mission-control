@@ -25,8 +25,6 @@ func TestFlattenAnnotation(t *testing.T) {
 	}{
 		{
 			description: "check for nil mutation annotation",
-			input:       nil,
-			expected:    nil,
 		},
 		{
 			description: "flatten normal annotation mutation policy struct",

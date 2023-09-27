@@ -28,14 +28,15 @@ var LabelSchema = &schema.Schema{
 			targetKubernetesResourcesKey: common.TargetKubernetesResourcesSchema,
 			scopeKey: {
 				Type:         schema.TypeString,
-				Description:  "Audit (dry-run).",
-				Optional:     true,
+				Description:  "Scope",
+				Required:     true,
 				Default:      "All",
 				ValidateFunc: validation.StringInSlice([]string{"All", "Cluster", "Namespaced"}, false),
 			},
 			LabelKey: {
 				Type:     schema.TypeList,
 				Optional: true,
+				MinItems: 1,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -44,7 +45,7 @@ var LabelSchema = &schema.Schema{
 							Required: true,
 						},
 						valueKey: {
-							Type:     schema.TypeBool,
+							Type:     schema.TypeString,
 							Required: true,
 						},
 					},
