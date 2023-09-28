@@ -29,7 +29,7 @@ var AnnotationSchema = &schema.Schema{
 			scopeKey: {
 				Type:         schema.TypeString,
 				Description:  "Scope",
-				Required:     true,
+				Optional:     true,
 				Default:      "All",
 				ValidateFunc: validation.StringInSlice([]string{"All", "Cluster", "Namespaced"}, false),
 			},
