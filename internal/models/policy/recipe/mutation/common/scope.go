@@ -1,7 +1,7 @@
 package policyrecipemutationcommonmodel
 
 const (
-	Asterisk   VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1Scope = "*"
+	Asterisk   VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1Scope = "All"
 	Cluster    VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1Scope = "Cluster"
 	Namespaced VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1Scope = "Namespaced"
 )
