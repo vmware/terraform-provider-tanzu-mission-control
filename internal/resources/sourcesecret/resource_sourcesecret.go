@@ -367,6 +367,18 @@ func updateCheckForMeta(d *schema.ResourceData, meta *objectmetamodel.VmwareTanz
 
 func updateCheckForSpec(d *schema.ResourceData, atomicSpec *sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSpec, scope commonscope.Scope) bool {
 	if !spec.HasSpecChanged(d) {
+		if *atomicSpec.SourceSecretType == *sourcesecretclustermodel.NewVmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretType(sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretTypeUSERNAMEPASSWORD) {
+			specTypeData, _ := (d.Get(helper.GetFirstElementOf(spec.SpecKey, spec.DataKey, spec.UsernamePasswordKey, spec.PasswordKey))).(string)
+			val, _ := spec.GetEncodedSpecData(specTypeData)
+			atomicSpec.Data.Data[spec.PasswordKey] = val
+		}
+
+		if *atomicSpec.SourceSecretType == *sourcesecretclustermodel.NewVmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretType(sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretTypeSSH) {
+			specTypeData, _ := (d.Get(helper.GetFirstElementOf(spec.SpecKey, spec.DataKey, spec.SSHKey, spec.IdentityKey))).(string)
+			val, _ := spec.GetEncodedSpecData(specTypeData)
+			atomicSpec.Data.Data[spec.IdentityKey] = val
+		}
+
 		return false
 	}
 
