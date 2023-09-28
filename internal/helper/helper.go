@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -165,4 +166,31 @@ func UpdateDataSourceSchema(d *schema.Schema) *schema.Schema {
 	}
 
 	return dv
+}
+
+func ConvertToString(value interface{}, sliceSep string) string {
+	outputStr := ""
+
+	switch v := value.(type) {
+	case float64, float32:
+		outputStr = fmt.Sprintf("%f", v)
+	case []byte:
+		outputStr = string(v)
+	case int, int8, int16, int32, int64:
+		outputStr = fmt.Sprintf("%d", v)
+	case bool:
+		outputStr = fmt.Sprintf("%t", v)
+	case []interface{}:
+		strSlice := make([]string, len(v))
+
+		for i, elem := range v {
+			strSlice[i] = ConvertToString(elem, sliceSep)
+		}
+
+		outputStr = strings.Join(strSlice, sliceSep)
+	case string:
+		outputStr = v
+	}
+
+	return outputStr
 }
