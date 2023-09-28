@@ -190,7 +190,7 @@ Set the environmental variable `TMC_MODE` to `DEV` to capture more granular logs
     <br/>
     ```sh
     # Set TF_REATTACH_PROVIDERS as environment variable.
-    export TF_REATTACH_PROVIDERS='{"registry.terraform.io/my-org/my-provider":{"Protocol":"grpc","Pid":3382870,"Test":true,"Addr":{"Network":"unix","String":"/tmp/plugin713096927"}}}'
+    export TF_REATTACH_PROVIDERS='{"vmware/dev/tanzu-mission-control":{"Protocol":"grpc","ProtocolVersion":5,"Pid":1338,"Test":true,"Addr":{"Network":"unix","String":"/var/folders/r9/h_0mgps9053g3tft7t8xh6rh0000gq/T/plugin2483048401"}}}'
 
     # Run TF command
     terraform plan
