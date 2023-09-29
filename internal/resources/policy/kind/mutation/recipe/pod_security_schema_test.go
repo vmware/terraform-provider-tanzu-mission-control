@@ -137,14 +137,10 @@ func TestFlattenPodSecurity(t *testing.T) {
 					seLinuxOptionsKey: []interface{}{
 						map[string]interface{}{
 							conditionKey: "IfFieldDoesNotExist",
-							valueKey: []interface{}{
-								map[string]interface{}{
-									levelKey: "level_up",
-									roleKey:  "role_role",
-									typeKey:  "type_type",
-									userKey:  "user_user",
-								},
-							},
+							levelKey:     "level_up",
+							roleKey:      "role_role",
+							typeKey:      "type_type",
+							userKey:      "user_user",
 						},
 					},
 					supplementalGroupsKey: []interface{}{

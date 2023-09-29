@@ -65,28 +65,10 @@ var ipConditionSchema = &schema.Schema{
 				Required:     true,
 				ValidateFunc: validation.StringInSlice([]string{"Always", "IfFieldDoesNotExist", "IfFieldExists"}, false),
 			},
-			valueKey: userIDRanges,
-		},
-	},
-}
-
-var userIDRanges = &schema.Schema{
-	Type:        schema.TypeList,
-	Description: "Allowed user id ranges",
-	Optional:    true,
-	Elem: &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			minKey: {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      0,
-				ValidateFunc: validation.IntBetween(0, 65535),
-			},
-			maxKey: {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      65535,
-				ValidateFunc: validation.IntBetween(0, 65535),
+			valueKey: {
+				Type:         schema.TypeFloat,
+				Required:     true,
+				ValidateFunc: validation.FloatBetween(0, 65535),
 			},
 		},
 	},
@@ -108,7 +90,7 @@ var conditionSchemaArrays = &schema.Schema{
 				Required: true,
 				MinItems: 1,
 				Elem: &schema.Schema{
-					Type: schema.TypeInt,
+					Type: schema.TypeFloat,
 				},
 			},
 		},
@@ -647,22 +629,25 @@ func expandSeLinuxOptions(data []interface{}) (seLinuxOptions *policyrecipemutat
 		seLinuxOptions.Condition = helper.StringPointer(v.(string))
 	}
 
-	if v, ok := seLinuxOptionsData[valueKey]; ok {
-		if vs, ok := v.([]interface{}); ok {
-			if len(vs) != 0 && vs[0] != nil {
-				values, _ := vs[0].(map[string]interface{})
+	value := &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecuritySeLinuxOptionsValue{}
 
-				value := &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecuritySeLinuxOptionsValue{}
-
-				value.Level = values[levelKey].(string)
-				value.Role = values[roleKey].(string)
-				value.Type = values[typeKey].(string)
-				value.User = values[userKey].(string)
-
-				seLinuxOptions.Value = value
-			}
-		}
+	if v, ok := seLinuxOptionsData[levelKey]; ok {
+		value.Level = v.(string)
 	}
+
+	if v, ok := seLinuxOptionsData[roleKey]; ok {
+		value.Role = v.(string)
+	}
+
+	if v, ok := seLinuxOptionsData[typeKey]; ok {
+		value.Type = v.(string)
+	}
+
+	if v, ok := seLinuxOptionsData[userKey]; ok {
+		value.User = v.(string)
+	}
+
+	seLinuxOptions.Value = value
 
 	return seLinuxOptions
 }
@@ -677,14 +662,10 @@ func flattenSeLinuxOptions(seLinuxOptions *policyrecipemutationmodel.VmwareTanzu
 	flattenSeLinuxOptions[conditionKey] = *seLinuxOptions.Condition
 
 	if seLinuxOptions.Value != nil {
-		acs := make(map[string]interface{})
-
-		acs[levelKey] = seLinuxOptions.Value.Level
-		acs[roleKey] = seLinuxOptions.Value.Role
-		acs[typeKey] = seLinuxOptions.Value.Type
-		acs[userKey] = seLinuxOptions.Value.User
-
-		flattenSeLinuxOptions[valueKey] = []interface{}{acs}
+		flattenSeLinuxOptions[levelKey] = seLinuxOptions.Value.Level
+		flattenSeLinuxOptions[roleKey] = seLinuxOptions.Value.Role
+		flattenSeLinuxOptions[typeKey] = seLinuxOptions.Value.Type
+		flattenSeLinuxOptions[userKey] = seLinuxOptions.Value.User
 	}
 
 	return []interface{}{flattenSeLinuxOptions}
