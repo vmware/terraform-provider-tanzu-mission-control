@@ -38,17 +38,11 @@ func buildModelField(modelJSON *BlockToStruct, schemaData interface{}, mapValue 
 }
 
 func modelHandleBlockStruct(modelJSON *BlockToStruct, schemaData interface{}, mapValue *BlockToStruct, arrIndexer *ArrIndexer) {
-	if schemaDataSlice, ok := schemaData.([]interface{}); ok {
-		for _, rootSchemaInnerValue := range schemaDataSlice {
-			rootSchemaDict, _ := rootSchemaInnerValue.(map[string]interface{})
+	if schemaDataSlice, ok := schemaData.([]interface{}); ok && len(schemaDataSlice) > 0 {
+		rootSchemaDict, _ := schemaDataSlice[0].(map[string]interface{})
 
-			for key, value := range *mapValue {
-				buildModelField(modelJSON, rootSchemaDict[key], value, arrIndexer)
-			}
-
-			if len(schemaData.([]interface{})) > 1 {
-				arrIndexer.IncrementLastIndex()
-			}
+		for key, value := range *mapValue {
+			buildModelField(modelJSON, rootSchemaDict[key], value, arrIndexer)
 		}
 	}
 }
@@ -85,7 +79,14 @@ func modelHandleBlockStructSlice(modelJSON *BlockToStruct, schemaData interface{
 			for elemMapKey, elemMapValue := range *elemTypeMap {
 				var schemaValue, _ = (schemaData.([]interface{}))[0].(map[string]interface{})[elemMapKey]
 
-				buildModelField(modelJSON, schemaValue, elemMapValue, arrIndexer)
+				if _, ok := elemMapValue.(*ListToStruct); ok {
+					buildModelField(modelJSON, schemaValue, elemMapValue, arrIndexer)
+				} else {
+					for _, item := range schemaValue.([]interface{}) {
+						buildModelField(modelJSON, []interface{}{item}, elemMapValue, arrIndexer)
+						arrIndexer.IncrementLastIndex()
+					}
+				}
 			}
 		}
 

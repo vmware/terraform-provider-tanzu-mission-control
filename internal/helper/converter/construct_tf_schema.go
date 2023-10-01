@@ -224,15 +224,7 @@ func tfHandleListStruct(modelJSONData *map[string]interface{}, mapValue *ListToS
 	var (
 		arr        []interface{}
 		modelValue interface{}
-
-		indexCreated = false
 	)
-
-	if len(arrIndexer.IndicesInts) > strings.Count((*mapValue)[0], "[]") {
-		arrIndexer.New()
-
-		indexCreated = true
-	}
 
 	for err == nil {
 		modelValue, err = getModelValue(modelJSONData, (*mapValue)[0], arrIndexer)
@@ -241,10 +233,6 @@ func tfHandleListStruct(modelJSONData *map[string]interface{}, mapValue *ListToS
 		if modelValue != nil {
 			arr = append(arr, modelValue)
 		}
-	}
-
-	if indexCreated {
-		arrIndexer.RemoveLastIndex()
 	}
 
 	if len(arr) > 0 {
