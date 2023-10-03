@@ -14,6 +14,7 @@ import (
 	clusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster"
 	backupscheduleclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/backupschedule"
 	continuousdeliveryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/continuousdelivery"
+	dataprotectionclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/dataprotection"
 	gitrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/gitrepository"
 	iamclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/iam_policy"
 	kustomizationclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/kustomization"
@@ -114,6 +115,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		TanzupackageResourceService:                   packageclusterclient.New(httpClient),
 		PackageInstallResourceService:                 pkginstallclusterclient.New(httpClient),
 		BackupScheduleService:                         backupscheduleclient.New(httpClient),
+		DataProtectionService:                         dataprotectionclient.New(httpClient),
 	}
 }
 
@@ -157,4 +159,5 @@ type TanzuMissionControl struct {
 	TanzupackageResourceService                   packageclusterclient.ClientService
 	PackageInstallResourceService                 pkginstallclusterclient.ClientService
 	BackupScheduleService                         backupscheduleclient.ClientService
+	DataProtectionService                         dataprotectionclient.ClientService
 }
