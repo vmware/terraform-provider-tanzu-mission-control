@@ -6,8 +6,13 @@ SPDX-License-Identifier: MPL-2.0
 package targetlocation
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"fmt"
+	"strings"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
+	targetlocationmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/targetlocation"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
@@ -15,9 +20,8 @@ const (
 	ResourceName = "tanzu-mission-control_target_location"
 
 	// Root Keys.
-	NameKey         = "name"
-	ProviderNameKey = "provider_name"
-	SpecKey         = "spec"
+	NameKey = "name"
+	SpecKey = "spec"
 
 	// Spec Directive Keys.
 	BucketKey         = "bucket"
@@ -48,61 +52,61 @@ const (
 	AzureSubscriptionIDKey = "subscription_id"
 )
 
+var TargetProviderValidValues = []string{
+	string(targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationTargetProviderAWS),
+	string(targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationTargetProviderAZURE),
+}
+
 var backupTargetLocationResourceSchema = map[string]*schema.Schema{
-	NameKey:         nameSchema,
-	ProviderNameKey: providerNameSchema,
-	SpecKey:         specSchema,
-	common.MetaKey:  common.Meta,
+	NameKey:        nameSchema,
+	SpecKey:        specSchema,
+	common.MetaKey: common.Meta,
 }
 
 var nameSchema = &schema.Schema{
-	Type:     schema.TypeString,
-	Required: true,
-	ForceNew: true,
-}
-
-var providerNameSchema = &schema.Schema{
-	Type:     schema.TypeString,
-	Required: true,
-	ForceNew: true,
+	Type:        schema.TypeString,
+	Description: "The name of the target location",
+	Required:    true,
+	ForceNew:    true,
 }
 
 var specSchema = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "Spec of enable backup target location",
+	Description: "Spec block of backup target location",
 	Required:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			BucketKey: {
 				Type:        schema.TypeString,
-				Description: "Bucket as target location for backups",
+				Description: "The bucket to use for object storage.",
 				ForceNew:    true,
 				Optional:    true,
 			},
 			SysBucketKey: {
 				Type:        schema.TypeString,
-				Description: "Bucket as target location for backups",
+				Description: "System bucket to use for object storage.\n(Only used for Managed TMC)",
 				Computed:    true,
 			},
 			RegionKey: {
 				Type:        schema.TypeString,
-				Description: "Bucket region",
+				Description: "The region of the bucket origin.\nRequired only when target location is AWS Self Managed.",
 				Optional:    true,
 			},
 			SysRegionKey: {
 				Type:        schema.TypeString,
-				Description: "Bucket as target location for backups",
+				Description: "System bucket region (Only used for Managed TMC)",
 				Computed:    true,
 			},
 			TargetProviderKey: {
-				Type:        schema.TypeString,
-				Description: "Target provider",
-				Required:    true,
+				Type:             schema.TypeString,
+				Description:      fmt.Sprintf("The target provider of the backup storage.\nValid values are (%s)", strings.Join(TargetProviderValidValues, ", ")),
+				Required:         true,
+				ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice(TargetProviderValidValues, false)),
 			},
 			CaCertKey: {
 				Type:        schema.TypeString,
-				Description: "CA cert",
+				Description: "A PEM-encoded certificate bundle to trust while connecting to the storage backend.",
 				Optional:    true,
 			},
 			CredentialKey:     credentialsSchema,
@@ -118,15 +122,17 @@ var credentialsSchema = &schema.Schema{
 	Required:    true,
 	ForceNew:    true,
 	Elem: &schema.Schema{
-		Type: schema.TypeString,
+		Type:        schema.TypeString,
+		Description: "The name of credential to be used to access the bucket.",
 	},
 }
 
 var assignedGroupsSchema = &schema.Schema{
-	Type:     schema.TypeList,
-	MaxItems: 1,
-	MinItems: 1,
-	Optional: true,
+	Type:        schema.TypeList,
+	Description: "Assigned groups block for the target location.",
+	MaxItems:    1,
+	MinItems:    1,
+	Optional:    true,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			ClusterGroupsKey: {
@@ -140,7 +146,7 @@ var assignedGroupsSchema = &schema.Schema{
 			ClusterKey: {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "Cluster objects",
+				Description: "(Repeatable Block) Cluster block.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						ClustersNameKey: {
@@ -166,52 +172,61 @@ var assignedGroupsSchema = &schema.Schema{
 }
 
 var configSchema = &schema.Schema{
-	Type:     schema.TypeList,
-	MaxItems: 1,
-	MinItems: 1,
-	Optional: true,
+	Type:        schema.TypeList,
+	Description: "Target location config block.\nRequired only when target location is Self Managed and should contain either AWS or Azure blocks but not both.",
+	MaxItems:    1,
+	MinItems:    1,
+	Optional:    true,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			AwsConfigKey: {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
-				MinItems: 1,
+				Type:        schema.TypeList,
+				Description: "AWS S3 and S3-compatible target location config block.",
+				Optional:    true,
+				MaxItems:    1,
+				MinItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						AwsS3ForcePathKey: {
-							Type:     schema.TypeBool,
-							Optional: true,
+							Type:        schema.TypeBool,
+							Description: "A flag for whether to force path style URLs for S3 objects.\nIt is default to false and set it to true when using local storage service like Minio.",
+							Optional:    false,
 						},
 						AwsS3BucketURLKey: {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Description: "The service endpoint for non-AWS S3 storage solution.",
+							Optional:    true,
 						},
 						AwsS3PublicURLKey: {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Description: "The service endpoint used for generating download URLs. This field is primarily for local storage services like Minio.",
+							Optional:    true,
 						},
 					},
 				},
 			},
 			AzureConfigKey: {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
-				MinItems: 1,
+				Type:        schema.TypeList,
+				Description: "Azure target location config block.",
+				Optional:    true,
+				MaxItems:    1,
+				MinItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						AzureResourceGroupKey: {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Description: "Name of the resource group containing the storage account for this backup storage location.",
+							Optional:    true,
 						},
 						AzureSubscriptionIDKey: {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Description: "Name of the storage account for this backup storage location.",
+							Optional:    true,
 						},
 						AzureStorageAccountKey: {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Description: "Subscription ID under which all the resources are being managed in azure.",
+							Optional:    true,
 						},
 					},
 				},
