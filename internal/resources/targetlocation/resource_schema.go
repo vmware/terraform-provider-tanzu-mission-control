@@ -190,7 +190,8 @@ var configSchema = &schema.Schema{
 						AwsS3ForcePathKey: {
 							Type:        schema.TypeBool,
 							Description: "A flag for whether to force path style URLs for S3 objects.\nIt is default to false and set it to true when using local storage service like Minio.",
-							Optional:    false,
+							Optional:    true,
+							Default:     false,
 						},
 						AwsS3BucketURLKey: {
 							Type:        schema.TypeString,
