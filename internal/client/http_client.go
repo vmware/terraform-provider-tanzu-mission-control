@@ -45,6 +45,7 @@ import (
 	pkginstallclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackageinstall"
 	pkgrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository"
 	pkgrepoavailabilityclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository/packagerepositoryavailability"
+	targetlocationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/targetlocation"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	workspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace"
 	iamworkspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace/iam_policy"
@@ -116,6 +117,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		PackageInstallResourceService:                 pkginstallclusterclient.New(httpClient),
 		BackupScheduleService:                         backupscheduleclient.New(httpClient),
 		DataProtectionService:                         dataprotectionclient.New(httpClient),
+		TargetLocationService:                         targetlocationclient.New(httpClient),
 	}
 }
 
@@ -160,4 +162,5 @@ type TanzuMissionControl struct {
 	PackageInstallResourceService                 pkginstallclusterclient.ClientService
 	BackupScheduleService                         backupscheduleclient.ClientService
 	DataProtectionService                         dataprotectionclient.ClientService
+	TargetLocationService                         targetlocationclient.ClientService
 }
