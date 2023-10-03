@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper/converter"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 )
 
@@ -167,4 +168,17 @@ func GetTypeIntMapData(data map[string]interface{}) map[string]int {
 	}
 
 	return convertedMapData
+}
+
+// MetaConverterMap mapping for converter.
+var MetaConverterMap = &converter.BlockToStruct{
+	annotationsKey: &converter.Map{
+		"*": "meta.annotations.*",
+	},
+	LabelsKey: &converter.Map{
+		"*": "meta.labels.*",
+	},
+	DescriptionKey:     "meta.description",
+	resourceVersionKey: "meta.resourceVersion",
+	uidKey:             "meta.uid",
 }
