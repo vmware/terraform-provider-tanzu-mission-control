@@ -11,96 +11,96 @@ import (
 )
 
 var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
-	nameKey:                  "fullName.name",
-	clusterNameKey:           "fullName.clusterName",
-	managementClusterNameKey: "fullName.managementClusterName",
-	provisionerNameKey:       "fullName.provisionerName",
-	specKey: &tfModelConverterHelper.BlockToStruct{
-		pausedKey: "spec.paused",
-		scheduleKey: &tfModelConverterHelper.BlockToStruct{
-			rateKey: "spec.schedule.rate",
+	NameKey:                  "fullName.name",
+	ClusterNameKey:           "fullName.clusterName",
+	ManagementClusterNameKey: "fullName.managementClusterName",
+	ProvisionerNameKey:       "fullName.provisionerName",
+	SpecKey: &tfModelConverterHelper.BlockToStruct{
+		PausedKey: "spec.paused",
+		ScheduleKey: &tfModelConverterHelper.BlockToStruct{
+			RateKey: "spec.schedule.rate",
 		},
-		templateKey: &tfModelConverterHelper.BlockToStruct{
-			csiSnapshotTimeoutKey:       "spec.template.csiSnapshotTimeout",
-			defaultVolumesToFsBackupKey: "spec.template.defaultVolumesToFsBackup",
-			defaultVolumesToResticKey:   "spec.template.defaultVolumesToRestic",
-			excludedNamespacesKey:       "spec.template.excludedNamespaces",
-			includedNamespacesKey:       "spec.template.includedNamespaces",
-			excludedResourcesKey:        "spec.template.excludedResources",
-			includedResourcesKey:        "spec.template.includedResources",
-			includeClusterResourcesKey:  "spec.template.includeClusterResources",
-			snapshotVolumesKey:          "spec.template.snapshotVolumes",
-			storageLocationKey:          "spec.template.storageLocation",
-			backupTTLKey:                "spec.template.ttl",
-			volumeSnapshotLocationsKey:  "spec.template.volumeSnapshotLocations",
-			hooksKey: &tfModelConverterHelper.BlockToStruct{
-				resourceKey: &tfModelConverterHelper.BlockSliceToStructSlice{
+		TemplateKey: &tfModelConverterHelper.BlockToStruct{
+			CsiSnapshotTimeoutKey:       "spec.template.csiSnapshotTimeout",
+			DefaultVolumesToFsBackupKey: "spec.template.defaultVolumesToFsBackup",
+			DefaultVolumesToResticKey:   "spec.template.defaultVolumesToRestic",
+			ExcludedNamespacesKey:       "spec.template.excludedNamespaces",
+			IncludedNamespacesKey:       "spec.template.includedNamespaces",
+			ExcludedResourcesKey:        "spec.template.excludedResources",
+			IncludedResourcesKey:        "spec.template.includedResources",
+			IncludeClusterResourcesKey:  "spec.template.includeClusterResources",
+			SnapshotVolumesKey:          "spec.template.snapshotVolumes",
+			StorageLocationKey:          "spec.template.storageLocation",
+			BackupTTLKey:                "spec.template.ttl",
+			VolumeSnapshotLocationsKey:  "spec.template.volumeSnapshotLocations",
+			HooksKey: &tfModelConverterHelper.BlockToStruct{
+				ResourceKey: &tfModelConverterHelper.BlockSliceToStructSlice{
 					{
-						excludedNamespacesKey: "spec.template.hooks.resources[].excludedNamespaces",
-						includedNamespacesKey: "spec.template.hooks.resources[].includedNamespaces",
-						nameKey:               "spec.template.hooks.resources[].name",
-						postHookKey: &tfModelConverterHelper.BlockSliceToStructSlice{
+						ExcludedNamespacesKey: "spec.template.hooks.resources[].excludedNamespaces",
+						IncludedNamespacesKey: "spec.template.hooks.resources[].includedNamespaces",
+						NameKey:               "spec.template.hooks.resources[].name",
+						PostHookKey: &tfModelConverterHelper.BlockSliceToStructSlice{
 							{
-								execKey: &tfModelConverterHelper.BlockToStruct{
-									commandKey:   "spec.template.hooks.resources[].postHooks[].exec.command",
-									containerKey: "spec.template.hooks.resources[].postHooks[].exec.container",
-									onErrorKey:   "spec.template.hooks.resources[].postHooks[].exec.onError",
-									timeoutKey:   "spec.template.hooks.resources[].postHooks[].exec.timeout",
+								ExecKey: &tfModelConverterHelper.BlockToStruct{
+									CommandKey:   "spec.template.hooks.resources[].postHooks[].exec.command",
+									ContainerKey: "spec.template.hooks.resources[].postHooks[].exec.container",
+									OnErrorKey:   "spec.template.hooks.resources[].postHooks[].exec.onError",
+									TimeoutKey:   "spec.template.hooks.resources[].postHooks[].exec.timeout",
 								},
 							},
 						},
-						preHookKey: &tfModelConverterHelper.BlockSliceToStructSlice{
+						PreHookKey: &tfModelConverterHelper.BlockSliceToStructSlice{
 							{
-								execKey: &tfModelConverterHelper.BlockToStruct{
-									commandKey:   "spec.template.hooks.resources[].preHooks[].exec.command",
-									containerKey: "spec.template.hooks.resources[].preHooks[].exec.container",
-									onErrorKey:   "spec.template.hooks.resources[].preHooks[].exec.onError",
-									timeoutKey:   "spec.template.hooks.resources[].preHooks[].exec.timeout",
+								ExecKey: &tfModelConverterHelper.BlockToStruct{
+									CommandKey:   "spec.template.hooks.resources[].preHooks[].exec.command",
+									ContainerKey: "spec.template.hooks.resources[].preHooks[].exec.container",
+									OnErrorKey:   "spec.template.hooks.resources[].preHooks[].exec.onError",
+									TimeoutKey:   "spec.template.hooks.resources[].preHooks[].exec.timeout",
 								},
 							},
 						},
-						labelSelectorKey: &tfModelConverterHelper.BlockToStruct{
-							matchExrpessionKey: &tfModelConverterHelper.BlockSliceToStructSlice{
+						LabelSelectorKey: &tfModelConverterHelper.BlockToStruct{
+							MatchExrpessionKey: &tfModelConverterHelper.BlockSliceToStructSlice{
 								{
-									meKey:         "spec.template.hooks.resources[].labelSelector.matchExpressions[].key",
-									meOperatorKey: "spec.template.hooks.resources[].labelSelector.matchExpressions[].operator",
-									meValuesKey:   "spec.template.hooks.resources[].labelSelector.matchExpressions[].values",
+									MeKey:         "spec.template.hooks.resources[].labelSelector.matchExpressions[].key",
+									MeOperatorKey: "spec.template.hooks.resources[].labelSelector.matchExpressions[].operator",
+									MeValuesKey:   "spec.template.hooks.resources[].labelSelector.matchExpressions[].values",
 								},
 							},
-							matchLabelsKey: &tfModelConverterHelper.Map{
+							MatchLabelsKey: &tfModelConverterHelper.Map{
 								"*": "spec.template.hooks.resources[].labelSelector.matchLabels.*",
 							},
 						},
 					},
 				},
 			},
-			labelSelectorKey: &tfModelConverterHelper.BlockToStruct{
-				matchExrpessionKey: &tfModelConverterHelper.BlockSliceToStructSlice{
+			LabelSelectorKey: &tfModelConverterHelper.BlockToStruct{
+				MatchExrpessionKey: &tfModelConverterHelper.BlockSliceToStructSlice{
 					{
-						meKey:         "spec.template.labelSelector.matchExpressions[].key",
-						meOperatorKey: "spec.template.labelSelector.matchExpressions[].operator",
-						meValuesKey:   "spec.template.labelSelector.matchExpressions[].values",
+						MeKey:         "spec.template.labelSelector.matchExpressions[].key",
+						MeOperatorKey: "spec.template.labelSelector.matchExpressions[].operator",
+						MeValuesKey:   "spec.template.labelSelector.matchExpressions[].values",
 					},
 				},
-				matchLabelsKey: &tfModelConverterHelper.Map{
+				MatchLabelsKey: &tfModelConverterHelper.Map{
 					"*": "spec.template.labelSelector.matchLabels.*",
 				},
 			},
-			orLabelSelectorKey: &tfModelConverterHelper.BlockSliceToStructSlice{
+			OrLabelSelectorKey: &tfModelConverterHelper.BlockSliceToStructSlice{
 				{
-					matchExrpessionKey: &tfModelConverterHelper.BlockSliceToStructSlice{
+					MatchExrpessionKey: &tfModelConverterHelper.BlockSliceToStructSlice{
 						{
-							meKey:         "spec.template.orLabelSelectors[].matchExpressions[].key",
-							meOperatorKey: "spec.template.orLabelSelectors[].matchExpressions[].operator",
-							meValuesKey:   "spec.template.orLabelSelectors[].matchExpressions[].values",
+							MeKey:         "spec.template.orLabelSelectors[].matchExpressions[].key",
+							MeOperatorKey: "spec.template.orLabelSelectors[].matchExpressions[].operator",
+							MeValuesKey:   "spec.template.orLabelSelectors[].matchExpressions[].values",
 						},
 					},
-					matchLabelsKey: &tfModelConverterHelper.Map{
+					MatchLabelsKey: &tfModelConverterHelper.Map{
 						"*": "spec.template.orLabelSelectors[].matchLabels.*",
 					},
 				},
 			},
-			orderedResourcesKey: &tfModelConverterHelper.Map{
+			OrderedResourcesKey: &tfModelConverterHelper.Map{
 				"*": "spec.template.orderedResources.*",
 			},
 		},
@@ -108,22 +108,22 @@ var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
 }
 
 var tfModelDataSourceRequestMap = &tfModelConverterHelper.BlockToStruct{
-	sortByKey:            "sortBy",
-	queryKey:             "query",
-	includeTotalCountKey: "includeTotal",
-	scopeKey: &tfModelConverterHelper.BlockToStruct{
-		clusterNameKey:           "searchScope.clusterScope.clusterName",
-		managementClusterNameKey: "searchScope.clusterScope.managementClusterName",
-		provisionerNameKey:       "searchScope.clusterScope.provisionerName",
-		nameKey:                  "searchScope.clusterScope.name",
+	SortByKey:            "sortBy",
+	QueryKey:             "query",
+	IncludeTotalCountKey: "includeTotal",
+	ScopeKey: &tfModelConverterHelper.BlockToStruct{
+		ClusterNameKey:           "searchScope.clusterName",
+		ManagementClusterNameKey: "searchScope.managementClusterName",
+		ProvisionerNameKey:       "searchScope.provisionerName",
+		NameKey:                  "searchScope.name",
 	},
 }
 
 var tfModelDataSourceResponseMap = &tfModelConverterHelper.BlockToStruct{
-	schedulesKey: &tfModelConverterHelper.BlockSliceToStructSlice{
+	SchedulesKey: &tfModelConverterHelper.BlockSliceToStructSlice{
 		// UNPACK tfModelResourceMap HERE.
 	},
-	totalCountKey: "totalCount",
+	TotalCountKey: "totalCount",
 }
 
 var tfModelResourceConverter = tfModelConverterHelper.TFSchemaModelConverter[*backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleSchedule]{
@@ -141,8 +141,8 @@ var tfModelDataSourceResponseConverter = tfModelConverterHelper.TFSchemaModelCon
 func constructTFModelDataSourceResponseMap() {
 	targetLocationDataSourceSchema := tfModelResourceConverter.UnpackSchema("schedules[]")
 
-	*(*tfModelDataSourceResponseMap)[schedulesKey].(*tfModelConverterHelper.BlockSliceToStructSlice) = append(
-		*(*tfModelDataSourceResponseMap)[schedulesKey].(*tfModelConverterHelper.BlockSliceToStructSlice),
+	*(*tfModelDataSourceResponseMap)[SchedulesKey].(*tfModelConverterHelper.BlockSliceToStructSlice) = append(
+		*(*tfModelDataSourceResponseMap)[SchedulesKey].(*tfModelConverterHelper.BlockSliceToStructSlice),
 		targetLocationDataSourceSchema,
 	)
 }

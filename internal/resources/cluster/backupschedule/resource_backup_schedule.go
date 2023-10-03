@@ -45,7 +45,7 @@ func ResourceBackupSchedule() *schema.Resource {
 func resourceBackupScheduleCreate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 	model := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
-	diags = validateSchema(model, BackupScope(data.Get(scopeKey).(string)))
+	diags = validateSchema(model, BackupScope(data.Get(ScopeKey).(string)))
 
 	if diags.HasError() {
 		return diags
@@ -67,7 +67,7 @@ func resourceBackupScheduleCreate(ctx context.Context, data *schema.ResourceData
 
 func resourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	backupScheduleFn := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{nameKey, clusterNameKey, managementClusterNameKey, provisionerNameKey}).FullName
+	backupScheduleFn := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey, ClusterNameKey, ManagementClusterNameKey, ProvisionerNameKey}).FullName
 	getResponse, err := config.TMCConnection.BackupScheduleService.BackupScheduleResourceServiceGet(backupScheduleFn)
 
 	if err != nil {
@@ -79,7 +79,7 @@ func resourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData, 
 
 		return diag.Errorf("Couldn't read backup schedule. Name: %s, Cluster: %s", backupScheduleFn.Name, backupScheduleFn.ClusterName)
 	} else if getResponse.Schedule != nil {
-		userExcludedNamespaces := getExcludedNamespaces(data, excludedNamespacesKey)
+		userExcludedNamespaces := getExcludedNamespaces(data, ExcludedNamespacesKey)
 		systemExcludedNamespaces := getResponseSystemExcludedNamespaces(getResponse.Schedule, userExcludedNamespaces)
 		getResponse.Schedule.Spec.Template.ExcludedNamespaces = userExcludedNamespaces
 
@@ -104,7 +104,7 @@ func resourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData, 
 
 func resourceBackupScheduleDelete(_ context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	backupScheduleFn := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{nameKey, clusterNameKey, managementClusterNameKey, provisionerNameKey}).FullName
+	backupScheduleFn := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey, ClusterNameKey, ManagementClusterNameKey, ProvisionerNameKey}).FullName
 	err := config.TMCConnection.BackupScheduleService.BackupScheduleResourceServiceDelete(backupScheduleFn)
 
 	if err != nil && !clienterrors.IsNotFoundError(err) {
@@ -121,13 +121,13 @@ func resourceBackupScheduleDelete(_ context.Context, data *schema.ResourceData, 
 func resourceBackupScheduleUpdate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 	model := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
-	diags = validateSchema(model, BackupScope(data.Get(scopeKey).(string)))
+	diags = validateSchema(model, BackupScope(data.Get(ScopeKey).(string)))
 
 	if diags.HasError() {
 		return diags
 	}
 
-	systemExcludedNamespaces := getExcludedNamespaces(data, systemExcludedNamespacesKey)
+	systemExcludedNamespaces := getExcludedNamespaces(data, SystemExcludedNamespacesKey)
 	model.Spec.Template.ExcludedNamespaces = append(model.Spec.Template.ExcludedNamespaces, systemExcludedNamespaces...)
 
 	request := &backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleRequest{
@@ -171,7 +171,7 @@ func resourceBackupScheduleImporter(_ context.Context, data *schema.ResourceData
 	if err != nil || getResponse.Schedule == nil {
 		return nil, errors.Errorf("Couldn't read backup schedule. Name: %s, Cluster: %s", backupScheduleFn.Name, backupScheduleFn.ClusterName)
 	} else {
-		userExcludedNamespaces := getExcludedNamespaces(data, excludedNamespacesKey)
+		userExcludedNamespaces := getExcludedNamespaces(data, ExcludedNamespacesKey)
 		systemExcludedNamespaces := getResponseSystemExcludedNamespaces(getResponse.Schedule, userExcludedNamespaces)
 		getResponse.Schedule.Spec.Template.ExcludedNamespaces = userExcludedNamespaces
 
@@ -194,7 +194,7 @@ func resourceBackupScheduleImporter(_ context.Context, data *schema.ResourceData
 
 func validateSchema(scheduleModel *backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleSchedule, scope BackupScope) (diags diag.Diagnostics) {
 	switch scope {
-	case fullClusterBackupScope:
+	case FullClusterBackupScope:
 		if len(scheduleModel.Spec.Template.IncludedNamespaces) > 0 {
 			d := buildValidationErrorDiag(fmt.Sprintf("(Template) Included namespaces can't be configured when scope is %s", scope))
 			diags = append(diags, d)
@@ -209,7 +209,7 @@ func validateSchema(scheduleModel *backupschedulemodels.VmwareTanzuManageV1alpha
 			d := buildValidationErrorDiag(fmt.Sprintf("(Template) Or lables selectors can't be configured when scope is %s", scope))
 			diags = append(diags, d)
 		}
-	case namespacesBackupScope:
+	case NamespacesBackupScope:
 		if len(scheduleModel.Spec.Template.IncludedNamespaces) == 0 {
 			d := buildValidationErrorDiag(fmt.Sprintf("(Template) Included namespaces must be configured when scope is %s", scope))
 			diags = append(diags, d)
@@ -230,7 +230,7 @@ func validateSchema(scheduleModel *backupschedulemodels.VmwareTanzuManageV1alpha
 			diags = append(diags, d)
 		}
 
-	case labelSelectorBackupScope:
+	case LabelSelectorBackupScope:
 		if scheduleModel.Spec.Template.LabelSelector == nil {
 			d := buildValidationErrorDiag(fmt.Sprintf("(Template) Lable selectors must be configured when scope is %s", scope))
 			diags = append(diags, d)
@@ -275,23 +275,23 @@ func buildValidationErrorDiag(msg string) diag.Diagnostic {
 }
 
 func getExcludedNamespaces(data *schema.ResourceData, excludedNsKey string) []string {
-	specData := data.Get(specKey).([]interface{})[0].(map[string]interface{})
-	template := specData[templateKey].([]interface{})[0].(map[string]interface{})
+	specData := data.Get(SpecKey).([]interface{})[0].(map[string]interface{})
+	template := specData[TemplateKey].([]interface{})[0].(map[string]interface{})
 
 	return helper.SetPrimitiveList[string](template[excludedNsKey])
 }
 
 func setSystemExcludedNamespaces(data *schema.ResourceData, systemExcludedNamespaces []string) {
-	specData := data.Get(specKey).([]interface{})[0].(map[string]interface{})
-	template := specData[templateKey].([]interface{})[0].(map[string]interface{})
-	template[systemExcludedNamespacesKey] = systemExcludedNamespaces
+	specData := data.Get(SpecKey).([]interface{})[0].(map[string]interface{})
+	template := specData[TemplateKey].([]interface{})[0].(map[string]interface{})
+	template[SystemExcludedNamespacesKey] = systemExcludedNamespaces
 
-	_ = data.Set(specKey, []interface{}{specData})
+	_ = data.Set(SpecKey, []interface{}{specData})
 }
 
 func getSchemaCsiSnapshotTimeout(data *schema.ResourceData) string {
-	specData := data.Get(specKey).([]interface{})[0].(map[string]interface{})
-	template := specData[templateKey].([]interface{})[0].(map[string]interface{})
+	specData := data.Get(SpecKey).([]interface{})[0].(map[string]interface{})
+	template := specData[TemplateKey].([]interface{})[0].(map[string]interface{})
 
-	return template[csiSnapshotTimeoutKey].(string)
+	return template[CsiSnapshotTimeoutKey].(string)
 }
