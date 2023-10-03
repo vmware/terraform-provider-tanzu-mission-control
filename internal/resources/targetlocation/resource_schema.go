@@ -17,7 +17,8 @@ import (
 )
 
 const (
-	ResourceName = "tanzu-mission-control_target_location"
+	ResourceName    = "tanzu-mission-control_target_location"
+	TMCProviderName = "tmc"
 
 	// Root Keys.
 	NameKey = "name"

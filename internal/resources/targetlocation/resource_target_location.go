@@ -46,7 +46,7 @@ func ResourceTargetLocation() *schema.Resource {
 func resourceTargetLocationCreate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 	model := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
-	model.FullName.ProviderName = "tmc"
+	model.FullName.ProviderName = TMCProviderName
 	credentialsType, err := getCredentialsType(config, model.Spec.Credential.Name)
 
 	if err != nil {
@@ -78,7 +78,7 @@ func resourceTargetLocationCreate(ctx context.Context, data *schema.ResourceData
 func resourceTargetLocationRead(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 	targetLocationFn := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey}).FullName
-	targetLocationFn.ProviderName = "tmc"
+	targetLocationFn.ProviderName = TMCProviderName
 	getResponse, err := config.TMCConnection.TargetLocationService.TargetLocationResourceServiceGet(targetLocationFn)
 
 	if err != nil {
@@ -121,7 +121,7 @@ func resourceTargetLocationRead(ctx context.Context, data *schema.ResourceData, 
 func resourceTargetLocationDelete(_ context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 	targetLocationFn := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey}).FullName
-	targetLocationFn.ProviderName = "tmc"
+	targetLocationFn.ProviderName = TMCProviderName
 	err := config.TMCConnection.TargetLocationService.TargetLocationResourceServiceDelete(targetLocationFn)
 
 	if err != nil && !clienterrors.IsNotFoundError(err) {
@@ -138,7 +138,7 @@ func resourceTargetLocationDelete(_ context.Context, data *schema.ResourceData, 
 func resourceTargetLocationUpdate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 	model := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
-	model.FullName.ProviderName = "tmc"
+	model.FullName.ProviderName = TMCProviderName
 	credentialsType, err := getCredentialsType(config, model.Spec.Credential.Name)
 
 	if err != nil {
@@ -181,7 +181,7 @@ func resourceTargetLocationImporter(_ context.Context, data *schema.ResourceData
 	}
 
 	targetLocationFn := &targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationFullName{
-		ProviderName: "tmc",
+		ProviderName: TMCProviderName,
 		Name:         targetLocationName,
 	}
 	getResponse, err := client.TMCConnection.TargetLocationService.TargetLocationResourceServiceGet(targetLocationFn)

@@ -38,7 +38,7 @@ func dataSourceTargetLocationsRead(ctx context.Context, data *schema.ResourceDat
 	request := tfModelDataSourceRequestConverter.ConvertTFSchemaToAPIModel(data, []string{})
 
 	if request.SearchScope.ClusterName != "" {
-		request.SearchScope.ProviderName = "tmc"
+		request.SearchScope.ProviderName = TMCProviderName
 	}
 
 	resp, err = config.TMCConnection.TargetLocationService.TargetLocationResourceServiceList(request)
