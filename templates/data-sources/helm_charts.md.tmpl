@@ -1,0 +1,21 @@
+---
+Title: "Helm Charts Data Source"
+Description: |-
+    Read the Helm Charts from TMC.
+---
+
+# Helm Charts
+
+This resource allows you to get list of Helm Charts through Tanzu Mission Control.
+
+The Helm charts tab on the Catalog page in the Tanzu Mission Control console shows the Available Helm charts.
+
+[Helm]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-2602A6A3-1FDA-4270-A76F-047FBD039ADF.html
+
+
+## Organization scoped Helm Charts
+
+### Example Usage
+
+{{ tffile "examples/data-sources/helmcharts/data_source.tf" }}
+{{ .SchemaMarkdown | trimspace }}
