@@ -37,7 +37,7 @@ type ClientService interface {
 
 	DataProtectionResourceServiceDelete(fn *dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionFullName, destroyBackups bool) error
 
-	DataProtectionResourceServiceList(clusterName string) (*dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionListDataProtectionsResponse, error)
+	DataProtectionResourceServiceList(fn *dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionFullName) (*dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionListDataProtectionsResponse, error)
 
 	DataProtectionResourceServiceUpdate(request *dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionCreateDataProtectionRequest) (*dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionCreateDataProtectionResponse, error)
 }
@@ -73,10 +73,24 @@ func (c *Client) DataProtectionResourceServiceDelete(fn *dataprotectionmodels.Vm
 /*
 DataProtectionResourceServiceList gets data protection details.
 */
-func (c *Client) DataProtectionResourceServiceList(clusterName string) (*dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionListDataProtectionsResponse, error) {
-	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, clusterName, dataProtectionPath).String()
+func (c *Client) DataProtectionResourceServiceList(fn *dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionFullName) (*dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionListDataProtectionsResponse, error) {
+	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, fn.ClusterName, dataProtectionPath)
+	queryParams := url.Values{}
+
+	if fn.ManagementClusterName != "" {
+		queryParams.Add("searchScope.managementClusterName", fn.ManagementClusterName)
+	}
+
+	if fn.ProvisionerName != "" {
+		queryParams.Add("searchScope.provisionerName", fn.ProvisionerName)
+	}
+
+	if len(queryParams) > 0 {
+		requestURL = requestURL.AppendQueryParams(queryParams)
+	}
+
 	resp := &dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionListDataProtectionsResponse{}
-	err := c.Get(requestURL, resp)
+	err := c.Get(requestURL.String(), resp)
 
 	return resp, err
 }
