@@ -11,6 +11,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/pkg/errors"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	backupschedulemodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/backupschedule"
@@ -37,9 +38,12 @@ func dataSourceTargetLocationRead(ctx context.Context, data *schema.ResourceData
 	request := tfModelDataSourceRequestConverter.ConvertTFSchemaToAPIModel(data, []string{})
 	resp, err = config.TMCConnection.BackupScheduleService.BackupScheduleResourceServiceList(request)
 
-	if err != nil {
-		return diag.Errorf("Couldn't list backup schedules")
-	} else if resp.Schedules != nil {
+	switch {
+	case err != nil:
+		return diag.FromErr(errors.Wrap(err, "Couldn't list backup schedules"))
+	case resp.Schedules == nil:
+		data.SetId("NO_DATA")
+	default:
 		err = tfModelDataSourceResponseConverter.FillTFSchema(resp, data)
 
 		if err != nil {
