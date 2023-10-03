@@ -109,9 +109,26 @@ func (c *Client) BackupScheduleResourceServiceList(request *backupschedulemodels
 		return nil, errors.New("scope must be set with either provider name or cluster name")
 	}
 
-	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, request.SearchScope.ClusterName, dataProtectionSchedulePath).String()
+	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, request.SearchScope.ClusterName, dataProtectionSchedulePath)
+	queryParams := url.Values{}
 
-	err := c.Get(requestURL, resp)
+	if request.SearchScope.ManagementClusterName != "" {
+		queryParams.Add("searchScope.managementClusterName", request.SearchScope.ManagementClusterName)
+	}
+
+	if request.SearchScope.ProvisionerName != "" {
+		queryParams.Add("searchScope.provisionerName", request.SearchScope.ProvisionerName)
+	}
+
+	if request.SearchScope.Name != "" {
+		queryParams.Add("searchScope.name", request.SearchScope.Name)
+	}
+
+	if len(queryParams) > 0 {
+		requestURL = requestURL.AppendQueryParams(queryParams)
+	}
+
+	err := c.Get(requestURL.String(), resp)
 
 	return resp, err
 }
