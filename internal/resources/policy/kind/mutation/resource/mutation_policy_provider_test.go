@@ -17,7 +17,7 @@ import (
 	policykindmutation "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/mutation"
 )
 
-func initTestProvider(t *testing.T) *schema.Provider {
+func initMutationPolicyTestProvider(t *testing.T) *schema.Provider {
 	testAccProvider := &schema.Provider{
 		Schema: authctx.ProviderAuthSchema(),
 		ResourcesMap: map[string]*schema.Resource{

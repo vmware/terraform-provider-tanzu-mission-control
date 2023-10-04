@@ -48,7 +48,7 @@ type testAcceptanceConfig struct {
 
 func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 	return &testAcceptanceConfig{
-		Provider:                   initTestProvider(t),
+		Provider:                   initMutationPolicyTestProvider(t),
 		MutationPolicyResource:     mutationPolicyResource,
 		MutationPolicyResourceVar:  mutationPolicyResourceVar,
 		MutationPolicyResourceName: fmt.Sprintf("%s.%s", mutationPolicyResource, mutationPolicyResourceVar),
