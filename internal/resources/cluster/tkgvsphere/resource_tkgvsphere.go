@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	nodepoolmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 	tkgvspheremodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgvsphere"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/common"
@@ -229,8 +230,7 @@ func expandTKGVsphereNetworkSettings(data []interface{}) (network *tkgvspheremod
 	}
 
 	if v, ok := lookUpNetwork[apiServerPortKey]; ok {
-		apiServerPort := v.(int)
-		network.APIServerPort = int32(apiServerPort)
+		helper.SetPrimitiveValue(v, &network.APIServerPort, "network.APIServerPort")
 	}
 
 	if v, ok := lookUpNetwork[controlPlaneEndPointKey]; ok {
