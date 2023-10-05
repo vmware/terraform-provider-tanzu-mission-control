@@ -23,7 +23,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 	secretmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/cluster"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret/scope"
+	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
@@ -161,7 +161,7 @@ resource "%s" "%s" {
 
 }
 
-`, clusterResource, clusterResourceVar, scope.AttachedValue, scope.AttachedValue, testConfig.ClusterName, testhelper.MetaTemplate, kubeconfigPath,
+`, clusterResource, clusterResourceVar, commonscope.AttachedValue, commonscope.AttachedValue, testConfig.ClusterName, testhelper.MetaTemplate, kubeconfigPath,
 		testConfig.SecretResource, testConfig.SecretResourceVar, testConfig.SecretName, secretSpec)
 }
 
@@ -258,7 +258,7 @@ func WithURL(val string) OperationOption {
 	}
 }
 
-// getTestSecretResourceSpec builds the input block for git repository resource based a recipe.
+// getTestSecretResourceSpec builds the input block for cluster secret resource based a recipe.
 func (testConfig *testAcceptanceConfig) getTestSecretResourceSpec(opts ...OperationOption) string {
 	cfg := &OperationConfig{
 		username:         "someusername",
