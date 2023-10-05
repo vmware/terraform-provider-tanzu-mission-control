@@ -20,6 +20,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindcustom "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
 	policykindimage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
+	policykindmutation "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/mutation"
 	policykindnetwork "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/network"
 	policykindquota "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/quota"
 	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
@@ -32,6 +33,7 @@ var ScopeMap = map[string][]string{
 	policykindquota.ResourceName:    {scope.ClusterKey, scope.ClusterGroupKey, scope.OrganizationKey},
 	policykindsecurity.ResourceName: {scope.ClusterKey, scope.ClusterGroupKey, scope.OrganizationKey},
 	policykindnetwork.ResourceName:  {scope.WorkspaceKey, scope.OrganizationKey},
+	policykindmutation.ResourceName: {scope.ClusterKey, scope.ClusterGroupKey, scope.OrganizationKey},
 }
 
 // nolint: gocognit

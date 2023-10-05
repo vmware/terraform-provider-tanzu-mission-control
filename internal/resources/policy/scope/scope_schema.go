@@ -22,7 +22,7 @@ import (
 var (
 	ScopeSchema = &schema.Schema{
 		Type:        schema.TypeList,
-		Description: "Scope for the custom, security, image, network and namespace quota policy, having one of the valid scopes for custom, security and namespace quota policy: cluster, cluster_group or organization and valid scopes for image and network policy: workspace or organization.",
+		Description: "Scope for the custom, security, image, network, namespace quota and mutation policy, having one of the valid scopes for custom, security, mutation, and namespace quota policy: cluster, cluster_group or organization and valid scopes for image and network policy: workspace or organization.",
 		Required:    true,
 		ForceNew:    true,
 		MaxItems:    1,

@@ -13,6 +13,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	policyrecipecustommodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom"
 	policyrecipecustomcommonmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom/common"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/common"
 )
 
 var TMCRequireLabels = &schema.Schema{
@@ -58,7 +59,7 @@ var TMCRequireLabels = &schema.Schema{
 					},
 				},
 			},
-			TargetKubernetesResourcesKey: targetKubernetesResources,
+			TargetKubernetesResourcesKey: common.TargetKubernetesResourcesSchema,
 		},
 	},
 }
@@ -88,7 +89,7 @@ func ConstructTMCRequireLabels(data []interface{}) (requireLabels *policyrecipec
 				requireLabels.TargetKubernetesResources = make([]*policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources, 0)
 
 				for _, raw := range vs {
-					requireLabels.TargetKubernetesResources = append(requireLabels.TargetKubernetesResources, expandTargetKubernetesResources(raw))
+					requireLabels.TargetKubernetesResources = append(requireLabels.TargetKubernetesResources, common.ExpandTargetKubernetesResources(raw))
 				}
 			}
 		}
@@ -164,7 +165,7 @@ func FlattenTMCRequireLabels(requireLabels *policyrecipecustommodel.VmwareTanzuM
 		var tkrs []interface{}
 
 		for _, tkr := range requireLabels.TargetKubernetesResources {
-			tkrs = append(tkrs, flattenTargetKubernetesResources(tkr))
+			tkrs = append(tkrs, common.FlattenTargetKubernetesResources(tkr))
 		}
 
 		flattenRequiredLabels[TargetKubernetesResourcesKey] = tkrs
