@@ -59,8 +59,8 @@ func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *sourcesecretclu
 						sourcesecretclustermodel.VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpecSecretTypeOPAQUESECRETTYPE,
 					)
 
-					unamekeyData, _ := getEncodedSpecData(username)
-					passwordkeyData, _ := getEncodedSpecData(password)
+					unamekeyData, _ := GetEncodedSpecData(username)
+					passwordkeyData, _ := GetEncodedSpecData(password)
 					specData := map[string]strfmt.Base64{
 						usernameKey: unamekeyData,
 						PasswordKey: passwordkeyData,
@@ -96,8 +96,8 @@ func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *sourcesecretclu
 						sourcesecretclustermodel.VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpecSecretTypeOPAQUESECRETTYPE,
 					)
 
-					identitydata, _ := getEncodedSpecData(identity)
-					knownhostsdata, _ := getEncodedSpecData(knownhosts)
+					identitydata, _ := GetEncodedSpecData(identity)
+					knownhostsdata, _ := GetEncodedSpecData(knownhosts)
 					specData := map[string]strfmt.Base64{
 						IdentityKey:   identitydata,
 						KnownhostsKey: knownhostsdata,
@@ -166,7 +166,7 @@ func FlattenSpecForClusterScope(spec *sourcesecretclustermodel.VmwareTanzuManage
 	return []interface{}{flattenSpecData}
 }
 
-func getEncodedSpecData(data string) (strfmt.Base64, error) {
+func GetEncodedSpecData(data string) (strfmt.Base64, error) {
 	var secretspecdata strfmt.Base64
 
 	err := secretspecdata.Scan(base64.StdEncoding.EncodeToString([]byte(data)))

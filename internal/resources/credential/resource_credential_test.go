@@ -67,7 +67,7 @@ meta {
       "key2" : "value2"
     }
     annotations = {
-      "repository-path" : "something"
+      "registry-namespace" : "something"
     }
   }
 

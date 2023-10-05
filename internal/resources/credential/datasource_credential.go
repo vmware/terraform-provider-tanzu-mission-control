@@ -8,7 +8,6 @@ package credential
 import (
 	"context"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -19,7 +18,6 @@ import (
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	credentialsmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/credential"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 const defaultWaitTimeout = 3 * time.Minute
@@ -42,25 +40,26 @@ func dataSourceCredentialRead(ctx context.Context, d *schema.ResourceData, m int
 		err   error
 	)
 
-	name, _ := d.Get(NameKey).(string)
+	model := tfModelResourceConverter.ConvertTFSchemaToAPIModel(d, []string{NameKey})
 
 	getCredentialResourceRetryableFunc := func() (retry bool, err error) {
-		resp, err = config.TMCConnection.CredentialResourceService.CredentialResourceServiceGet(constructFullname(d))
+		resp, err = config.TMCConnection.CredentialResourceService.CredentialResourceServiceGet(model.FullName)
 		if err != nil || resp == nil {
 			if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
 				_ = schema.RemoveFromState(d, m)
 				return false, nil
 			}
 
-			return true, errors.Wrapf(err, "unable to get Tanzu Mission Control credential entry, name : %s", name)
+			return true, errors.Wrapf(err, "unable to get Tanzu Mission Control credential entry, name : %s", model.FullName.Name)
 		}
 
 		if resp.Credential.Status == nil || resp.Credential.Status.Phase == nil {
-			return true, errors.Errorf("status or phase not found for Tanzu Mission Control credential entry, name: %s", name)
+			return true, errors.Errorf("status or phase not found for Tanzu Mission Control credential entry, name: %s", model.FullName.Name)
 		}
 
-		if !strings.EqualFold(string(*resp.Credential.Status.Phase), string(credentialsmodels.VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseVALID)) {
-			log.Printf("[DEBUG] waiting for creadential(%s) to be in VALID phase", name)
+		if *resp.Credential.Status.Phase != credentialsmodels.VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseVALID &&
+			*resp.Credential.Status.Phase != credentialsmodels.VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseCREATED {
+			log.Printf("[DEBUG] waiting for creadential(%s) to be in VALID phase", model.FullName.Name)
 			return true, nil
 		}
 
@@ -96,18 +95,12 @@ func dataSourceCredentialRead(ctx context.Context, d *schema.ResourceData, m int
 	}
 
 	d.SetId(resp.Credential.Meta.UID)
+	err = tfModelResourceConverter.FillTFSchema(resp.Credential, d)
 
-	status := map[string]interface{}{
-		"phase":      resp.Credential.Status.Phase,
-		"phase_info": resp.Credential.Status.PhaseInfo,
-	}
+	if err != nil {
+		log.Println(err)
 
-	if err := d.Set(common.MetaKey, common.FlattenMeta(resp.Credential.Meta)); err != nil {
-		return diag.FromErr(err)
-	}
-
-	if err := d.Set(statusKey, status); err != nil {
-		return diag.FromErr(err)
+		return diag.Errorf("Unable to get credentials. Schema conversion failed.")
 	}
 
 	return diags
