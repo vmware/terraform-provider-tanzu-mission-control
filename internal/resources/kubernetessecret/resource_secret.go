@@ -7,8 +7,12 @@ package kubernetessecret
 
 import (
 	"context"
+	"log"
+	"strings"
 
+	"github.com/go-openapi/strfmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/pkg/errors"
@@ -16,14 +20,17 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
-	secretmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/cluster"
-	secretexportmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/cluster/secretexport"
+	clustersecretmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/cluster"
+	secretexportclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/cluster/secretexport"
+	clustergroupsecretmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/clustergroup"
+	secretexportclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/clustergroup/secretexport"
+	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
+	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret/scope"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret/spec"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret/status"
 )
-
-type contextMethodKey struct{}
 
 func ResourceSecret() *schema.Resource {
 	return &schema.Resource{
@@ -32,6 +39,9 @@ func ResourceSecret() *schema.Resource {
 		UpdateContext: resourceSecretInPlaceUpdate,
 		ReadContext:   dataSourceSecretRead,
 		Schema:        getResourceSchema(),
+		CustomizeDiff: customdiff.All(
+			schema.CustomizeDiffFunc(commonscope.ValidateScope(scope.ScopesAllowed[:])),
+		),
 	}
 }
 
@@ -71,14 +81,9 @@ func getSecretSchema(isDataSource bool) map[string]*schema.Schema {
 			Description: "ID of Organization.",
 			Optional:    true,
 		},
-		scope.ScopeKey: scope.ScopeSchema,
-		statusKey: {
-			Type:        schema.TypeMap,
-			Description: "Status for the Secret Export.",
-			Computed:    true,
-			Elem:        &schema.Schema{Type: schema.TypeString},
-		},
-		common.MetaKey: common.Meta,
+		commonscope.ScopeKey: scope.ScopeSchema,
+		statusKey:            status.StatusSchema,
+		common.MetaKey:       common.Meta,
 	}
 
 	innerMap := map[string]*schema.Schema{
@@ -105,56 +110,140 @@ func getSecretSchema(isDataSource bool) map[string]*schema.Schema {
 func resourceSecretCreate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	secretRequest := &secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretRequest{
-		Secret: &secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecret{
-			FullName: constructFullname(d),
-			Meta:     common.ConstructMeta(d),
-			Spec:     spec.ConstructSpec(d),
-		},
+	secretName, ok := d.Get(NameKey).(string)
+	if !ok {
+		return diag.Errorf("Unable to read secret name")
 	}
 
-	secretResponse, err := config.TMCConnection.SecretResourceService.SecretResourceServiceCreate(secretRequest)
-
-	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "unable to create Tanzu Mission Control secret entry, name : %s", secretRequest.Secret.FullName.Name))
+	secretNamespaceName, ok := d.Get(NamespaceNameKey).(string)
+	if !ok {
+		return diag.Errorf("Unable to read secret namespace name")
 	}
 
-	d.SetId(secretResponse.Secret.Meta.UID)
+	scopedFullnameData := scope.ConstructScope(d, secretName, secretNamespaceName)
+
+	if scopedFullnameData == nil {
+		return diag.Errorf("Unable to create Tanzu Mission Control secret entry; Scope full name is empty")
+	}
+
+	var (
+		UID  string
+		meta = common.ConstructMeta(d)
+	)
+
+	switch scopedFullnameData.Scope {
+	case commonscope.ClusterScope:
+		if scopedFullnameData.FullnameCluster != nil {
+			secretReq := &clustersecretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretRequest{
+				Secret: &clustersecretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecret{
+					FullName: scopedFullnameData.FullnameCluster,
+					Meta:     meta,
+					Spec:     spec.ConstructSpecForClusterScope(d),
+				},
+			}
+
+			secretResponse, err := config.TMCConnection.SecretResourceService.SecretResourceServiceCreate(secretReq)
+			if err != nil {
+				return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control cluster secret entry, name : %s", secretName))
+			}
+
+			UID = secretResponse.Secret.Meta.UID
+		}
+	case commonscope.ClusterGroupScope:
+		if scopedFullnameData.FullnameClusterGroup != nil {
+			secretReq := &clustergroupsecretmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretRequest{
+				Secret: &clustergroupsecretmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretSecret{
+					FullName: scopedFullnameData.FullnameClusterGroup,
+					Meta:     meta,
+					Spec:     spec.ConstructSpecForClusterGroupScope(d),
+				},
+			}
+
+			secretResponse, err := config.TMCConnection.ClusterGroupSecretResourceService.SecretResourceServiceCreate(secretReq)
+			if err != nil {
+				return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control cluster group secret entry, name : %s", secretName))
+			}
+
+			UID = secretResponse.Secret.Meta.UID
+		}
+	case commonscope.UnknownScope:
+		return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scope.ScopesAllowed[:], `, `))
+	}
+
+	d.SetId(UID)
 
 	if d.Get(ExportKey).(bool) {
-		secretexportRequest := &secretexportmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretExportRequest{
-			SecretExport: &secretexportmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretExport{
-				FullName: constructFullnameSecetExport(d),
-				Meta:     common.ConstructMeta(d),
-			},
-		}
-
-		_, err = config.TMCConnection.SecretExportResourceService.SecretExportResourceServiceCreate(secretexportRequest)
-
+		err := createDeleteSecretExport(true, scopedFullnameData, config, d)
 		if err != nil {
-			return diag.FromErr(errors.Wrapf(err, "unable to create Tanzu Mission Control secret export entry, name : %s", NameKey))
+			return diag.FromErr(err)
 		}
 	}
 
 	return dataSourceSecretRead(ctx, d, m)
 }
 
-func resourceSecretDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceSecretDelete(_ context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	secretName, _ := d.Get(NameKey).(string)
-
-	// Warning or errors can be collected in a slice type
-	var diags diag.Diagnostics
-
-	err := config.TMCConnection.SecretExportResourceService.SecretExportResourceServiceDelete(constructFullnameSecetExport(d))
-	if err != nil && !clienterrors.IsNotFoundError(err) {
-		return diag.FromErr(errors.Wrapf(err, "unable to delete Tanzu Mission Control secret export entry, name : %s", secretName))
+	secretName, ok := d.Get(NameKey).(string)
+	if !ok {
+		return diag.Errorf("Unable to read secret name")
 	}
 
-	err = config.TMCConnection.SecretResourceService.SecretResourceServiceDelete(constructFullname(d))
-	if err != nil && !clienterrors.IsNotFoundError(err) {
-		return diag.FromErr(errors.Wrapf(err, "unable to delete Tanzu Mission Control secret entry, name : %s", secretName))
+	secretNamespaceName, ok := d.Get(NamespaceNameKey).(string)
+	if !ok {
+		return diag.Errorf("Unable to read secret namespace name")
+	}
+
+	scopedFullnameData := scope.ConstructScope(d, secretName, secretNamespaceName)
+
+	if scopedFullnameData == nil {
+		return diag.Errorf("Unable to delete Tanzu Mission Control secret entry; Scope full name is empty")
+	}
+
+	switch scopedFullnameData.Scope {
+	case commonscope.ClusterScope:
+		if scopedFullnameData.FullnameCluster != nil {
+			err := config.TMCConnection.SecretExportResourceService.SecretExportResourceServiceDelete(
+				&secretexportclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretexportFullName{
+					Name:                  scopedFullnameData.FullnameCluster.Name,
+					ClusterName:           scopedFullnameData.FullnameCluster.ClusterName,
+					ManagementClusterName: scopedFullnameData.FullnameCluster.ManagementClusterName,
+					ProvisionerName:       scopedFullnameData.FullnameCluster.ProvisionerName,
+					NamespaceName:         scopedFullnameData.FullnameCluster.NamespaceName,
+					OrgID:                 scopedFullnameData.FullnameCluster.OrgID,
+				},
+			)
+			if err != nil && !clienterrors.IsNotFoundError(err) {
+				return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control cluster secret export entry, name : %s", secretName))
+			}
+
+			err = config.TMCConnection.SecretResourceService.SecretResourceServiceDelete(scopedFullnameData.FullnameCluster)
+			if err != nil && !clienterrors.IsNotFoundError(err) {
+				return diag.FromErr(errors.Wrapf(err, "unable to delete Tanzu Mission Control secret entry, name : %s", secretName))
+			}
+		}
+	case commonscope.ClusterGroupScope:
+		if scopedFullnameData.FullnameClusterGroup != nil {
+			err := config.TMCConnection.ClusterGroupSecretExportResourceService.SecretExportResourceServiceDelete(
+				&secretexportclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretexportFullName{
+					Name:             scopedFullnameData.FullnameClusterGroup.Name,
+					ClusterGroupName: scopedFullnameData.FullnameClusterGroup.ClusterGroupName,
+					NamespaceName:    scopedFullnameData.FullnameClusterGroup.NamespaceName,
+					OrgID:            scopedFullnameData.FullnameClusterGroup.OrgID,
+				},
+			)
+			if err != nil && !clienterrors.IsNotFoundError(err) {
+				return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control cluster group secret export entry, name : %s", secretName))
+			}
+
+			err = config.TMCConnection.ClusterGroupSecretResourceService.SecretResourceServiceDelete(scopedFullnameData.FullnameClusterGroup)
+			if err != nil && !clienterrors.IsNotFoundError(err) {
+				return diag.FromErr(errors.Wrapf(err, "Unable to delete Tanzu Mission Control cluster group secret entry, name : %s", secretName))
+			}
+		}
+	case commonscope.UnknownScope:
+		return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scope.ScopesAllowed[:], `, `))
 	}
 
 	_ = schema.RemoveFromState(d, m)
@@ -165,71 +254,214 @@ func resourceSecretDelete(_ context.Context, d *schema.ResourceData, m interface
 func resourceSecretInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
-	updateRequired := false
+	secretName, ok := d.Get(NameKey).(string)
+	if !ok {
+		return diag.Errorf("Unable to read secret name")
+	}
 
-	switch {
-	case d.HasChange(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.ImageRegistryURLKey)):
+	secretNamespaceName, ok := d.Get(NamespaceNameKey).(string)
+	if !ok {
+		return diag.Errorf("Unable to read secret namespace name")
+	}
+
+	scopedFullnameData := scope.ConstructScope(d, secretName, secretNamespaceName)
+
+	if scopedFullnameData == nil {
+		return diag.Errorf("Unable to update Tanzu Mission Control secret entry; Scope full name is empty")
+	}
+
+	secretDataFromServer, err := retrieveSecretDataFromServer(config, scopedFullnameData, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	if d.HasChange(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.ImageRegistryURLKey)) {
 		return diag.Errorf("updating %v is not possible", spec.ImageRegistryURLKey)
-	case common.HasMetaChanged(d):
-		fallthrough
-	case d.HasChange(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.UsernameKey)) || d.HasChange(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.PasswordKey)) || d.HasChange(ExportKey):
-		updateRequired = true
 	}
 
-	if !updateRequired {
-		return diags
-	}
+	if updateCheckForMeta(d, secretDataFromServer.meta) || updateCheckForSpec(d, secretDataFromServer.atomicSpec, scopedFullnameData.Scope) {
+		switch scopedFullnameData.Scope {
+		case commonscope.ClusterScope:
+			if scopedFullnameData.FullnameCluster != nil {
+				secretReq := &clustersecretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretRequest{
+					Secret: &clustersecretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecret{
+						FullName: scopedFullnameData.FullnameCluster,
+						Meta:     secretDataFromServer.meta,
+						Spec:     secretDataFromServer.atomicSpec,
+					},
+				}
 
-	getResp, err := config.TMCConnection.SecretResourceService.SecretResourceServiceGet(constructFullname(d))
-	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "unable to get Tanzu Mission Control secret entry, name : %s", d.Get(scope.ClusterNameKey)))
-	}
+				_, err = config.TMCConnection.SecretResourceService.SecretResourceServiceUpdate(secretReq)
+				if err != nil {
+					return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster secret entry, name : %s", secretName))
+				}
+			}
+		case commonscope.ClusterGroupScope:
+			if scopedFullnameData.FullnameClusterGroup != nil {
+				secretReq := &clustergroupsecretmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretRequest{
+					Secret: &clustergroupsecretmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretSecret{
+						FullName: scopedFullnameData.FullnameClusterGroup,
+						Meta:     secretDataFromServer.meta,
+						Spec: &clustergroupsecretmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretSpec{
+							AtomicSpec: secretDataFromServer.atomicSpec,
+						},
+					},
+				}
 
-	if common.HasMetaChanged(d) {
-		meta := common.ConstructMeta(d)
-
-		if value, ok := getResp.Secret.Meta.Labels[common.CreatorLabelKey]; ok {
-			meta.Labels[common.CreatorLabelKey] = value
+				_, err = config.TMCConnection.ClusterGroupSecretResourceService.SecretResourceServiceUpdate(secretReq)
+				if err != nil {
+					return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control cluster group secret entry, name : %s", secretName))
+				}
+			}
+		case commonscope.UnknownScope:
+			return diag.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scope.ScopesAllowed[:], `, `))
 		}
-
-		getResp.Secret.Meta.Labels = meta.Labels
-		getResp.Secret.Meta.Description = meta.Description
-	}
-
-	getResp.Secret.Spec = spec.ConstructSpec(d)
-
-	_, err = config.TMCConnection.SecretResourceService.SecretResourceServiceUpdate(
-		&secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretRequest{
-			Secret: getResp.Secret,
-		},
-	)
-	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "unable to update Tanzu Mission Control secret entry, name : %s", d.Get(scope.ClusterNameKey)))
 	}
 
 	if d.HasChange(ExportKey) {
-		secretexportName := d.Get(NameKey).(string)
-
-		if d.Get(ExportKey).(bool) {
-			secretexportRequest := &secretexportmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretExportRequest{
-				SecretExport: &secretexportmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretExport{
-					FullName: constructFullnameSecetExport(d),
-					Meta:     common.ConstructMeta(d),
-				},
-			}
-
-			_, err = config.TMCConnection.SecretExportResourceService.SecretExportResourceServiceCreate(secretexportRequest)
-
-			if err != nil {
-				return diag.FromErr(errors.Wrapf(err, "unable to create Tanzu Mission Control secret export entry, name : %s", secretexportName))
-			}
-		} else {
-			err = config.TMCConnection.SecretExportResourceService.SecretExportResourceServiceDelete(constructFullnameSecetExport(d))
-			if err != nil && !clienterrors.IsNotFoundError(err) {
-				return diag.FromErr(errors.Wrapf(err, "unable to delete Tanzu Mission Control secret export entry, name : %s", secretexportName))
-			}
+		err := createDeleteSecretExport(d.Get(ExportKey).(bool), scopedFullnameData, config, d)
+		if err != nil {
+			return diag.FromErr(err)
 		}
 	}
 
 	return dataSourceSecretRead(ctx, d, m)
+}
+
+func updateCheckForSpec(d *schema.ResourceData, atomicSpec *clustersecretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec, scope commonscope.Scope) bool {
+	if !(spec.HasSpecChanged(d)) {
+		username := d.Get(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.UsernameKey))
+		password := d.Get(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.PasswordKey))
+		url := d.Get(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.ImageRegistryURLKey))
+
+		secretSpecData, _ := spec.GetEncodedSpecData(url.(string), username.(string), password.(string))
+
+		atomicSpec.Data = map[string]strfmt.Base64{
+			spec.DockerconfigKey: secretSpecData,
+		}
+
+		return false
+	}
+
+	var secretSpec *clustersecretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec
+
+	switch scope {
+	case commonscope.ClusterScope:
+		secretSpec = spec.ConstructSpecForClusterScope(d)
+	case commonscope.ClusterGroupScope:
+		clusterGroupScopeSpec := spec.ConstructSpecForClusterGroupScope(d)
+		secretSpec = clusterGroupScopeSpec.AtomicSpec
+	}
+
+	atomicSpec.SecretType = secretSpec.SecretType
+	atomicSpec.Data = secretSpec.Data
+
+	log.Printf("[INFO] updating secret spec")
+
+	return true
+}
+
+func updateCheckForMeta(d *schema.ResourceData, meta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta) bool {
+	if !common.HasMetaChanged(d) {
+		return false
+	}
+
+	objectMeta := common.ConstructMeta(d)
+
+	if value, ok := meta.Labels[common.CreatorLabelKey]; ok {
+		objectMeta.Labels[common.CreatorLabelKey] = value
+	}
+
+	meta.Labels = objectMeta.Labels
+	meta.Description = objectMeta.Description
+
+	log.Printf("[INFO] updating secret meta data")
+
+	return true
+}
+
+func createDeleteSecretExport(createKey bool, scopedFullnameData *scope.ScopedFullname, config authctx.TanzuContext, d *schema.ResourceData) error {
+	if createKey {
+		switch scopedFullnameData.Scope {
+		case commonscope.ClusterScope:
+			if scopedFullnameData.FullnameCluster != nil {
+				secretReq := &secretexportclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretExportRequest{
+					SecretExport: &secretexportclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretExport{
+						FullName: &secretexportclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretexportFullName{
+							Name:                  scopedFullnameData.FullnameCluster.Name,
+							ClusterName:           scopedFullnameData.FullnameCluster.ClusterName,
+							ManagementClusterName: scopedFullnameData.FullnameCluster.ManagementClusterName,
+							ProvisionerName:       scopedFullnameData.FullnameCluster.ProvisionerName,
+							NamespaceName:         scopedFullnameData.FullnameCluster.NamespaceName,
+							OrgID:                 scopedFullnameData.FullnameCluster.OrgID,
+						},
+						Meta: common.ConstructMeta(d),
+					},
+				}
+
+				_, err := config.TMCConnection.SecretExportResourceService.SecretExportResourceServiceCreate(secretReq)
+				if err != nil {
+					return errors.Wrapf(err, "Unable to create Tanzu Mission Control cluster secret export entry, name : %s", scopedFullnameData.FullnameCluster.Name)
+				}
+			}
+		case commonscope.ClusterGroupScope:
+			if scopedFullnameData.FullnameClusterGroup != nil {
+				secretReq := &secretexportclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretexportRequest{
+					SecretExport: &secretexportclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretexportSecretExport{
+						FullName: &secretexportclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretexportFullName{
+							Name:             scopedFullnameData.FullnameClusterGroup.Name,
+							ClusterGroupName: scopedFullnameData.FullnameClusterGroup.ClusterGroupName,
+							NamespaceName:    scopedFullnameData.FullnameClusterGroup.NamespaceName,
+							OrgID:            scopedFullnameData.FullnameClusterGroup.OrgID,
+						},
+						Meta: common.ConstructMeta(d),
+					},
+				}
+
+				_, err := config.TMCConnection.ClusterGroupSecretExportResourceService.SecretExportResourceServiceCreate(secretReq)
+				if err != nil {
+					return errors.Wrapf(err, "Unable to create Tanzu Mission Control cluster group secret export entry, name : %s", scopedFullnameData.FullnameClusterGroup.Name)
+				}
+			}
+		case commonscope.UnknownScope:
+			return errors.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scope.ScopesAllowed[:], `, `))
+		}
+	} else {
+		switch scopedFullnameData.Scope {
+		case commonscope.ClusterScope:
+			if scopedFullnameData.FullnameCluster != nil {
+				err := config.TMCConnection.SecretExportResourceService.SecretExportResourceServiceDelete(
+					&secretexportclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretexportFullName{
+						Name:                  scopedFullnameData.FullnameCluster.Name,
+						ClusterName:           scopedFullnameData.FullnameCluster.ClusterName,
+						ManagementClusterName: scopedFullnameData.FullnameCluster.ManagementClusterName,
+						ProvisionerName:       scopedFullnameData.FullnameCluster.ProvisionerName,
+						NamespaceName:         scopedFullnameData.FullnameCluster.NamespaceName,
+						OrgID:                 scopedFullnameData.FullnameCluster.OrgID,
+					},
+				)
+				if err != nil && !clienterrors.IsNotFoundError(err) {
+					return errors.Wrapf(err, "Unable to delete Tanzu Mission Control cluster secret export entry, name : %s", scopedFullnameData.FullnameCluster.Name)
+				}
+			}
+		case commonscope.ClusterGroupScope:
+			if scopedFullnameData.FullnameClusterGroup != nil {
+				err := config.TMCConnection.ClusterGroupSecretExportResourceService.SecretExportResourceServiceDelete(
+					&secretexportclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretexportFullName{
+						Name:             scopedFullnameData.FullnameClusterGroup.Name,
+						ClusterGroupName: scopedFullnameData.FullnameClusterGroup.ClusterGroupName,
+						NamespaceName:    scopedFullnameData.FullnameClusterGroup.NamespaceName,
+						OrgID:            scopedFullnameData.FullnameClusterGroup.OrgID,
+					},
+				)
+				if err != nil && !clienterrors.IsNotFoundError(err) {
+					return errors.Wrapf(err, "Unable to delete Tanzu Mission Control cluster group secret export entry, name : %s", scopedFullnameData.FullnameClusterGroup.Name)
+				}
+			}
+		case commonscope.UnknownScope:
+			return errors.Errorf("no valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(scope.ScopesAllowed[:], `, `))
+		}
+	}
+
+	return nil
 }

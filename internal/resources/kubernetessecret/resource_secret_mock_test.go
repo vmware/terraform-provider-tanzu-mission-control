@@ -175,7 +175,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			UID:             "secret1",
 			ResourceVersion: "v1",
 		},
-		Status: &status.VmwareTanzuManageV1alpha1ClusterNamespaceStatus{
+		Status: &secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretStatus{
 			Conditions: map[string]status.VmwareTanzuCoreV1alpha1StatusCondition{
 				"Ready": {
 					Reason: "made successfully",
