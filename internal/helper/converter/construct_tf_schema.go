@@ -43,7 +43,7 @@ func buildTFValue(modelJSONData *map[string]interface{}, mapValue interface{}, a
 		modelField := mapValue.Field
 		modelValue, err = getModelValue(modelJSONData, modelField, arrIndexer)
 
-		if err != nil {
+		if err == nil {
 			tfSchemaValue = mapValue.EvalFunc(ConstructTFSchema, modelValue)
 		}
 	case string:
