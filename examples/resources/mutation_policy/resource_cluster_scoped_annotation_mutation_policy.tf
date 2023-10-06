@@ -3,8 +3,8 @@ resource "tanzu-mission-control_mutation_policy" "cluster_annotation_mutation_po
 
   scope {
     cluster {
-      management_cluster_name = "test"
-      provisioner_name        = "test"
+      management_cluster_name = "attached"
+      provisioner_name        = "attached"
       name                    = "test"
     }
   }
