@@ -79,12 +79,14 @@ func modelHandleBlockStructSlice(modelJSON *BlockToStruct, schemaData interface{
 			for elemMapKey, elemMapValue := range *elemTypeMap {
 				var schemaValue, _ = (schemaData.([]interface{}))[0].(map[string]interface{})[elemMapKey]
 
-				if _, ok := elemMapValue.(*ListToStruct); ok {
-					buildModelField(modelJSON, schemaValue, elemMapValue, arrIndexer)
-				} else {
-					for _, item := range schemaValue.([]interface{}) {
-						buildModelField(modelJSON, []interface{}{item}, elemMapValue, arrIndexer)
-						arrIndexer.IncrementLastIndex()
+				if schemaValue != nil {
+					if _, ok := elemMapValue.(*ListToStruct); ok {
+						buildModelField(modelJSON, schemaValue, elemMapValue, arrIndexer)
+					} else {
+						for _, item := range schemaValue.([]interface{}) {
+							buildModelField(modelJSON, []interface{}{item}, elemMapValue, arrIndexer)
+							arrIndexer.IncrementLastIndex()
+						}
 					}
 				}
 			}
