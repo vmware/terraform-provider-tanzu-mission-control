@@ -128,6 +128,16 @@ func tfHandleBlockStructSlice(modelJSONData *map[string]interface{}, mapValue *B
 				}
 			}
 
+			isEvaluatedField := false
+
+			for _, v := range *elemMap {
+				_, isEvaluatedField = v.(*EvaluatedField)
+			}
+
+			if isEvaluatedField {
+				break
+			}
+
 			if err == nil {
 				arrIndexer.IncrementLastIndex()
 			} else if err.Error() == arrIndexExceededMsg && i+1 < len(*mapValue) {

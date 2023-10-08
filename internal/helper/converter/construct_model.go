@@ -133,7 +133,7 @@ func setModelValue(model *BlockToStruct, field string, value interface{}, arrInd
 	} else {
 		fieldPaths := strings.Split(field, ".")
 		arrIndices := arrIndexer.GetAllIndexes()
-		leafField := fieldPaths[len(fieldPaths)-1]
+		leafField := strings.ReplaceAll(fieldPaths[len(fieldPaths)-1], "[]", "")
 		arrayFields := 0
 		parentField := *model
 
