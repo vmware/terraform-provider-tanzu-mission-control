@@ -35,13 +35,13 @@ const testDefaultCreateEksClusterScript = `
 					  "0.0.0.0/0",
 					]
 					security_groups = [ // Forces new
-					  "sg-0a6768722e9716768",
+					  "sg-0b77767aa25e20fec",
 					]
 					subnet_ids = [ // Forces new
-					  "subnet-0a184f6302af32a86",
-					  "subnet-0ed95d5c212ac62a1",
-					  "subnet-0526ecaecde5b1bf7",
-					  "subnet-06897e1063cc0cf4e",
+					  "subnet-0c285da60b373a4cc",
+					  "subnet-0be854d94fa197cb7",
+					  "subnet-04975d535cf761785",
+					  "subnet-0d50aa17c694457c9",
 					]
 				}
 			}
@@ -54,31 +54,22 @@ const testDefaultCreateEksClusterScript = `
 				spec {
 					// Refer to nodepool's schema
 					role_arn       = "arn:aws:iam::{{.AWSAccountNumber}}:role/worker.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
-					ami_type       = "CUSTOM" // Forces New
-					ami_info {
-						ami_id = "ami-2qu8409oisdfj0qw"
-						override_bootstrap_cmd = "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami"
-					}
+					ami_type       = "AL2_x86_64" // Forces New
 					capacity_type  = "ON_DEMAND"
-					root_disk_size = 40 // Default: 20GiB, forces New
+					root_disk_size = 20 // Default: 20GiB, forces New
 					tags           = { "testnptag" : "testnptagvalue" }
 					node_labels    = { "testnplabelkey" : "testnplabelvalue" }
 					subnet_ids = [ // Required, forces new
-						"subnet-0a184f6302af32a86",
-						"subnet-0ed95d5c212ac62a1",
-						"subnet-0526ecaecde5b1bf7",
-						"subnet-06897e1063cc0cf4e",
+						"subnet-0c285da60b373a4cc",
+						"subnet-0be854d94fa197cb7",
+						"subnet-04975d535cf761785",
+						"subnet-0d50aa17c694457c9",
 					]
-					remote_access  {     // Forces new
-						ssh_key = "anshulc" // Required (for remote access)
-						security_groups = [
-							"sg-0a6768722e9716768",
-						]
-					}
+					
 					scaling_config  {
-						desired_size = 4
-						max_size     = 8
-						min_size     = 1
+						desired_size = 2
+						max_size     = 2
+						min_size     = 2
 					}
 					update_config {
 						max_unavailable_nodes = "2"
@@ -89,7 +80,7 @@ const testDefaultCreateEksClusterScript = `
 					]
 				}
 			  }
-			  nodepool {
+			nodepool {
 				// could be flattened, but keeping it same for consistency
 				info  {
 					name        = "second-np"
@@ -101,15 +92,11 @@ const testDefaultCreateEksClusterScript = `
 					tags        = { "testnptag" : "testnptagvalue" }
 					node_labels = { "testnplabelkey" : "testnplabelvalue" }
 					subnet_ids = [ // Required, forces new
-						"subnet-0a184f6302af32a86",
-						"subnet-0ed95d5c212ac62a1",
-						"subnet-0526ecaecde5b1bf7",
-						"subnet-06897e1063cc0cf4e",
+						"subnet-0c285da60b373a4cc",
+						"subnet-0be854d94fa197cb7",
+						"subnet-04975d535cf761785",
+						"subnet-0d50aa17c694457c9",
 					]
-					launch_template  {
-						name    = "{{.LaunchTemplateName}}"
-						version = "{{.LaunchTemplateVersion}}"
-					}
 					scaling_config  {
 						desired_size = 4
 						max_size     = 8
@@ -126,7 +113,6 @@ const testDefaultCreateEksClusterScript = `
 				}
 			}
 		}
-		
 		ready_wait_timeout = "59m"
 	}
 `
