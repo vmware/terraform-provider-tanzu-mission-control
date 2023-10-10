@@ -10,121 +10,88 @@ package kubernetessecret
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
+	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
+	secretscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret/scope"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
-func TestAcceptanceForSecretDataSource(t *testing.T) {
-	var provider = initTestProvider(t)
+func TestAcceptanceForSecretResourceDataSource(t *testing.T) {
+	testConfig := testGetDefaultAcceptanceConfig(t)
 
-	secretName := acctest.RandomWithPrefix("tf-sct-test")
-	clusterName := acctest.RandomWithPrefix("tf-cluster-data")
-	dataSourceName := fmt.Sprintf("data.%s.%s", ResourceName, secretDataSourceVar)
-	resourceName := fmt.Sprintf("%s.%s", ResourceName, secretResourceVar)
+	t.Log("start cluster secret data source acceptance tests!", testConfig.ScopeHelperResources.Cluster.Name)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
-		ProviderFactories: testhelper.GetTestProviderFactories(provider),
+		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
-				Config: getTestSecretDataSourceConfigValue(t, clusterName, secretName, testhelper.MetaTemplate),
-				Check: resource.ComposeTestCheckFunc(
-					checkDataSourceAttributes(dataSourceName, resourceName),
-				),
+				Config: testConfig.getTestDataSourceBasicConfigValue(commonscope.ClusterGroupScope),
+				Check:  testConfig.checkDataSourceAttributes(),
+			},
+			{
+				Config: testConfig.getTestDataSourceBasicConfigValue(commonscope.ClusterScope),
+				Check:  testConfig.checkDataSourceAttributes(),
 			},
 		},
 	})
 	t.Log("secret data source acceptance test complete!")
 }
 
-func getTestSecretDataSourceConfigValue(t *testing.T, clusterName, secretName, meta string) string {
-	kubeconfigPath := os.Getenv("KUBECONFIG")
-	if kubeconfigPath == "" {
-		t.Skipf("KUBECONFIG env var is not set: %s", kubeconfigPath)
-	}
+func (testConfig *testAcceptanceConfig) getTestDataSourceBasicConfigValue(scope commonscope.Scope) string {
+	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestResourceHelperAndScope(scope, secretscope.ScopesAllowed[:])
 
 	return fmt.Sprintf(`
-resource "%s" "%s" {
-	management_cluster_name = "attached"
-	provisioner_name        = "attached"
-	name                    = "%s"
+	%s
 
-  attach_k8s_cluster {
-    kubeconfig_file = "%s"
-  }
+	resource "%s" "%s" {
+	 name = "%s"
 
-  %s
+	 namespace_name = "default"
 
-  spec {
-    cluster_group = "default"
-  }
+	 %s
 
-  ready_wait_timeout = "3m"
-}
-
-resource "%s" "%s" {
-  name = "%s"
-
-  namespace_name = "default"
-
-  scope {
-	cluster {
-		management_cluster_name = "attached"
-		provisioner_name = "attached"
-		cluster_name = tanzu-mission-control_cluster.tmc_cluster_test.name
+	 spec {
+		docker_config_json {
+			username = "someusername"
+			password = "somepassword"
+			image_registry_url = "someregistryurl"
+		}
+	  }
 	}
-  }
 
-  spec {
-	docker_config_json {
-		username = "someusername"
-		password = "somepassword"
-		image_registry_url = "someregistryurl"
+	data "%s" "%s" {
+		name = tanzu-mission-control_kubernetes_secret.test_secret.name
+
+		namespace_name = "default"
+
+		%s
 	}
-  }
+	`, helperBlock, testConfig.SecretResource, testConfig.SecretResourceVar, testConfig.SecretName, scopeBlock, testConfig.SecretResource, testConfig.DataSourceVar, scopeBlock)
 }
 
-data "%s" "%s" {
-  name = tanzu-mission-control_kubernetes_secret.test_secret.name
-
-  namespace_name = "default"
-
-  scope {
-	cluster {
-		management_cluster_name = "attached"
-		provisioner_name = "attached"
-		cluster_name = tanzu-mission-control_kubernetes_secret.test_secret.scope[0].cluster[0].cluster_name
-	}
-  }
-}
-`, clusterResource, clusterResourceVar, clusterName, kubeconfigPath, meta, ResourceName,
-		secretResourceVar, secretName, ResourceName, secretDataSourceVar)
-}
-
-func checkDataSourceAttributes(dataSourceName, resourceName string) resource.TestCheckFunc {
+func (testConfig *testAcceptanceConfig) checkDataSourceAttributes() resource.TestCheckFunc {
 	var check = []resource.TestCheckFunc{
-		verifySecretDataSource(dataSourceName),
-		resource.TestCheckResourceAttrPair(dataSourceName, "name", resourceName, "name"),
-		resource.TestCheckResourceAttrSet(dataSourceName, "id"),
+		testConfig.verifyDataSourceCreation(testConfig.DataSourceName),
+		resource.TestCheckResourceAttrPair(testConfig.DataSourceName, "name", testConfig.SecretResourceName, "name"),
+		resource.TestCheckResourceAttrSet(testConfig.DataSourceName, "id"),
 	}
 
-	check = append(check, MetaDataSourceAttributeCheck(dataSourceName, resourceName)...)
+	check = append(check, MetaDataSourceAttributeCheck(testConfig.DataSourceName, testConfig.SecretResourceName)...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }
 
-func verifySecretDataSource(name string) resource.TestCheckFunc {
+func (testConfig *testAcceptanceConfig) verifyDataSourceCreation(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		_, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("root module does not have secret resource %s", name)
+			return fmt.Errorf("root module does not have source secret resource %s", name)
 		}
 
 		return nil
