@@ -4,10 +4,8 @@ data "tanzu-mission-control_kubernetes_secret" "read_secret" {
   namespace_name = "tf-secret-namespace-name" # Required 
 
   scope {
-    cluster {
-      name                    = "testcluster" # Required
-      provisioner_name        = "attached"    # Default: attached
-      management_cluster_name = "attached"    # Default: attached
+    cluster_group {
+      name = "default" # Required
     }
   }
 }
