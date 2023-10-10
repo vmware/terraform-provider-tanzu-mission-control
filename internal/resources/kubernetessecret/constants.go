@@ -15,5 +15,6 @@ const (
 	SecretExportPhaseKey = "secret_export_phase"
 	statusKey            = "status"
 	Ready                = "Ready"
-	ResourceName         = "tanzu-mission-control_kubernetes_secret"
+
+	ResourceName = "tanzu-mission-control_kubernetes_secret"
 )

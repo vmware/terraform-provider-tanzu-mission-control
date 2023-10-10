@@ -19,16 +19,18 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	secretmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/cluster"
+	secretcgmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/clustergroup"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
-	status "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/status"
+	statusmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/status"
 )
 
 const (
-	https              = "https:/"
-	apiVersionAndGroup = "v1alpha1/clusters"
-	apiSubGroup        = "namespaces"
-	apiKind            = "secrets"
-	exportAPIKind      = "secretexports"
+	https                = "https:/"
+	apiVersionAndGroup   = "v1alpha1/clusters"
+	apiSubGroup          = "namespaces"
+	apiKind              = "secrets"
+	exportAPIKind        = "secretexports"
+	cgAPIVersionAndGroup = "v1alpha1/clustergroups"
 )
 
 func getMockSpec() secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec {
@@ -40,6 +42,7 @@ func getMockSpec() secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSp
 	}
 }
 
+// nolint: unparam
 func bodyInspectingResponder(t *testing.T, expectedContent interface{}, successResponse int, successResponseBody interface{}) httpmock.Responder {
 	return func(r *http.Request) (*http.Response, error) {
 		successFunc := func() (*http.Response, error) {
@@ -89,6 +92,7 @@ func bodyInspectingResponder(t *testing.T, expectedContent interface{}, successR
 	}
 }
 
+// nolint: unparam
 // Register a new responder when the given call is made.
 func changeStateResponder(registerFunc func(), successResponse int, successResponseBody interface{}) httpmock.Responder {
 	return func(r *http.Request) (*http.Response, error) {
@@ -106,14 +110,16 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 
 	OrgID := os.Getenv("ORG_ID")
 
-	// POST
+	// cluster level cluster secret resource.
 	secretSpec := getMockSpec()
 	postRequestModel := &secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecret{
 		FullName: &secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretFullName{
-			Name:          testConfig.SecretName,
-			OrgID:         OrgID,
-			ClusterName:   testConfig.ClusterName,
-			NamespaceName: testConfig.NamespaceName,
+			Name:                  testConfig.SecretName,
+			OrgID:                 OrgID,
+			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
+			ProvisionerName:       "attached",
+			ManagementClusterName: "attached",
+			NamespaceName:         testConfig.NamespaceName,
 		},
 		Spec: &secretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
@@ -130,10 +136,12 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 
 	postResponseModel := &secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecret{
 		FullName: &secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretFullName{
-			Name:          testConfig.SecretName,
-			OrgID:         OrgID,
-			ClusterName:   testConfig.ClusterName,
-			NamespaceName: testConfig.NamespaceName,
+			Name:                  testConfig.SecretName,
+			OrgID:                 OrgID,
+			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
+			ProvisionerName:       "attached",
+			ManagementClusterName: "attached",
+			NamespaceName:         testConfig.NamespaceName,
 		},
 		Spec: &secretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
@@ -159,10 +167,12 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 	// GET Network Secret mock setup
 	getModel := &secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecret{
 		FullName: &secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretFullName{
-			Name:          testConfig.SecretName,
-			OrgID:         OrgID,
-			ClusterName:   testConfig.ClusterName,
-			NamespaceName: testConfig.NamespaceName,
+			Name:                  testConfig.SecretName,
+			OrgID:                 OrgID,
+			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
+			ProvisionerName:       "attached",
+			ManagementClusterName: "attached",
+			NamespaceName:         testConfig.NamespaceName,
 		},
 		Spec: &secretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
@@ -176,7 +186,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			ResourceVersion: "v1",
 		},
 		Status: &secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretStatus{
-			Conditions: map[string]status.VmwareTanzuCoreV1alpha1StatusCondition{
+			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
 				"Ready": {
 					Reason: "made successfully",
 				},
@@ -188,11 +198,11 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 		Secret: getModel,
 	}
 
-	postEndpoint := (helper.ConstructRequestURL(https, endpoint, apiVersionAndGroup, testConfig.ClusterName, apiSubGroup, testConfig.NamespaceName, apiKind)).String()
-	getSecretEndpoint := (helper.ConstructRequestURL(https, endpoint, apiVersionAndGroup, testConfig.ClusterName, apiSubGroup, testConfig.NamespaceName, apiKind, testConfig.SecretName)).String()
+	postEndpoint := (helper.ConstructRequestURL(https, endpoint, apiVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, apiSubGroup, testConfig.NamespaceName, apiKind)).String()
+	getSecretEndpoint := (helper.ConstructRequestURL(https, endpoint, apiVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, apiSubGroup, testConfig.NamespaceName, apiKind, testConfig.SecretName)).String()
 	deleteEndpoint := getSecretEndpoint
 
-	getSecretExportEndpoint := (helper.ConstructRequestURL(https, endpoint, apiVersionAndGroup, testConfig.ClusterName, apiSubGroup, testConfig.NamespaceName, exportAPIKind, testConfig.SecretName)).String()
+	getSecretExportEndpoint := (helper.ConstructRequestURL(https, endpoint, apiVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, apiSubGroup, testConfig.NamespaceName, exportAPIKind, testConfig.SecretName)).String()
 	deleteExportEndpoint := getSecretExportEndpoint
 
 	httpmock.RegisterResponder("POST", postEndpoint,
@@ -214,6 +224,121 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 		// Set up the get to return 404 after the Secret has been 'deleted'
 		func() {
 			httpmock.RegisterResponder("GET", getSecretExportEndpoint,
+				httpmock.NewStringResponder(404, "Not found"))
+		},
+		http.StatusOK,
+		nil))
+
+	// cluster group level cluster secret resource.
+
+	postCGRequestModel := &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretSecret{
+		FullName: &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretFullName{
+			Name:             testConfig.SecretName,
+			OrgID:            OrgID,
+			NamespaceName:    testConfig.NamespaceName,
+			ClusterGroupName: testConfig.ScopeHelperResources.ClusterGroup.Name,
+		},
+		Spec: &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretSpec{
+			AtomicSpec: &secretSpec,
+		},
+		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
+			ParentReferences: nil,
+			Description:      "resource with description",
+			Labels: map[string]string{
+				"key1": "value1",
+				"key2": "value2",
+			},
+			UID:             "secret1",
+			ResourceVersion: "v1",
+		},
+	}
+
+	postCGResponseModel := &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretSecret{
+		FullName: &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretFullName{
+			Name:             testConfig.SecretName,
+			OrgID:            OrgID,
+			NamespaceName:    testConfig.NamespaceName,
+			ClusterGroupName: testConfig.ScopeHelperResources.ClusterGroup.Name,
+		},
+		Spec: &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretSpec{
+			AtomicSpec: &secretSpec,
+		},
+		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
+			ParentReferences: nil,
+			Description:      "resource with description",
+			Labels: map[string]string{
+				"key1": "value1",
+				"key2": "value2",
+			},
+			UID:             "secret1",
+			ResourceVersion: "v1",
+		},
+	}
+
+	postCGRequest := &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretRequest{
+		Secret: postCGRequestModel,
+	}
+
+	postCGResponse := &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretResponse{
+		Secret: postCGResponseModel,
+	}
+
+	// GET Network Secret mock setup
+	getCGModel := &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretSecret{
+		FullName: &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretFullName{
+			Name:             testConfig.SecretName,
+			OrgID:            OrgID,
+			NamespaceName:    testConfig.NamespaceName,
+			ClusterGroupName: testConfig.ScopeHelperResources.ClusterGroup.Name,
+		},
+		Spec: &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretSpec{
+			AtomicSpec: &secretSpec,
+		},
+		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
+			ParentReferences: nil,
+			Description:      "resource with description",
+			Labels: map[string]string{
+				"key1": "value1",
+				"key2": "value2",
+			},
+			UID:             "secret1",
+			ResourceVersion: "v1",
+		},
+		Status: &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretStatus{
+			Phase: statusmodel.NewVmwareTanzuManageV1alpha1CommonBatchPhase(statusmodel.VmwareTanzuManageV1alpha1CommonBatchPhaseAPPLIED),
+		},
+	}
+
+	getCGResponse := &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretGetSecretResponse{
+		Secret: getCGModel,
+	}
+
+	postCGEndpoint := (helper.ConstructRequestURL(https, endpoint, cgAPIVersionAndGroup, testConfig.ScopeHelperResources.ClusterGroup.Name, "namespace", apiKind)).String()
+	getSecretCGEndpoint := (helper.ConstructRequestURL(https, endpoint, cgAPIVersionAndGroup, testConfig.ScopeHelperResources.ClusterGroup.Name, "namespace", apiKind, testConfig.SecretName)).String()
+	deleteCGEndpoint := getSecretCGEndpoint
+
+	getSecretExportCGEndpoint := (helper.ConstructRequestURL(https, endpoint, cgAPIVersionAndGroup, testConfig.ScopeHelperResources.ClusterGroup.Name, "namespace", exportAPIKind, testConfig.SecretName)).String()
+	deleteExportCGEndpoint := getSecretExportCGEndpoint
+
+	httpmock.RegisterResponder("POST", postCGEndpoint,
+		bodyInspectingResponder(t, postCGRequest, 200, postCGResponse))
+
+	httpmock.RegisterResponder("GET", getSecretCGEndpoint,
+		bodyInspectingResponder(t, nil, 200, getCGResponse))
+
+	httpmock.RegisterResponder("DELETE", deleteCGEndpoint, changeStateResponder(
+		// Set up the get to return 404 after the Secret has been 'deleted'
+		func() {
+			httpmock.RegisterResponder("GET", getSecretCGEndpoint,
+				httpmock.NewStringResponder(404, "Not found"))
+		},
+		http.StatusOK,
+		nil))
+
+	httpmock.RegisterResponder("DELETE", deleteExportCGEndpoint, changeStateResponder(
+		// Set up the get to return 404 after the Secret has been 'deleted'
+		func() {
+			httpmock.RegisterResponder("GET", getSecretExportCGEndpoint,
 				httpmock.NewStringResponder(404, "Not found"))
 		},
 		http.StatusOK,
