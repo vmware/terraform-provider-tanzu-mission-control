@@ -68,7 +68,7 @@ func TestAcceptanceForPackageRepositoryDataSource(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
-					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" && found {
+					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped packagerepository acceptance test")
 					}
 				},
@@ -93,7 +93,7 @@ func TestAcceptanceForPackageRepositoryDataSource(t *testing.T) {
 }
 
 func (testConfig *testAcceptanceConfig) getTestPackageRepositoryDataSourceBasicConfigValue(scope commonscope.Scope, disabled bool, imageURL string) string {
-	helperBlock, _ := testConfig.ScopeHelperResources.GetTestResourceHelperAndScope(scope, packagerepositoryscope.ScopesAllowed[:])
+	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestResourceHelperAndScope(scope, packagerepositoryscope.ScopesAllowed[:])
 
 	if _, found := os.LookupEnv("ENABLE_PKGREPO_ENV_TEST"); !found {
 		return fmt.Sprintf(`
@@ -109,7 +109,6 @@ func (testConfig *testAcceptanceConfig) getTestPackageRepositoryDataSourceBasicC
 			provisioner_name = "attached"
 		}
 	 }
-
 
 		spec {
 			imgpkg_bundle {
@@ -135,22 +134,17 @@ func (testConfig *testAcceptanceConfig) getTestPackageRepositoryDataSourceBasicC
 	%s
 
 	resource "time_sleep" "wait_for_3m" {
-		create_duration = "180s"
+		create_duration = "50s"
 
 		depends_on = [tanzu-mission-control_cluster.test_cluster]
 	}
-	
 
 	resource "%s" "%s" {
 		name = "%s"
 
 		disabled = %t
 
-		scope {
-			cluster {
-				name = tanzu-mission-control_cluster.test_cluster.name
-			}
-		}
+		%s
 
 		spec {
 			imgpkg_bundle {
@@ -170,7 +164,7 @@ func (testConfig *testAcceptanceConfig) getTestPackageRepositoryDataSourceBasicC
 			}
 		}
 	}
-	`, helperBlock, testConfig.PkgRepoResource, testConfig.PkgRepoResourceVar, testConfig.PkgRepoName, disabled, imageURL, testConfig.PkgRepoResource, testConfig.PkgRepoDataSourceVar)
+	`, helperBlock, testConfig.PkgRepoResource, testConfig.PkgRepoResourceVar, testConfig.PkgRepoName, disabled, scopeBlock, imageURL, testConfig.PkgRepoResource, testConfig.PkgRepoDataSourceVar)
 }
 
 // checkPkgRepositoryDataSourceAttributes checks to get git repository creation.
