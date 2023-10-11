@@ -95,12 +95,15 @@ func dataSourceCredentialRead(ctx context.Context, d *schema.ResourceData, m int
 	}
 
 	d.SetId(resp.Credential.Meta.UID)
-	err = tfModelResourceConverter.FillTFSchema(resp.Credential, d)
 
-	if err != nil {
-		log.Println(err)
+	if helper.IsDataRead(ctx) {
+		err = tfModelResourceConverter.FillTFSchema(resp.Credential, d)
 
-		return diag.Errorf("Unable to get credentials. Schema conversion failed.")
+		if err != nil {
+			log.Println(err)
+
+			return diag.Errorf("Unable to get credentials. Schema conversion failed.")
+		}
 	}
 
 	return diags
