@@ -43,7 +43,7 @@ func buildTFValue(modelJSONData *map[string]interface{}, mapValue interface{}, a
 		modelField := mapValue.Field
 		modelValue, err = getModelValue(modelJSONData, modelField, arrIndexer)
 
-		if err != nil {
+		if err == nil {
 			tfSchemaValue = mapValue.EvalFunc(ConstructTFSchema, modelValue)
 		}
 	case string:
@@ -126,6 +126,16 @@ func tfHandleBlockStructSlice(modelJSONData *map[string]interface{}, mapValue *B
 						tfElemValue[key] = value
 					}
 				}
+			}
+
+			isEvaluatedField := false
+
+			for _, v := range *elemMap {
+				_, isEvaluatedField = v.(*EvaluatedField)
+			}
+
+			if isEvaluatedField {
+				break
 			}
 
 			if err == nil {
