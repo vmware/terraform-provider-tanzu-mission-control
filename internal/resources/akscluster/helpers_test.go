@@ -418,6 +418,7 @@ func aTestNodePool(w ...nodepoolWither) *models.VmwareTanzuManageV1alpha1Aksclus
 				MaxSurge: "50%",
 			},
 			VnetSubnetID: "subnet-1",
+			//PodSubnetID:  "subnet-2",
 		},
 	}
 

@@ -79,6 +79,11 @@ type VmwareTanzuManageV1alpha1AksclusterNodepoolSpec struct {
 	// If this is not specified, a VNET and subnet will be generated and used. If no podSubnetID is specified, this applies to
 	// nodes and pods, otherwise it applies to just nodes. This is of the form:
 	VnetSubnetID string `json:"vnetSubnetId,omitempty"`
+
+	//Todo: change this
+	// If this is not specified, a VNET and subnet will be generated and used. If no podSubnetID is specified, this applies to
+	// nodes and pods, otherwise it applies to just nodes. This is of the form:
+	PodSubnetID string `json:"podSubnetId,omitempty"`
 }
 
 // MarshalBinary interface implementation.
