@@ -90,6 +90,7 @@ const (
 	keyKey                                     = "key"
 	valueKey                                   = "value"
 	vnetSubnetKey                              = "vnet_subnet_id"
+	podSubnetKey                               = "pod_subnet_id"
 	nodeLabelsKey                              = "node_labels"
 	autoscalingConfigKey                       = "auto_scaling_config"
 	minCountKey                                = "min_count"

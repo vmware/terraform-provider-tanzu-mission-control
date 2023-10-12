@@ -624,7 +624,12 @@ var NodepoolSpecSchema = &schema.Schema{
 			},
 			vnetSubnetKey: {
 				Type:        schema.TypeString,
-				Description: "If this is not specified, a VNET and subnet will be generated and used. If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to just nodes",
+				Description: "The ID of a subnet in an existing VNet into which to deploy the cluster. If this is not specified, a VNET and subnet will be generated and used. If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to just nodes",
+				Optional:    true,
+			},
+			podSubnetKey: {
+				Type:        schema.TypeString,
+				Description: "The ID of a subnet in an existing VNet into which to assign pods in the cluster. Requires network-plugin to be azure and not compatible with network-plugin-mode overlay",
 				Optional:    true,
 			},
 			nodeLabelsKey: {
