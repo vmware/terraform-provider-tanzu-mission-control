@@ -41,6 +41,9 @@ var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
 			},
 		},
 	},
+	statusKey: &tfModelConverterHelper.Map{
+		"*": "status.*",
+	},
 }
 
 func keyValueEvalFunc(mode tfModelConverterHelper.EvaluationMode, valToEvaluate interface{}) interface{} {

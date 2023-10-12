@@ -38,6 +38,12 @@ var credentialSchema = map[string]*schema.Schema{
 	},
 	common.MetaKey: common.Meta,
 	specKey:        credSpec,
+	statusKey: {
+		Type:        schema.TypeMap,
+		Description: "Status of credential resource",
+		Computed:    true,
+		Elem:        &schema.Schema{Type: schema.TypeString},
+	},
 	waitKey: {
 		Type:        schema.TypeString,
 		Description: "Wait timeout duration until credential resource reaches VALID state. Accepted timeout duration values like 5s, 5m, or 1h, higher than zero.",
