@@ -34,12 +34,12 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 				Licenses: []string{
 					"some1",
 				},
-				ReleaseNotes:   "someReleaseNotes",
+				ReleaseNotes:   "cert-manager 1.1.0 https://github.com/jetstack/cert-manager/1.1.0",
 				ReleasedAt:     strfmt.DateTime{},
 				RepositoryName: "testRepo",
 				ValuesSchema: &packageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageValuesSchema{
 					Template: &packageclustermodel.K8sIoApimachineryPkgRuntimeRawExtension{
-						Raw: []byte("somevalue"),
+						Raw: []byte("{\"examples\":[{\"namespace\":\"cert-manager\"}],\"properties\":{\"namespace\":{\"default\":\"cert-manager\",\"description\":\"The namespace in which to deploy cert-manager.\",\"type\":\"string\"}},\"title\":\"cert-manager.tanzu.vmware.com.1.1.0+vmware.1-tkg.2 values schema\"}"),
 					},
 				},
 			},
@@ -50,13 +50,39 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 						"some1",
 					},
 					RepositoryNameKey: "testRepo",
-					ReleaseNotesKey:   "someReleaseNotes",
-					ReleasedAtKey:     strfmt.DateTime{}.String(),
+					ReleaseNotesKey: []interface{}{
+						map[string]interface{}{
+							metadataNameKey: "cert-manager",
+							versionKey:      "1.1.0",
+							urlKey:          "https://github.com/jetstack/cert-manager/1.1.0",
+						},
+					},
+					ReleasedAtKey: strfmt.DateTime{}.String(),
 					ValuesSchemaKey: []interface{}{
 						map[string]interface{}{
 							TemplateKey: []interface{}{
 								map[string]interface{}{
-									RawKey: "somevalue",
+									RawKey: []interface{}{
+										map[string]interface{}{
+											examplesKey: []interface{}{
+												map[string]interface{}{
+													namespaceKey: "cert-manager",
+												},
+											},
+											propertiesKey: []interface{}{
+												map[string]interface{}{
+													namespaceKey: []interface{}{
+														map[string]interface{}{
+															defaultKey:     "cert-manager",
+															descriptionKey: "The namespace in which to deploy cert-manager.",
+															typeKey:        "string",
+														},
+													},
+												},
+											},
+											titleKey: "cert-manager.tanzu.vmware.com.1.1.0+vmware.1-tkg.2 values schema",
+										},
+									},
 								},
 							},
 						},
