@@ -9,7 +9,6 @@ import (
 	"github.com/go-openapi/swag"
 
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
-	statusmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/status"
 )
 
 // VmwareTanzuManageV1alpha1ClusterNamespaceSecret Represents Tanzu Secret.
@@ -27,7 +26,7 @@ type VmwareTanzuManageV1alpha1ClusterNamespaceSecret struct {
 	Spec *VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec `json:"spec,omitempty"`
 
 	// Status for the Secret.
-	Status *statusmodel.VmwareTanzuManageV1alpha1ClusterNamespaceStatus `json:"status,omitempty"`
+	Status *VmwareTanzuManageV1alpha1ClusterNamespaceSecretStatus `json:"status,omitempty"`
 
 	// Metadata describing the type of the resource.
 	Type *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectType `json:"type,omitempty"`

@@ -24,6 +24,8 @@ import (
 	continuousdeliveryclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/continuousdelivery"
 	gitrepositoryclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/gitrepository"
 	iamclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/iam_policy"
+	secretclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/kubernetessecret"
+	secretexportclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/kubernetessecret/secretexport"
 	kustomizationclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/kustomization"
 	policyclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/policy"
 	sourcesecretclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/sourcesecret"
@@ -112,6 +114,8 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterTanzuPackageService:                    tanzupackageclusterclient.New(httpClient),
 		TanzupackageResourceService:                   packageclusterclient.New(httpClient),
 		PackageInstallResourceService:                 pkginstallclusterclient.New(httpClient),
+		ClusterGroupSecretResourceService:             secretclustergroupclient.New(httpClient),
+		ClusterGroupSecretExportResourceService:       secretexportclustergroupclient.New(httpClient),
 	}
 }
 
@@ -154,4 +158,6 @@ type TanzuMissionControl struct {
 	ClusterTanzuPackageService                    tanzupackageclusterclient.ClientService
 	TanzupackageResourceService                   packageclusterclient.ClientService
 	PackageInstallResourceService                 pkginstallclusterclient.ClientService
+	ClusterGroupSecretResourceService             secretclustergroupclient.ClientService
+	ClusterGroupSecretExportResourceService       secretexportclustergroupclient.ClientService
 }

@@ -11,30 +11,34 @@ import (
 	"github.com/stretchr/testify/require"
 
 	secretclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/cluster"
+	secretclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/clustergroup"
+	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 )
 
 func TestFlattenScope(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
-		description  string
-		input        *ScopedFullname
-		allowedScope []string
-		expectedData []interface{}
-		expectedName string
+		description       string
+		input             *ScopedFullname
+		expectedData      []interface{}
+		expectedName      string
+		expectedNamespace string
 	}{
 		{
-			description:  "check for nil scope",
-			input:        nil,
-			expectedData: nil,
-			expectedName: "",
+			description:       "check for nil scope",
+			input:             nil,
+			expectedData:      nil,
+			expectedName:      "",
+			expectedNamespace: "",
 		},
 		{
 			description: "normal scenario with complete cluster scope",
 			input: &ScopedFullname{
-				Scope: ClusterScope,
+				Scope: commonscope.ClusterScope,
 				FullnameCluster: &secretclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretFullName{
 					Name:                  "n",
+					NamespaceName:         "nn",
 					ClusterName:           "c",
 					ManagementClusterName: "m",
 					ProvisionerName:       "p",
@@ -42,25 +46,49 @@ func TestFlattenScope(t *testing.T) {
 			},
 			expectedData: []interface{}{
 				map[string]interface{}{
-					ClusterKey: []interface{}{
+					commonscope.ClusterKey: []interface{}{
 						map[string]interface{}{
-							ManagementClusterNameKey: "m",
-							ClusterNameKey:           "c",
-							ProvisionerNameKey:       "p",
+							commonscope.ManagementClusterNameKey: "m",
+							commonscope.NameKey:                  "c",
+							commonscope.ProvisionerNameKey:       "p",
 						},
 					},
 				},
 			},
-			expectedName: "n",
+			expectedName:      "n",
+			expectedNamespace: "nn",
+		},
+		{
+			description: "normal scenario with complete cluster group scope",
+			input: &ScopedFullname{
+				Scope: commonscope.ClusterGroupScope,
+				FullnameClusterGroup: &secretclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretFullName{
+					Name:             "n",
+					NamespaceName:    "nn",
+					ClusterGroupName: "c",
+				},
+			},
+			expectedData: []interface{}{
+				map[string]interface{}{
+					commonscope.ClusterGroupKey: []interface{}{
+						map[string]interface{}{
+							commonscope.NameKey: "c",
+						},
+					},
+				},
+			},
+			expectedName:      "n",
+			expectedNamespace: "nn",
 		},
 	}
 
 	for _, each := range cases {
 		test := each
 		t.Run(test.description, func(t *testing.T) {
-			actualData, actualName := FlattenScope(test.input, test.allowedScope)
+			actualData, actualName, actualNamespace := FlattenScope(test.input)
 			require.Equal(t, test.expectedData, actualData)
 			require.Equal(t, test.expectedName, actualName)
+			require.Equal(t, test.expectedNamespace, actualNamespace)
 		})
 	}
 }
