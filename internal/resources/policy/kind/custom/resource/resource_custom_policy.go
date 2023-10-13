@@ -5,6 +5,9 @@
 package custompolicyresource
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -30,6 +33,13 @@ func ResourceCustomPolicy() *schema.Resource {
 	}
 }
 
+var (
+	ScopesAllowed = [...]string{scope.ClusterKey, scope.ClusterGroupKey, scope.OrganizationKey}
+	ScopeSchema   = scope.GetScopeSchema(
+		scope.WithDescription(fmt.Sprintf("Scope for the custom policy, having one of the valid scopes: %v.", strings.Join(ScopesAllowed[:], `, `))),
+		scope.WithScopes(ScopesAllowed[:]))
+)
+
 var customPolicySchema = map[string]*schema.Schema{
 	policy.NameKey: {
 		Type:        schema.TypeString,
@@ -37,7 +47,7 @@ var customPolicySchema = map[string]*schema.Schema{
 		Required:    true,
 		ForceNew:    true,
 	},
-	scope.ScopeKey: scope.ScopeSchema,
+	scope.ScopeKey: ScopeSchema,
 	common.MetaKey: common.Meta,
 	policy.SpecKey: policykindcustom.SpecSchema,
 }
