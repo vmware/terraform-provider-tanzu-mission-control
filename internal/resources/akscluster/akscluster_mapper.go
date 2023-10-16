@@ -290,12 +290,6 @@ func constructNetworkConfig(data []any) (*models.VmwareTanzuManageV1alpha1Aksclu
 		networkConfig.PodCidrs = helper.SetPrimitiveList[string](v.([]any))
 	}
 
-	// Validation. DNS Server Ip or service CIDR cannot be set is network plugin is 'kubenet'
-	//TODO: this does not look like a valid requirement so far. Need an extra check
-	//if networkConfig.NetworkPlugin == "kubenet" && (networkConfig.DNSServiceIP != "" || networkConfig.ServiceCidrs != nil) {
-	//	return networkConfig, errors.New("can not set network_config.dns_service_ip or network_config.service_cidr when network_config.network_plugin is set to kubenet")
-	//}
-
 	return networkConfig, nil
 }
 
