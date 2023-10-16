@@ -31,6 +31,9 @@ type VmwareTanzuManageV1alpha1AksclusterNetworkConfig struct {
 	// Network plugin of the cluster. The valid value is azure, kubenet and none.
 	NetworkPlugin string `json:"networkPlugin,omitempty"`
 
+	// Network plugin mode of the cluster. The valid values are overlay and ''.
+	NetworkPluginMode string `json:"networkPluginMode,omitempty"`
+
 	// Network policy of the cluster. The valid value is azure and calico.
 	NetworkPolicy string `json:"networkPolicy,omitempty"`
 

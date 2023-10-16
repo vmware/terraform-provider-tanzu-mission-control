@@ -6,8 +6,6 @@ SPDX-License-Identifier: MPL-2.0
 package akscluster
 
 import (
-	"errors"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
@@ -260,6 +258,10 @@ func constructNetworkConfig(data []any) (*models.VmwareTanzuManageV1alpha1Aksclu
 		helper.SetPrimitiveValue(v, &networkConfig.NetworkPlugin, networkPluginKey)
 	}
 
+	if v, ok := networkConfigData[networkPluginModeKey]; ok {
+		helper.SetPrimitiveValue(v, &networkConfig.NetworkPluginMode, networkPluginModeKey)
+	}
+
 	if v, ok := networkConfigData[networkPolicyKey]; ok {
 		helper.SetPrimitiveValue(v, &networkConfig.NetworkPolicy, networkPolicyKey)
 	}
@@ -288,9 +290,11 @@ func constructNetworkConfig(data []any) (*models.VmwareTanzuManageV1alpha1Aksclu
 		networkConfig.PodCidrs = helper.SetPrimitiveList[string](v.([]any))
 	}
 
-	if networkConfig.NetworkPlugin == "kubenet" && (networkConfig.DNSServiceIP != "" || networkConfig.ServiceCidrs != nil) {
-		return networkConfig, errors.New("can not set network_config.dns_service_ip or network_config.service_cidr when network_config.network_plugin is set to kubenet")
-	}
+	// Validation. DNS Server Ip or service CIDR cannot be set is network plugin is 'kubenet'
+	//TODO: this does not look like a valid requirement so far. Need an extra check
+	//if networkConfig.NetworkPlugin == "kubenet" && (networkConfig.DNSServiceIP != "" || networkConfig.ServiceCidrs != nil) {
+	//	return networkConfig, errors.New("can not set network_config.dns_service_ip or network_config.service_cidr when network_config.network_plugin is set to kubenet")
+	//}
 
 	return networkConfig, nil
 }
@@ -575,6 +579,7 @@ func toNetworkConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterNetwor
 	data := make(map[string]any)
 	data[loadBalancerSkuKey] = config.LoadBalancerSku
 	data[networkPluginKey] = config.NetworkPlugin
+	data[networkPluginModeKey] = config.NetworkPluginMode
 	data[networkPolicyKey] = config.NetworkPolicy
 	data[dnsPrefixKey] = config.DNSPrefix
 	data[dnsServiceIPKey] = config.DNSServiceIP

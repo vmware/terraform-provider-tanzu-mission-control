@@ -318,10 +318,20 @@ var NetworkConfig = &schema.Resource{
 		},
 		networkPluginKey: {
 			Type:        schema.TypeString,
-			Description: "Network plugin. Set the value of this key to 'azure' if you want to specify values for network_config.dns_service_ip and/or network_config.service_cidr.",
+			Description: "Network plugin. It is used for building Kubernetes network. Allowed values: azure, kubenet. Specify 'azure' for routable pod IPs from VNET, 'kubenet' for non-routable pod IPs with an overlay network, Defaults to 'kubenet'",
 			ForceNew:    true,
 			Optional:    true,
 			Computed:    true,
+		},
+		networkPluginModeKey: {
+			Type:        schema.TypeString,
+			Description: "Network plugin mode. Allowed values: overlay. Used to control the mode the network plugin should operate in. For example, 'overlay' used with networkPlugin=azure will use an overlay network (non-VNET IPs) for pods in the cluster.",
+			ForceNew:    true,
+			Optional:    true,
+			Computed:    true,
+			ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+				string(aksmodel.VmwareTanzuManageV1alpha1AksclusterClusterNetworkPluginModeOverlay),
+			}, false)),
 		},
 		networkPolicyKey: {
 			Type:        schema.TypeString,
