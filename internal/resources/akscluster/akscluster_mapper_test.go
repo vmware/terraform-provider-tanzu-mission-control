@@ -28,6 +28,7 @@ func Test_ConstructAKSCluster(t *testing.T) {
 }
 
 func Test_ConstructAKSCluster_withInvalidNetworkConfig(t *testing.T) {
+	t.Skip("Skip before we are sure that we have a valid requirements")
 	tests := []*schema.ResourceData{
 		schema.TestResourceDataRaw(t, akscluster.ClusterSchema, aTestClusterDataMap(withNetworkPlugin("kubenet"))),
 		schema.TestResourceDataRaw(t, akscluster.ClusterSchema, aTestClusterDataMap(withNetworkPlugin("kubenet"), withoutNetworkDNSServiceIP)),

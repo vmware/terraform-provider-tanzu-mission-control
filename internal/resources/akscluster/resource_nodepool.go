@@ -7,6 +7,7 @@ package akscluster
 
 import (
 	"context"
+	"fmt"
 	"reflect"
 	"strings"
 	"time"
@@ -239,6 +240,64 @@ func pollUntilNodepoolDeleted(ctx context.Context, npFn *aksmodel.VmwareTanzuMan
 			}
 		}
 	}
+}
+
+// validateAllNodePools returns an error configuration will result in a cluster that will fail to create.
+func validateAllNodePools(nodepools []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) error {
+	for _, n := range nodepools {
+		if *n.Spec.Mode == aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM {
+			return nil
+		}
+	}
+
+	return errors.New("AKS cluster must contain at least 1 SYSTEM nodepool")
+}
+
+// validateNodePool works on every node pool
+// The method returns an error configuration that will cause a failure in the node pool creation
+func validateNodePool(cluster *aksmodel.VmwareTanzuManageV1alpha1AksCluster, nodepool *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) error {
+	nc := cluster.Spec.Config.NetworkConfig
+
+	// Pod subNetId cannot be set for network CNI 'kubenet' or 'azure' with overlay
+	if (nc.NetworkPlugin != "azure" || (nc.NetworkPlugin == "azure" && nc.NetworkPluginMode == "overlay")) &&
+		nodepool.Spec.PodSubnetID != "" {
+		return errors.New("can not set pod_subnet_id when network_plugin is set to 'kubenet' or to 'azure' with network_plugin_mode set to 'overlay'")
+	}
+
+	// Pod subNet cannot be specified without node subNet
+	if nodepool.Spec.VnetSubnetID == "" && nodepool.Spec.PodSubnetID != "" {
+		return errors.New("pod subNet cannot be specified if node subNet is not defined")
+	}
+
+	// Node and pod subnet should belong to the same vNet
+	if nodepool.Spec.VnetSubnetID != "" && nodepool.Spec.PodSubnetID != "" {
+		if nodepool.Spec.VnetSubnetID == nodepool.Spec.PodSubnetID {
+			return errors.New("node (Vnet-subnet) and pod subNets cannot be the same")
+		}
+
+		nodeVNet, err := getVnetIdFromSubNetId(nodepool.Spec.VnetSubnetID)
+		if err != nil {
+			return err
+		}
+		podVNet, err := getVnetIdFromSubNetId(nodepool.Spec.PodSubnetID)
+		if err != nil {
+			return err
+		}
+		if nodeVNet != podVNet {
+			return errors.New("node (Vnet-subnet) and pod subNets should belong to the same vNet")
+		}
+	}
+	return nil
+}
+
+// getVnetIdFromSubNetId returns parent vNet Id from subnet Id
+// in case of incorrect subnetI format it will return an error
+func getVnetIdFromSubNetId(subnetID string) (string, error) {
+	sections := strings.Split(subnetID, "/subnets/")
+	if len(sections) == 2 {
+		return sections[0], nil
+	}
+	return "", errors.New(fmt.Sprintf("cannot read vNet Id from subnet with Id '%s'", subnetID))
 }
 
 func checkIfNodepoolExists(new *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool, existing []*aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool {

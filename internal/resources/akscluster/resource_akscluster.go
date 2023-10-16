@@ -42,12 +42,29 @@ func resourceClusterCreate(ctx context.Context, data *schema.ResourceData, confi
 		return diag.Errorf("error while retrieving Tanzu auth config")
 	}
 
+	cluster, cErr := ConstructCluster(data)
+	if cErr != nil {
+		return diag.FromErr(cErr)
+	}
+
 	nodepools := ConstructNodepools(data)
-	if err := validate(nodepools); err != nil {
+
+	if err := validateCluster(cluster); err != nil {
 		return diag.FromErr(err)
 	}
 
-	if err := createOrUpdateCluster(data, tc.TMCConnection.AKSClusterResourceService); err != nil {
+	// validate all node pools together
+	if err := validateAllNodePools(nodepools); err != nil {
+		return diag.FromErr(err)
+	}
+	// Validate every node pool
+	for _, nodepool := range nodepools {
+		if err := validateNodePool(cluster, nodepool); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if err := createOrUpdateCluster(cluster, data, tc.TMCConnection.AKSClusterResourceService); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -168,24 +185,9 @@ func resourceClusterImporter(_ context.Context, data *schema.ResourceData, confi
 	return []*schema.ResourceData{data}, nil
 }
 
-// validate returns an error configuration will result in a cluster that will fail to create.
-func validate(nodepools []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) error {
-	for _, n := range nodepools {
-		if *n.Spec.Mode == models.VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM {
-			return nil
-		}
-	}
-
-	return errors.New("AKS cluster must contain at least 1 SYSTEM nodepool")
-}
-
 // createOrUpdateCluster creates an AKS cluster in TMC.  It is possible the cluster already exists in which case the
 // existing cluster is updated with any node pools defined in the configuration.
-func createOrUpdateCluster(data *schema.ResourceData, client akscluster.ClientService) error {
-	cluster, cErr := ConstructCluster(data)
-	if cErr != nil {
-		return cErr
-	}
+func createOrUpdateCluster(cluster *models.VmwareTanzuManageV1alpha1AksCluster, data *schema.ResourceData, client akscluster.ClientService) error {
 
 	clusterReq := &models.VmwareTanzuManageV1alpha1AksclusterCreateAksClusterRequest{AksCluster: cluster}
 	createResp, err := client.AksClusterResourceServiceCreate(clusterReq)
@@ -235,6 +237,33 @@ func updateClusterConfig(ctx context.Context, data *schema.ResourceData, cluster
 	defer cancel()
 
 	return pollUntilReady(ctxTimeout, data, tc.TMCConnection, getPollInterval(ctx))
+}
+
+// validateCluster returns an error configuration will result in a cluster that will fail to create.
+func validateCluster(cluster *models.VmwareTanzuManageV1alpha1AksCluster) error {
+	nc := cluster.Spec.Config.NetworkConfig
+
+	// Pod subNetId cannot be set for network CNI 'kubenet' or 'azure' without overlay.
+	if nc.NetworkPlugin != "azure" && nc.NetworkPluginMode == "overlay" {
+		return errors.New("network_plugin_mode 'overlay' can only be used if network_plugin is set to 'azure'")
+	}
+	// podCIDR cannot be set if network-plugin is 'azure' without 'overlay'
+	if nc.NetworkPlugin == "azure" && nc.NetworkPluginMode != "overlay" && !emptyStringArray(nc.PodCidrs) {
+		return errors.New("podCIDR cannot be set if network-plugin is 'azure' without 'overlay'")
+	}
+	return nil
+}
+
+func emptyStringArray(strArray []string) bool {
+	if len(strArray) == 0 {
+		return true
+	}
+	for _, value := range strArray {
+		if value != "" {
+			return false
+		}
+	}
+	return true
 }
 
 func pollUntilReady(ctx context.Context, data *schema.ResourceData, mc *client.TanzuMissionControl, interval time.Duration) error {
