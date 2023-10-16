@@ -27,21 +27,6 @@ func Test_ConstructAKSCluster(t *testing.T) {
 	assert.Equal(t, expected.Spec, result.Spec, "unexpected spec")
 }
 
-func Test_ConstructAKSCluster_withInvalidNetworkConfig(t *testing.T) {
-	t.Skip("Skip before we are sure that we have a valid requirements")
-	tests := []*schema.ResourceData{
-		schema.TestResourceDataRaw(t, akscluster.ClusterSchema, aTestClusterDataMap(withNetworkPlugin("kubenet"))),
-		schema.TestResourceDataRaw(t, akscluster.ClusterSchema, aTestClusterDataMap(withNetworkPlugin("kubenet"), withoutNetworkDNSServiceIP)),
-		schema.TestResourceDataRaw(t, akscluster.ClusterSchema, aTestClusterDataMap(withNetworkPlugin("kubenet"), withoutNetworkServiceCIDR)),
-	}
-
-	for _, d := range tests {
-		_, err := akscluster.ConstructCluster(d)
-		assert.NotNil(t, err)
-		assert.Equal(t, err.Error(), "can not set network_config.dns_service_ip or network_config.service_cidr when network_config.network_plugin is set to kubenet")
-	}
-}
-
 func Test_FlattenToMap_nilSpec(t *testing.T) {
 	got := akscluster.ToAKSClusterMap(nil, nil)
 	assert.Equal(t, []any{}, got)
