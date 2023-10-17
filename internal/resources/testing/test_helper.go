@@ -66,8 +66,6 @@ type TestAcceptanceConfig struct {
 	Region                   string
 	AWSAccountNumber         string
 	CloudFormationTemplateID string
-	LaunchTemplateName       string
-	LaunchTemplateVersion    string
 	CredentialName           string
 	OrgID                    string
 	ClusterGroupName         string
@@ -133,14 +131,6 @@ func WithEKSCluster() TestAcceptanceOption {
 
 			if val, exists := os.LookupEnv("EKS_KUBERNETES_VERSION"); exists {
 				config.KubernetesVersion = val
-			}
-
-			if val, exists := os.LookupEnv("EKS_LAUNCH_TEMPLATE_NAME"); exists {
-				config.LaunchTemplateName = val
-			}
-
-			if val, exists := os.LookupEnv("EKS_LAUNCH_TEMPLATE_VERSION"); exists {
-				config.LaunchTemplateVersion = val
 			}
 
 			if val, exists := os.LookupEnv("EKS_CREDENTIAL_NAME"); exists {
@@ -213,9 +203,7 @@ func TestGetDefaultEksAcceptanceConfig() *TestAcceptanceConfig {
 		AWSAccountNumber:         "919197287370",
 		Region:                   "us-west-2",
 		ClusterGroupName:         "default",
-		KubernetesVersion:        "1.23",
-		LaunchTemplateName:       "PLACE_HOLDER",
-		LaunchTemplateVersion:    "PLACE_HOLDER",
+		KubernetesVersion:        "1.26",
 		CredentialName:           "PLACE_HOLDER",
 		CloudFormationTemplateID: "PLACE_HOLDER",
 	}

@@ -369,7 +369,7 @@ func getFullName() *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName {
 	return &aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName{
 		CredentialName:    os.Getenv("AKS_CREDENTIAL_NAME"),
 		Name:              fmt.Sprintf("tf-acc-test-%s", acctest.RandString(5)),
-		ResourceGroupName: "test-group",
+		ResourceGroupName: "vmwtmc-912fa6df-87a89396",
 		SubscriptionID:    os.Getenv("AKS_SUBSCRIPTION_ID"),
 	}
 }
@@ -388,13 +388,14 @@ func testAKSCluster(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) st
 	return fmt.Sprintf(`resource "tanzu-mission-control_akscluster" "%s" {
   credential_name = "%s"
   subscription_id = "%s"
-  resource_group  = "test-group"
+  resource_group  = "vmwtmc-912fa6df-87a89396"
   name            = "%s"
   spec {
     config {
       location = "eastus"
-      kubernetes_version = "1.25.11"
+      kubernetes_version = "1.26.6"
       network_config {
+		network_plugin = "azure"
         dns_prefix = "dns-tf-test"
       }
       storage_config {
@@ -418,13 +419,14 @@ func testAKSClusterEnableCSI(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFul
 	return fmt.Sprintf(`resource "tanzu-mission-control_akscluster" "%s" {
   credential_name = "%s"
   subscription_id = "%s"
-  resource_group  = "test-group"
+  resource_group  = "vmwtmc-912fa6df-87a89396"
   name            = "%s"
   spec {
     config {
       location = "eastus"
-      kubernetes_version = "1.25.11"
+      kubernetes_version = "1.26.6"
       network_config {
+		network_plugin = "azure"
         dns_prefix = "dns-tf-test"
       }
       storage_config {
@@ -448,13 +450,14 @@ func testAKSClusterAddUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1Aksclus
 	return fmt.Sprintf(`resource "tanzu-mission-control_akscluster" "%s" {
   credential_name = "%s"
   subscription_id = "%s"
-  resource_group  = "test-group"
+  resource_group  = "vmwtmc-912fa6df-87a89396"
   name            = "%s"
   spec {
     config {
       location = "eastus"
-      kubernetes_version = "1.25.11"
+      kubernetes_version = "1.26.6"
       network_config {
+		network_plugin = "azure"
         dns_prefix = "dns-tf-test"
       }
       storage_config {
@@ -498,13 +501,14 @@ func mockCluster(w ...clusterWither) *aksmodel.VmwareTanzuManageV1alpha1AksClust
 			Config: &aksmodel.VmwareTanzuManageV1alpha1AksclusterClusterConfig{
 				Location: "eastus",
 				NetworkConfig: &aksmodel.VmwareTanzuManageV1alpha1AksclusterNetworkConfig{
-					DNSPrefix: "dns-tf-test",
+					NetworkPlugin: "azure",
+					DNSPrefix:     "dns-tf-test",
 				},
 				StorageConfig: &aksmodel.VmwareTanzuManageV1alpha1AksclusterStorageConfig{
 					EnableDiskCsiDriver: false,
 					EnableFileCsiDriver: false,
 				},
-				Version: "1.25.11",
+				Version: "1.26.6",
 			},
 		},
 		Status: &aksmodel.VmwareTanzuManageV1alpha1AksclusterStatus{
