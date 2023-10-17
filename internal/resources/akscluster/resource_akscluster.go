@@ -188,7 +188,6 @@ func resourceClusterImporter(_ context.Context, data *schema.ResourceData, confi
 // createOrUpdateCluster creates an AKS cluster in TMC.  It is possible the cluster already exists in which case the
 // existing cluster is updated with any node pools defined in the configuration.
 func createOrUpdateCluster(cluster *models.VmwareTanzuManageV1alpha1AksCluster, data *schema.ResourceData, client akscluster.ClientService) error {
-
 	clusterReq := &models.VmwareTanzuManageV1alpha1AksclusterCreateAksClusterRequest{AksCluster: cluster}
 	createResp, err := client.AksClusterResourceServiceCreate(clusterReq)
 
@@ -244,13 +243,14 @@ func validateCluster(cluster *models.VmwareTanzuManageV1alpha1AksCluster) error 
 	nc := cluster.Spec.Config.NetworkConfig
 
 	// Pod subNetId cannot be set for network CNI 'kubenet' or 'azure' without overlay.
-	if nc.NetworkPlugin != "azure" && nc.NetworkPluginMode == "overlay" {
+	if nc.NetworkPlugin != azureCNI && nc.NetworkPluginMode == cniAzureOverlay {
 		return errors.New("network_plugin_mode 'overlay' can only be used if network_plugin is set to 'azure'")
 	}
 	// podCIDR cannot be set if network-plugin is 'azure' without 'overlay'
-	if nc.NetworkPlugin == "azure" && nc.NetworkPluginMode != "overlay" && !emptyStringArray(nc.PodCidrs) {
+	if nc.NetworkPlugin == azureCNI && nc.NetworkPluginMode != cniAzureOverlay && !emptyStringArray(nc.PodCidrs) {
 		return errors.New("podCIDR cannot be set if network-plugin is 'azure' without 'overlay'")
 	}
+
 	return nil
 }
 
@@ -258,11 +258,13 @@ func emptyStringArray(strArray []string) bool {
 	if len(strArray) == 0 {
 		return true
 	}
+
 	for _, value := range strArray {
 		if value != "" {
 			return false
 		}
 	}
+
 	return true
 }
 
