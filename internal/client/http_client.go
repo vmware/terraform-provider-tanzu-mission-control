@@ -31,6 +31,7 @@ import (
 	eksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster"
 	eksnodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster/nodepool"
 	integrationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/integration"
+	kubeconfigclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubeconfig"
 	secretclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubernetessecret"
 	secretexportclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubernetessecret/secretexport"
 	namespaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/namespace"
@@ -112,6 +113,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterTanzuPackageService:                    tanzupackageclusterclient.New(httpClient),
 		TanzupackageResourceService:                   packageclusterclient.New(httpClient),
 		PackageInstallResourceService:                 pkginstallclusterclient.New(httpClient),
+		KubeConfigResourceService:                     kubeconfigclient.New(httpClient),
 	}
 }
 
@@ -154,4 +156,5 @@ type TanzuMissionControl struct {
 	ClusterTanzuPackageService                    tanzupackageclusterclient.ClientService
 	TanzupackageResourceService                   packageclusterclient.ClientService
 	PackageInstallResourceService                 pkginstallclusterclient.ClientService
+	KubeConfigResourceService                     kubeconfigclient.ClientService
 }
