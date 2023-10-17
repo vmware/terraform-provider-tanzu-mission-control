@@ -39,17 +39,17 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclu
 	return nil
 }
 
-// VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse Response from creating a TanzuKubernetesCluster.
+// VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterTanzuKubernetesClusterResponse Response from creating a TanzuKubernetesCluster.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.managementcluster.provisioner.tanzukubernetescluster.CreateTanzuKubernetesClusterResponse
-type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse struct {
+type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterTanzuKubernetesClusterResponse struct {
 
 	// TanzuKubernetesCluster created.
 	TanzuKubernetesCluster *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterTanzuKubernetesCluster `json:"tanzuKubernetesCluster,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterTanzuKubernetesClusterResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -58,8 +58,8 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclu
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCreateTanzuKubernetesClusterResponse
+func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterTanzuKubernetesClusterResponse) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterTanzuKubernetesClusterResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
