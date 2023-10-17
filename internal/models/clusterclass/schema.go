@@ -24,16 +24,20 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassVariab
 	if m == nil {
 		return nil, nil
 	}
+
 	return swag.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassVariableSchema) UnmarshalBinary(b []byte) error {
 	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassVariableSchema
+
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
+
 	*m = res
+
 	return nil
 }
 
@@ -56,6 +60,7 @@ func (m *K8sIoApimachineryPkgRuntimeRawExtension) MarshalBinary() ([]byte, error
 // UnmarshalBinary interface implementation.
 func (m *K8sIoApimachineryPkgRuntimeRawExtension) UnmarshalBinary(b []byte) error {
 	var res K8sIoApimachineryPkgRuntimeRawExtension
+
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -7,6 +7,7 @@ package clusterclass
 
 import (
 	"github.com/go-openapi/swag"
+
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 )
 
@@ -36,15 +37,19 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassCluste
 	if m == nil {
 		return nil, nil
 	}
+
 	return swag.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassClusterClass) UnmarshalBinary(b []byte) error {
 	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassClusterClass
+
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
+
 	*m = res
+
 	return nil
 }

@@ -26,15 +26,19 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassListCl
 	if m == nil {
 		return nil, nil
 	}
+
 	return swag.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassListClusterClassesResponse) UnmarshalBinary(b []byte) error {
 	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassListClusterClassesResponse
+
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
+
 	*m = res
+
 	return nil
 }
