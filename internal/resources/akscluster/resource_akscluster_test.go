@@ -79,7 +79,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate() {
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_withPodCIDR() {
-	nodepools := []any{aTestNodepoolDataMap(withPodSubnetId(""))}
+	nodepools := []any{aTestNodepoolDataMap(withPodSubnetID(""))}
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap(withNodepools(nodepools),
 		withNetworkPlugin("kubenet"), withPodCIDR([]any{"10.1.0.0/16"})))
 	expectedNP := aTestNodePool(forCluster(aTestCluster(withTestPodCIDR).FullName))
@@ -214,7 +214,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_podCIDR
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_overlay_with_pood_subnet_fail() {
-	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetId("vnet-1/subnet-1"))}
+	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetID("vnet-1/subnet-1"))}
 	cluster := aTestClusterDataMap(withNetworkPluginMode("overlay"), withNodepools(nodepools))
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
 
@@ -225,7 +225,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_overlay_with
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_kubenet_with_pood_subnet_fail() {
-	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetId("vnet-1/subnet-1"))}
+	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetID("vnet-1/subnet-1"))}
 	cluster := aTestClusterDataMap(withNetworkPlugin("kubenet"), withNetworkPluginMode(""), withNodepools(nodepools))
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
 
@@ -236,7 +236,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_kubenet_with
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_wrong_subnet_format_fail() {
-	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetId("vnet-1/subnet-1"))}
+	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetID("vnet-1/subnet-1"))}
 	cluster := aTestClusterDataMap(withNodepools(nodepools))
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
 
@@ -247,7 +247,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_wrong_subnet
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_different_vNets_fail() {
-	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetId("vnet-2/subnets/subnet-2"))}
+	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetID("vnet-2/subnets/subnet-2"))}
 	cluster := aTestClusterDataMap(withNodepools(nodepools))
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
 
@@ -259,7 +259,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_different_vN
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_pod_subnet_without_node_subnet_fail() {
 	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"),
-		withNodeSubnetId(""), withPodSubnetId("vnet-1/subnets/subnet-2"))}
+		withNodeSubnetID(""), withPodSubnetID("vnet-1/subnets/subnet-2"))}
 	cluster := aTestClusterDataMap(withNodepools(nodepools))
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
 
@@ -270,7 +270,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_pod_subnet_w
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_pod_and_pod_submets_same_fail() {
-	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetId("vnet-1/subnets/subnet-1"))}
+	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetID("vnet-1/subnets/subnet-1"))}
 	cluster := aTestClusterDataMap(withNodepools(nodepools))
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
 

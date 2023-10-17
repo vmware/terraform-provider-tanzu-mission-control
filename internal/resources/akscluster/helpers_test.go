@@ -236,26 +236,6 @@ func withNetworkPluginMode(pluginMode string) mapWither {
 	}
 }
 
-func withoutNetworkDNSServiceIP(m map[string]any) {
-	specs := m["spec"].([]any)
-	spec := specs[0].(map[string]any)
-	configs := spec["config"].([]any)
-	config := configs[0].(map[string]any)
-	networks := config["network_config"].([]any)
-	network := networks[0].(map[string]any)
-	delete(network, "dns_service_ip")
-}
-
-func withoutNetworkServiceCIDR(m map[string]any) {
-	specs := m["spec"].([]any)
-	spec := specs[0].(map[string]any)
-	configs := spec["config"].([]any)
-	config := configs[0].(map[string]any)
-	networks := config["network_config"].([]any)
-	network := networks[0].(map[string]any)
-	delete(network, "service_cidr")
-}
-
 func withNodepools(nps []any) mapWither {
 	return func(m map[string]any) {
 		specs := m["spec"].([]any)
@@ -294,19 +274,19 @@ func withNodepoolMode(mode string) mapWither {
 	}
 }
 
-func withNodeSubnetId(nodeSubnetId string) mapWither {
+func withNodeSubnetID(nodeSubnetID string) mapWither {
 	return func(m map[string]any) {
 		specs := m["spec"].([]any)
 		spec := specs[0].(map[string]any)
-		spec["vnet_subnet_id"] = nodeSubnetId
+		spec["vnet_subnet_id"] = nodeSubnetID
 	}
 }
 
-func withPodSubnetId(podSubnetId string) mapWither {
+func withPodSubnetID(podSubnetID string) mapWither {
 	return func(m map[string]any) {
 		specs := m["spec"].([]any)
 		spec := specs[0].(map[string]any)
-		spec["pod_subnet_id"] = podSubnetId
+		spec["pod_subnet_id"] = podSubnetID
 	}
 }
 

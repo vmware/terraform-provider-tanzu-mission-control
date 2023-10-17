@@ -132,13 +132,7 @@ func constructConfig(data []any) (*models.VmwareTanzuManageV1alpha1AksclusterClu
 
 	if v, ok := configData[networkConfigKey]; ok {
 		data, _ := v.([]any)
-		v, err := constructNetworkConfig(data)
-
-		if err != nil {
-			return nil, err
-		} else {
-			config.NetworkConfig = v
-		}
+		config.NetworkConfig = constructNetworkConfig(data)
 	}
 
 	if v, ok := configData[skuKey]; ok {
@@ -245,9 +239,9 @@ func constructLinuxConfig(data []any) *models.VmwareTanzuManageV1alpha1Akscluste
 	return linuxConfig
 }
 
-func constructNetworkConfig(data []any) (*models.VmwareTanzuManageV1alpha1AksclusterNetworkConfig, error) {
+func constructNetworkConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterNetworkConfig {
 	if len(data) < 1 {
-		return nil, nil
+		return nil
 	}
 
 	// NetworkConfig schema defines max 1
@@ -290,7 +284,7 @@ func constructNetworkConfig(data []any) (*models.VmwareTanzuManageV1alpha1Aksclu
 		networkConfig.PodCidrs = helper.SetPrimitiveList[string](v.([]any))
 	}
 
-	return networkConfig, nil
+	return networkConfig
 }
 
 func constructStorageConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterStorageConfig {

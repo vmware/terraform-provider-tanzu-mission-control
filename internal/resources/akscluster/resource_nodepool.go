@@ -254,12 +254,12 @@ func validateAllNodePools(nodepools []*aksmodel.VmwareTanzuManageV1alpha1Aksclus
 }
 
 // validateNodePool works on every node pool
-// The method returns an error configuration that will cause a failure in the node pool creation
+// The method returns an error configuration that will cause a failure in the node pool creation.
 func validateNodePool(cluster *aksmodel.VmwareTanzuManageV1alpha1AksCluster, nodepool *aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) error {
 	nc := cluster.Spec.Config.NetworkConfig
 
 	// Pod subNetId cannot be set for network CNI 'kubenet' or 'azure' with overlay
-	if (nc.NetworkPlugin != "azure" || (nc.NetworkPlugin == "azure" && nc.NetworkPluginMode == "overlay")) &&
+	if (nc.NetworkPlugin != azureCNI || (nc.NetworkPlugin == azureCNI && nc.NetworkPluginMode == cniAzureOverlay)) &&
 		nodepool.Spec.PodSubnetID != "" {
 		return errors.New("can not set pod_subnet_id when network_plugin is set to 'kubenet' or to 'azure' with network_plugin_mode set to 'overlay'")
 	}
@@ -275,28 +275,31 @@ func validateNodePool(cluster *aksmodel.VmwareTanzuManageV1alpha1AksCluster, nod
 			return errors.New("node (Vnet-subnet) and pod subNets cannot be the same")
 		}
 
-		nodeVNet, err := getVnetIdFromSubNetId(nodepool.Spec.VnetSubnetID)
+		nodeVNet, err := getVnetIDFromSubNetID(nodepool.Spec.VnetSubnetID)
 		if err != nil {
 			return err
 		}
-		podVNet, err := getVnetIdFromSubNetId(nodepool.Spec.PodSubnetID)
+
+		podVNet, err := getVnetIDFromSubNetID(nodepool.Spec.PodSubnetID)
 		if err != nil {
 			return err
 		}
+
 		if nodeVNet != podVNet {
 			return errors.New("node (Vnet-subnet) and pod subNets should belong to the same vNet")
 		}
 	}
+
 	return nil
 }
 
-// getVnetIdFromSubNetId returns parent vNet Id from subnet Id
-// in case of incorrect subnetI format it will return an error
-func getVnetIdFromSubNetId(subnetID string) (string, error) {
+// getVnetIDFromSubNetID returns parent vNet Id from subnet Id in case of incorrect subnetId format it will return an error.
+func getVnetIDFromSubNetID(subnetID string) (string, error) {
 	sections := strings.Split(subnetID, "/subnets/")
 	if len(sections) == 2 {
 		return sections[0], nil
 	}
+
 	return "", errors.New(fmt.Sprintf("cannot read vNet Id from subnet with Id '%s'", subnetID))
 }
 
