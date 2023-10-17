@@ -9,6 +9,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,15 +19,6 @@ import (
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	backupschedulemodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/backupschedule"
-)
-
-type ReadContextModeKey string
-type ReadContextModeValue string
-
-const (
-	readContextMode       ReadContextModeKey   = "Mode"
-	readContextModeCreate ReadContextModeValue = "Create"
-	readContextModeUpdate ReadContextModeValue = "Update"
 )
 
 func ResourceBackupSchedule() *schema.Resource {
@@ -62,32 +54,46 @@ func resourceBackupScheduleCreate(ctx context.Context, data *schema.ResourceData
 			request.Schedule.FullName.Name, request.Schedule.FullName.ClusterName))
 	}
 
-	return resourceBackupScheduleRead(context.WithValue(ctx, readContextMode, readContextModeCreate), data, m)
+	return resourceBackupScheduleRead(helper.GetContextWithCaller(ctx, helper.CreateState), data, m)
 }
 
 func resourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
+
+	var (
+		resp *backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleResponse
+		err  error
+	)
+
 	backupScheduleFn := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey, ClusterNameKey, ManagementClusterNameKey, ProvisionerNameKey}).FullName
-	getResponse, err := config.TMCConnection.BackupScheduleService.BackupScheduleResourceServiceGet(backupScheduleFn)
+	resp, err = readResourceWait(config, backupScheduleFn)
 
 	if err != nil {
-		if clienterrors.IsNotFoundError(err) && ctx.Value(readContextMode) == nil {
-			*data = schema.ResourceData{}
+		if clienterrors.IsNotFoundError(err) {
+			if !helper.IsContextCallerSet(ctx) {
+				*data = schema.ResourceData{}
 
-			return diags
+				return diags
+			} else if helper.IsDeleteState(ctx) {
+				// d.SetId("") is automatically called assuming delete returns no errors, but
+				// it is added here for explicitness.
+				_ = schema.RemoveFromState(data, m)
+
+				return diags
+			}
 		}
 
 		return diag.Errorf("Couldn't read backup schedule. Name: %s, Cluster: %s", backupScheduleFn.Name, backupScheduleFn.ClusterName)
-	} else if getResponse.Schedule != nil {
+	} else if resp != nil {
 		userExcludedNamespaces := getExcludedNamespaces(data, ExcludedNamespacesKey)
-		systemExcludedNamespaces := getResponseSystemExcludedNamespaces(getResponse.Schedule, userExcludedNamespaces)
-		getResponse.Schedule.Spec.Template.ExcludedNamespaces = userExcludedNamespaces
+		systemExcludedNamespaces := getResponseSystemExcludedNamespaces(resp.Schedule, userExcludedNamespaces)
+		resp.Schedule.Spec.Template.ExcludedNamespaces = userExcludedNamespaces
 
 		if getSchemaCsiSnapshotTimeout(data) == "" {
-			getResponse.Schedule.Spec.Template.CsiSnapshotTimeout = ""
+			resp.Schedule.Spec.Template.CsiSnapshotTimeout = ""
 		}
 
-		err = tfModelResourceConverter.FillTFSchema(getResponse.Schedule, data)
+		err = tfModelResourceConverter.FillTFSchema(resp.Schedule, data)
 
 		if err != nil {
 			return diag.Errorf("Couldn't read backup schedule. Name: %s, Cluster: %s", backupScheduleFn.Name, backupScheduleFn.ClusterName)
@@ -102,7 +108,7 @@ func resourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData, 
 	return diags
 }
 
-func resourceBackupScheduleDelete(_ context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+func resourceBackupScheduleDelete(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 	backupScheduleFn := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey, ClusterNameKey, ManagementClusterNameKey, ProvisionerNameKey}).FullName
 	err := config.TMCConnection.BackupScheduleService.BackupScheduleResourceServiceDelete(backupScheduleFn)
@@ -111,11 +117,7 @@ func resourceBackupScheduleDelete(_ context.Context, data *schema.ResourceData, 
 		return diag.FromErr(errors.Wrapf(err, "unable to delete Tanzu Mission Control backup schedule. Name: %s, Cluster: %s", backupScheduleFn.Name, backupScheduleFn.ClusterName))
 	}
 
-	// d.SetId("") is automatically called assuming delete returns no errors, but
-	// it is added here for explicitness.
-	_ = schema.RemoveFromState(data, m)
-
-	return diags
+	return resourceBackupScheduleRead(helper.GetContextWithCaller(ctx, helper.DeleteState), data, m)
 }
 
 func resourceBackupScheduleUpdate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
@@ -141,7 +143,7 @@ func resourceBackupScheduleUpdate(ctx context.Context, data *schema.ResourceData
 			request.Schedule.FullName.Name, request.Schedule.FullName.ClusterName))
 	}
 
-	return resourceBackupScheduleRead(context.WithValue(ctx, readContextMode, readContextModeUpdate), data, m)
+	return resourceBackupScheduleRead(helper.GetContextWithCaller(ctx, helper.UpdateState), data, m)
 }
 
 func resourceBackupScheduleImporter(_ context.Context, data *schema.ResourceData, config any) ([]*schema.ResourceData, error) {
@@ -190,6 +192,35 @@ func resourceBackupScheduleImporter(_ context.Context, data *schema.ResourceData
 	}
 
 	return []*schema.ResourceData{data}, err
+}
+
+func readResourceWait(config authctx.TanzuContext, resourceFullName *backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleFullName) (resp *backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleResponse, err error) {
+	responseStatus := backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleStatusPhasePHASEUNSPECIFIED
+
+	for responseStatus != backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleStatusPhaseFAILEDVALIDATION {
+		resp, err = config.TMCConnection.BackupScheduleService.BackupScheduleResourceServiceGet(resourceFullName)
+
+		if err != nil || resp == nil || resp.Schedule == nil {
+			return nil, err
+		}
+
+		responseStatus = *resp.Schedule.Status.Phase
+
+		if responseStatus == backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleStatusPhaseENABLED || responseStatus == backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleStatusPhasePAUSED {
+			break
+		} else {
+			time.Sleep(5 * time.Second)
+		}
+	}
+
+	if responseStatus == backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleStatusPhaseFAILEDVALIDATION {
+		err = errors.Errorf("Failed validation of backup schedule '%s' in cluster: %s/%s/%s", resourceFullName.Name,
+			resourceFullName.ManagementClusterName, resourceFullName.ProvisionerName, resourceFullName.ClusterName)
+
+		return nil, err
+	}
+
+	return resp, err
 }
 
 func validateSchema(scheduleModel *backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleSchedule, scope BackupScope) (diags diag.Diagnostics) {

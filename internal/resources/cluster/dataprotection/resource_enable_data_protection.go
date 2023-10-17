@@ -13,19 +13,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	dataprotectionmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/dataprotection"
-)
-
-type ReadContextModeKey string
-type ReadContextModeValue string
-
-const (
-	readContextMode       ReadContextModeKey   = "Mode"
-	readContextModeCreate ReadContextModeValue = "Create"
-	readContextModeUpdate ReadContextModeValue = "Update"
 )
 
 func ResourceEnableDataProtection() *schema.Resource {
@@ -59,7 +51,7 @@ func resourceEnableDataProtectionCreate(ctx context.Context, data *schema.Resour
 			model.FullName.ManagementClusterName, model.FullName.ProvisionerName, model.FullName.ClusterName))
 	}
 
-	return resourceEnableDataProtectionRead(context.WithValue(ctx, readContextMode, readContextModeCreate), data, m)
+	return resourceEnableDataProtectionRead(helper.GetContextWithCaller(ctx, helper.CreateState), data, m)
 }
 
 func resourceEnableDataProtectionRead(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
@@ -71,41 +63,26 @@ func resourceEnableDataProtectionRead(ctx context.Context, data *schema.Resource
 	)
 
 	resourceFullName := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{ClusterNameKey, ProvisionerNameKey, ManagementClusterNameKey}).FullName
-	responseStatus := dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionStatusPhasePHASEUNSPECIFIED
-
-	for responseStatus != dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionStatusPhaseERROR {
-		resp, err = config.TMCConnection.DataProtectionService.DataProtectionResourceServiceList(resourceFullName)
-
-		if err != nil || resp == nil {
-			return diag.Errorf("Couldn't receive data protection configurations for cluster: %s/%s/%s",
-				resourceFullName.ManagementClusterName, resourceFullName.ProvisionerName, resourceFullName.ClusterName)
-		}
-
-		dataProtection := resp.DataProtections[0]
-		responseStatus = *dataProtection.Status.Phase
-
-		if responseStatus != dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionStatusPhaseREADY {
-			time.Sleep(5 * time.Second)
-		} else {
-			break
-		}
-	}
-
-	if responseStatus == dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionStatusPhaseERROR {
-		return diag.Errorf("data protection configurations errored for cluster: %s/%s/%s",
-			resourceFullName.ManagementClusterName, resourceFullName.ProvisionerName, resourceFullName.ClusterName)
-	}
+	resp, err = readResourceWait(config, resourceFullName)
 
 	if err != nil {
-		if clienterrors.IsNotFoundError(err) && ctx.Value(readContextMode) == nil {
-			*data = schema.ResourceData{}
+		if clienterrors.IsNotFoundError(err) {
+			if !helper.IsContextCallerSet(ctx) {
+				*data = schema.ResourceData{}
 
-			return diags
+				return diags
+			} else if helper.IsDeleteState(ctx) {
+				// d.SetId("") is automatically called assuming delete returns no errors, but
+				// it is added here for explicitness.
+				_ = schema.RemoveFromState(data, m)
+
+				return diags
+			}
 		}
 
-		diags = diag.Errorf("Couldn't find data protection configuration for cluster: %s/%s/%s",
+		return diag.Errorf("Couldn't find data protection configuration for cluster: %s/%s/%s",
 			resourceFullName.ManagementClusterName, resourceFullName.ProvisionerName, resourceFullName.ClusterName)
-	} else if resp.DataProtections != nil {
+	} else if resp != nil {
 		var (
 			oldSpecMap map[string]interface{}
 
@@ -138,7 +115,7 @@ func resourceEnableDataProtectionRead(ctx context.Context, data *schema.Resource
 	return diags
 }
 
-func resourceEnableDataProtectionDelete(_ context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+func resourceEnableDataProtectionDelete(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 	resourceFullName := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{ClusterNameKey, ProvisionerNameKey, ManagementClusterNameKey}).FullName
 	deletionPolicy := data.Get(DeletionPolicyKey).([]interface{})
@@ -155,11 +132,7 @@ func resourceEnableDataProtectionDelete(_ context.Context, data *schema.Resource
 			resourceFullName.ManagementClusterName, resourceFullName.ProvisionerName, resourceFullName.ClusterName))
 	}
 
-	// d.SetId("") is automatically called assuming delete returns no errors, but
-	// it is added here for explicitness.
-	_ = schema.RemoveFromState(data, m)
-
-	return diags
+	return resourceEnableDataProtectionRead(helper.GetContextWithCaller(ctx, helper.DeleteState), data, m)
 }
 
 func resourceEnableDataProtectionUpdate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
@@ -180,7 +153,7 @@ func resourceEnableDataProtectionUpdate(ctx context.Context, data *schema.Resour
 			model.FullName.ManagementClusterName, model.FullName.ProvisionerName, model.FullName.ClusterName))
 	}
 
-	return resourceEnableDataProtectionRead(context.WithValue(ctx, readContextMode, readContextModeUpdate), data, m)
+	return resourceEnableDataProtectionRead(helper.GetContextWithCaller(ctx, helper.UpdateState), data, m)
 }
 
 func resourceEnableDataProtectionImporter(_ context.Context, data *schema.ResourceData, config any) ([]*schema.ResourceData, error) {
@@ -229,4 +202,34 @@ func resourceEnableDataProtectionImporter(_ context.Context, data *schema.Resour
 	}
 
 	return []*schema.ResourceData{data}, err
+}
+
+func readResourceWait(config authctx.TanzuContext, resourceFullName *dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionFullName) (resp *dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionListDataProtectionsResponse, err error) {
+	responseStatus := dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionStatusPhasePHASEUNSPECIFIED
+
+	for responseStatus != dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionStatusPhaseERROR {
+		resp, err = config.TMCConnection.DataProtectionService.DataProtectionResourceServiceList(resourceFullName)
+
+		if err != nil || resp == nil || resp.DataProtections == nil {
+			return nil, err
+		}
+
+		dataProtection := resp.DataProtections[0]
+		responseStatus = *dataProtection.Status.Phase
+
+		if responseStatus == dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionStatusPhaseREADY {
+			break
+		} else {
+			time.Sleep(5 * time.Second)
+		}
+	}
+
+	if responseStatus == dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionStatusPhaseERROR {
+		err = errors.Errorf("data protection configurations errored for cluster: %s/%s/%s",
+			resourceFullName.ManagementClusterName, resourceFullName.ProvisionerName, resourceFullName.ClusterName)
+
+		return nil, err
+	}
+
+	return resp, err
 }

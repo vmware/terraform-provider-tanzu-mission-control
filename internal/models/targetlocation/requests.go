@@ -43,14 +43,14 @@ func (m *VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBack
 // VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationResponse Response from creating a BackupLocation.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.dataprotection.provider.backuplocation.CreateBackupLocationResponse.
-type VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationResponse struct {
+type VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse struct {
 
 	// BackupLocation created.
 	BackupLocation *VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationBackupLocation `json:"backupLocation,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationResponse) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -59,8 +59,8 @@ func (m *VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBack
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationResponse) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationResponse
+func (m *VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse
 
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
@@ -95,37 +95,6 @@ func (m *VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationListBackup
 // UnmarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationListBackupLocationsResponse) UnmarshalBinary(b []byte) error {
 	var res VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationListBackupLocationsResponse
-
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-
-	*m = res
-
-	return nil
-}
-
-// VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationGetBackupLocationResponse Response from getting a BackupLocation.
-//
-// swagger:model vmware.tanzu.manage.v1alpha1.dataprotection.provider.backuplocation.GetBackupLocationResponse.
-type VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationGetBackupLocationResponse struct {
-
-	// BackupLocation returned.
-	BackupLocation *VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationBackupLocation `json:"backupLocation,omitempty"`
-}
-
-// MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationGetBackupLocationResponse) MarshalBinary() ([]byte, error) {
-	if m == nil {
-		return nil, nil
-	}
-
-	return swag.WriteJSON(m)
-}
-
-// UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationGetBackupLocationResponse) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationGetBackupLocationResponse
 
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err

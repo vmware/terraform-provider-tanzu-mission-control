@@ -39,13 +39,13 @@ type Client struct {
 type ClientService interface {
 	TargetLocationResourceServiceList(request *targetlocationsmodel.ListBackupLocationsRequest) (*targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationListBackupLocationsResponse, error)
 
-	TargetLocationResourceServiceCreate(request *targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationRequest) (*targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationResponse, error)
+	TargetLocationResourceServiceCreate(request *targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationRequest) (*targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse, error)
 
-	TargetLocationResourceServiceUpdate(request *targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationRequest) (*targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationResponse, error)
+	TargetLocationResourceServiceUpdate(request *targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationRequest) (*targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse, error)
 
 	TargetLocationResourceServiceDelete(fn *targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationFullName) error
 
-	TargetLocationResourceServiceGet(fn *targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationFullName) (*targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationGetBackupLocationResponse, error)
+	TargetLocationResourceServiceGet(fn *targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationFullName) (*targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse, error)
 }
 
 /*
@@ -73,9 +73,9 @@ func (c *Client) TargetLocationResourceServiceList(request *targetlocationsmodel
 TargetLocationResourceServiceList gets a target location.
 */
 
-func (c *Client) TargetLocationResourceServiceGet(fullName *targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationFullName) (*targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationGetBackupLocationResponse, error) {
+func (c *Client) TargetLocationResourceServiceGet(fullName *targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationFullName) (*targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse, error) {
 	requestURL := helper.ConstructRequestURL(dataProtectionAPIVersionAndGroup, fullName.ProviderName, backupLocationsAPI, fullName.Name).String()
-	resp := &targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationGetBackupLocationResponse{}
+	resp := &targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse{}
 	err := c.Get(requestURL, resp)
 
 	return resp, err
@@ -84,8 +84,8 @@ func (c *Client) TargetLocationResourceServiceGet(fullName *targetlocationsmodel
 /*
 TargetLocationResourceServiceCreate creates a target location.
 */
-func (c *Client) TargetLocationResourceServiceCreate(request *targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationRequest) (*targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationResponse, error) {
-	response := &targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationResponse{}
+func (c *Client) TargetLocationResourceServiceCreate(request *targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationRequest) (*targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse, error) {
+	response := &targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse{}
 	requestURL := helper.ConstructRequestURL(dataProtectionAPIVersionAndGroup, request.BackupLocation.FullName.ProviderName, backupLocationsAPI).String()
 	err := c.Create(requestURL, request, response)
 
@@ -95,8 +95,8 @@ func (c *Client) TargetLocationResourceServiceCreate(request *targetlocationsmod
 /*
 TargetLocationResourceServiceUpdate updates a target location.
 */
-func (c *Client) TargetLocationResourceServiceUpdate(request *targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationRequest) (*targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationResponse, error) {
-	response := &targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationResponse{}
+func (c *Client) TargetLocationResourceServiceUpdate(request *targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationCreateBackupLocationRequest) (*targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse, error) {
+	response := &targetlocationsmodel.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse{}
 	requestURL := helper.ConstructRequestURL(dataProtectionAPIVersionAndGroup, request.BackupLocation.FullName.ProviderName, backupLocationsAPI, request.BackupLocation.FullName.Name).String()
 	err := c.Update(requestURL, request, response)
 

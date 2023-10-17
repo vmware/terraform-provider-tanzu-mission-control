@@ -7,6 +7,7 @@ package targetlocation
 
 import (
 	"context"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -14,19 +15,14 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	credentialsmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/credential"
 	targetlocationmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/targetlocation"
 )
 
 type CredentialsTypeCtxKey string
-type ReadContextModeKey string
-type ReadContextModeValue string
 
 const (
-	readContextMode       ReadContextModeKey   = "Mode"
-	readContextModeCreate ReadContextModeValue = "Create"
-	readContextModeUpdate ReadContextModeValue = "Update"
-
 	credentialsTypeCtxKey CredentialsTypeCtxKey = "CredentialsType"
 )
 
@@ -72,30 +68,38 @@ func resourceTargetLocationCreate(ctx context.Context, data *schema.ResourceData
 
 	ctx = context.WithValue(ctx, credentialsTypeCtxKey, credentialsType)
 
-	return resourceTargetLocationRead(context.WithValue(ctx, readContextMode, readContextModeCreate), data, m)
+	return resourceTargetLocationRead(helper.GetContextWithCaller(ctx, helper.CreateState), data, m)
 }
 
 func resourceTargetLocationRead(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 	targetLocationFn := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey}).FullName
 	targetLocationFn.ProviderName = TMCProviderName
-	getResponse, err := config.TMCConnection.TargetLocationService.TargetLocationResourceServiceGet(targetLocationFn)
+	resp, err := readResourceWait(config, targetLocationFn)
 
 	if err != nil {
-		if clienterrors.IsNotFoundError(err) && ctx.Value(readContextMode) == nil {
-			*data = schema.ResourceData{}
+		if clienterrors.IsNotFoundError(err) {
+			if !helper.IsContextCallerSet(ctx) {
+				*data = schema.ResourceData{}
 
-			return diags
+				return diags
+			} else if helper.IsDeleteState(ctx) {
+				// d.SetId("") is automatically called assuming delete returns no errors, but
+				// it is added here for explicitness.
+				_ = schema.RemoveFromState(data, m)
+
+				return diags
+			}
 		}
 
 		return diag.Errorf("Couldn't read backup target location. Name: %s, Provider: %s", targetLocationFn.Name, targetLocationFn.ProviderName)
-	} else if getResponse.BackupLocation != nil {
+	} else if resp != nil {
 		var credentialsType credentialsmodels.VmwareTanzuManageV1alpha1AccountCredentialProvider
 
 		credentialsTypeCtx := ctx.Value(credentialsTypeCtxKey)
 
 		if credentialsTypeCtx == nil {
-			credentialsType, err = getCredentialsType(config, getResponse.BackupLocation.Spec.Credential.Name)
+			credentialsType, err = getCredentialsType(config, resp.BackupLocation.Spec.Credential.Name)
 
 			if err != nil {
 				return diag.Errorf("Couldn't read backup target location. Credentials Error: %s", err.Error())
@@ -105,7 +109,7 @@ func resourceTargetLocationRead(ctx context.Context, data *schema.ResourceData, 
 		}
 
 		// When Credentials are TMC managed, bucket returns with a generated name, therefore removing it from the response to keep the state consistent
-		err = tfModelResourceConverter.FillTFSchema(getResponse.BackupLocation, data)
+		err = tfModelResourceConverter.FillTFSchema(resp.BackupLocation, data)
 
 		if err != nil {
 			return diag.Errorf("Couldn't read backup target location. Name: %s, Provider: %s", targetLocationFn.Name, targetLocationFn.ProviderName)
@@ -118,7 +122,7 @@ func resourceTargetLocationRead(ctx context.Context, data *schema.ResourceData, 
 	return diags
 }
 
-func resourceTargetLocationDelete(_ context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+func resourceTargetLocationDelete(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 	targetLocationFn := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey}).FullName
 	targetLocationFn.ProviderName = TMCProviderName
@@ -128,11 +132,7 @@ func resourceTargetLocationDelete(_ context.Context, data *schema.ResourceData, 
 		return diag.FromErr(errors.Wrapf(err, "Couldn't delete backup target location. Name: %s, Provider: %s", targetLocationFn.Name, targetLocationFn.ProviderName))
 	}
 
-	// d.SetId("") is automatically called assuming delete returns no errors, but
-	// it is added here for explicitness.
-	_ = schema.RemoveFromState(data, m)
-
-	return diags
+	return resourceTargetLocationRead(helper.GetContextWithCaller(ctx, helper.DeleteState), data, m)
 }
 
 func resourceTargetLocationUpdate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
@@ -168,7 +168,7 @@ func resourceTargetLocationUpdate(ctx context.Context, data *schema.ResourceData
 			request.BackupLocation.FullName.Name, request.BackupLocation.FullName.ProviderName))
 	}
 
-	return resourceTargetLocationRead(context.WithValue(ctx, readContextMode, readContextModeUpdate), data, m)
+	return resourceTargetLocationRead(helper.GetContextWithCaller(ctx, helper.UpdateState), data, m)
 }
 
 func resourceTargetLocationImporter(_ context.Context, data *schema.ResourceData, config any) ([]*schema.ResourceData, error) {
@@ -206,6 +206,34 @@ func resourceTargetLocationImporter(_ context.Context, data *schema.ResourceData
 	}
 
 	return []*schema.ResourceData{data}, err
+}
+
+func readResourceWait(config authctx.TanzuContext, resourceFullName *targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationFullName) (resp *targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse, err error) {
+	responseStatus := targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationStatusPhasePHASEUNSPECIFIED
+
+	for responseStatus != targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationStatusPhaseERROR {
+		resp, err = config.TMCConnection.TargetLocationService.TargetLocationResourceServiceGet(resourceFullName)
+
+		if err != nil || resp == nil || resp.BackupLocation == nil {
+			return nil, err
+		}
+
+		responseStatus = *resp.BackupLocation.Status.Phase
+
+		if responseStatus == targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationStatusPhaseREADY {
+			break
+		} else {
+			time.Sleep(5 * time.Second)
+		}
+	}
+
+	if responseStatus == targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationStatusPhaseERROR {
+		err = errors.Errorf("Target location '%s' has errored.", resourceFullName.Name)
+
+		return nil, err
+	}
+
+	return resp, err
 }
 
 func validateSchema(tlModel *targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationBackupLocation, credentialsType credentialsmodels.VmwareTanzuManageV1alpha1AccountCredentialProvider) error {
