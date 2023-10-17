@@ -30,8 +30,8 @@ var AnnotationSchema = &schema.Schema{
 				Type:         schema.TypeString,
 				Description:  "Scope",
 				Optional:     true,
-				Default:      "All",
-				ValidateFunc: validation.StringInSlice([]string{"All", "Cluster", "Namespaced"}, false),
+				Default:      "*",
+				ValidateFunc: validation.StringInSlice([]string{"*", "Cluster", "Namespaced"}, false),
 			},
 			AnnotationKey: {
 				Type:     schema.TypeList,

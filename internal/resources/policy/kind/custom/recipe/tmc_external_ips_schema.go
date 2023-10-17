@@ -9,11 +9,11 @@ package recipe
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/common"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	policyrecipecustommodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom"
 	policyrecipecustomcommonmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom/common"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/common"
 )
 
 var TMCExternalIps = &schema.Schema{

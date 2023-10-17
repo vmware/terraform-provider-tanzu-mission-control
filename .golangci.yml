@@ -85,6 +85,7 @@ run:
     - tanzupackages
     - tanzupackage
     - clustersecret
+    - mutationpolicy
 
 linters-settings:
   funlen:
