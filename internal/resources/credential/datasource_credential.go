@@ -108,7 +108,6 @@ func dataSourceCredentialRead(ctx context.Context, d *schema.ResourceData, m int
 
 		return diag.Errorf("Unable to get credentials. Schema conversion failed.")
 	}
-	// }
 
 	return diags
 }
