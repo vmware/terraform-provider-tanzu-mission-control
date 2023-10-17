@@ -21,13 +21,15 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	configModels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubeconfig"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 type mocks struct {
-	clusterClient  *mockClusterClient
-	nodepoolClient *mockNodepoolClient
+	clusterClient    *mockClusterClient
+	nodepoolClient   *mockNodepoolClient
+	kubeConfigClient *mockKubeConfigClient
 }
 
 func TestAKSClusterResource(t *testing.T) {
@@ -54,10 +56,17 @@ func (s *CreatClusterTestSuite) SetupTest() {
 	s.mocks.nodepoolClient = &mockNodepoolClient{
 		nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
 	}
+	s.mocks.kubeConfigClient = &mockKubeConfigClient{
+		kubeConfigResponse: &configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponse{
+			Status:     configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusREADY.Pointer(),
+			Kubeconfig: "base64_kubeconfig",
+		},
+	}
 	s.config = authctx.TanzuContext{
 		TMCConnection: &client.TanzuMissionControl{
 			AKSClusterResourceService:  s.mocks.clusterClient,
 			AKSNodePoolResourceService: s.mocks.nodepoolClient,
+			KubeConfigResourceService:  s.mocks.kubeConfigClient,
 		},
 	}
 	s.aksClusterResource = akscluster.ResourceTMCAKSCluster()
@@ -76,6 +85,31 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate() {
 	s.Assert().Equal(expectedFullName(), s.mocks.clusterClient.AksClusterResourceServiceGetCalledWith)
 	s.Assert().Equal(expectedFullName(), s.mocks.nodepoolClient.AksNodePoolResourceServiceListCalledWith)
 	s.Assert().Equal("test-uid", d.Id())
+}
+
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_waitFor_KubConfig() {
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap(withWaitForHealthy))
+	expectedNP := aTestNodePool(forCluster(aTestCluster().FullName))
+
+	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
+
+	s.Assert().False(result.HasError())
+	s.Assert().True(s.mocks.clusterClient.AksCreateClusterWasCalled, "cluster create was not called")
+	s.Assert().Equal(s.mocks.nodepoolClient.CreateNodepoolWasCalledWith, expectedNP, "nodepool create was not called ")
+	s.Assert().Equal(expectedFullName(), s.mocks.clusterClient.AksClusterResourceServiceGetCalledWith)
+	s.Assert().Equal(expectedFullName(), s.mocks.nodepoolClient.AksNodePoolResourceServiceListCalledWith)
+	s.Assert().Equal("my-agent-name", s.mocks.kubeConfigClient.KubeConfigServiceCalledWith.Name)
+	s.Assert().Equal("test-uid", d.Id())
+	s.Assert().Equal("base64_kubeconfig", d.Get("kubeconfig"))
+}
+
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_waitFor_KubConfig_Timeout() {
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap(withWaitForHealthy, with5msTimeout))
+	s.mocks.kubeConfigClient.kubeConfigError = errors.New("timeout")
+
+	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
+
+	s.Assert().True(result.HasError())
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_invalidConfig() {
