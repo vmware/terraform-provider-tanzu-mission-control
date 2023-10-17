@@ -36,6 +36,7 @@ import (
 	securitypolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 	securitypolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security/resource"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/sourcesecret"
+	utkgresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzukubernetescluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackageinstall"
 	packagerepository "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackagerepository"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/workspace"
@@ -68,6 +69,7 @@ func Provider() *schema.Provider {
 			tanzupackageinstall.ResourceName: tanzupackageinstall.ResourcePackageInstall(),
 			kubernetessecret.ResourceName:    kubernetessecret.ResourceSecret(),
 			mutationpolicy.ResourceName:      mutationpolicyresource.ResourceMutationPolicy(),
+			utkgresource.ResourceName:        utkgresource.ResourceTanzuKubernetesCluster(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:             cluster.DataSourceTMCCluster(),

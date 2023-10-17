@@ -13,10 +13,20 @@ import (
 // BlockToStruct Converts a Terraform Block to a Swagger Struct (1:1).
 type BlockToStruct map[string]interface{}
 
-// BlockToStructSlice Converts a Terraform Block to a Slice of Swagger Structs (1:N).
+// BlockToStructSliceField Converts a Terraform Block to a Slice of Swagger Structs (1:N).
+type BlockToStructSliceField struct {
+	Field   string
+	Mapping BlockToStructSlice
+}
+
 type BlockToStructSlice []*BlockToStruct
 
-// BlockSliceToStructSlice Converts a Terraform Block Slice to a Slice of Swagger Structs (N:N).
+// BlockSliceToStructSliceField Converts a Terraform Block to a Slice of Swagger Structs (N:N).
+type BlockSliceToStructSliceField struct {
+	Field   string
+	Mapping BlockToStructSlice
+}
+
 type BlockSliceToStructSlice []*BlockToStruct
 
 // Map Converts a Terraform Block/Map to Swagger Struct/Map.
