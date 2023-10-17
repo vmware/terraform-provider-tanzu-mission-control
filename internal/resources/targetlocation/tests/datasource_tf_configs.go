@@ -36,7 +36,7 @@ type DataSourceTFConfigBuilder struct {
 	ClusterInfo                    string
 }
 
-func InitDataSourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, resourceConfigBuilder *ResourceTFConfigBuilder, bMode DataSourceBuildMode) *DataSourceTFConfigBuilder {
+func InitDataSourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, resourceConfigBuilder *ResourceTFConfigBuilder, bMode DataSourceBuildMode, tmcManageCredentials string) *DataSourceTFConfigBuilder {
 	var (
 		dataProtectionRequiredRs string
 		targetLocationRequiredRs string
@@ -44,7 +44,7 @@ func InitDataSourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources
 
 	if bMode != DsNoParentRs {
 		dataProtectionRequiredRs = dataprotectiontests.InitResourceTFConfigBuilder(scopeHelper, dataprotectiontests.RsNoParentResource).GetEnableDataProtectionConfig()
-		targetLocationRequiredRs = resourceConfigBuilder.GetTMCManagedTargetLocationConfig()
+		targetLocationRequiredRs = resourceConfigBuilder.GetTMCManagedTargetLocationConfig(tmcManageCredentials)
 	}
 
 	tfConfigBuilder := &DataSourceTFConfigBuilder{

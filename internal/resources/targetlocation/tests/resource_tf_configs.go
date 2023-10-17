@@ -103,31 +103,8 @@ func InitResourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, 
 
 // TODO: Figure out how to build credentials for all 3 resource permutations
 
-func (builder *ResourceTFConfigBuilder) GetTMCManagedTargetLocationConfig() string {
+func (builder *ResourceTFConfigBuilder) GetTMCManagedTargetLocationConfig(tmcManageCredentials string) string {
 	return fmt.Sprintf(`
-		resource "tanzu-mission-control_credential" "tmc_managed" {
-		  name = "tf-managed-tmc-test"
-		
-		  meta {
-			description = "TMC provisioned AWS S3 storage"
-			labels = {
-			  "key1" : "value1",
-			}
-		  }
-		
-		  spec {
-			capability = "DATA_PROTECTION"
-			provider   = "AWS_EC2"
-			data {
-			  aws_credential {
-				iam_role {
-				  arn = "arn:aws:iam::4987398738934:role/some-role.com"
-				}
-			  }
-			}
-		  }
-		}	
-
 		%s
 
 		resource "%s" "%s" {
@@ -137,7 +114,7 @@ func (builder *ResourceTFConfigBuilder) GetTMCManagedTargetLocationConfig() stri
 			target_provider = "AWS"
 		
 			credential = {            
-			  name = tanzu-mission-control_credential.tmc_managed.name
+			  name = "%s"
 			}
 
 			%s
@@ -148,6 +125,7 @@ func (builder *ResourceTFConfigBuilder) GetTMCManagedTargetLocationConfig() stri
 		targetlocationres.ResourceName,
 		TmcManagedResourceName,
 		TargetLocationTMCManagedName,
+		tmcManageCredentials,
 		builder.AssignedGroupsBlock,
 	)
 }
@@ -155,7 +133,7 @@ func (builder *ResourceTFConfigBuilder) GetTMCManagedTargetLocationConfig() stri
 func (builder *ResourceTFConfigBuilder) GetAWSSelfManagedTargetLocationConfig() string {
 	return fmt.Sprintf(`
 		resource "tanzu-mission-control_credential" "aws_self_provisioned" {
-		  name = "tf-aws-self-provisioned-test"
+		  name = "aws-self-provisioned-test"
 		
 		  meta {
 			description = "Minio storage"

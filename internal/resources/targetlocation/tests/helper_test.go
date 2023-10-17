@@ -24,7 +24,8 @@ import (
 )
 
 const (
-	azureCredentialsNameEnv = "AZURE_CREDENTIALS_NAME" // #nosec G101
+	tmcManagedCredentialsEnv = "TMC_MANAGED_CREDENTIALS_NAME" // #nosec G101
+	azureCredentialsNameEnv  = "AZURE_CREDENTIALS_NAME"       // #nosec G101
 )
 
 var (

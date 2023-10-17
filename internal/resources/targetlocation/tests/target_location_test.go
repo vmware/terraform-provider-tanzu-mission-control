@@ -42,18 +42,24 @@ func TestAcceptanceTargetLocationResource(t *testing.T) {
 		t.FailNow()
 	}
 
-	var (
-		tfResourceConfigBuilder   = InitResourceTFConfigBuilder(testScopeHelper, RsFullBuild)
-		tfDataSourceConfigBuilder = InitDataSourceTFConfigBuilder(testScopeHelper, tfResourceConfigBuilder, DsFullBuild)
-		provider                  = initTestProvider(t)
-	)
-
+	tmcManagedCredentialsName, tmcManagedCredentialsExist := os.LookupEnv(tmcManagedCredentialsEnv)
 	azureCredentialsName, azureCredentialsExist := os.LookupEnv(azureCredentialsNameEnv)
+
+	if !tmcManagedCredentialsExist {
+		t.Error("TMC Managed credentials name is missing!")
+		t.FailNow()
+	}
 
 	if !azureCredentialsExist {
 		t.Error("Azure credentials name is missing!")
 		t.FailNow()
 	}
+
+	var (
+		tfResourceConfigBuilder   = InitResourceTFConfigBuilder(testScopeHelper, RsFullBuild)
+		tfDataSourceConfigBuilder = InitDataSourceTFConfigBuilder(testScopeHelper, tfResourceConfigBuilder, DsFullBuild, tmcManagedCredentialsName)
+		provider                  = initTestProvider(t)
+	)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
@@ -75,7 +81,7 @@ func TestAcceptanceTargetLocationResource(t *testing.T) {
 				),
 			},
 			{
-				Config: tfResourceConfigBuilder.GetTMCManagedTargetLocationConfig(),
+				Config: tfResourceConfigBuilder.GetTMCManagedTargetLocationConfig(tmcManagedCredentialsName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(TmcManagedResourceFullName, "name", TargetLocationTMCManagedName),
 					verifyTargetLocationResourceCreation(provider, TmcManagedResourceFullName, TargetLocationTMCManagedName),
