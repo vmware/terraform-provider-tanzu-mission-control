@@ -105,7 +105,8 @@ Optional:
 - `dns_service_ip` (String) IP address assigned to the Kubernetes DNS service. This key can only be set when the network_config.network_plugin key is set to 'azure'.
 - `docker_bridge_cidr` (String) A CIDR notation IP range assigned to the Docker bridge network
 - `load_balancer_sku` (String) Load balancer SKU
-- `network_plugin` (String) Network plugin. Set the value of this key to 'azure' if you want to specify values for network_config.dns_service_ip and/or network_config.service_cidr.
+- `network_plugin` (String) Network plugin. It is used for building Kubernetes network. Allowed values: azure, kubenet. Specify 'azure' for routable pod IPs from VNET, 'kubenet' for non-routable pod IPs with an overlay network, Defaults to 'kubenet'
+- `network_plugin_mode` (String) Network plugin mode. Allowed values: overlay. Used to control the mode the network plugin should operate in. For example, 'overlay' used with networkPlugin=azure will use an overlay network (non-VNET IPs) for pods in the cluster.
 - `network_policy` (String) Network policy
 - `pod_cidr` (List of String) CIDR notation IP ranges from which to assign pod IPs
 - `service_cidr` (List of String) CIDR notation IP ranges from which to assign service cluster IP. This key can only be set when the network_config.network_plugin key is set to 'azure'.
