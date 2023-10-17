@@ -18,6 +18,7 @@ import (
 	aksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster"
 	aksnodepool "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster/nodepool"
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	configModels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubeconfig"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 )
@@ -185,6 +186,10 @@ func withoutNodepoolType(m map[string]any) {
 
 func with5msTimeout(m map[string]any) {
 	m["ready_wait_timeout"] = (5 * time.Millisecond).String()
+}
+
+func withWaitForHealthy(m map[string]any) {
+	m["wait_for_healthy"] = true
 }
 
 func withDNSPrefix(prefix string) mapWither {
@@ -608,4 +613,15 @@ func (m *mockNodepoolClient) AksNodePoolResourceServiceDelete(req *models.Vmware
 	m.DeleteNodepoolWasCalledWith = req
 
 	return m.DeleteErr
+}
+
+type mockKubeConfigClient struct {
+	KubeConfigServiceCalledWith *configModels.VmwareTanzuManageV1alpha1ClusterFullName
+	kubeConfigResponse          *configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponse
+	kubeConfigError             error
+}
+
+func (m *mockKubeConfigClient) KubeconfigServiceGet(fn *configModels.VmwareTanzuManageV1alpha1ClusterFullName) (*configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponse, error) {
+	m.KubeConfigServiceCalledWith = fn
+	return m.kubeConfigResponse, m.kubeConfigError
 }
