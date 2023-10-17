@@ -22,6 +22,10 @@ import (
 	targetlocationres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/targetlocation"
 )
 
+const (
+	tmcManagedCredentialsEnv = "TMC_MANAGED_CREDENTIALS_NAME" // #nosec G101
+)
+
 var (
 	testScopeHelper = commonscope.NewScopeHelperResources()
 )

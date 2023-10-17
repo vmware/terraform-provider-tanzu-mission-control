@@ -50,7 +50,7 @@ type ResourceTFConfigBuilder struct {
 	TargetLocationInfo             string
 }
 
-func InitResourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, bMode ResourceBuildMode) *ResourceTFConfigBuilder {
+func InitResourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, bMode ResourceBuildMode, tmcManageCredentials string) *ResourceTFConfigBuilder {
 	var (
 		dataProtectionRequiredResource string
 		targetLocationRequiredResource string
@@ -62,7 +62,7 @@ func InitResourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, 
 		targetLocationConfigBuilder := targetlocationtests.InitResourceTFConfigBuilder(scopeHelper, targetlocationtests.RsClusterOnlyNoParentRs)
 
 		dataProtectionRequiredResource = dataProtectionConfigBuilder.GetEnableDataProtectionConfig()
-		targetLocationRequiredResource = targetLocationConfigBuilder.GetTMCManagedTargetLocationConfig()
+		targetLocationRequiredResource = targetLocationConfigBuilder.GetTMCManagedTargetLocationConfig(tmcManageCredentials)
 	case RsDataProtectionParentRsOnly:
 		dataProtectionConfigBuilder := dataprotectiontests.InitResourceTFConfigBuilder(scopeHelper, dataprotectiontests.RsFullBuild)
 
@@ -70,7 +70,7 @@ func InitResourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, 
 	case RsTargetLocationParentRsOnly:
 		targetLocationConfigBuilder := targetlocationtests.InitResourceTFConfigBuilder(scopeHelper, targetlocationtests.RsFullBuild)
 
-		targetLocationRequiredResource = targetLocationConfigBuilder.GetTMCManagedTargetLocationConfig()
+		targetLocationRequiredResource = targetLocationConfigBuilder.GetTMCManagedTargetLocationConfig(tmcManageCredentials)
 	}
 
 	mgmtClusterName := fmt.Sprintf("%s.%s", scopeHelper.Cluster.ResourceName, clusterres.ManagementClusterNameKey)

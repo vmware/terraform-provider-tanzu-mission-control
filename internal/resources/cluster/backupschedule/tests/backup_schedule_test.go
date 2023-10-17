@@ -42,8 +42,15 @@ func TestAcceptanceBackupScheduleResource(t *testing.T) {
 		t.FailNow()
 	}
 
+	tmcManagedCredentialsName, tmcManagedCredentialsExist := os.LookupEnv(tmcManagedCredentialsEnv)
+
+	if !tmcManagedCredentialsExist {
+		t.Error("TMC Managed credentials name is missing!")
+		t.FailNow()
+	}
+
 	var (
-		tfResourceConfigBuilder   = InitResourceTFConfigBuilder(testScopeHelper, RsFullBuild)
+		tfResourceConfigBuilder   = InitResourceTFConfigBuilder(testScopeHelper, RsFullBuild, tmcManagedCredentialsName)
 		tfDataSourceConfigBuilder = InitDataSourceTFConfigBuilder(testScopeHelper, tfResourceConfigBuilder, DsFullBuild)
 		provider                  = initTestProvider(t)
 	)
