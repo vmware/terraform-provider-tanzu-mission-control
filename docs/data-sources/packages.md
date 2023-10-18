@@ -84,10 +84,20 @@ Read-Only:
 
 - `capacity_requirements_description` (String)
 - `licenses` (Set of String)
-- `release_notes` (String)
+- `release_notes` (List of Object) (see [below for nested schema](#nestedobjatt--packages--spec--release_notes))
 - `released_at` (String)
 - `repository_name` (String)
 - `values_schema` (List of Object) (see [below for nested schema](#nestedobjatt--packages--spec--values_schema))
+
+<a id="nestedobjatt--packages--spec--release_notes"></a>
+### Nested Schema for `packages.spec.release_notes`
+
+Read-Only:
+
+- `metadata_name` (String)
+- `url` (String)
+- `version` (String)
+
 
 <a id="nestedobjatt--packages--spec--values_schema"></a>
 ### Nested Schema for `packages.spec.values_schema`
@@ -101,4 +111,37 @@ Read-Only:
 
 Read-Only:
 
-- `raw` (String)
+- `raw` (List of Object) (see [below for nested schema](#nestedobjatt--packages--spec--values_schema--template--raw))
+
+<a id="nestedobjatt--packages--spec--values_schema--template--raw"></a>
+### Nested Schema for `packages.spec.values_schema.template.raw`
+
+Read-Only:
+
+- `examples` (List of Object) (see [below for nested schema](#nestedobjatt--packages--spec--values_schema--template--raw--examples))
+- `properties` (List of Object) (see [below for nested schema](#nestedobjatt--packages--spec--values_schema--template--raw--properties))
+- `title` (String) Title of object.
+
+<a id="nestedobjatt--packages--spec--values_schema--template--raw--examples"></a>
+### Nested Schema for `packages.spec.values_schema.template.raw.title`
+
+Read-Only:
+
+- `namespace` (String) Namespace name.
+
+
+<a id="nestedobjatt--packages--spec--values_schema--template--raw--properties"></a>
+### Nested Schema for `packages.spec.values_schema.template.raw.title`
+
+Read-Only:
+
+- `namespace` (List of Object) (see [below for nested schema](#nestedobjatt--packages--spec--values_schema--template--raw--title--namespace))
+
+<a id="nestedobjatt--packages--spec--values_schema--template--raw--title--namespace"></a>
+### Nested Schema for `packages.spec.values_schema.template.raw.title.namespace`
+
+Read-Only:
+
+- `default` (String) Default value of object.
+- `description` (String) Description of the object of object.
+- `type` (String) Type of object.
