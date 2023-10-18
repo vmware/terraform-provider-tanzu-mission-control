@@ -20,8 +20,8 @@ import (
 const (
 	PkgResource         = ResourceName
 	pkgDataSourceVar    = "test_data_source_pkg"
-	pkgName             = "2.0.0"
-	pkgMetadataName     = "pkg.test.carvel.dev"
+	pkgName             = "1.1.0+vmware.1-tkg.2"
+	pkgMetadataName     = "cert-manager.tanzu.vmware.com"
 	globalRepoNamespace = "tanzu-package-repo-global"
 
 	imageURL = "projects.registry.vmware.com/tmc/build-integrations/package/repository/e2e-test-unauth-repo@sha256:87a5f7e0c44523fbc35a9432c657bebce246138bbd0f16d57f5615933ceef632"
