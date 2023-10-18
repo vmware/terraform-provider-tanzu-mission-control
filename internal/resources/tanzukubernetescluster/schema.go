@@ -135,7 +135,8 @@ var TopologySchema = &schema.Schema{
 			ClusterClassKey: {
 				Type:        schema.TypeString,
 				Description: "The name of the cluster class for the cluster.",
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 			},
 			ClusterVariablesKey: {
 				Type:        schema.TypeString,
