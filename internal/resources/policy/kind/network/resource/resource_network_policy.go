@@ -6,6 +6,9 @@ SPDX-License-Identifier: MPL-2.0
 package networkpolicyresource
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -31,6 +34,13 @@ func ResourceNetworkPolicy() *schema.Resource {
 	}
 }
 
+var (
+	ScopesAllowed = [...]string{scope.OrganizationKey, scope.WorkspaceKey}
+	ScopeSchema   = scope.GetScopeSchema(
+		scope.WithDescription(fmt.Sprintf("Scope for the network policy, having one of the valid scopes: %v.", strings.Join(ScopesAllowed[:], `, `))),
+		scope.WithScopes(ScopesAllowed[:]))
+)
+
 var networkPolicySchema = map[string]*schema.Schema{
 	policy.NameKey: {
 		Type:        schema.TypeString,
@@ -38,7 +48,7 @@ var networkPolicySchema = map[string]*schema.Schema{
 		Required:    true,
 		ForceNew:    true,
 	},
-	scope.ScopeKey: scope.ScopeSchema,
+	scope.ScopeKey: ScopeSchema,
 	common.MetaKey: common.Meta,
 	policy.SpecKey: policykindnetwork.SpecSchema,
 }

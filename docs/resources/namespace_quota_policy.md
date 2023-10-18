@@ -620,7 +620,7 @@ resource "tanzu-mission-control_namespace_quota_policy" "organization_scoped_cus
 ### Required
 
 - `name` (String) Name of the namespace quota policy
-- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image, network and namespace quota policy, having one of the valid scopes for custom, security and namespace quota policy: cluster, cluster_group or organization and valid scopes for image and network policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the quota policy, having one of the valid scopes: cluster, cluster_group, organization. (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Spec for the namespace namespace quota policy (see [below for nested schema](#nestedblock--spec))
 
 ### Optional
@@ -669,6 +669,7 @@ Required:
 - `organization` (String) ID of this organization
 
 
+
 <a id="nestedblock--spec"></a>
 ### Nested Schema for `spec`
 
@@ -686,9 +687,9 @@ Optional:
 Optional:
 
 - `custom` (Block List, Max: 1) The input schema for namespace quota policy custom recipe version v1 (see [below for nested schema](#nestedblock--spec--input--custom))
-- `large` (Block List, Max: 1) The input schema for namespace quota policy large recipe version v1 
-- `medium` (Block List, Max: 1) The input schema for namespace quota policy medium recipe version v1 
-- `small` (Block List, Max: 1) The input schema for namespace quota policy small recipe version v1 
+- `large` (Block List, Max: 1) The input schema for namespace quota policy large recipe version v1 (see [below for nested schema](#nestedblock--spec--input--large))
+- `medium` (Block List, Max: 1) The input schema for namespace quota policy medium recipe version v1 (see [below for nested schema](#nestedblock--spec--input--medium))
+- `small` (Block List, Max: 1) The input schema for namespace quota policy small recipe version v1 (see [below for nested schema](#nestedblock--spec--input--small))
 
 <a id="nestedblock--spec--input--custom"></a>
 ### Nested Schema for `spec.input.custom`
@@ -704,6 +705,20 @@ Optional:
 - `requests_storage` (String) The sum of storage requests across all persistent volume claims cannot exceed this value
 - `requests_storage_per_class` (Map of String) Across all persistent volume claims associated with each storage class, the sum of storage requests cannot exceed this value
 - `resource_counts` (Map of Number) The total number of Services of the given type that can exist in a namespace
+
+
+<a id="nestedblock--spec--input--large"></a>
+### Nested Schema for `spec.input.large`
+
+
+<a id="nestedblock--spec--input--medium"></a>
+### Nested Schema for `spec.input.medium`
+
+
+<a id="nestedblock--spec--input--small"></a>
+### Nested Schema for `spec.input.small`
+
+
 
 <a id="nestedblock--spec--namespace_selector"></a>
 ### Nested Schema for `spec.namespace_selector`

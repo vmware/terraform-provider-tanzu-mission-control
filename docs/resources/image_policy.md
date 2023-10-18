@@ -439,7 +439,7 @@ resource "tanzu-mission-control_image_policy" "organization_scoped_require-diges
 ### Required
 
 - `name` (String) Name of the image policy
-- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image, network and namespace quota policy, having one of the valid scopes for custom, security and namespace quota policy: cluster, cluster_group or organization and valid scopes for image and network policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the image policy, having one of the valid scopes: organization, workspace. (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Spec for the image policy (see [below for nested schema](#nestedblock--spec))
 
 ### Optional
@@ -457,7 +457,6 @@ Optional:
 
 - `organization` (Block List, Max: 1) The schema for organization policy full name (see [below for nested schema](#nestedblock--scope--organization))
 - `workspace` (Block List, Max: 1) The schema for workspace policy full name (see [below for nested schema](#nestedblock--scope--workspace))
-
 
 <a id="nestedblock--scope--organization"></a>
 ### Nested Schema for `scope.organization`

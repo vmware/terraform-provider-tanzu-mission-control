@@ -19,24 +19,56 @@ import (
 	policyworkspacemodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/workspace"
 )
 
-var (
-	ScopeSchema = &schema.Schema{
+type (
+	SchemaOption func(*SchemaConfig)
+
+	SchemaConfig struct {
+		Description string
+		Scopes      []string
+	}
+)
+
+func WithDescription(d string) SchemaOption {
+	return func(config *SchemaConfig) {
+		config.Description = d
+	}
+}
+
+func WithScopes(s []string) SchemaOption {
+	return func(config *SchemaConfig) {
+		config.Scopes = s
+	}
+}
+
+func GetScopeSchema(opts ...SchemaOption) *schema.Schema {
+	cfg := &SchemaConfig{}
+
+	for _, o := range opts {
+		o(cfg)
+	}
+
+	schemaForAllowedScopes := func() map[string]*schema.Schema {
+		scopeSchemaMap := make(map[string]*schema.Schema)
+
+		for _, scope := range cfg.Scopes {
+			scopeSchemaMap[scope] = getSchemaForScope()(scope)
+		}
+
+		return scopeSchemaMap
+	}()
+
+	return &schema.Schema{
 		Type:        schema.TypeList,
-		Description: "Scope for the custom, security, image, network and namespace quota policy, having one of the valid scopes for custom, security and namespace quota policy: cluster, cluster_group or organization and valid scopes for image and network policy: workspace or organization.",
+		Description: cfg.Description,
 		Required:    true,
 		ForceNew:    true,
 		MaxItems:    1,
 		MinItems:    1,
 		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				ClusterKey:      ClusterPolicyFullname,
-				ClusterGroupKey: ClusterGroupPolicyFullname,
-				WorkspaceKey:    WorkspacePolicyFullname,
-				OrganizationKey: OrganizationPolicyFullname,
-			},
+			Schema: schemaForAllowedScopes,
 		},
 	}
-)
+}
 
 type (
 	Scope int64

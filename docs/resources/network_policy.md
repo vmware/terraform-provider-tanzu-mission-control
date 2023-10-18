@@ -1118,7 +1118,7 @@ resource "tanzu-mission-control_network_policy" "organization_scoped_custom-ingr
 ### Required
 
 - `name` (String) Name of the network policy
-- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image, network and namespace quota policy, having one of the valid scopes for custom, security and namespace quota policy: cluster, cluster_group or organization and valid scopes for image and network policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the network policy, having one of the valid scopes: organization, workspace. (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Spec for the network policy (see [below for nested schema](#nestedblock--spec))
 
 ### Optional
@@ -1152,6 +1152,8 @@ Required:
 
 - `workspace` (String) Name of this workspace
 
+
+
 <a id="nestedblock--spec"></a>
 ### Nested Schema for `spec`
 
@@ -1169,12 +1171,12 @@ Optional:
 Optional:
 
 - `allow_all` (Block List, Max: 1) The input schema for network policy allow-all recipe version v1 (see [below for nested schema](#nestedblock--spec--input--allow_all))
-- `allow_all_egress` (Block List, Max: 1) The input schema for network policy allow-all-egress recipe version v1 
+- `allow_all_egress` (Block List, Max: 1) The input schema for network policy allow-all-egress recipe version v1 (see [below for nested schema](#nestedblock--spec--input--allow_all_egress))
 - `allow_all_to_pods` (Block List, Max: 1) The input schema for network policy allow-all-to-pods recipe version v1 (see [below for nested schema](#nestedblock--spec--input--allow_all_to_pods))
 - `custom_egress` (Block List, Max: 1) The input schema for network policy custom egress recipe version v1 (see [below for nested schema](#nestedblock--spec--input--custom_egress))
 - `custom_ingress` (Block List, Max: 1) The input schema for network policy custom ingress recipe version v1 (see [below for nested schema](#nestedblock--spec--input--custom_ingress))
-- `deny_all` (Block List, Max: 1) The input schema for network policy deny-all recipe version v1 
-- `deny_all_egress` (Block List, Max: 1) The input schema for network policy deny-all-egress recipe version v1 
+- `deny_all` (Block List, Max: 1) The input schema for network policy deny-all recipe version v1 (see [below for nested schema](#nestedblock--spec--input--deny_all))
+- `deny_all_egress` (Block List, Max: 1) The input schema for network policy deny-all-egress recipe version v1 (see [below for nested schema](#nestedblock--spec--input--deny_all_egress))
 - `deny_all_to_pods` (Block List, Max: 1) The input schema for network policy deny-all-to-pods recipe version v1 (see [below for nested schema](#nestedblock--spec--input--deny_all_to_pods))
 
 <a id="nestedblock--spec--input--allow_all"></a>
@@ -1183,6 +1185,10 @@ Optional:
 Optional:
 
 - `from_own_namespace` (Boolean) Allow traffic only from own namespace. Allow traffic only from pods in the same namespace as the destination pod.
+
+
+<a id="nestedblock--spec--input--allow_all_egress"></a>
+### Nested Schema for `spec.input.allow_all_egress`
 
 
 <a id="nestedblock--spec--input--allow_all_to_pods"></a>
@@ -1330,17 +1336,12 @@ Optional:
 
 
 
+<a id="nestedblock--spec--input--deny_all"></a>
+### Nested Schema for `spec.input.deny_all`
 
 
-
-
-<a id="nestedblock--spec--input--custom_ingress--to_pod_labels"></a>
-### Nested Schema for `spec.input.custom_ingress.to_pod_labels`
-
-Required:
-
-- `key` (String) Key
-- `value` (String) Value
+<a id="nestedblock--spec--input--deny_all_egress"></a>
+### Nested Schema for `spec.input.deny_all_egress`
 
 
 <a id="nestedblock--spec--input--deny_all_to_pods"></a>
@@ -1370,6 +1371,8 @@ Optional:
 
 - `key` (String) Key is the label key that the selector applies to
 - `operator` (String) Operator represents a key's relationship to a set of values
+
+
 
 
 <a id="nestedblock--meta"></a>

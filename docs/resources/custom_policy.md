@@ -8,6 +8,7 @@ Description: |-
 
 The `tanzu-mission-control_custom_policy` resource enables you to attach one of the pre-defined custom policy recipes to a particular scope for management through Tanzu Mission Control.
 
+
 ## Input Recipe
 
 In the Tanzu Mission Control custom policy resource, there are six system defined types of custom templates that you can use:
@@ -1082,7 +1083,7 @@ resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-require-
 ### Required
 
 - `name` (String) Name of the custom policy
-- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image, network and namespace quota policy, having one of the valid scopes for custom, security and namespace quota policy: cluster, cluster_group or organization and valid scopes for image and network policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the custom policy, having one of the valid scopes: cluster, cluster_group, organization. (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Spec for the custom policy (see [below for nested schema](#nestedblock--spec))
 
 ### Optional
