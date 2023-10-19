@@ -8,9 +8,6 @@ package akscluster
 import "time"
 
 const (
-	azureCNI        = "azure"
-	cniAzureOverlay = "overlay"
-
 	ResourceName                               = "tanzu-mission-control_akscluster"
 	RetryInterval                              = retryInterval("retry-interval")
 	defaultTimeout                             = 30 * time.Minute

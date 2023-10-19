@@ -9,6 +9,17 @@ import (
 	"github.com/go-openapi/swag"
 )
 
+const (
+	// VmwareTanzuManageV1alpha1AksClusterNetworkPluginKubenet captures value "kubenet".
+	VmwareTanzuManageV1alpha1AksClusterNetworkPluginKubenet = "kubenet"
+
+	// VmwareTanzuManageV1alpha1AksClusterNetworkPluginAzure captures value "azure".
+	VmwareTanzuManageV1alpha1AksClusterNetworkPluginAzure = "azure"
+
+	// VmwareTanzuManageV1alpha1AksClusterNetworkPluginModeOverlay captures value "overlay".
+	VmwareTanzuManageV1alpha1AksClusterNetworkPluginModeOverlay = "overlay"
+)
+
 // VmwareTanzuManageV1alpha1AksclusterNetworkConfig The network configuration for the AKS cluster.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.akscluster.NetworkConfig

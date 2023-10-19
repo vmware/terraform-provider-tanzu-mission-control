@@ -322,6 +322,10 @@ var NetworkConfig = &schema.Resource{
 			ForceNew:    true,
 			Optional:    true,
 			Computed:    true,
+			ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{"",
+				aksmodel.VmwareTanzuManageV1alpha1AksClusterNetworkPluginKubenet,
+				aksmodel.VmwareTanzuManageV1alpha1AksClusterNetworkPluginAzure,
+			}, false)),
 		},
 		networkPluginModeKey: {
 			Type:        schema.TypeString,
@@ -329,8 +333,8 @@ var NetworkConfig = &schema.Resource{
 			ForceNew:    true,
 			Optional:    true,
 			Computed:    true,
-			ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
-				string(aksmodel.VmwareTanzuManageV1alpha1AksclusterClusterNetworkPluginModeOverlay),
+			ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{"",
+				aksmodel.VmwareTanzuManageV1alpha1AksClusterNetworkPluginModeOverlay,
 			}, false)),
 		},
 		networkPolicyKey: {

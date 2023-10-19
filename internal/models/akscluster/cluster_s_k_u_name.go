@@ -27,15 +27,11 @@ func (m VmwareTanzuManageV1alpha1AksclusterClusterSKUName) Pointer() *VmwareTanz
 }
 
 const (
-
 	// VmwareTanzuManageV1alpha1AksclusterClusterSKUNameNAMEUNSPECIFIED captures enum value "NAME_UNSPECIFIED".
 	VmwareTanzuManageV1alpha1AksclusterClusterSKUNameNAMEUNSPECIFIED VmwareTanzuManageV1alpha1AksclusterClusterSKUName = "NAME_UNSPECIFIED"
 
 	// VmwareTanzuManageV1alpha1AksclusterClusterSKUNameBASIC captures enum value "BASIC".
 	VmwareTanzuManageV1alpha1AksclusterClusterSKUNameBASIC VmwareTanzuManageV1alpha1AksclusterClusterSKUName = "BASIC"
-
-	// VmwareTanzuManageV1alpha1AksclusterClusterNetworkPluginModeOverlay captures value "overlay".
-	VmwareTanzuManageV1alpha1AksclusterClusterNetworkPluginModeOverlay VmwareTanzuManageV1alpha1AksclusterClusterSKUName = "overlay"
 )
 
 // for schema.

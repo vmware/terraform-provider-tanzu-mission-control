@@ -53,15 +53,8 @@ func resourceClusterCreate(ctx context.Context, data *schema.ResourceData, confi
 		return diag.FromErr(err)
 	}
 
-	// validate all node pools together
-	if err := validateAllNodePools(nodepools); err != nil {
+	if err := validateNodePools(cluster, nodepools); err != nil {
 		return diag.FromErr(err)
-	}
-	// Validate every node pool
-	for _, nodepool := range nodepools {
-		if err := validateNodePool(cluster, nodepool); err != nil {
-			return diag.FromErr(err)
-		}
 	}
 
 	if err := createOrUpdateCluster(cluster, data, tc.TMCConnection.AKSClusterResourceService); err != nil {
@@ -243,11 +236,11 @@ func validateCluster(cluster *models.VmwareTanzuManageV1alpha1AksCluster) error 
 	nc := cluster.Spec.Config.NetworkConfig
 
 	// Pod subNetId cannot be set for network CNI 'kubenet' or 'azure' without overlay.
-	if nc.NetworkPlugin != azureCNI && nc.NetworkPluginMode == cniAzureOverlay {
+	if nc.NetworkPlugin != models.VmwareTanzuManageV1alpha1AksClusterNetworkPluginAzure && nc.NetworkPluginMode == models.VmwareTanzuManageV1alpha1AksClusterNetworkPluginModeOverlay {
 		return errors.New("network_plugin_mode 'overlay' can only be used if network_plugin is set to 'azure'")
 	}
 	// podCIDR cannot be set if network-plugin is 'azure' without 'overlay'
-	if nc.NetworkPlugin == azureCNI && nc.NetworkPluginMode != cniAzureOverlay && !emptyStringArray(nc.PodCidrs) {
+	if nc.NetworkPlugin == models.VmwareTanzuManageV1alpha1AksClusterNetworkPluginAzure && nc.NetworkPluginMode != models.VmwareTanzuManageV1alpha1AksClusterNetworkPluginModeOverlay && !emptyStringArray(nc.PodCidrs) {
 		return errors.New("podCIDR cannot be set if network-plugin is 'azure' without 'overlay'")
 	}
 

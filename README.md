@@ -214,7 +214,7 @@ Please refer to `examples` folder to perform CRUD operations with Tanzu Mission 
 # Troubleshooting
 
 ## Executions of a different version of the provider
-Terraform will always look for the latest version of the provided and will use it even if you have just built a previous version.
+Terraform will always look for the latest version of the provider and will use it even if you have just built a previous version.
 Terraform caches all known builds/versions in the cache folder located in ```~/.terraform.d``` folder.
 
 Delete ```~/.terraform.d/plugins/vmware``` folder to remove all cached versions of the plugin

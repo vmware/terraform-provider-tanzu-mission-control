@@ -192,7 +192,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_all_sys
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_overlay_with_kubenet_fail() {
-	cluster := aTestClusterDataMap(withNetworkPlugin("kubenet"), withNetworkPluginMode("overlay"))
+	cluster := aTestClusterDataMap(withNetworkPlugin(models.VmwareTanzuManageV1alpha1AksClusterNetworkPluginKubenet), withNetworkPluginMode(models.VmwareTanzuManageV1alpha1AksClusterNetworkPluginModeOverlay))
 	s.mocks.nodepoolClient.failSystemPools = true
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
 
@@ -215,7 +215,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_podCIDR
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_overlay_with_pood_subnet_fail() {
 	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetID("vnet-1/subnet-1"))}
-	cluster := aTestClusterDataMap(withNetworkPluginMode("overlay"), withNodepools(nodepools))
+	cluster := aTestClusterDataMap(withNetworkPluginMode(models.VmwareTanzuManageV1alpha1AksClusterNetworkPluginModeOverlay), withNodepools(nodepools))
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
@@ -226,7 +226,8 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_overlay_with
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_kubenet_with_pood_subnet_fail() {
 	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetID("vnet-1/subnet-1"))}
-	cluster := aTestClusterDataMap(withNetworkPlugin("kubenet"), withNetworkPluginMode(""), withNodepools(nodepools))
+	cluster := aTestClusterDataMap(withNetworkPlugin(models.VmwareTanzuManageV1alpha1AksClusterNetworkPluginKubenet),
+		withNetworkPluginMode(""), withNodepools(nodepools))
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
