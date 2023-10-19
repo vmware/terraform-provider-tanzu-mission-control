@@ -246,6 +246,7 @@ func pollUntilNodepoolDeleted(ctx context.Context, npFn *models.VmwareTanzuManag
 func validateNodePools(cluster *models.VmwareTanzuManageV1alpha1AksCluster, nodepools []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) error {
 	// validate all node pools all together, at least one of them should be SYSTEM
 	var foundSystemNodepool bool
+
 	for _, n := range nodepools {
 		if *n.Spec.Mode == models.VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM {
 			foundSystemNodepool = true
