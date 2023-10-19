@@ -14,10 +14,7 @@ import (
 )
 
 func ConstructCluster(data *schema.ResourceData) (*models.VmwareTanzuManageV1alpha1AksCluster, error) {
-	spec, err := constructAKSClusterSpec(data)
-	if err != nil {
-		return nil, err
-	}
+	spec := constructAKSClusterSpec(data)
 
 	return &models.VmwareTanzuManageV1alpha1AksCluster{
 		FullName: extractClusterFullName(data),
@@ -26,7 +23,7 @@ func ConstructCluster(data *schema.ResourceData) (*models.VmwareTanzuManageV1alp
 	}, nil
 }
 
-func constructAKSClusterSpec(data *schema.ResourceData) (*models.VmwareTanzuManageV1alpha1AksclusterSpec, error) {
+func constructAKSClusterSpec(data *schema.ResourceData) *models.VmwareTanzuManageV1alpha1AksclusterSpec {
 	specData := extractClusterSpec(data)
 
 	spec := &models.VmwareTanzuManageV1alpha1AksclusterSpec{}
@@ -40,13 +37,7 @@ func constructAKSClusterSpec(data *schema.ResourceData) (*models.VmwareTanzuMana
 
 	if v, ok := specData[configKey]; ok {
 		configData, _ := v.([]any)
-		v, err := constructConfig(configData)
-
-		if err != nil {
-			return nil, err
-		} else {
-			spec.Config = v
-		}
+		spec.Config = constructConfig(configData)
 	}
 
 	if v, ok := specData[agentNameKey]; ok {
@@ -57,7 +48,7 @@ func constructAKSClusterSpec(data *schema.ResourceData) (*models.VmwareTanzuMana
 		helper.SetPrimitiveValue(v, &spec.ResourceID, resourceIDKey)
 	}
 
-	return spec, nil
+	return spec
 }
 
 func extractClusterSpec(data *schema.ResourceData) map[string]any {
@@ -75,9 +66,9 @@ func extractClusterSpec(data *schema.ResourceData) map[string]any {
 	return dataSpec[0].(map[string]any)
 }
 
-func constructConfig(data []any) (*models.VmwareTanzuManageV1alpha1AksclusterClusterConfig, error) {
+func constructConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterClusterConfig {
 	if len(data) < 1 {
-		return nil, nil
+		return nil
 	}
 
 	// Config schema defines max 1
@@ -149,7 +140,7 @@ func constructConfig(data []any) (*models.VmwareTanzuManageV1alpha1AksclusterClu
 		helper.SetPrimitiveValue(v, &config.NodeResourceGroupName, nodeResourceGroupNameKey)
 	}
 
-	return config, nil
+	return config
 }
 
 func constructSku(data []any) *models.VmwareTanzuManageV1alpha1AksclusterClusterSKU {
