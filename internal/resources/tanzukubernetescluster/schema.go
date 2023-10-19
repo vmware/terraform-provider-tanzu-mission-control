@@ -6,7 +6,12 @@ SPDX-License-Identifier: MPL-2.0
 package tanzukubernetescluster
 
 import (
+	"encoding/json"
+
+	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/pkg/errors"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
@@ -139,9 +144,12 @@ var TopologySchema = &schema.Schema{
 				Computed:    true,
 			},
 			ClusterVariablesKey: {
-				Type:        schema.TypeString,
-				Description: "Variables configuration for the cluster.",
-				Required:    true,
+				Type:                  schema.TypeString,
+				Description:           "Variables configuration for the cluster.",
+				Required:              true,
+				ValidateDiagFunc:      validateJSONString,
+				DiffSuppressOnRefresh: true,
+				DiffSuppressFunc:      checkVariablesValues,
 			},
 			CoreAddonKey: {
 				Type:        schema.TypeList,
@@ -254,9 +262,12 @@ var NodePoolSpecSchema = &schema.Schema{
 				Optional:    true,
 			},
 			OverridesKey: {
-				Type:        schema.TypeString,
-				Description: "Overrides can be used to override cluster level variables.",
-				Optional:    true,
+				Type:                  schema.TypeString,
+				Description:           "Overrides can be used to override cluster level variables.",
+				Optional:              true,
+				ValidateDiagFunc:      validateJSONString,
+				DiffSuppressOnRefresh: true,
+				DiffSuppressFunc:      checkVariablesValues,
 			},
 			ReplicasKey:    ReplicasSchema,
 			OSImageKey:     OSImageSchema,
@@ -295,4 +306,94 @@ var OSImageSchema = &schema.Schema{
 			},
 		},
 	},
+}
+
+func validateJSONString(value interface{}, path cty.Path) diag.Diagnostics {
+	valueJSON := make(map[string]interface{})
+	err := json.Unmarshal([]byte(value.(string)), &valueJSON)
+
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Value is not a valid JSON string."))
+	}
+
+	return nil
+}
+
+func checkVariablesValues(k, oldValue, newValue string, d *schema.ResourceData) bool {
+	if oldValue == "" && newValue != "" {
+		return false
+	}
+
+	oldValueJSON := make(map[string]interface{})
+	newValuesJSON := make(map[string]interface{})
+	_ = json.Unmarshal([]byte(oldValue), &oldValueJSON)
+	_ = json.Unmarshal([]byte(newValue), &newValuesJSON)
+	allMapKeys := getAllKeys(oldValueJSON, newValuesJSON)
+
+	for k, _ := range allMapKeys {
+		isVariableEqual := isVariableEqual(oldValueJSON[k], newValuesJSON[k])
+
+		if !isVariableEqual {
+			return isVariableEqual
+		}
+	}
+
+	return true
+}
+
+func isVariableEqual(oldVar interface{}, newVar interface{}) bool {
+	if (oldVar == nil && newVar != nil) || (oldVar != nil && newVar == nil) {
+		return false
+	} else if oldVar != nil && newVar != nil {
+		switch oldVar.(type) {
+		case []interface{}:
+			oldVarLen := len(oldVar.([]interface{}))
+
+			if oldVarLen != len(newVar.([]interface{})) {
+				return false
+			}
+
+			isVarEqual := true
+
+			// List order is a mandatory requirement for deciding list equality
+			for i := 0; i < oldVarLen; i++ {
+				isVarEqual = isVariableEqual(oldVar.([]interface{})[i], newVar.([]interface{})[i])
+
+				if !isVarEqual {
+					return isVarEqual
+				}
+			}
+		case map[string]interface{}:
+			if len(oldVar.(map[string]interface{})) != len(newVar.(map[string]interface{})) {
+				return false
+			}
+
+			isVarEqual := true
+			allMapKeys := getAllKeys(oldVar.(map[string]interface{}), newVar.(map[string]interface{}))
+
+			for k, _ := range allMapKeys {
+				isVarEqual = isVariableEqual(oldVar.(map[string]interface{})[k], newVar.(map[string]interface{})[k])
+
+				if !isVarEqual {
+					return isVarEqual
+				}
+			}
+		default:
+			return oldVar == newVar
+		}
+	}
+
+	return true
+}
+
+func getAllKeys(maps ...map[string]interface{}) map[string]bool {
+	keys := make(map[string]bool)
+
+	for _, m := range maps {
+		for key := range m {
+			keys[key] = true
+		}
+	}
+
+	return keys
 }
