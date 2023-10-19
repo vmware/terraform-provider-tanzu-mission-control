@@ -1,9 +1,9 @@
 /*
-Copyright © 2022 VMware, Inc. All Rights Reserved.
+Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package recipe
+package common
 
 import (
 	"testing"
@@ -42,7 +42,7 @@ func TestFlattenTargetKubernetesResources(t *testing.T) {
 	for _, each := range cases {
 		test := each
 		t.Run(test.description, func(t *testing.T) {
-			actual := flattenTargetKubernetesResources(test.input)
+			actual := FlattenTargetKubernetesResources(test.input)
 			require.Equal(t, test.expected, actual)
 		})
 	}

@@ -27,6 +27,8 @@ import (
 	custompolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom/resource"
 	imagepolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
 	imagepolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image/resource"
+	mutationpolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/mutation"
+	mutationpolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/mutation/resource"
 	networkpolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/network"
 	networkpolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/network/resource"
 	quotapolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/quota"
@@ -65,6 +67,7 @@ func Provider() *schema.Provider {
 			packagerepository.ResourceName:   packagerepository.ResourcePackageRepository(),
 			tanzupackageinstall.ResourceName: tanzupackageinstall.ResourcePackageInstall(),
 			kubernetessecret.ResourceName:    kubernetessecret.ResourceSecret(),
+			mutationpolicy.ResourceName:      mutationpolicyresource.ResourceMutationPolicy(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:             cluster.DataSourceTMCCluster(),

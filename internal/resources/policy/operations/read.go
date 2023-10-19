@@ -16,6 +16,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindcustom "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
 	policykindimage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/image"
+	policykindmutation "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/mutation"
 	policykindnetwork "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/network"
 	policykindquota "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/quota"
 	policykindsecurity "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
@@ -61,6 +62,8 @@ func ResourcePolicyRead(_ context.Context, d *schema.ResourceData, m interface{}
 		flattenedSpec = policykindquota.FlattenSpec(spec)
 	case policykindnetwork.ResourceName:
 		flattenedSpec = policykindnetwork.FlattenSpec(spec)
+	case policykindmutation.ResourceName:
+		flattenedSpec = policykindmutation.FlattenSpec(spec)
 	}
 
 	if err := d.Set(policy.SpecKey, flattenedSpec); err != nil {

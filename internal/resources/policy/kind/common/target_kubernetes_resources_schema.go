@@ -1,9 +1,9 @@
 /*
-Copyright © 2022 VMware, Inc. All Rights Reserved.
+Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package recipe
+package common
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -12,7 +12,7 @@ import (
 	policyrecipecustomcommonmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom/common"
 )
 
-var targetKubernetesResources = &schema.Schema{
+var TargetKubernetesResourcesSchema = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "A list of kubernetes api resources on which the policy will be enforced, identified using apiGroups and kinds.",
 	Required:    true,
@@ -43,7 +43,7 @@ var targetKubernetesResources = &schema.Schema{
 	},
 }
 
-func expandTargetKubernetesResources(data interface{}) (kubernetesResources *policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources) {
+func ExpandTargetKubernetesResources(data interface{}) (kubernetesResources *policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources) {
 	if data == nil {
 		return kubernetesResources
 	}
@@ -77,7 +77,7 @@ func expandTargetKubernetesResources(data interface{}) (kubernetesResources *pol
 	return kubernetesResources
 }
 
-func flattenTargetKubernetesResources(kubernetesResources *policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources) (data interface{}) {
+func FlattenTargetKubernetesResources(kubernetesResources *policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources) (data interface{}) {
 	if kubernetesResources == nil {
 		return data
 	}

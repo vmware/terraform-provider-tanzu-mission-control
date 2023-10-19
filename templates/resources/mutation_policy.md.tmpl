@@ -1,0 +1,111 @@
+---
+Title: "Mutation Policy Resource"
+Description: |-
+    Creating the Tanzu Kubernetes mutation policy resource.
+---
+
+# Mutation Policy
+
+The `tanzu-mission-control_mutation_policy` resource enables you to attach a mutation policy with an input recipe to a organisation, cluster group, or a cluster for management through Tanzu Mission Control.
+
+## Input Recipe
+
+In the Tanzu Mission Control mutation policy resource, there are three system defined types of mutation templates that you can use:
+- **annotation**
+- **label**
+- **pod-security**
+
+## Policy Scope and Inheritance
+
+In the Tanzu Mission Control resource hierarchy, there are three levels at which you can specify mutation policy resources:
+- **organization** - `organization` block under `scope` sub-resource
+- **object groups** - `cluster_group` block under `scope` sub-resource
+- **Kubernetes objects** - `cluster` block under `scope` sub-resource
+
+**Note:**
+The scope parameter is mandatory in the schema and the user needs to add one of the defined scopes to the script for the provider to function.
+Only one scope per resource is allowed.
+
+## Target Kubernetes Resources
+
+Label and annotation mutation policy recipes contain a Kubernetes Resource spec that contains `api_groups` and `kind` as sub fields.
+These attributes are of the kind `[]string` which the policy API supports. In terraform, while declaring multiple
+`api_groups` and `kinds` under one block of `target_kubernetes_resources` is validated by the API but not reflected on the UI.
+For UI comparison with Terraform, one must add multiple blocks of `target_kubernetes_resources`, each containing a API Group and a Kind.
+
+Example:
+
+```
+target_kubernetes_resources {
+  api_groups = [
+    "apps",
+  ]
+  kinds = [
+    "Event",
+  ]
+}
+target_kubernetes_resources {
+  api_groups = [
+    "batch",
+  ]
+  kinds = [
+    "Pod",
+  ]
+}
+```
+
+## Cluster scoped annotation Mutation Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/mutation_policy/resource_cluster_scoped_annotation_mutation_policy.tf" }}
+
+## Cluster scoped label Mutation Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/mutation_policy/resource_cluster_scoped_label_mutation_policy.tf" }}
+
+## Cluster scoped pod-security Mutation Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/mutation_policy/resource_cluster_scoped_pod_security_mutation_policy.tf" }}
+
+## Cluster group scoped annotation Mutation Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/mutation_policy/resource_cluster_group_scoped_annotation_mutation_policy.tf" }}
+
+## Cluster group scoped label Mutation Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/mutation_policy/resource_cluster_group_scoped_label_mutation_policy.tf" }}
+
+## Cluster group scoped pod-security Mutation Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/mutation_policy/resource_cluster_group_scoped_pod_security_mutation_policy.tf" }}
+
+## Organization scoped annotation Mutation Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/mutation_policy/resource_organization_scoped_annotation_mutation_policy.tf" }}
+
+## Organization scoped label Mutation Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/mutation_policy/resource_organization_scoped_label_mutation_policy.tf" }}
+
+## Organization scoped pod-security Mutation Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/mutation_policy/resource_organization_scoped_pod_security_mutation_policy.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
