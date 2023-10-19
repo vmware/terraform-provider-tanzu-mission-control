@@ -244,7 +244,6 @@ func pollUntilNodepoolDeleted(ctx context.Context, npFn *models.VmwareTanzuManag
 
 // validateNodePools returns an error configuration will result in a cluster that will fail to create.
 func validateNodePools(cluster *models.VmwareTanzuManageV1alpha1AksCluster, nodepools []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) error {
-
 	// validate all node pools all together, at least one of them should be SYSTEM
 	var foundSystemNodepool bool
 	for _, n := range nodepools {
@@ -253,6 +252,7 @@ func validateNodePools(cluster *models.VmwareTanzuManageV1alpha1AksCluster, node
 			break
 		}
 	}
+
 	if !foundSystemNodepool {
 		return errors.New("AKS cluster must contain at least 1 SYSTEM nodepool")
 	}

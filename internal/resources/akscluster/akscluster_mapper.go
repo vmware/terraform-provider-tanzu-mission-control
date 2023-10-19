@@ -200,7 +200,7 @@ func constructAPIServerAccessConfig(data []any) *models.VmwareTanzuManageV1alpha
 	apiServerAccessConfig := &models.VmwareTanzuManageV1alpha1AksclusterAPIServerAccessConfig{}
 
 	if v, ok := apiServerAccessConfigData[authorizedIPRangesKey]; ok {
-		apiServerAccessConfig.AuthorizedIPRanges = helper.SetPrimitiveList[string](v)
+		apiServerAccessConfig.AuthorizedIPRanges = helper.SetPrimitiveList[string](v, authorizedIPRangesKey)
 	}
 
 	if v, ok := apiServerAccessConfigData[enablePrivateClusterKey]; ok {
@@ -224,7 +224,7 @@ func constructLinuxConfig(data []any) *models.VmwareTanzuManageV1alpha1Akscluste
 	}
 
 	if v, ok := linuxConfigData[sshkeysKey]; ok {
-		linuxConfig.SSHKeys = helper.SetPrimitiveList[string](v)
+		linuxConfig.SSHKeys = helper.SetPrimitiveList[string](v, sshkeysKey)
 	}
 
 	return linuxConfig
@@ -268,11 +268,11 @@ func constructNetworkConfig(data []any) *models.VmwareTanzuManageV1alpha1Aksclus
 	}
 
 	if v, ok := networkConfigData[serviceCidrKey]; ok {
-		networkConfig.ServiceCidrs = helper.SetPrimitiveList[string](v.([]any))
+		networkConfig.ServiceCidrs = helper.SetPrimitiveList[string](v.([]any), serviceCidrKey)
 	}
 
 	if v, ok := networkConfigData[podCidrKey]; ok {
-		networkConfig.PodCidrs = helper.SetPrimitiveList[string](v.([]any))
+		networkConfig.PodCidrs = helper.SetPrimitiveList[string](v.([]any), podCidrKey)
 	}
 
 	return networkConfig
@@ -338,7 +338,7 @@ func constructAadConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterA
 	aadConfig := &models.VmwareTanzuManageV1alpha1AksclusterAADConfig{}
 
 	if v, ok := aadConfigData[adminGroupIDsKey]; ok {
-		aadConfig.AdminGroupObjectIds = helper.SetPrimitiveList[string](v)
+		aadConfig.AdminGroupObjectIds = helper.SetPrimitiveList[string](v, adminGroupIDsKey)
 	}
 
 	if v, ok := aadConfigData[enableAzureRbacKey]; ok {
