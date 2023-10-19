@@ -128,7 +128,6 @@ func aTestCluster(w ...clusterWither) *models.VmwareTanzuManageV1alpha1AksCluste
 					LoadBalancerSku:  "load-balancer",
 					NetworkPlugin:    "azure",
 					NetworkPolicy:    "policy",
-					PodCidrs:         []string{""},
 					ServiceCidrs:     []string{"127.0.0.4"},
 				},
 				StorageConfig: &models.VmwareTanzuManageV1alpha1AksclusterStorageConfig{
@@ -336,7 +335,7 @@ func aTestClusterDataMap(w ...mapWither) map[string]any {
 					"network_policy":      "policy",
 					"dns_service_ip":      "127.0.0.1",
 					"docker_bridge_cidr":  "127.0.0.2",
-					"pod_cidr":            []any{""},
+					"pod_cidr":            nil,
 					"service_cidr":        []any{"127.0.0.4"},
 					"dns_prefix":          "net-prefix",
 				}},

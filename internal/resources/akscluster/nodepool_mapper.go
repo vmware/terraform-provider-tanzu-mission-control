@@ -69,7 +69,7 @@ func constructNodepoolSpec(data map[string]any) *models.VmwareTanzuManageV1alpha
 	}
 
 	if v, ok := npSpecData[availabilityZonesKey]; ok {
-		npSpec.AvailabilityZones = helper.SetPrimitiveList[string](v)
+		npSpec.AvailabilityZones = helper.SetPrimitiveList[string](v, availabilityZonesKey)
 	}
 
 	if v, ok := npSpecData[countKey]; ok {

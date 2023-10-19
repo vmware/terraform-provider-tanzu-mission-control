@@ -122,9 +122,9 @@ func SetPrimitiveValue(input, model interface{}, key string) {
 	}
 }
 
-func SetPrimitiveList[T any](data any) []T {
+func SetPrimitiveList[T any](data any, key string) []T {
 	list, ok := data.([]any)
-	if !ok || len(list) < 1 {
+	if !ok || len(list) < 1 || (len(list) == 1 && list[0] == nil) {
 		return nil
 	}
 
@@ -133,7 +133,7 @@ func SetPrimitiveList[T any](data any) []T {
 	for _, v := range list {
 		var value T
 
-		SetPrimitiveValue(v, &value, "")
+		SetPrimitiveValue(v, &value, key)
 
 		out = append(out, value)
 	}
