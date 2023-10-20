@@ -18,10 +18,28 @@ import (
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 )
 
+// getDataSourceSchema creates a data source version of the resource schema.
+func getDataSourceSchema() map[string]*schema.Schema {
+	ds := make(map[string]*schema.Schema, len(ClusterSchema))
+
+	for k, v := range ClusterSchema {
+		dv := v
+		// make cluster 'spec' field optional
+		if k == clusterSpecKey {
+			dv.Required = false
+			dv.Optional = true
+		}
+
+		ds[k] = dv
+	}
+
+	return ds
+}
+
 func DataSourceTMCAKSCluster() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceTMCAKSClusterRead,
-		Schema:      ClusterSchema,
+		Schema:      getDataSourceSchema(),
 	}
 }
 
