@@ -98,12 +98,12 @@ resource "tanzu-mission-control_akscluster" "tf_aks_cluster" {
 
       network_config {
         // Required
-        load_balancer_sku  = "<load-balancer-sku>"  // Forces Recreate
-        network_plugin     = "<network-plugin>"     // Forces Recreate
-        network_plugin_mode     = "<network-plugin-mode>"     // Forces Recreate
-        network_policy     = "<network-policy>"     // Forces Recreate
-        dns_service_ip     = "<dns-service-ip>"     // Forces Recreate
-        docker_bridge_cidr = "<docker-bridge-cidr>" // Forces Recreate
+        load_balancer_sku   = "<load-balancer-sku>"   // Forces Recreate
+        network_plugin      = "<network-plugin>"      // Forces Recreate
+        network_plugin_mode = "<network-plugin-mode>" // Forces Recreate
+        network_policy      = "<network-policy>"      // Forces Recreate
+        dns_service_ip      = "<dns-service-ip>"      // Forces Recreate
+        docker_bridge_cidr  = "<docker-bridge-cidr>"  // Forces Recreate
         pod_cidr = [
           // Forces Recreate
           "<pod-cidr-1>",
@@ -178,7 +178,7 @@ resource "tanzu-mission-control_akscluster" "tf_aks_cluster" {
               }
             ]
             vnet_subnet_id = "<vnet-subnet-id>" // Force Recreate
-            pod_subnet_id = "<pod-subnet-id>" // Force Recreate
+            pod_subnet_id  = "<pod-subnet-id>"  // Force Recreate
             node_labels    = { "key" : "value" }
             tags           = { "key" : "value" }
 

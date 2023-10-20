@@ -64,6 +64,13 @@ func (s *CreatClusterTestSuite) SetupTest() {
 	s.ctx = context.WithValue(context.Background(), akscluster.RetryInterval, 10*time.Millisecond)
 }
 
+func (s *CreatClusterTestSuite) Test_datasource_spec_should_be_required() {
+	resourceSchema := s.aksClusterResource
+
+	s.Assert().True(resourceSchema.Schema["spec"].Required)
+	s.Assert().False(resourceSchema.Schema["spec"].Optional)
+}
+
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate() {
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 	expectedNP := aTestNodePool(forCluster(aTestCluster().FullName))

@@ -326,21 +326,3 @@ Optional:
 Optional:
 
 - `max_surge` (String) Max Surge
-
-
-
-
-
-<a id="nestedblock--meta"></a>
-### Nested Schema for `meta`
-
-Optional:
-
-- `annotations` (Map of String) Annotations for the resource
-- `description` (String) Description of the resource
-- `labels` (Map of String) Labels for the resource
-
-Read-Only:
-
-- `resource_version` (String) Resource version of the resource
-- `uid` (String) UID of the resource
