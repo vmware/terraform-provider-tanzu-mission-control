@@ -195,13 +195,13 @@ resource "tanzu-mission-control_credential" "aws_eks_cred" {
       key_value {
         type = "OPAQUE_SECRET_TYPE"
         data = {
-          "aws_access_key_id"          = "abcd="
-          "aws_secret_access_key"      = "xyz=="
+          "aws_access_key_id"     = "abcd="
+          "aws_secret_access_key" = "xyz=="
         }
       }
     }
   }
-  ready_wait_timeout = "1m" // Wait time for credential create operations to finish (default: 3m).
+  ready_wait_timeout = "5m" // Wait time for credential create operations to finish (default: 3m).
 }
 ```
 

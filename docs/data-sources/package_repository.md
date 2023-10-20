@@ -24,7 +24,7 @@ data "tanzu-mission-control_package_repository" "read_cluster_pkg_repository" {
 
   scope {
     cluster {
-      name            = "testcluster" # Required
+      name                    = "testcluster" # Required
       provisioner_name        = "attached"    # Default: attached
       management_cluster_name = "attached"    # Default: attached
     }
