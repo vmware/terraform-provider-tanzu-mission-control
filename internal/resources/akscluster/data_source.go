@@ -26,8 +26,18 @@ func getDataSourceSchema() map[string]*schema.Schema {
 		dv := v
 		// make cluster 'spec' field optional
 		if k == clusterSpecKey {
-			dv.Required = false
-			dv.Optional = true
+			// Create a new copy of the struct
+			newSpec := &schema.Schema{
+				Type:        v.Type,
+				Description: v.Description,
+				Required:    v.Required,
+				MaxItems:    v.MaxItems,
+				Elem:        v.Elem,
+			}
+			newSpec.Required = false
+			newSpec.Optional = true
+
+			dv = newSpec
 		}
 
 		ds[k] = dv
