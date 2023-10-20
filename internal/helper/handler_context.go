@@ -25,7 +25,7 @@ func GetContextWithCaller(ctx context.Context, caller Caller) context.Context {
 }
 
 func IsContextCallerSet(ctx context.Context) bool {
-	return ctx.Value(contextMethodKey{}).(Caller) != ""
+	return ctx.Value(contextMethodKey{}) != nil
 }
 
 func IsDataRead(ctx context.Context) bool {
