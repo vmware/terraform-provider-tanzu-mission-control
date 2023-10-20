@@ -24,7 +24,7 @@ resource "tanzu-mission-control_package_repository" "create_cluster_pkg_reposito
 
   scope {
     cluster {
-      name            = "testcluster" # Required
+      name                    = "testcluster" # Required
       provisioner_name        = "attached"    # Default: attached
       management_cluster_name = "attached"    # Default: attached
     }
@@ -37,7 +37,7 @@ resource "tanzu-mission-control_package_repository" "create_cluster_pkg_reposito
 
   spec {
     imgpkg_bundle {
-        image = "testImage" # Required
+      image = "testImage" # Required
     }
   }
 }

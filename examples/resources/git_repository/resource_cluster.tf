@@ -6,7 +6,7 @@ resource "tanzu-mission-control_git_repository" "create_cluster_git_repository" 
 
   scope {
     cluster {
-      name            = "testcluster" # Required
+      name                    = "testcluster" # Required
       provisioner_name        = "attached"    # Default: attached
       management_cluster_name = "attached"    # Default: attached
     }

@@ -17,7 +17,7 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
 
   spec {
     data {
-        ssh_key {
+      ssh_key {
         identity    = "testidentity"    # Required
         known_hosts = "testknown_hosts" # Required
       }

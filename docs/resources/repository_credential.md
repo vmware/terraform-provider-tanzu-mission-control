@@ -55,7 +55,7 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_group_sou
 
   spec {
     data {
-        username_password {
+      username_password {
         username = "testusername" # Required
         password = "testpassword" # Required
       }
@@ -88,9 +88,9 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
 
   spec {
     data {
-        username_password {
-          username = "testusername" # Required
-          password = "testpassword" # Required
+      username_password {
+        username = "testusername" # Required
+        password = "testpassword" # Required
       }
     }
   }
@@ -119,7 +119,7 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_group_sou
 
   spec {
     data {
-        ssh_key {
+      ssh_key {
         identity    = "testidentity"    # Required
         known_hosts = "testknown_hosts" # Required
       }
@@ -152,7 +152,7 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
 
   spec {
     data {
-        ssh_key {
+      ssh_key {
         identity    = "testidentity"    # Required
         known_hosts = "testknown_hosts" # Required
       }
