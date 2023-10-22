@@ -10,9 +10,9 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper/converter"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper/converter"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 )
 
@@ -171,14 +171,18 @@ func GetTypeIntMapData(data map[string]interface{}) map[string]int {
 }
 
 // MetaConverterMap mapping for converter.
-var MetaConverterMap = &converter.BlockToStruct{
-	annotationsKey: &converter.Map{
-		"*": "meta.annotations.*",
-	},
-	LabelsKey: &converter.Map{
-		"*": "meta.labels.*",
-	},
-	DescriptionKey:     "meta.description",
-	resourceVersionKey: "meta.resourceVersion",
-	uidKey:             "meta.uid",
+func GetMetaConverterMap(modelPathSeparator string) *converter.BlockToStruct {
+	var MetaConverterMap = &converter.BlockToStruct{
+		annotationsKey: &converter.Map{
+			converter.AllMapKeysFieldMarker: strings.Join([]string{"meta", "annotations", converter.AllMapKeysFieldMarker}, modelPathSeparator),
+		},
+		LabelsKey: &converter.Map{
+			converter.AllMapKeysFieldMarker: strings.Join([]string{"meta", "labels", converter.AllMapKeysFieldMarker}, modelPathSeparator),
+		},
+		DescriptionKey:     strings.Join([]string{"meta", "description"}, modelPathSeparator),
+		resourceVersionKey: strings.Join([]string{"meta", "resourceVersion"}, modelPathSeparator),
+		uidKey:             strings.Join([]string{"meta", "uid"}, modelPathSeparator),
+	}
+
+	return MetaConverterMap
 }

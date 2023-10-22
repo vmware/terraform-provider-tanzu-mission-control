@@ -37,10 +37,13 @@ func dataSourceCredentialRead(ctx context.Context, d *schema.ResourceData, m int
 	var (
 		diags diag.Diagnostics
 		resp  *credentialsmodels.VmwareTanzuManageV1alpha1AccountCredentialGetCredentialResponse
-		err   error
 	)
 
-	model := tfModelResourceConverter.ConvertTFSchemaToAPIModel(d, []string{NameKey})
+	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(d, []string{NameKey})
+
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "unable to get Tanzu Mission Control credential"))
+	}
 
 	getCredentialResourceRetryableFunc := func() (retry bool, err error) {
 		resp, err = config.TMCConnection.CredentialResourceService.CredentialResourceServiceGet(model.FullName)
