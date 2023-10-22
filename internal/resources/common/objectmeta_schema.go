@@ -10,9 +10,9 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper/converter"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper/converter"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 )
 
@@ -170,7 +170,7 @@ func GetTypeIntMapData(data map[string]interface{}) map[string]int {
 	return convertedMapData
 }
 
-// MetaConverterMap mapping for converter.
+// GetMetaConverterMap returns mapping for converter.
 func GetMetaConverterMap(modelPathSeparator string) *converter.BlockToStruct {
 	var MetaConverterMap = &converter.BlockToStruct{
 		annotationsKey: &converter.Map{
