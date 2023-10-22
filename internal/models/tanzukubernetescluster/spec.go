@@ -24,7 +24,7 @@ type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetescluster
 	ProxyName string `json:"proxyName,omitempty"`
 
 	// TMC-managed flag indicates if the cluster is managed by tmc.
-	TmcManaged bool `json:"tmcManaged,omitempty"`
+	TmcManaged bool `json:"tmcManaged"`
 
 	// The cluster topology.
 	Topology *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterTopology `json:"topology,omitempty"`

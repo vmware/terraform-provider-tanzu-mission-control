@@ -107,8 +107,7 @@ var specSchema = &schema.Schema{
 			TMCManagedKey: {
 				Type:        schema.TypeBool,
 				Description: "TMC-managed flag indicates if the cluster is managed by tmc.\n(Default: False)",
-				Default:     false,
-				Optional:    true,
+				Computed:    true,
 			},
 			ProxyNameKey: {
 				Type:        schema.TypeString,
@@ -345,37 +344,30 @@ func isVariableEqual(oldVar interface{}, newVar interface{}) bool {
 	if (oldVar == nil && newVar != nil) || (oldVar != nil && newVar == nil) {
 		return false
 	} else if oldVar != nil && newVar != nil {
-		switch oldVar.(type) {
+		switch oldVar := oldVar.(type) {
 		case []interface{}:
-			oldVarLen := len(oldVar.([]interface{}))
+			oldVarLen := len(oldVar)
 
 			if oldVarLen != len(newVar.([]interface{})) {
 				return false
 			}
 
-			isVarEqual := true
-
 			// List order is a mandatory requirement for deciding list equality
 			for i := 0; i < oldVarLen; i++ {
-				isVarEqual = isVariableEqual(oldVar.([]interface{})[i], newVar.([]interface{})[i])
-
-				if !isVarEqual {
-					return isVarEqual
+				if !isVariableEqual(oldVar[i], newVar.([]interface{})[i]) {
+					return false
 				}
 			}
 		case map[string]interface{}:
-			if len(oldVar.(map[string]interface{})) != len(newVar.(map[string]interface{})) {
+			if len(oldVar) != len(newVar.(map[string]interface{})) {
 				return false
 			}
 
-			isVarEqual := true
-			allMapKeys := getAllKeys(oldVar.(map[string]interface{}), newVar.(map[string]interface{}))
+			allMapKeys := getAllKeys(oldVar, newVar.(map[string]interface{}))
 
 			for k, _ := range allMapKeys {
-				isVarEqual = isVariableEqual(oldVar.(map[string]interface{})[k], newVar.(map[string]interface{})[k])
-
-				if !isVarEqual {
-					return isVarEqual
+				if !isVariableEqual(oldVar[k], newVar.(map[string]interface{})[k]) {
+					return false
 				}
 			}
 		default:
