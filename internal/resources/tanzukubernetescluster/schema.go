@@ -329,7 +329,7 @@ func checkVariablesValues(k, oldValue, newValue string, d *schema.ResourceData) 
 	_ = json.Unmarshal([]byte(newValue), &newValuesJSON)
 	allMapKeys := getAllKeys(oldValueJSON, newValuesJSON)
 
-	for k, _ := range allMapKeys {
+	for k := range allMapKeys {
 		isVariableEqual := isVariableEqual(oldValueJSON[k], newValuesJSON[k])
 
 		if !isVariableEqual {
@@ -365,7 +365,7 @@ func isVariableEqual(oldVar interface{}, newVar interface{}) bool {
 
 			allMapKeys := getAllKeys(oldVar, newVar.(map[string]interface{}))
 
-			for k, _ := range allMapKeys {
+			for k := range allMapKeys {
 				if !isVariableEqual(oldVar[k], newVar.(map[string]interface{})[k]) {
 					return false
 				}
