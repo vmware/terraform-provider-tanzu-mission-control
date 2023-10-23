@@ -45,6 +45,8 @@ func (converter *TFSchemaModelConverter[T]) buildTFValue(modelJSONData *map[stri
 
 		if err == nil {
 			tfSchemaValue = mapValue.EvalFunc(ConstructTFSchema, modelValue)
+		} else if strings.Contains(err.Error(), arrayCannotBeReachedMsg) && strings.HasSuffix(modelField, ArrayFieldMarker) {
+			err = nil
 		}
 	case string:
 		tfSchemaValue, err = converter.getModelValue(modelJSONData, mapValue, arrIndexer)
