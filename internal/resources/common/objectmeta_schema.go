@@ -174,10 +174,10 @@ func GetTypeIntMapData(data map[string]interface{}) map[string]int {
 func GetMetaConverterMap(modelPathSeparator string) *converter.BlockToStruct {
 	var MetaConverterMap = &converter.BlockToStruct{
 		AnnotationsKey: &converter.Map{
-			converter.AllMapKeysFieldMarker: converter.BuildModelPath(modelPathSeparator, "meta", "annotations"),
+			converter.AllMapKeysFieldMarker: converter.BuildModelPath(modelPathSeparator, "meta", "annotations", converter.AllMapKeysFieldMarker),
 		},
 		LabelsKey: &converter.Map{
-			converter.AllMapKeysFieldMarker: converter.BuildModelPath(modelPathSeparator, "meta", "labels"),
+			converter.AllMapKeysFieldMarker: converter.BuildModelPath(modelPathSeparator, "meta", "labels", converter.AllMapKeysFieldMarker),
 		},
 		DescriptionKey:     converter.BuildModelPath(modelPathSeparator, "meta", "description"),
 		resourceVersionKey: converter.BuildModelPath(modelPathSeparator, "meta", "resourceVersion"),
