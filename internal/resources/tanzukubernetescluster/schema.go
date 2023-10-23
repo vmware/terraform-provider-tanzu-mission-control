@@ -347,26 +347,37 @@ func isVariableEqual(oldVar interface{}, newVar interface{}) bool {
 		switch oldVar := oldVar.(type) {
 		case []interface{}:
 			oldVarLen := len(oldVar)
+			newVar, isArray := newVar.([]interface{})
 
-			if oldVarLen != len(newVar.([]interface{})) {
+			if !isArray {
+				return false
+			}
+
+			if oldVarLen != len(newVar) {
 				return false
 			}
 
 			// List order is a mandatory requirement for deciding list equality
 			for i := 0; i < oldVarLen; i++ {
-				if !isVariableEqual(oldVar[i], newVar.([]interface{})[i]) {
+				if !isVariableEqual(oldVar[i], newVar[i]) {
 					return false
 				}
 			}
 		case map[string]interface{}:
-			if len(oldVar) != len(newVar.(map[string]interface{})) {
+			newVar, isMap := newVar.(map[string]interface{})
+
+			if !isMap {
 				return false
 			}
 
-			allMapKeys := getAllKeys(oldVar, newVar.(map[string]interface{}))
+			if len(oldVar) != len(newVar) {
+				return false
+			}
+
+			allMapKeys := getAllKeys(oldVar, newVar)
 
 			for k := range allMapKeys {
-				if !isVariableEqual(oldVar[k], newVar.(map[string]interface{})[k]) {
+				if !isVariableEqual(oldVar[k], newVar[k]) {
 					return false
 				}
 			}
