@@ -17,7 +17,7 @@ const (
 	apiVersionAndGroup = "/v1alpha1/managementclusters"
 	provisioners       = "provisioners"
 	clusterClasses     = "clusterclasses"
-	nameQueryParamKey  = "name"
+	nameQueryParamKey  = "searchScope.name"
 )
 
 // New creates a new tanzu kubernetes cluster resource service API client.
