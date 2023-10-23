@@ -29,23 +29,23 @@ var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
 			VersionKey:      tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "version"),
 			NodePoolKey: &tfModelConverterHelper.BlockSliceToStructSlice{
 				{
-					NameKey:        tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "nodePools[]", "info", "name"),
-					DescriptionKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "nodePools[]", "info", "description"),
+					NameKey:        tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", tfModelConverterHelper.BuildArrayField("nodePools"), "info", "name"),
+					DescriptionKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", tfModelConverterHelper.BuildArrayField("nodePools"), "info", "description"),
 					SpecKey: &tfModelConverterHelper.BlockToStruct{
-						WorkerClassKey:   tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "nodePools[]", "spec", "class"),
-						FailureDomainKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "nodePools[]", "spec", "failureDomain"),
+						WorkerClassKey:   tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", tfModelConverterHelper.BuildArrayField("nodePools"), "spec", "class"),
+						FailureDomainKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", tfModelConverterHelper.BuildArrayField("nodePools"), "spec", "failureDomain"),
 						common.MetaKey: &tfModelConverterHelper.BlockToStruct{
-							common.LabelsKey:      tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "nodePools[]", "spec", "metadata", "labels"),
-							common.AnnotationsKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "nodePools[]", "spec", "metadata", "annotations"),
+							common.LabelsKey:      tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", tfModelConverterHelper.BuildArrayField("nodePools"), "spec", "metadata", "labels"),
+							common.AnnotationsKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", tfModelConverterHelper.BuildArrayField("nodePools"), "spec", "metadata", "annotations"),
 						},
-						ReplicasKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "nodePools[]", "spec", "replicas"),
+						ReplicasKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", tfModelConverterHelper.BuildArrayField("nodePools"), "spec", "replicas"),
 						OSImageKey: &tfModelConverterHelper.BlockToStruct{
-							NameKey:    tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "nodePools[]", "spec", "osImage", "name"),
-							OSArchKey:  tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "nodePools[]", "spec", "osImage", "arch"),
-							VersionKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "nodePools[]", "spec", "osImage", "version"),
+							NameKey:    tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", tfModelConverterHelper.BuildArrayField("nodePools"), "spec", "osImage", "name"),
+							OSArchKey:  tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", tfModelConverterHelper.BuildArrayField("nodePools"), "spec", "osImage", "arch"),
+							VersionKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", tfModelConverterHelper.BuildArrayField("nodePools"), "spec", "osImage", "version"),
 						},
 						OverridesKey: &tfModelConverterHelper.EvaluatedField{
-							Field:    tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "nodePools[]", "spec", "overrides[]"),
+							Field:    tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", tfModelConverterHelper.BuildArrayField("nodePools"), "spec", tfModelConverterHelper.BuildArrayField("overrides")),
 							EvalFunc: tfModelConverterHelper.EvaluationFunc(evaluateClusterVariables),
 						},
 					},
@@ -53,8 +53,8 @@ var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
 			},
 			CoreAddonKey: &tfModelConverterHelper.BlockSliceToStructSlice{
 				{
-					TypeKey:     tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "coreAddons[]", "type"),
-					ProviderKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "coreAddons[]", "provider"),
+					TypeKey:     tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", tfModelConverterHelper.BuildArrayField("coreAddons"), "type"),
+					ProviderKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", tfModelConverterHelper.BuildArrayField("coreAddons"), "provider"),
 				},
 			},
 			NetworkKey: &tfModelConverterHelper.BlockToStruct{
@@ -75,7 +75,7 @@ var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
 				},
 			},
 			ClusterVariablesKey: &tfModelConverterHelper.EvaluatedField{
-				Field:    tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", "variables[]"),
+				Field:    tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "topology", tfModelConverterHelper.BuildArrayField("variables")),
 				EvalFunc: tfModelConverterHelper.EvaluationFunc(evaluateClusterVariables),
 			},
 		},
