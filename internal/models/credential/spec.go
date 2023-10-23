@@ -109,7 +109,7 @@ const (
 	VmwareTanzuManageV1alpha1AccountCredentialProviderGENERICKEYVALUE VmwareTanzuManageV1alpha1AccountCredentialProvider = "GENERIC_KEY_VALUE"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1AccountCredentialProviderEnum []interface{}
 
 func init() {

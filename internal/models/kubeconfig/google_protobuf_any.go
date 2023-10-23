@@ -23,20 +23,23 @@ type GoogleProtobufAny struct {
 	Value strfmt.Base64 `json:"value,omitempty"`
 }
 
-// MarshalBinary interface implementation
+// MarshalBinary interface implementation.
 func (m *GoogleProtobufAny) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
+
 	return swag.WriteJSON(m)
 }
 
-// UnmarshalBinary interface implementation
+// UnmarshalBinary interface implementation.
 func (m *GoogleProtobufAny) UnmarshalBinary(b []byte) error {
 	var res GoogleProtobufAny
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
+
 	*m = res
+
 	return nil
 }

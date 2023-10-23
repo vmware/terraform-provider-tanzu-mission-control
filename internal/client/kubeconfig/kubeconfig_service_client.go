@@ -6,10 +6,11 @@ SPDX-License-Identifier: MPL-2.0
 package kubeconfig
 
 import (
+	"net/url"
+
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubeconfig"
-	"net/url"
 )
 
 const (
