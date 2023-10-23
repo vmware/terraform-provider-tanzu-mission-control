@@ -28,14 +28,14 @@ func (m VmwareTanzuManageV1alpha1ClusterKubeconfigCliType) Pointer() *VmwareTanz
 
 const (
 
-	// VmwareTanzuManageV1alpha1ClusterKubeconfigCliTypeTMCCLI captures enum value "TMC_CLI"
+	// VmwareTanzuManageV1alpha1ClusterKubeconfigCliTypeTMCCLI captures enum value "TMC_CLI".
 	VmwareTanzuManageV1alpha1ClusterKubeconfigCliTypeTMCCLI VmwareTanzuManageV1alpha1ClusterKubeconfigCliType = "TMC_CLI"
 
-	// VmwareTanzuManageV1alpha1ClusterKubeconfigCliTypeTANZUCLI captures enum value "TANZU_CLI"
+	// VmwareTanzuManageV1alpha1ClusterKubeconfigCliTypeTANZUCLI captures enum value "TANZU_CLI".
 	VmwareTanzuManageV1alpha1ClusterKubeconfigCliTypeTANZUCLI VmwareTanzuManageV1alpha1ClusterKubeconfigCliType = "TANZU_CLI"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1ClusterKubeconfigCliTypeEnum []interface{}
 
 func init() {
@@ -43,6 +43,7 @@ func init() {
 	if err := json.Unmarshal([]byte(`["TMC_CLI","TANZU_CLI"]`), &res); err != nil {
 		panic(err)
 	}
+
 	for _, v := range res {
 		vmwareTanzuManageV1alpha1ClusterKubeconfigCliTypeEnum = append(vmwareTanzuManageV1alpha1ClusterKubeconfigCliTypeEnum, v)
 	}

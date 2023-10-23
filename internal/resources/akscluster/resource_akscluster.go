@@ -307,6 +307,7 @@ func pollForKubeConfig(ctx context.Context, data *schema.ResourceData, mc *clien
 				OrgID:                 "",
 			}
 			resp, err := mc.KubeConfigResourceService.KubeconfigServiceGet(fn)
+
 			if kubeConfigReady(err, resp) {
 				if err = data.Set(kubeconfigKey, resp.Kubeconfig); err != nil {
 					return fmt.Errorf("failed to set kubeconfig, %w", err)

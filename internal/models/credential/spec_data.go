@@ -95,7 +95,7 @@ const (
 	VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpecSecretTypeDOCKERCONFIGJSONSECRETTYPE VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpecSecretType = "DOCKERCONFIGJSON_SECRET_TYPE"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpecSecretTypeEnum []interface{}
 
 func init() {

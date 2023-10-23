@@ -55,32 +55,32 @@ func (m VmwareTanzuManageV1alpha1AccountCredentialStatusPhase) Pointer() *Vmware
 
 const (
 
-	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhasePHASEUNSPECIFIED captures enum value "PHASE_UNSPECIFIED"
+	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhasePHASEUNSPECIFIED captures enum value "PHASE_UNSPECIFIED".
 	VmwareTanzuManageV1alpha1AccountCredentialStatusPhasePHASEUNSPECIFIED VmwareTanzuManageV1alpha1AccountCredentialStatusPhase = "PHASE_UNSPECIFIED"
 
-	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseCREATED captures enum value "CREATED"
+	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseCREATED captures enum value "CREATED".
 	VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseCREATED VmwareTanzuManageV1alpha1AccountCredentialStatusPhase = "CREATED"
 
-	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseVALIDATING captures enum value "VALIDATING"
+	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseVALIDATING captures enum value "VALIDATING".
 	VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseVALIDATING VmwareTanzuManageV1alpha1AccountCredentialStatusPhase = "VALIDATING"
 
-	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseVALID captures enum value "VALID"
+	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseVALID captures enum value "VALID".
 	VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseVALID VmwareTanzuManageV1alpha1AccountCredentialStatusPhase = "VALID"
 
-	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseINVALID captures enum value "INVALID"
+	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseINVALID captures enum value "INVALID".
 	VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseINVALID VmwareTanzuManageV1alpha1AccountCredentialStatusPhase = "INVALID"
 
-	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseERROR captures enum value "ERROR"
+	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseERROR captures enum value "ERROR".
 	VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseERROR VmwareTanzuManageV1alpha1AccountCredentialStatusPhase = "ERROR"
 
-	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseDELETING captures enum value "DELETING"
+	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseDELETING captures enum value "DELETING".
 	VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseDELETING VmwareTanzuManageV1alpha1AccountCredentialStatusPhase = "DELETING"
 
-	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseDELETED captures enum value "DELETED"
+	// VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseDELETED captures enum value "DELETED".
 	VmwareTanzuManageV1alpha1AccountCredentialStatusPhaseDELETED VmwareTanzuManageV1alpha1AccountCredentialStatusPhase = "DELETED"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1AccountCredentialStatusPhaseEnum []interface{}
 
 func init() {

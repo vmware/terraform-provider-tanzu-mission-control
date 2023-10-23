@@ -31,23 +31,23 @@ func (m VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatus) P
 
 const (
 
-	// VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusSTATUSUNSPECIFIED captures enum value "STATUS_UNSPECIFIED"
+	// VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusSTATUSUNSPECIFIED captures enum value "STATUS_UNSPECIFIED".
 	VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusSTATUSUNSPECIFIED VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatus = "STATUS_UNSPECIFIED"
 
-	// VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusCREATING captures enum value "CREATING"
+	// VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusCREATING captures enum value "CREATING".
 	VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusCREATING VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatus = "CREATING"
 
-	// VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusPENDING captures enum value "PENDING"
+	// VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusPENDING captures enum value "PENDING".
 	VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusPENDING VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatus = "PENDING"
 
-	// VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusREADY captures enum value "READY"
+	// VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusREADY captures enum value "READY".
 	VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusREADY VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatus = "READY"
 
-	// VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusUNAVAILABLE captures enum value "UNAVAILABLE"
+	// VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusUNAVAILABLE captures enum value "UNAVAILABLE".
 	VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusUNAVAILABLE VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatus = "UNAVAILABLE"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusEnum []interface{}
 
 func init() {
@@ -55,6 +55,7 @@ func init() {
 	if err := json.Unmarshal([]byte(`["STATUS_UNSPECIFIED","CREATING","PENDING","READY","UNAVAILABLE"]`), &res); err != nil {
 		panic(err)
 	}
+
 	for _, v := range res {
 		vmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusEnum = append(vmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusEnum, v)
 	}
