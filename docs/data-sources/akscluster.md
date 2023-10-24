@@ -270,6 +270,7 @@ Optional:
 - `os_disk_size_gb` (Number) OS Disk Size in GB to be used to specify the disk size for every machine in the nodepool. If you specify 0, it will apply the default osDisk size according to the vmSize specified
 - `os_disk_type` (String) OS Disk Type. Allowed values include: EPHEMERAL or MANAGED.
 - `os_type` (String) The OS type of the nodepool. Allowed values include: LINUX.
+- `pod_subnet_id` (String) The ID of a subnet in an existing VNet into which to assign pods in the cluster. Requires network-plugin to be azure and not compatible with network-plugin-mode overlay
 - `scale_set_eviction_policy` (String) Scale set eviction policy, Allowed values include: DELETE or DEALLOCATE.
 - `scale_set_priority` (String) Scale set priority. Allowed values include: REGULAR or SPOT.
 - `spot_max_price` (Number) Max spot price
@@ -277,7 +278,7 @@ Optional:
 - `taints` (Block List) The taints added to new nodes during nodepool create and scale (see [below for nested schema](#nestedblock--spec--nodepool--spec--taints))
 - `type` (String) The Nodepool type. Allowed values include: VIRTUAL_MACHINE_SCALE_SETS or AVAILABILITY_SET.
 - `upgrade_config` (Block List, Max: 1) upgrade config (see [below for nested schema](#nestedblock--spec--nodepool--spec--upgrade_config))
-- `vnet_subnet_id` (String) If this is not specified, a VNET and subnet will be generated and used. If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to just nodes
+- `vnet_subnet_id` (String) The ID of a subnet in an existing VNet into which to deploy the cluster. If this is not specified, a VNET and subnet will be generated and used. If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to just nodes
 
 <a id="nestedblock--spec--nodepool--spec--auto_scaling_config"></a>
 ### Nested Schema for `spec.nodepool.spec.auto_scaling_config`

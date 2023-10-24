@@ -53,15 +53,8 @@ func resourceClusterCreate(ctx context.Context, data *schema.ResourceData, confi
 		return diag.FromErr(err)
 	}
 
-	// validate all node pools together
-	if err := validateAllNodePools(nodepools); err != nil {
+	if err := validateNodePools(cluster, nodepools); err != nil {
 		return diag.FromErr(err)
-	}
-	// Validate every node pool
-	for _, nodepool := range nodepools {
-		if err := validateNodePool(cluster, nodepool); err != nil {
-			return diag.FromErr(err)
-		}
 	}
 
 	if err := createOrUpdateCluster(cluster, data, tc.TMCConnection.AKSClusterResourceService); err != nil {

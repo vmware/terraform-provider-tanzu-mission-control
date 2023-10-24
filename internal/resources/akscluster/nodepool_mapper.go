@@ -121,6 +121,10 @@ func constructNodepoolSpec(data map[string]any) *models.VmwareTanzuManageV1alpha
 		helper.SetPrimitiveValue(v, &npSpec.VnetSubnetID, vnetSubnetKey)
 	}
 
+	if v, ok := npSpecData[podSubnetKey]; ok {
+		helper.SetPrimitiveValue(v, &npSpec.PodSubnetID, podSubnetKey)
+	}
+
 	if v, ok := npSpecData[nodeLabelsKey]; ok {
 		data, _ := v.(map[string]interface{})
 		npSpec.NodeLabels = constructStringMap[string](data)
@@ -274,6 +278,7 @@ func toNodepoolSpecMap(spec *models.VmwareTanzuManageV1alpha1AksclusterNodepoolS
 	data[enableNodePublicIPKey] = spec.EnableNodePublicIP
 	data[taintsKey] = toTaintList(spec.NodeTaints)
 	data[vnetSubnetKey] = spec.VnetSubnetID
+	data[podSubnetKey] = spec.PodSubnetID
 	data[nodeLabelsKey] = toInterfaceMap(spec.NodeLabels)
 	data[tagsKey] = toInterfaceMap(spec.Tags)
 	data[autoscalingConfigKey] = toAutoscalingConfigMap(spec.AutoScaling)
