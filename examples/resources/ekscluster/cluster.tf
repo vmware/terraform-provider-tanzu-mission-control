@@ -49,6 +49,20 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
           "subnet-06897e1063cc0cf4e",
         ]
       }
+
+      addons_config { // this whole section is optional
+        vpc_cni_config {
+          eni_config {
+            id = "subnet-0a680171b6330619f" // Required, need not belong to the same VPC as the cluster, subnets provided in vpc_cni_config are expected to be in different AZs
+            security_groups = [ //optional, if not provided, the cluster security group will be used
+              "sg-00c96ad9d02a22522",
+            ]
+          }
+          eni_config {
+            id = "subnet-06feb0bb0451cda79" // Required, need not belong to the same VPC as the cluster, subnets provided in vpc_cni_config are expected to be in different AZs
+          }
+        }
+      }
     }
 
     nodepool {

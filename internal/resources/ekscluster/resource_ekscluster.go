@@ -215,7 +215,8 @@ var configSchema = &schema.Schema{
 					},
 				},
 			},
-			vpcKey: vpcSchema,
+			vpcKey:          vpcSchema,
+			addonsConfigKey: addonsConfigSchema,
 		},
 	},
 }
@@ -264,6 +265,57 @@ var vpcSchema = &schema.Schema{
 				Required:    true,
 				ForceNew:    true,
 				MinItems:    2,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+		},
+	},
+}
+
+var addonsConfigSchema = &schema.Schema{
+	Type:        schema.TypeList,
+	Description: "Addons config contains the configuration for all the addons of the cluster, which support customization of addon configuration",
+	Optional:    true,
+	MaxItems:    1,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			vpccniConfigKey: vpccniConfigSchema,
+		},
+	},
+}
+
+var vpccniConfigSchema = &schema.Schema{
+	Type:        schema.TypeList,
+	Description: "VPC CNI addon config contains the configuration for the VPC CNI addon of the cluster",
+	Optional:    true,
+	MaxItems:    1,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			eniConfigKey: eniConfigSchema,
+		},
+	},
+}
+
+var eniConfigSchema = &schema.Schema{
+	Type:        schema.TypeList,
+	Description: "ENI config for the VPC CNI addon",
+	Optional:    true,
+	MinItems:    1,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			idKey: {
+				Type:        schema.TypeString,
+				Description: "Subnet id for the ENI",
+				Required:    true,
+				ForceNew:    true,
+			},
+			securityGroupsKey: {
+				Type:        schema.TypeSet,
+				Description: "Security groups for the ENI",
+				Optional:    true,
+				ForceNew:    true,
+				MinItems:    1,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -345,6 +397,11 @@ func constructConfig(data []interface{}) *eksmodel.VmwareTanzuManageV1alpha1Eksc
 	if v, ok := configData[vpcKey]; ok {
 		data, _ := v.([]interface{})
 		config.Vpc = constructVpc(data)
+	}
+
+	if v, ok := configData[addonsConfigKey]; ok {
+		data, _ := v.([]interface{})
+		config.AddonsConfig = constructAddonsConfig(data)
 	}
 
 	return config
@@ -432,6 +489,64 @@ func constructVpc(data []interface{}) *eksmodel.VmwareTanzuManageV1alpha1Eksclus
 	}
 
 	return vpc
+}
+
+func constructAddonsConfig(data []interface{}) *eksmodel.VmwareTanzuManageV1alpha1EksclusterAddonsConfig {
+	addonsConfig := &eksmodel.VmwareTanzuManageV1alpha1EksclusterAddonsConfig{}
+
+	if len(data) == 0 || data[0] == nil {
+		return addonsConfig
+	}
+
+	addonsConfigData, _ := data[0].(map[string]interface{})
+
+	if v, ok := addonsConfigData[vpccniConfigKey]; ok {
+		data, _ := v.([]interface{})
+		addonsConfig.VpcCniAddonConfig = constructVpccniConfig(data)
+	}
+
+	return addonsConfig
+}
+
+func constructVpccniConfig(data []interface{}) *eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig {
+	vpccniConfig := &eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig{}
+
+	if len(data) == 0 || data[0] == nil {
+		return vpccniConfig
+	}
+
+	vpccniConfigData, _ := data[0].(map[string]interface{})
+
+	if v, ok := vpccniConfigData[eniConfigKey]; ok {
+		data, _ := v.([]interface{})
+		vpccniConfig.EniConfigs = constructEniConfig(data)
+	}
+
+	return vpccniConfig
+}
+
+func constructEniConfig(data []interface{}) []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig {
+	out := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig, 0, len(data))
+
+	for _, v := range data {
+		eniConfig := &eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig{}
+
+		if v, ok := v.(map[string]interface{}); ok {
+			if v, ok := v[idKey]; ok {
+				helper.SetPrimitiveValue(v, &eniConfig.SubnetID, idKey)
+			}
+
+			if v, ok := v[securityGroupsKey]; ok {
+				if data, ok := v.(*schema.Set); ok {
+					eniConfig.SecurityGroupIds = constructStringList(data.List())
+				}
+			}
+		}
+
+		out = append(out, eniConfig)
+	}
+
+	return out
 }
 
 func constructStringMap(data map[string]interface{}) map[string]string {
@@ -732,6 +847,10 @@ func flattenConfig(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlan
 		data[vpcKey] = flattenVpc(item.Vpc)
 	}
 
+	if item.AddonsConfig != nil {
+		data[addonsConfigKey] = flattenAddonsConfig(item.AddonsConfig)
+	}
+
 	return []interface{}{data}
 }
 
@@ -786,4 +905,56 @@ func flattenVpc(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterVPCConfig) []i
 	}
 
 	return []interface{}{data}
+}
+
+func flattenAddonsConfig(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterAddonsConfig) []interface{} {
+	if item == nil {
+		return []interface{}{}
+	}
+
+	data := make(map[string]interface{})
+
+	if item.VpcCniAddonConfig != nil {
+		data[vpccniConfigKey] = flattenVpccniConfig(item.VpcCniAddonConfig)
+	}
+
+	return []interface{}{data}
+}
+
+func flattenVpccniConfig(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig) []interface{} {
+	if item == nil {
+		return []interface{}{}
+	}
+
+	data := make(map[string]interface{})
+	data[eniConfigKey] = flattenEniConfigs(item.EniConfigs)
+
+	return []interface{}{data}
+}
+
+func flattenEniConfigs(item []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig) []interface{} {
+	if item == nil {
+		return []interface{}{}
+	}
+
+	data := make([]interface{}, 0)
+
+	for _, v := range item {
+		data = append(data, flattenEniConfig(v))
+	}
+
+	return data
+}
+
+func flattenEniConfig(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig) interface{} {
+	if item == nil {
+		return nil
+	}
+
+	data := make(map[string]interface{})
+
+	data[idKey] = item.SubnetID
+	data[securityGroupsKey] = item.SecurityGroupIds
+
+	return data
 }

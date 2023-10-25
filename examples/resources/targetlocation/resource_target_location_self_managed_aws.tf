@@ -1,9 +1,9 @@
 resource "tanzu-mission-control_target_location" "demo_aws_self_provisioned" {
-  name          = "TARGET_LOCATION_NAME"
+  name = "TARGET_LOCATION_NAME"
 
   spec {
     target_provider = "AWS"
-    credential      = {
+    credential = {
       name = "AWS_CREDENTIAL_NAME"
     }
 

@@ -1,9 +1,9 @@
 resource "tanzu-mission-control_target_location" "demo_azure_self_provisioned" {
-  name          = "TARGET_LOCATION_NAME"
+  name = "TARGET_LOCATION_NAME"
 
   spec {
     target_provider = "AZURE"
-    credential      = {
+    credential = {
       name = "AZURE_CREDENTIAL_NAME"
     }
 

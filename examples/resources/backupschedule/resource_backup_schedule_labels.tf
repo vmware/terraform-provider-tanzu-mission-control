@@ -18,9 +18,9 @@ resource "tanzu-mission-control_backup_schedule" "sample-full" {
 
     template {
       default_volumes_to_fs_backup = false
-      include_cluster_resources = true
-      backup_ttl = "604800s"
-      storage_location = "TARGET_LOCATION_NAME"
+      include_cluster_resources    = true
+      backup_ttl                   = "604800s"
+      storage_location             = "TARGET_LOCATION_NAME"
 
       label_selector {
         match_expression {

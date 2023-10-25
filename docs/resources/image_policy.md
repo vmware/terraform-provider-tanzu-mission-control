@@ -439,7 +439,7 @@ resource "tanzu-mission-control_image_policy" "organization_scoped_require-diges
 ### Required
 
 - `name` (String) Name of the image policy
-- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image, network and namespace quota policy, having one of the valid scopes for custom, security and namespace quota policy: cluster, cluster_group or organization and valid scopes for image and network policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image, network, namespace quota and mutation policy, having one of the valid scopes for custom, security, mutation, and namespace quota policy: cluster, cluster_group or organization and valid scopes for image and network policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Spec for the image policy (see [below for nested schema](#nestedblock--spec))
 
 ### Optional
@@ -455,8 +455,30 @@ resource "tanzu-mission-control_image_policy" "organization_scoped_require-diges
 
 Optional:
 
+- `cluster` (Block List, Max: 1) The schema for cluster policy full name (see [below for nested schema](#nestedblock--scope--cluster))
+- `cluster_group` (Block List, Max: 1) The schema for cluster group policy full name (see [below for nested schema](#nestedblock--scope--cluster_group))
 - `organization` (Block List, Max: 1) The schema for organization policy full name (see [below for nested schema](#nestedblock--scope--organization))
 - `workspace` (Block List, Max: 1) The schema for workspace policy full name (see [below for nested schema](#nestedblock--scope--workspace))
+
+<a id="nestedblock--scope--cluster"></a>
+### Nested Schema for `scope.cluster`
+
+Required:
+
+- `name` (String) Name of this cluster
+
+Optional:
+
+- `management_cluster_name` (String) Name of the management cluster
+- `provisioner_name` (String) Provisioner of the cluster
+
+
+<a id="nestedblock--scope--cluster_group"></a>
+### Nested Schema for `scope.cluster_group`
+
+Required:
+
+- `cluster_group` (String) Name of this cluster group
 
 
 <a id="nestedblock--scope--organization"></a>

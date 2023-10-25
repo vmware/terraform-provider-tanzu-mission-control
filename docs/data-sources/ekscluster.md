@@ -93,6 +93,7 @@ Required:
 
 Optional:
 
+- `addons_config` (Block List, Max: 1) Addons config contains the configuration for all the addons of the cluster, which support customization of addon configuration (see [below for nested schema](#nestedblock--spec--config--addons_config))
 - `kubernetes_network_config` (Block List, Max: 1) Kubernetes Network Config (see [below for nested schema](#nestedblock--spec--config--kubernetes_network_config))
 - `logging` (Block List, Max: 1) EKS logging configuration (see [below for nested schema](#nestedblock--spec--config--logging))
 - `tags` (Map of String) The metadata to apply to the cluster to assist with categorization and organization
@@ -110,6 +111,34 @@ Optional:
 - `enable_public_access` (Boolean) Enable cluster API server access from the internet. You can, optionally, limit the CIDR blocks that can access the public endpoint using public_access_cidrs (see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))
 - `public_access_cidrs` (Set of String) Specify which addresses from the internet can communicate to the public endpoint, if public endpoint is enabled (see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))
 - `security_groups` (Set of String) Security groups for the cluster VMs
+
+
+<a id="nestedblock--spec--config--addons_config"></a>
+### Nested Schema for `spec.config.addons_config`
+
+Optional:
+
+- `vpc_cni_config` (Block List, Max: 1) VPC CNI addon config contains the configuration for the VPC CNI addon of the cluster (see [below for nested schema](#nestedblock--spec--config--addons_config--vpc_cni_config))
+
+<a id="nestedblock--spec--config--addons_config--vpc_cni_config"></a>
+### Nested Schema for `spec.config.addons_config.vpc_cni_config`
+
+Optional:
+
+- `eni_config` (Block List) ENI config for the VPC CNI addon (see [below for nested schema](#nestedblock--spec--config--addons_config--vpc_cni_config--eni_config))
+
+<a id="nestedblock--spec--config--addons_config--vpc_cni_config--eni_config"></a>
+### Nested Schema for `spec.config.addons_config.vpc_cni_config.eni_config`
+
+Required:
+
+- `id` (String) Subnet id for the ENI
+
+Optional:
+
+- `security_groups` (Set of String) Security groups for the ENI
+
+
 
 
 <a id="nestedblock--spec--config--kubernetes_network_config"></a>

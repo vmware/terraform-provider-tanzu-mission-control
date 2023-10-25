@@ -582,6 +582,113 @@ func TestClusterSpecEqual(t *testing.T) {
 			},
 			result: true,
 		},
+		{
+			name: "addon configs are set equal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.AddonsConfig = &eksmodel.VmwareTanzuManageV1alpha1EksclusterAddonsConfig{
+					VpcCniAddonConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig{
+						EniConfigs: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig{
+							{
+								SubnetID:         "subnet-id-1",
+								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+							},
+							{
+								SubnetID:         "subnet-id-2",
+								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+							},
+						},
+					},
+				}
+			},
+			modifySpec2: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.AddonsConfig = &eksmodel.VmwareTanzuManageV1alpha1EksclusterAddonsConfig{
+					VpcCniAddonConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig{
+						EniConfigs: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig{
+							{
+								SubnetID:         "subnet-id-2",
+								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+							}, {
+								SubnetID:         "subnet-id-1",
+								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+							},
+						},
+					},
+				}
+			},
+			result: true,
+		},
+		{
+			name: "addon config subnets are set unequal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.AddonsConfig = &eksmodel.VmwareTanzuManageV1alpha1EksclusterAddonsConfig{
+					VpcCniAddonConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig{
+						EniConfigs: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig{
+							{
+								SubnetID:         "subnet-id-1",
+								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+							},
+							{
+								SubnetID:         "subnet-id-2",
+								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+							},
+						},
+					},
+				}
+			},
+			modifySpec2: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.AddonsConfig = &eksmodel.VmwareTanzuManageV1alpha1EksclusterAddonsConfig{
+					VpcCniAddonConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig{
+						EniConfigs: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig{
+							{
+								SubnetID:         "subnet-id-1",
+								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+							},
+							{
+								SubnetID:         "subnet-id-3",
+								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+							},
+						},
+					},
+				}
+			},
+			result: false,
+		},
+		{
+			name: "addon config SecurityGroupIds are set unequal",
+			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.AddonsConfig = &eksmodel.VmwareTanzuManageV1alpha1EksclusterAddonsConfig{
+					VpcCniAddonConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig{
+						EniConfigs: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig{
+							{
+								SubnetID:         "subnet-id-1",
+								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+							},
+							{
+								SubnetID:         "subnet-id-2",
+								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+							},
+						},
+					},
+				}
+			},
+			modifySpec2: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
+				spec1.Config.AddonsConfig = &eksmodel.VmwareTanzuManageV1alpha1EksclusterAddonsConfig{
+					VpcCniAddonConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig{
+						EniConfigs: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig{
+							{
+								SubnetID:         "subnet-id-1",
+								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+							},
+							{
+								SubnetID:         "subnet-id-2",
+								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-zzzzzz"},
+							},
+						},
+					},
+				}
+			},
+			result: false,
+		},
 	}
 
 	for _, test := range tests {
