@@ -1,0 +1,96 @@
+---
+Title: "Helm  Resource"
+Description: |-
+    Adding Helm resource to a cluster.
+---
+
+# Defining Helm
+
+Enable the Helm service when you want to install Helm charts on a cluster or cluster group.
+When you enable the Helm service on a cluster or cluster group, you can then create releases in your cluster from Helm charts stored in the Bitnami Helm repository.
+
+# Terraform Resources for Helm
+
+## Helm Feature
+
+
+The `tanzu-mission-control_helm_feature` resource allows you to enable and disable helm feature for a particular scope through Tanzu Mission Control.
+
+Only after enabling the helm feature User will be able to create the helm release. 
+
+Please refer to [Enable Helm Service on Your Cluster or Cluster Group.][helm-feature]
+
+[helm-feature]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-0927CDC8-A5C1-4FAE-9A7C-8A5D62FDF8D8.html
+
+
+## Helm Release
+
+The `tanzu-mission-control_helm_release` resource allows you to install, update, get and delete helm chart to a particular scope through Tanzu Mission Control.
+
+Before creating helm charts user needs to enable the helm service on a particular scope cluster or cluster group and for enable user can use `tanzu-mission-control_helm_feature` resource.
+The`feature_ref` field of `tanzu-mission-control_helm_release` when specified, ensures clean up of this Terraform resource from the state file by creating a dependency on the Helm feature when the Helm feature is disabled.
+To create a Helm release, you must be associated with the cluster.admin or clustergroup.admin role.
+
+
+# Usecase Example for adding Cluster level helm release from helm repository
+
+{{ tffile "examples/usecases/cl_helm_release_usecase.tf" }}
+
+
+Please refer to [Install a Helm Chart from a Helm Repository.][helm-release-helmrepo]
+
+[helm-release-helmrepo]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-2602A6A3-1FDA-4270-A76F-047FBD039ADF.html
+
+
+# Usecase Example for adding Cluster level helm release from git repository
+
+{{ tffile "examples/usecases/cl_helm_release_git_usecase.tf" }}
+
+
+# Usecase Example for adding Cluster level helm release from git repository
+
+{{ tffile "examples/usecases/cg_helm_release_git_usecase.tf" }}
+
+
+
+Please refer to [Install a Helm Chart from a Git Repository.][helm-release-gitrepo]
+
+The `tanzu-mission-control_git_repository` resource can be used to add, update, and delete git repository to a particular scope through Tanzu Mission Control.
+
+[helm-release-gitrepo]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-F7F4EFA4-F681-42BC-AFDC-874C43D39CD4.html
+
+
+# Terraform Data Sources for Helm
+
+## Helm Repository
+
+This `tanzu-mission-control_helm_repository` allows user to read Helm Repository from a cluster through Tanzu Mission Control.
+
+The Available tab on the Catalog page in the Tanzu Mission Control console shows the Helm repositories that are available.
+
+
+## Cluster scoped Helm Repository
+
+### Example Usage
+
+{{ tffile "examples/data-sources/helmrepository/data_source.tf" }}
+
+
+## Helm Charts
+
+This `tanzu-mission-control_helm_charts` allows you to get list of Helm Charts through Tanzu Mission Control.
+
+The Helm charts tab on the Catalog page in the Tanzu Mission Control console shows the Available Helm charts.
+
+
+## Organization scoped Helm Charts
+
+### Example Usage
+
+{{ tffile "examples/data-sources/helmcharts/data_source.tf" }}
+
+
+
+Please refer to [Install a Helm Chart from a Helm Repository.][helm-release-helmrepo]
+
+[helm-release-helmrepo]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-2602A6A3-1FDA-4270-A76F-047FBD039ADF.html

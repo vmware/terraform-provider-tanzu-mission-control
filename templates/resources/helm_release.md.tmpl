@@ -1,0 +1,52 @@
+---
+Title: "Helm Release Resource"
+Description: |-
+    Creating the Helm Release resource.
+---
+
+# Helm Release
+
+The `tanzu-mission-control_helm_release` resource allows you to install, update, get and delete helm chart to a particular scope through Tanzu Mission Control.
+
+Before creating helm charts user needs to enable the helm service on a particular scope cluster or cluster group and for enable user can use `tanzu-mission-control_helm_feature` resource.
+The`feature_ref` field of `tanzu-mission-control_helm_release` when specified, ensures clean up of this Terraform resource from the state file by creating a dependency on the Helm feature when the Helm feature is disabled.
+To add a helm charts, you must be associated with the cluster.admin or clustergroup.admin role.
+
+## Helm Release Scope
+
+In the Tanzu Mission Control resource hierarchy, there are two levels at which you can specify Helm Feature resources:
+- **object groups** - `cluster_group` block under `scope` sub-resource
+- **Kubernetes objects** - `cluster` block under `scope` sub-resource
+
+**Note:**
+The scope parameter is mandatory in the schema and the user needs to add one of the defined scopes to the script for the provider to function.
+Only one scope per resource is allowed.
+
+### Install a Helm Chart from a Git Repository
+
+The Helm service must already be enabled to be able to install Helm releases on a cluster or cluster group.
+[helm-release]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-F7F4EFA4-F681-42BC-AFDC-874C43D39CD4.html
+
+## Cluster group scoped Helm Release using Git Repository
+
+### Example Usage
+
+{{ tffile "examples/resources/helmrelease/cg_resource.tf" }}
+
+## Cluster scoped Helm Release using Git Repository
+
+### Example Usage
+
+{{ tffile "examples/resources/helmrelease/cl_resource_git_type.tf" }}
+
+### Install a Helm Chart from a Helm Repository
+
+The Helm service must already be enabled to be able to install Helm releases on a cluster.
+[helm-release]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-2602A6A3-1FDA-4270-A76F-047FBD039ADF.html
+
+## Cluster scoped Helm Release using Helm Repository
+
+### Example Usage
+
+{{ tffile "examples/resources/helmrelease/cl_resource_helm_type.tf" }}
+{{ .SchemaMarkdown | trimspace }}

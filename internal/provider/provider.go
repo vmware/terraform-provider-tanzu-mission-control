@@ -17,6 +17,10 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/credential"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/ekscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/gitrepository"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmcharts"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmfeature"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmrelease"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmrepository"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/iampolicy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kustomization"
@@ -68,6 +72,8 @@ func Provider() *schema.Provider {
 			tanzupackageinstall.ResourceName: tanzupackageinstall.ResourcePackageInstall(),
 			kubernetessecret.ResourceName:    kubernetessecret.ResourceSecret(),
 			mutationpolicy.ResourceName:      mutationpolicyresource.ResourceMutationPolicy(),
+			helmrelease.ResourceName:         helmrelease.ResourceHelmRelease(),
+			helmfeature.ResourceName:         helmfeature.ResourceHelm(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:             cluster.DataSourceTMCCluster(),
@@ -86,6 +92,9 @@ func Provider() *schema.Provider {
 			tanzupackages.ResourceName:       tanzupackages.DataSourceTanzuPackages(),
 			tanzupackageinstall.ResourceName: tanzupackageinstall.DataSourcePackageInstall(),
 			kubernetessecret.ResourceName:    kubernetessecret.DataSourceSecret(),
+			helmfeature.ResourceName:         helmfeature.DataSourceHelm(),
+			helmcharts.ResourceName:          helmcharts.DataSourceHelmCharts(),
+			helmrepository.ResourceName:      helmrepository.DataSourceHelmRepository(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
