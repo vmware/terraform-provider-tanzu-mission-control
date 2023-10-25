@@ -111,8 +111,8 @@ func (converter *TFSchemaModelConverter[T]) FillTFSchema(modelPtr T, data *schem
 // It utilizes the implementation of schema unpacking implemented for BlockToStruct types.
 // As an example, if you have converter or converter mapping of an object like Target Location and you need to create another schema for a slice of Target Locations,
 // then you can use the converter or the mapping to unpack the schema for the higher level struct containing the list of Target Locations.
-func (converter *TFSchemaModelConverter[T]) UnpackSchema(prefix string) *BlockToStruct {
-	newTFModelMap := converter.TFModelMap.UnpackSchema(nil, prefix).(*BlockToStruct)
+func (converter *TFSchemaModelConverter[T]) UnpackSchema(modelPathSeparator string, prefix string) *BlockToStruct {
+	newTFModelMap := converter.TFModelMap.UnpackSchema(modelPathSeparator, nil, prefix).(*BlockToStruct)
 
 	return newTFModelMap
 }

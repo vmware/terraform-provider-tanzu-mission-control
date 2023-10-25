@@ -68,7 +68,7 @@ func (curMap *Map) Copy(excludedKeys []string) Map {
 }
 
 // UnpackSchema Unpacks a schema to a higher level schema, useful for data sources which list an individual Swagger API Model.
-func (b *BlockToStruct) UnpackSchema(mapValue interface{}, prefix string) interface{} {
+func (b *BlockToStruct) UnpackSchema(modelPathSeparator string, mapValue interface{}, prefix string) interface{} {
 	var elem interface{}
 
 	if mapValue == nil {
@@ -81,32 +81,32 @@ func (b *BlockToStruct) UnpackSchema(mapValue interface{}, prefix string) interf
 			elem = &BlockToStruct{}
 
 			for key, value := range *mapValue.(*BlockToStruct) {
-				(*elem.(*BlockToStruct))[key] = b.UnpackSchema(value, prefix)
+				(*elem.(*BlockToStruct))[key] = b.UnpackSchema(modelPathSeparator, value, prefix)
 			}
 		} else {
 			elem = &Map{}
 
 			for key, value := range *mapValue.(*Map) {
-				(*elem.(*Map))[key] = b.UnpackSchema(value, prefix)
+				(*elem.(*Map))[key] = b.UnpackSchema(modelPathSeparator, value, prefix)
 			}
 		}
 	case *BlockToStructSlice:
 		elem = &BlockToStructSlice{}
 
 		for _, elemMap := range *mapValue {
-			elemValue := b.UnpackSchema(elemMap, prefix)
+			elemValue := b.UnpackSchema(modelPathSeparator, elemMap, prefix)
 			*elem.(*BlockToStructSlice) = append(*elem.(*BlockToStructSlice), elemValue.(*BlockToStruct))
 		}
 	case *BlockSliceToStructSlice:
 		elem = &BlockSliceToStructSlice{}
 
 		for _, elemMap := range *mapValue {
-			elemValue := b.UnpackSchema(elemMap, prefix)
+			elemValue := b.UnpackSchema(modelPathSeparator, elemMap, prefix)
 			*elem.(*BlockSliceToStructSlice) = append(*elem.(*BlockSliceToStructSlice), elemValue.(*BlockToStruct))
 		}
 	case *ListToStruct:
 		elem = &ListToStruct{}
-		elemValue := b.UnpackSchema((*mapValue)[0], prefix)
+		elemValue := b.UnpackSchema(modelPathSeparator, (*mapValue)[0], prefix)
 		*elem.(*ListToStruct) = append(*elem.(*ListToStruct), elemValue.(string))
 	case *EvaluatedField:
 		elem = &EvaluatedField{
@@ -114,7 +114,7 @@ func (b *BlockToStruct) UnpackSchema(mapValue interface{}, prefix string) interf
 			EvalFunc: (mapValue).EvalFunc,
 		}
 	case string:
-		return fmt.Sprintf("%s.%s", prefix, mapValue)
+		return fmt.Sprintf("%s%s%s", prefix, modelPathSeparator, mapValue)
 	}
 
 	return elem
