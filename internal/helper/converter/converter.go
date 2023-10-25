@@ -35,7 +35,7 @@ const (
 // Arguments for the function are:
 // data - a schema.ResourceData object.
 // buildOnlyKeys - a []string for specifying specific keys to be built in the model.
-// keys should be supplied relatively to the Terraform schema structure, for nested keys it should be supplied with "." separator.
+// keys should be supplied relatively to the Terraform schema structure, for nested keys it should be supplied with a separator.
 // If no keys supplied in the slice, the function will build the entire model.
 func (converter *TFSchemaModelConverter[T]) ConvertTFSchemaToAPIModel(data *schema.ResourceData, buildOnlyKeys []string) (modelPtr T, err error) {
 	var (
@@ -50,7 +50,7 @@ func (converter *TFSchemaModelConverter[T]) ConvertTFSchemaToAPIModel(data *sche
 
 	if len(buildOnlyKeys) > 0 {
 		for _, subKey := range buildOnlyKeys {
-			converter.handleOffsetBuildModelField(&modelJSON, data, strings.Split(subKey, "."), &arrIndexer)
+			converter.handleOffsetBuildModelField(&modelJSON, data, strings.Split(subKey, converter.getModelPathSeparator()), &arrIndexer)
 		}
 	} else {
 		for mapKey, mapValue := range *converter.TFModelMap {
@@ -111,8 +111,8 @@ func (converter *TFSchemaModelConverter[T]) FillTFSchema(modelPtr T, data *schem
 // It utilizes the implementation of schema unpacking implemented for BlockToStruct types.
 // As an example, if you have converter or converter mapping of an object like Target Location and you need to create another schema for a slice of Target Locations,
 // then you can use the converter or the mapping to unpack the schema for the higher level struct containing the list of Target Locations.
-func (converter *TFSchemaModelConverter[T]) UnpackSchema(modelPathSeparator string, prefix string) *BlockToStruct {
-	newTFModelMap := converter.TFModelMap.UnpackSchema(modelPathSeparator, nil, prefix).(*BlockToStruct)
+func (converter *TFSchemaModelConverter[T]) UnpackSchema(prefix string) *BlockToStruct {
+	newTFModelMap := converter.TFModelMap.UnpackSchema(converter.getModelPathSeparator(), nil, prefix).(*BlockToStruct)
 
 	return newTFModelMap
 }

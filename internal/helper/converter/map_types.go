@@ -110,7 +110,7 @@ func (b *BlockToStruct) UnpackSchema(modelPathSeparator string, mapValue interfa
 		*elem.(*ListToStruct) = append(*elem.(*ListToStruct), elemValue.(string))
 	case *EvaluatedField:
 		elem = &EvaluatedField{
-			Field:    strings.Join([]string{prefix, (mapValue).Field}, "."),
+			Field:    strings.Join([]string{prefix, (mapValue).Field}, modelPathSeparator),
 			EvalFunc: (mapValue).EvalFunc,
 		}
 	case string:
