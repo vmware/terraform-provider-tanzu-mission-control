@@ -220,7 +220,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_podCIDR
 	s.Assert().Equal("podCIDR cannot be set if network-plugin is 'azure' without 'overlay'", result[0].Summary)
 }
 
-func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_overlay_with_pood_subnet_fail() {
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_overlay_with_pod_subnet_fail() {
 	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetID("vnet-1/subnet-1"))}
 	cluster := aTestClusterDataMap(withNetworkPluginMode("overlay"), withNodepools(nodepools))
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
@@ -231,7 +231,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_overlay_with
 	s.Assert().Equal("can not set pod_subnet_id when network_plugin is set to 'kubenet' or to 'azure' with network_plugin_mode set to 'overlay'", result[0].Summary)
 }
 
-func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_kubenet_with_pood_subnet_fail() {
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_kubenet_with_pod_subnet_fail() {
 	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetID("vnet-1/subnet-1"))}
 	cluster := aTestClusterDataMap(withNetworkPlugin("kubenet"), withNetworkPluginMode(""), withNodepools(nodepools))
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
