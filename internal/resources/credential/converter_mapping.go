@@ -17,32 +17,32 @@ import (
 )
 
 var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
-	NameKey:        tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "fullname", "name"),
+	NameKey:        tfModelConverterHelper.BuildDefaultModelPath("fullname", "name"),
 	common.MetaKey: common.GetMetaConverterMap(tfModelConverterHelper.DefaultModelPathSeparator),
 	specKey: &tfModelConverterHelper.BlockToStruct{
-		capabilityKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "capability"),
-		providerKey:   tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "meta", "provider"),
+		capabilityKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "capability"),
+		providerKey:   tfModelConverterHelper.BuildDefaultModelPath("spec", "meta", "provider"),
 		dataKey: &tfModelConverterHelper.BlockToStruct{
-			genericCredentialKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "data", "genericCredential"),
+			genericCredentialKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "genericCredential"),
 			awsCredentialKey: &tfModelConverterHelper.BlockToStruct{
-				awsAccountIDKey:      tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "data", "awsCredential", "accountId"),
-				genericCredentialKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "data", "awsCredential", "genericCredential"),
+				awsAccountIDKey:      tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "awsCredential", "accountId"),
+				genericCredentialKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "awsCredential", "genericCredential"),
 				awsIAMRoleKey: &tfModelConverterHelper.BlockToStruct{
-					iamRoleARNKey:   tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "data", "awsCredential", "iamRole", "arn"),
-					iamRoleExtIDKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "data", "awsCredential", "iamRole", "extId"),
+					iamRoleARNKey:   tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "awsCredential", "iamRole", "arn"),
+					iamRoleExtIDKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "awsCredential", "iamRole", "extId"),
 				},
 			},
 			keyValueKey: &tfModelConverterHelper.BlockToStruct{
 				dataKey: &tfModelConverterHelper.EvaluatedField{
-					Field:    tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "data", "keyValue", "data"),
+					Field:    tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "keyValue", "data"),
 					EvalFunc: tfModelConverterHelper.EvaluationFunc(keyValueEvalFunc),
 				},
-				typeKey: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "spec", "data", "keyValue", "type"),
+				typeKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "keyValue", "type"),
 			},
 		},
 	},
 	statusKey: &tfModelConverterHelper.Map{
-		tfModelConverterHelper.AllMapKeysFieldMarker: tfModelConverterHelper.BuildModelPath(tfModelConverterHelper.DefaultModelPathSeparator, "status", tfModelConverterHelper.AllMapKeysFieldMarker),
+		tfModelConverterHelper.AllMapKeysFieldMarker: tfModelConverterHelper.BuildDefaultModelPath("status", tfModelConverterHelper.AllMapKeysFieldMarker),
 	},
 }
 
