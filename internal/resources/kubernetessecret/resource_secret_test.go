@@ -12,30 +12,34 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
-	secretmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/cluster"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret/scope"
+	secretclmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/cluster"
+	secretcgmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/clustergroup"
+	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
+	secretscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret/scope"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
 func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 	return &testAcceptanceConfig{
-		Provider:           initTestProvider(t),
-		SecretResource:     ResourceName,
-		SecretResourceVar:  secretResourceVar,
-		SecretResourceName: fmt.Sprintf("%s.%s", ResourceName, secretResourceVar),
-		SecretName:         acctest.RandomWithPrefix("tf-sc-test"),
-		NamespaceName:      "default",
-		ClusterName:        acctest.RandomWithPrefix("tf-cluster"),
+		Provider:             initTestProvider(t),
+		SecretResource:       ResourceName,
+		SecretResourceVar:    secretResourceVar,
+		SecretResourceName:   fmt.Sprintf("%s.%s", ResourceName, secretResourceVar),
+		SecretName:           acctest.RandomWithPrefix("tf-sc-test"),
+		ScopeHelperResources: commonscope.NewScopeHelperResources(),
+		NamespaceName:        "default",
+		DataSourceName:       fmt.Sprintf("data.%s.%s", ResourceName, secretDataSourceVar),
+		DataSourceVar:        secretDataSourceVar,
 	}
 }
 
@@ -77,16 +81,20 @@ func TestAcceptanceForSecretResource(t *testing.T) {
 		}
 	}
 
+	t.Log("start cluster secret resource acceptance tests!", testConfig.ScopeHelperResources.Cluster.Name)
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
 		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
-				Config: testConfig.getTestResourceClusterGroupConfigValue(t),
-				Check: resource.ComposeTestCheckFunc(
-					testConfig.checkResourceAttributes(testConfig.Provider, testConfig.SecretResource, testConfig.SecretName),
-				),
+				Config: testConfig.getTestResourceBasicConfigValue(commonscope.ClusterGroupScope),
+				Check:  testConfig.checkResourceAttributes(commonscope.ClusterGroupScope),
+			},
+			{
+				Config: testConfig.getTestResourceBasicConfigValue(commonscope.ClusterScope),
+				Check:  testConfig.checkResourceAttributes(commonscope.ClusterScope),
 			},
 		},
 	},
@@ -94,107 +102,103 @@ func TestAcceptanceForSecretResource(t *testing.T) {
 	t.Log("secret resource acceptance test complete!")
 }
 
-func (testConfig *testAcceptanceConfig) getTestResourceClusterGroupConfigValue(t *testing.T, opts ...OperationOption) string {
+func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope commonscope.Scope, opts ...OperationOption) string {
+	helperBlock, scopeBlock := testConfig.ScopeHelperResources.GetTestResourceHelperAndScope(scope, secretscope.ScopesAllowed[:])
 	secretSpec := testConfig.getTestSecretResourceSpec(opts...)
 
 	if _, found := os.LookupEnv("ENABLE_SECRET_ENV_TEST"); !found {
-		return fmt.Sprintf(`
+		clStr := fmt.Sprintf(`
+	resource "%s" "%s" {
+	 name = "%s"
 
-resource "%s" "%s" {
-  name = "%s"
+	 namespace_name = "default"
+	
+	 scope {
+		cluster {
+			name = "%s"
+			management_cluster_name = "attached"
+			provisioner_name = "attached"
+		}
+	 }
 
-  namespace_name = "default"
-
-  scope {
-	cluster {
-		management_cluster_name = "attached"
-		provisioner_name = "attached"
-		cluster_name = "%s"
+	%s
 	}
-  }
+	`, testConfig.SecretResource, testConfig.SecretResourceVar, testConfig.SecretName, testConfig.ScopeHelperResources.Cluster.Name, secretSpec)
 
-  %s
+		cgStr := fmt.Sprintf(`
+	resource "%s" "%s" {
+	 name = "%s"
 
-}
-
-`, testConfig.SecretResource, testConfig.SecretResourceVar, testConfig.SecretName, testConfig.ClusterName, secretSpec)
+	 namespace_name = "default"
+	
+	 scope {
+		cluster_group {
+			name = "%s"
+		}
+	 }
+	
+	 %s
 	}
+	`, testConfig.SecretResource, testConfig.SecretResourceVar, testConfig.SecretName, testConfig.ScopeHelperResources.ClusterGroup.Name, secretSpec)
 
-	kubeconfigPath := os.Getenv("KUBECONFIG")
-	if kubeconfigPath == "" {
-		t.Skipf("KUBECONFIG env var is not set: %s", kubeconfigPath)
+		switch scope {
+		case commonscope.ClusterScope:
+			return clStr
+		case commonscope.ClusterGroupScope:
+			return cgStr
+		default:
+			return ""
+		}
 	}
 
 	return fmt.Sprintf(`
-resource "%s" "%s" {
-  management_cluster_name = "%s"
-  provisioner_name        = "%s"
-  name                    = "%s"
+	%s
 
-  %s
+	resource "%s" "%s" {
+	 name = "%s"
 
-  attach_k8s_cluster {
-    kubeconfig_file = "%s"
-  }
+	 namespace_name = "default"
 
-  spec {
-    cluster_group = "default"
-  }
+	 %s
 
-  ready_wait_timeout = "3m"
-}
-
-resource "%s" "%s" {
-  name = "%s"
-
-  namespace_name = "default"
-
-  scope {
-	cluster {
-		management_cluster_name = "attached"
-		provisioner_name = "attached"
-		cluster_name = tanzu-mission-control_cluster.tmc_cluster_test.name
+	 %s
 	}
-  }
-
-  %s
-
+	`, helperBlock, testConfig.SecretResource, testConfig.SecretResourceVar, testConfig.SecretName, scopeBlock, secretSpec)
 }
 
-`, clusterResource, clusterResourceVar, scope.AttachedValue, scope.AttachedValue, testConfig.ClusterName, testhelper.MetaTemplate, kubeconfigPath,
-		testConfig.SecretResource, testConfig.SecretResourceVar, testConfig.SecretName, secretSpec)
-}
-
-func (testConfig *testAcceptanceConfig) checkResourceAttributes(provider *schema.Provider, resourceName, secretName string) resource.TestCheckFunc {
+func (testConfig *testAcceptanceConfig) checkResourceAttributes(scopeType commonscope.Scope) resource.TestCheckFunc {
 	var check = []resource.TestCheckFunc{
-		testConfig.verifySecretResourceCreation(provider, resourceName, testConfig.ClusterName, secretName),
+		testConfig.verifyResourceCreation(scopeType),
 		resource.TestCheckResourceAttr(testConfig.SecretResourceName, "name", testConfig.SecretName),
 	}
 
-	check = append(check, MetaResourceAttributeCheck(testConfig.SecretResourceName)...)
+	switch scopeType {
+	case commonscope.ClusterScope:
+		check = append(check, resource.TestCheckResourceAttr(testConfig.SecretResourceName, "scope.0.cluster.0.name", testConfig.ScopeHelperResources.Cluster.Name))
+	case commonscope.ClusterGroupScope:
+		check = append(check, resource.TestCheckResourceAttr(testConfig.SecretResourceName, "scope.0.cluster_group.0.name", testConfig.ScopeHelperResources.ClusterGroup.Name))
+	case commonscope.UnknownScope:
+		log.Printf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(secretscope.ScopesAllowed[:], `, `))
+	}
+
+	check = append(check, commonscope.MetaResourceAttributeCheck(testConfig.SecretResourceName)...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }
 
-func (testConfig *testAcceptanceConfig) verifySecretResourceCreation(
-	provider *schema.Provider,
-	resourceName string,
-	clusterName string,
-	secretName string,
-) resource.TestCheckFunc {
+func (testConfig *testAcceptanceConfig) verifyResourceCreation(scopeType commonscope.Scope) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if provider == nil {
+		if testConfig.Provider == nil {
 			return fmt.Errorf("provider not initialised")
 		}
 
 		rs, ok := s.RootModule().Resources[testConfig.SecretResourceName]
-
 		if !ok {
-			return fmt.Errorf("not found resource %s", resourceName)
+			return fmt.Errorf("not found resource: %s", testConfig.SecretResourceName)
 		}
 
 		if rs.Primary.ID == "" {
-			return fmt.Errorf("ID not set, resource %s", resourceName)
+			return fmt.Errorf("ID not set, resource: %s", testConfig.SecretResourceName)
 		}
 
 		config := authctx.TanzuContext{
@@ -209,21 +213,41 @@ func (testConfig *testAcceptanceConfig) verifySecretResourceCreation(
 			return errors.Wrap(err, "unable to set the context")
 		}
 
-		fn := &secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretFullName{
-			Name:                  secretName,
-			ClusterName:           clusterName,
-			ManagementClusterName: "attached",
-			ProvisionerName:       "attached",
-			NamespaceName:         testConfig.NamespaceName,
-		}
+		switch scopeType {
+		case commonscope.ClusterScope:
+			fn := &secretclmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretFullName{
+				ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
+				ManagementClusterName: commonscope.AttachedValue,
+				Name:                  testConfig.SecretName,
+				NamespaceName:         testConfig.NamespaceName,
+				ProvisionerName:       commonscope.AttachedValue,
+			}
 
-		resp, err := config.TMCConnection.SecretResourceService.SecretResourceServiceGet(fn)
-		if err != nil {
-			return fmt.Errorf("sceret resource not found: %s", err)
-		}
+			resp, err := config.TMCConnection.SecretResourceService.SecretResourceServiceGet(fn)
+			if err != nil {
+				return errors.Wrap(err, "cluster scoped secret resource not found")
+			}
 
-		if resp == nil {
-			return fmt.Errorf("sceret resource is empty, resource: %s", resourceName)
+			if resp == nil {
+				return errors.Wrapf(err, "cluster scoped secret resource is empty, resource: %s", testConfig.SecretResourceName)
+			}
+		case commonscope.ClusterGroupScope:
+			fn := &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretFullName{
+				ClusterGroupName: testConfig.ScopeHelperResources.ClusterGroup.Name,
+				Name:             testConfig.SecretName,
+				NamespaceName:    testConfig.NamespaceName,
+			}
+
+			resp, err := config.TMCConnection.ClusterGroupSecretResourceService.SecretResourceServiceGet(fn)
+			if err != nil {
+				return errors.Wrap(err, "cluster group scoped secret resource not found")
+			}
+
+			if resp == nil {
+				return errors.Wrapf(err, "cluster group scoped secret resource is empty, resource: %s", testConfig.SecretResourceName)
+			}
+		case commonscope.UnknownScope:
+			return errors.Errorf("[ERROR]: No valid scope type block found: minimum one valid scope type block is required among: %v. Please check the schema.", strings.Join(secretscope.ScopesAllowed[:], `, `))
 		}
 
 		return nil
@@ -258,7 +282,7 @@ func WithURL(val string) OperationOption {
 	}
 }
 
-// getTestSecretResourceSpec builds the input block for git repository resource based a recipe.
+// getTestSecretResourceSpec builds the input block for cluster secret resource based a recipe.
 func (testConfig *testAcceptanceConfig) getTestSecretResourceSpec(opts ...OperationOption) string {
 	cfg := &OperationConfig{
 		username:         "someusername",

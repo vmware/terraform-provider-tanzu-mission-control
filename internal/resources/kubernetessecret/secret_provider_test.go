@@ -14,18 +14,21 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 )
 
 func initTestProvider(t *testing.T) *schema.Provider {
 	testProvider := &schema.Provider{
 		Schema: authctx.ProviderAuthSchema(),
 		ResourcesMap: map[string]*schema.Resource{
-			ResourceName:         ResourceSecret(),
-			cluster.ResourceName: cluster.ResourceTMCCluster(),
+			ResourceName:              ResourceSecret(),
+			cluster.ResourceName:      cluster.ResourceTMCCluster(),
+			clustergroup.ResourceName: clustergroup.ResourceClusterGroup(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			ResourceName:         DataSourceSecret(),
-			cluster.ResourceName: cluster.DataSourceTMCCluster(),
+			ResourceName:              DataSourceSecret(),
+			cluster.ResourceName:      cluster.DataSourceTMCCluster(),
+			clustergroup.ResourceName: clustergroup.DataSourceClusterGroup(),
 		},
 		ConfigureContextFunc: getConfigureContextFunc(),
 	}

@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 )
 
 const (
@@ -23,13 +24,15 @@ const (
 )
 
 type testAcceptanceConfig struct {
-	Provider           *schema.Provider
-	SecretResource     string
-	SecretResourceVar  string
-	SecretResourceName string
-	SecretName         string
-	ClusterName        string
-	NamespaceName      string
+	Provider             *schema.Provider
+	SecretResource       string
+	SecretResourceVar    string
+	SecretResourceName   string
+	SecretName           string
+	ScopeHelperResources *commonscope.ScopeHelperResources
+	NamespaceName        string
+	DataSourceName       string
+	DataSourceVar        string
 }
 
 func getConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
