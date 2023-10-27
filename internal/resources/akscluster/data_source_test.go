@@ -15,8 +15,11 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/pkg/errors"
+
 	"github.com/stretchr/testify/suite"
+
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
@@ -75,6 +78,20 @@ func (s *ReadDatasourceTestSuite) Test_datasourceRead() {
 	s.Assert().Equal("test-uid", d.Id(), "expect id from REST request")
 	s.Assert().NotNil(d.Get(common.MetaKey), "expected metadata from REST request")
 	s.Assert().NotNil(d.Get("spec"), "expected cluster spec from REST request")
+
+	s.Assert().False(s.mocks.kubeConfigClient.KubeConfigServicedWasCalled, "kubeconfig client was called when not expected")
+}
+
+func (s *ReadDatasourceTestSuite) Test_datasourceRead_waitFor_KubConfig() {
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap(withWaitForHealthy))
+
+	result := s.datasource.ReadContext(s.ctx, d, s.config)
+
+	s.Assert().False(result.HasError())
+
+	s.Assert().True(s.mocks.kubeConfigClient.KubeConfigServicedWasCalled, "kubeconfig client was not called")
+	s.Assert().Equal("my-agent-name", s.mocks.kubeConfigClient.KubeConfigServiceCalledWith.Name)
+	s.Assert().Equal("base64_kubeconfig", d.Get("kubeconfig"))
 
 	s.Assert().False(s.mocks.kubeConfigClient.KubeConfigServicedWasCalled, "kubeconfig client was called when not expected")
 }
