@@ -6,12 +6,13 @@ Description: |-
 
 # Helm Feature
 
-The `tanzu-mission-control_helm_feature` resource allows you to enable and disable helm feature to a particular scope through Tanzu Mission Control.
+The `tanzu-mission-control_helm_feature` resource allows you to enable and disable [helm feature][helm-feature] to a particular scope through Tanzu Mission Control.
 
 When you enable the Helm service on a cluster or cluster group, you can then create releases in your cluster from Helm charts stored in the Bitnami repository.
 To enable a helm service, you must be associated with the cluster.admin or clustergroup.admin role.
 
 [helm-feature]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-0927CDC8-A5C1-4FAE-9A7C-8A5D62FDF8D8.html
+
 ## Helm Feature Scope
 
 In the Tanzu Mission Control resource hierarchy, there are two levels at which you can specify Helm Feature resources:
