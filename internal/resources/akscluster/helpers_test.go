@@ -584,12 +584,15 @@ func (m *mockNodepoolClient) AksNodePoolResourceServiceDelete(req *models.Vmware
 }
 
 type mockKubeConfigClient struct {
+	KubeConfigServicedWasCalled bool
 	KubeConfigServiceCalledWith *configModels.VmwareTanzuManageV1alpha1ClusterFullName
 	kubeConfigResponse          *configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponse
 	kubeConfigError             error
 }
 
 func (m *mockKubeConfigClient) KubeconfigServiceGet(fn *configModels.VmwareTanzuManageV1alpha1ClusterFullName) (*configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponse, error) {
+	m.KubeConfigServicedWasCalled = true
 	m.KubeConfigServiceCalledWith = fn
+
 	return m.kubeConfigResponse, m.kubeConfigError
 }
