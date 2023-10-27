@@ -88,10 +88,12 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate() {
 
 	s.Assert().False(result.HasError())
 	s.Assert().True(s.mocks.clusterClient.AksCreateClusterWasCalled, "cluster create was not called")
-	s.Assert().Equal(s.mocks.nodepoolClient.CreateNodepoolWasCalledWith, expectedNP, "nodepool create was not called ")
+	s.Assert().Equal(s.mocks.nodepoolClient.CreateNodepoolWasCalledWith, expectedNP, "nodepool create was not called")
 	s.Assert().Equal(expectedFullName(), s.mocks.clusterClient.AksClusterResourceServiceGetCalledWith)
 	s.Assert().Equal(expectedFullName(), s.mocks.nodepoolClient.AksNodePoolResourceServiceListCalledWith)
 	s.Assert().Equal("test-uid", d.Id())
+
+	s.Assert().False(s.mocks.kubeConfigClient.KubeConfigServicedWasCalled, "kubeconfig client was called when not expected")
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_withPodCIDR() {
@@ -147,6 +149,7 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_waitFor_KubConfig() {
 	s.Assert().Equal(s.mocks.nodepoolClient.CreateNodepoolWasCalledWith, expectedNP, "nodepool create was not called ")
 	s.Assert().Equal(expectedFullName(), s.mocks.clusterClient.AksClusterResourceServiceGetCalledWith)
 	s.Assert().Equal(expectedFullName(), s.mocks.nodepoolClient.AksNodePoolResourceServiceListCalledWith)
+	s.Assert().True(s.mocks.kubeConfigClient.KubeConfigServicedWasCalled, "kubeconfig client was not called")
 	s.Assert().Equal("my-agent-name", s.mocks.kubeConfigClient.KubeConfigServiceCalledWith.Name)
 	s.Assert().Equal("test-uid", d.Id())
 	s.Assert().Equal("base64_kubeconfig", d.Get("kubeconfig"))
