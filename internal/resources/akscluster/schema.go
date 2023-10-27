@@ -318,10 +318,24 @@ var NetworkConfig = &schema.Resource{
 		},
 		networkPluginKey: {
 			Type:        schema.TypeString,
-			Description: "Network plugin. Set the value of this key to 'azure' if you want to specify values for network_config.dns_service_ip and/or network_config.service_cidr.",
+			Description: "Network plugin. It is used for building Kubernetes network. Allowed values: azure, kubenet. Specify 'azure' for routable pod IPs from VNET, 'kubenet' for non-routable pod IPs with an overlay network, Defaults to 'kubenet'",
 			ForceNew:    true,
 			Optional:    true,
 			Computed:    true,
+			ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{"",
+				aksmodel.VmwareTanzuManageV1alpha1AksClusterNetworkPluginKubenet,
+				aksmodel.VmwareTanzuManageV1alpha1AksClusterNetworkPluginAzure,
+			}, false)),
+		},
+		networkPluginModeKey: {
+			Type:        schema.TypeString,
+			Description: "Network plugin mode. Allowed values: overlay. Used to control the mode the network plugin should operate in. For example, 'overlay' used with networkPlugin=azure will use an overlay network (non-VNET IPs) for pods in the cluster.",
+			ForceNew:    true,
+			Optional:    true,
+			Computed:    true,
+			ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{"",
+				aksmodel.VmwareTanzuManageV1alpha1AksClusterNetworkPluginModeOverlay,
+			}, false)),
 		},
 		networkPolicyKey: {
 			Type:        schema.TypeString,
@@ -624,7 +638,12 @@ var NodepoolSpecSchema = &schema.Schema{
 			},
 			vnetSubnetKey: {
 				Type:        schema.TypeString,
-				Description: "If this is not specified, a VNET and subnet will be generated and used. If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to just nodes",
+				Description: "The ID of a subnet in an existing VNet into which to deploy the cluster. If this is not specified, a VNET and subnet will be generated and used. If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to just nodes",
+				Optional:    true,
+			},
+			podSubnetKey: {
+				Type:        schema.TypeString,
+				Description: "The ID of a subnet in an existing VNet into which to assign pods in the cluster. Requires network-plugin to be azure and not compatible with network-plugin-mode overlay",
 				Optional:    true,
 			},
 			nodeLabelsKey: {

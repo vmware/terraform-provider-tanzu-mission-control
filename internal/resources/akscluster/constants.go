@@ -8,6 +8,9 @@ package akscluster
 import "time"
 
 const (
+	azureCNI        = "azure"
+	cniAzureOverlay = "overlay"
+
 	ResourceName                               = "tanzu-mission-control_akscluster"
 	RetryInterval                              = retryInterval("retry-interval")
 	defaultTimeout                             = 30 * time.Minute
@@ -49,6 +52,7 @@ const (
 	networkConfigKey                           = "network_config"
 	loadBalancerSkuKey                         = "load_balancer_sku"
 	networkPluginKey                           = "network_plugin"
+	networkPluginModeKey                       = "network_plugin_mode"
 	networkPolicyKey                           = "network_policy"
 	dnsServiceIPKey                            = "dns_service_ip"
 	dockerBridgeCidrKey                        = "docker_bridge_cidr"
@@ -90,6 +94,7 @@ const (
 	keyKey                                     = "key"
 	valueKey                                   = "value"
 	vnetSubnetKey                              = "vnet_subnet_id"
+	podSubnetKey                               = "pod_subnet_id"
 	nodeLabelsKey                              = "node_labels"
 	autoscalingConfigKey                       = "auto_scaling_config"
 	minCountKey                                = "min_count"

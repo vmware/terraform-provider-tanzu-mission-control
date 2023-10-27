@@ -71,6 +71,13 @@ func (s *ReadDatasourceTestSuite) Test_datasourceRead() {
 	s.Assert().NotNil(d.Get("spec"), "expected cluster spec from REST request")
 }
 
+func (s *ReadDatasourceTestSuite) Test_datasource_spec_should_be_optional() {
+	dataSourceSchema := s.datasource
+
+	s.Assert().False(dataSourceSchema.Schema["spec"].Required)
+	s.Assert().True(dataSourceSchema.Schema["spec"].Optional)
+}
+
 func (s *ReadDatasourceTestSuite) Test_datasourceRead_invalidConfig() {
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 

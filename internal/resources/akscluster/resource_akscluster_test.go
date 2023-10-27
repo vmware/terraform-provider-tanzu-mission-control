@@ -64,9 +64,33 @@ func (s *CreatClusterTestSuite) SetupTest() {
 	s.ctx = context.WithValue(context.Background(), akscluster.RetryInterval, 10*time.Millisecond)
 }
 
+func (s *CreatClusterTestSuite) Test_datasource_spec_should_be_required() {
+	resourceSchema := s.aksClusterResource
+
+	s.Assert().True(resourceSchema.Schema["spec"].Required)
+	s.Assert().False(resourceSchema.Schema["spec"].Optional)
+}
+
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate() {
 	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap())
 	expectedNP := aTestNodePool(forCluster(aTestCluster().FullName))
+
+	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
+
+	s.Assert().False(result.HasError())
+	s.Assert().True(s.mocks.clusterClient.AksCreateClusterWasCalled, "cluster create was not called")
+	s.Assert().Equal(s.mocks.nodepoolClient.CreateNodepoolWasCalledWith, expectedNP, "nodepool create was not called ")
+	s.Assert().Equal(expectedFullName(), s.mocks.clusterClient.AksClusterResourceServiceGetCalledWith)
+	s.Assert().Equal(expectedFullName(), s.mocks.nodepoolClient.AksNodePoolResourceServiceListCalledWith)
+	s.Assert().Equal("test-uid", d.Id())
+}
+
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_withPodCIDR() {
+	nodepools := []any{aTestNodepoolDataMap(withPodSubnetID(""))}
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap(withNodepools(nodepools),
+		withNetworkPlugin("kubenet"), withPodCIDR([]any{"10.1.0.0/16"})))
+	expectedNP := aTestNodePool(forCluster(aTestCluster(withTestPodCIDR).FullName))
+	expectedNP.Spec.PodSubnetID = ""
 
 	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
 
@@ -172,6 +196,95 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_all_sys
 
 	s.Assert().True(result.HasError())
 	s.Assert().Equal("no system nodepools were successfully created. [failed to create system nodepool]", result[0].Summary)
+}
+
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_overlay_with_kubenet_fail() {
+	cluster := aTestClusterDataMap(withNetworkPlugin("kubenet"), withNetworkPluginMode("overlay"))
+	s.mocks.nodepoolClient.failSystemPools = true
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
+
+	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
+
+	s.Assert().True(result.HasError())
+	s.Assert().Equal("network_plugin_mode 'overlay' can only be used if network_plugin is set to 'azure'", result[0].Summary)
+}
+
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_podCIDR_azure_fail() {
+	cluster := aTestClusterDataMap(withNetworkPlugin("azure"), withPodCIDR([]any{"127.0.0.3"}))
+	s.mocks.nodepoolClient.failSystemPools = true
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
+
+	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
+
+	s.Assert().True(result.HasError())
+	s.Assert().Equal("podCIDR cannot be set if network-plugin is 'azure' without 'overlay'", result[0].Summary)
+}
+
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_overlay_with_pod_subnet_fail() {
+	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetID("vnet-1/subnet-1"))}
+	cluster := aTestClusterDataMap(withNetworkPluginMode("overlay"), withNodepools(nodepools))
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
+
+	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
+
+	s.Assert().True(result.HasError())
+	s.Assert().Equal("can not set pod_subnet_id when network_plugin is set to 'kubenet' or to 'azure' with network_plugin_mode set to 'overlay'", result[0].Summary)
+}
+
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_kubenet_with_pod_subnet_fail() {
+	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetID("vnet-1/subnet-1"))}
+	cluster := aTestClusterDataMap(withNetworkPlugin("kubenet"), withNetworkPluginMode(""), withNodepools(nodepools))
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
+
+	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
+
+	s.Assert().True(result.HasError())
+	s.Assert().Equal("can not set pod_subnet_id when network_plugin is set to 'kubenet' or to 'azure' with network_plugin_mode set to 'overlay'", result[0].Summary)
+}
+
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_wrong_subnet_format_fail() {
+	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetID("vnet-1/subnet-1"))}
+	cluster := aTestClusterDataMap(withNodepools(nodepools))
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
+
+	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
+
+	s.Assert().True(result.HasError())
+	s.Assert().Equal("cannot read vNet Id from subnet with Id 'vnet-1/subnet-1'", result[0].Summary)
+}
+
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_different_vNets_fail() {
+	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetID("vnet-2/subnets/subnet-2"))}
+	cluster := aTestClusterDataMap(withNodepools(nodepools))
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
+
+	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
+
+	s.Assert().True(result.HasError())
+	s.Assert().Equal("node (Vnet-subnet) and pod subNets should belong to the same vNet", result[0].Summary)
+}
+
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_pod_subnet_without_node_subnet_fail() {
+	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"),
+		withNodeSubnetID(""), withPodSubnetID("vnet-1/subnets/subnet-2"))}
+	cluster := aTestClusterDataMap(withNodepools(nodepools))
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
+
+	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
+
+	s.Assert().True(result.HasError())
+	s.Assert().Equal("pod subNet cannot be specified if node subNet is not defined", result[0].Summary)
+}
+
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_NodePool_pod_and_pod_submets_same_fail() {
+	nodepools := []any{aTestNodepoolDataMap(withNodepoolMode("SYSTEM"), withPodSubnetID("vnet-1/subnets/subnet-1"))}
+	cluster := aTestClusterDataMap(withNodepools(nodepools))
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, cluster)
+
+	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
+
+	s.Assert().True(result.HasError())
+	s.Assert().Equal("node (Vnet-subnet) and pod subNets cannot be the same", result[0].Summary)
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_ClusterCreate_no_system_nodepool() {

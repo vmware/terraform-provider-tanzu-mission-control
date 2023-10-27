@@ -146,7 +146,8 @@ Optional:
 - `dns_service_ip` (String) IP address assigned to the Kubernetes DNS service. This key can only be set when the network_config.network_plugin key is set to 'azure'.
 - `docker_bridge_cidr` (String) A CIDR notation IP range assigned to the Docker bridge network
 - `load_balancer_sku` (String) Load balancer SKU
-- `network_plugin` (String) Network plugin. Set the value of this key to 'azure' if you want to specify values for network_config.dns_service_ip and/or network_config.service_cidr.
+- `network_plugin` (String) Network plugin. It is used for building Kubernetes network. Allowed values: azure, kubenet. Specify 'azure' for routable pod IPs from VNET, 'kubenet' for non-routable pod IPs with an overlay network, Defaults to 'kubenet'
+- `network_plugin_mode` (String) Network plugin mode. Allowed values: overlay. Used to control the mode the network plugin should operate in. For example, 'overlay' used with networkPlugin=azure will use an overlay network (non-VNET IPs) for pods in the cluster.
 - `network_policy` (String) Network policy
 - `pod_cidr` (List of String) CIDR notation IP ranges from which to assign pod IPs
 - `service_cidr` (List of String) CIDR notation IP ranges from which to assign service cluster IP. This key can only be set when the network_config.network_plugin key is set to 'azure'.
@@ -290,6 +291,7 @@ Optional:
 - `os_disk_size_gb` (Number) OS Disk Size in GB to be used to specify the disk size for every machine in the nodepool. If you specify 0, it will apply the default osDisk size according to the vmSize specified
 - `os_disk_type` (String) OS Disk Type. Allowed values include: EPHEMERAL or MANAGED.
 - `os_type` (String) The OS type of the nodepool. Allowed values include: LINUX.
+- `pod_subnet_id` (String) The ID of a subnet in an existing VNet into which to assign pods in the cluster. Requires network-plugin to be azure and not compatible with network-plugin-mode overlay
 - `scale_set_eviction_policy` (String) Scale set eviction policy, Allowed values include: DELETE or DEALLOCATE.
 - `scale_set_priority` (String) Scale set priority. Allowed values include: REGULAR or SPOT.
 - `spot_max_price` (Number) Max spot price
@@ -297,7 +299,7 @@ Optional:
 - `taints` (Block List) The taints added to new nodes during nodepool create and scale (see [below for nested schema](#nestedblock--spec--nodepool--spec--taints))
 - `type` (String) The Nodepool type. Allowed values include: VIRTUAL_MACHINE_SCALE_SETS or AVAILABILITY_SET.
 - `upgrade_config` (Block List, Max: 1) upgrade config (see [below for nested schema](#nestedblock--spec--nodepool--spec--upgrade_config))
-- `vnet_subnet_id` (String) If this is not specified, a VNET and subnet will be generated and used. If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to just nodes
+- `vnet_subnet_id` (String) The ID of a subnet in an existing VNet into which to deploy the cluster. If this is not specified, a VNET and subnet will be generated and used. If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to just nodes
 
 <a id="nestedblock--spec--nodepool--spec--auto_scaling_config"></a>
 ### Nested Schema for `spec.nodepool.spec.auto_scaling_config`

@@ -211,6 +211,14 @@ The plugin will read the descriptions and schema of each resource and data sourc
 
 Please refer to `examples` folder to perform CRUD operations with Tanzu Mission Control provider for various resources
 
+# Troubleshooting
+
+## Executions of a different version of the provider
+Terraform will always look for the latest version of the provided and will use it even if you have just built a previous version.
+Terraform caches all known builds/versions in the cache folder located in ```~/.terraform.d``` folder.
+
+Delete ```~/.terraform.d/plugins/vmware``` folder to remove all cached versions of the plugin
+
 # Support
 
 The Tanzu Mission Control Terraform provider is now VMware supported as well as community supported. For bugs and feature requests please open a Github Issue and label it appropriately or contact VMware support.

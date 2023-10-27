@@ -51,6 +51,16 @@ func withStatusSuccess(c *models.VmwareTanzuManageV1alpha1AksCluster) {
 	}
 }
 
+func withTestPodCIDR(c *models.VmwareTanzuManageV1alpha1AksCluster) {
+	c.Spec = &models.VmwareTanzuManageV1alpha1AksclusterSpec{
+		Config: &models.VmwareTanzuManageV1alpha1AksclusterClusterConfig{
+			NetworkConfig: &models.VmwareTanzuManageV1alpha1AksclusterNetworkConfig{
+				PodCidrs: []string{"10.1.0.0/16"},
+			},
+		},
+	}
+}
+
 func withNodepoolStatusSuccess(c *models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) {
 	c.Status = &models.VmwareTanzuManageV1alpha1AksclusterNodepoolStatus{
 		Phase: models.VmwareTanzuManageV1alpha1AksclusterNodepoolPhaseREADY.Pointer(),
@@ -118,7 +128,6 @@ func aTestCluster(w ...clusterWither) *models.VmwareTanzuManageV1alpha1AksCluste
 					LoadBalancerSku:  "load-balancer",
 					NetworkPlugin:    "azure",
 					NetworkPolicy:    "policy",
-					PodCidrs:         []string{"127.0.0.3"},
 					ServiceCidrs:     []string{"127.0.0.4"},
 				},
 				StorageConfig: &models.VmwareTanzuManageV1alpha1AksclusterStorageConfig{
@@ -202,24 +211,28 @@ func withNetworkPlugin(plugin string) mapWither {
 	}
 }
 
-func withoutNetworkDNSServiceIP(m map[string]any) {
-	specs := m["spec"].([]any)
-	spec := specs[0].(map[string]any)
-	configs := spec["config"].([]any)
-	config := configs[0].(map[string]any)
-	networks := config["network_config"].([]any)
-	network := networks[0].(map[string]any)
-	delete(network, "dns_service_ip")
+func withPodCIDR(podCIDR []any) mapWither {
+	return func(m map[string]any) {
+		specs := m["spec"].([]any)
+		spec := specs[0].(map[string]any)
+		configs := spec["config"].([]any)
+		config := configs[0].(map[string]any)
+		networks := config["network_config"].([]any)
+		network := networks[0].(map[string]any)
+		network["pod_cidr"] = podCIDR
+	}
 }
 
-func withoutNetworkServiceCIDR(m map[string]any) {
-	specs := m["spec"].([]any)
-	spec := specs[0].(map[string]any)
-	configs := spec["config"].([]any)
-	config := configs[0].(map[string]any)
-	networks := config["network_config"].([]any)
-	network := networks[0].(map[string]any)
-	delete(network, "service_cidr")
+func withNetworkPluginMode(pluginMode string) mapWither {
+	return func(m map[string]any) {
+		specs := m["spec"].([]any)
+		spec := specs[0].(map[string]any)
+		configs := spec["config"].([]any)
+		config := configs[0].(map[string]any)
+		networks := config["network_config"].([]any)
+		network := networks[0].(map[string]any)
+		network["network_plugin_mode"] = pluginMode
+	}
 }
 
 func withNodepools(nps []any) mapWither {
@@ -257,6 +270,22 @@ func withNodepoolMode(mode string) mapWither {
 		specs := m["spec"].([]any)
 		spec := specs[0].(map[string]any)
 		spec["mode"] = mode
+	}
+}
+
+func withNodeSubnetID(nodeSubnetID string) mapWither {
+	return func(m map[string]any) {
+		specs := m["spec"].([]any)
+		spec := specs[0].(map[string]any)
+		spec["vnet_subnet_id"] = nodeSubnetID
+	}
+}
+
+func withPodSubnetID(podSubnetID string) mapWither {
+	return func(m map[string]any) {
+		specs := m["spec"].([]any)
+		spec := specs[0].(map[string]any)
+		spec["pod_subnet_id"] = podSubnetID
 	}
 }
 
@@ -300,14 +329,15 @@ func aTestClusterDataMap(w ...mapWither) map[string]any {
 					"ssh_keys":       []any{"key1", "key2"},
 				}},
 				"network_config": []any{map[string]any{
-					"load_balancer_sku":  "load-balancer",
-					"network_plugin":     "azure",
-					"network_policy":     "policy",
-					"dns_service_ip":     "127.0.0.1",
-					"docker_bridge_cidr": "127.0.0.2",
-					"pod_cidr":           []any{"127.0.0.3"},
-					"service_cidr":       []any{"127.0.0.4"},
-					"dns_prefix":         "net-prefix",
+					"load_balancer_sku":   "load-balancer",
+					"network_plugin":      "azure",
+					"network_plugin_mode": "",
+					"network_policy":      "policy",
+					"dns_service_ip":      "127.0.0.1",
+					"docker_bridge_cidr":  "127.0.0.2",
+					"pod_cidr":            nil,
+					"service_cidr":        []any{"127.0.0.4"},
+					"dns_prefix":          "net-prefix",
 				}},
 				"storage_config": []any{map[string]any{
 					"enable_disk_csi_driver":     true,
@@ -417,7 +447,8 @@ func aTestNodePool(w ...nodepoolWither) *models.VmwareTanzuManageV1alpha1Aksclus
 			UpgradeConfig: &models.VmwareTanzuManageV1alpha1AksclusterNodepoolUpgradeConfig{
 				MaxSurge: "50%",
 			},
-			VnetSubnetID: "subnet-1",
+			VnetSubnetID: "vnet-1/subnets/subnet-1",
+			PodSubnetID:  "vnet-1/subnets/subnet-2",
 		},
 	}
 
@@ -453,7 +484,8 @@ func aTestNodepoolDataMap(w ...mapWither) map[string]any {
 					"value":  "tval",
 				},
 			},
-			"vnet_subnet_id": "subnet-1",
+			"vnet_subnet_id": "vnet-1/subnets/subnet-1",
+			"pod_subnet_id":  "vnet-1/subnets/subnet-2",
 			"node_labels":    map[string]any{"label": "val"},
 			"tags":           map[string]any{"tmc.node.tag": "val"},
 			"auto_scaling_config": []any{map[string]any{
