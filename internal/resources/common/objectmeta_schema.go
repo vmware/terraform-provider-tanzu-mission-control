@@ -20,7 +20,7 @@ const (
 	MetaKey            = "meta"
 	LabelsKey          = "labels"
 	DescriptionKey     = "description"
-	annotationsKey     = "annotations"
+	AnnotationsKey     = "annotations"
 	uidKey             = "uid"
 	resourceVersionKey = "resource_version"
 	CreatorLabelKey    = "tmc.cloud.vmware.com/creator"
@@ -34,7 +34,7 @@ var Meta = &schema.Schema{
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			annotationsKey: {
+			AnnotationsKey: {
 				Type:        schema.TypeMap,
 				Description: "Annotations for the resource",
 				Optional:    true,
@@ -109,7 +109,7 @@ func ConstructMeta(d *schema.ResourceData) (objectMeta *objectmetamodel.VmwareTa
 
 	objectMetaData := data[0].(map[string]interface{})
 
-	if v, ok := objectMetaData[annotationsKey]; ok {
+	if v, ok := objectMetaData[AnnotationsKey]; ok {
 		objectMeta.Annotations = GetTypeStringMapData(v.(map[string]interface{}))
 	}
 
@@ -139,7 +139,7 @@ func FlattenMeta(objectMeta *objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta) 
 
 	flattenMetaData := make(map[string]interface{})
 
-	flattenMetaData[annotationsKey] = objectMeta.Annotations
+	flattenMetaData[AnnotationsKey] = objectMeta.Annotations
 	flattenMetaData[LabelsKey] = objectMeta.Labels
 	flattenMetaData[DescriptionKey] = objectMeta.Description
 	flattenMetaData[uidKey] = objectMeta.UID
@@ -170,15 +170,19 @@ func GetTypeIntMapData(data map[string]interface{}) map[string]int {
 	return convertedMapData
 }
 
-// MetaConverterMap mapping for converter.
-var MetaConverterMap = &converter.BlockToStruct{
-	annotationsKey: &converter.Map{
-		"*": "meta.annotations.*",
-	},
-	LabelsKey: &converter.Map{
-		"*": "meta.labels.*",
-	},
-	DescriptionKey:     "meta.description",
-	resourceVersionKey: "meta.resourceVersion",
-	uidKey:             "meta.uid",
+// GetMetaConverterMap returns mapping for converter.
+func GetMetaConverterMap(modelPathSeparator string) *converter.BlockToStruct {
+	var MetaConverterMap = &converter.BlockToStruct{
+		AnnotationsKey: &converter.Map{
+			converter.AllMapKeysFieldMarker: converter.BuildModelPath(modelPathSeparator, "meta", "annotations", converter.AllMapKeysFieldMarker),
+		},
+		LabelsKey: &converter.Map{
+			converter.AllMapKeysFieldMarker: converter.BuildModelPath(modelPathSeparator, "meta", "labels", converter.AllMapKeysFieldMarker),
+		},
+		DescriptionKey:     converter.BuildModelPath(modelPathSeparator, "meta", "description"),
+		resourceVersionKey: converter.BuildModelPath(modelPathSeparator, "meta", "resourceVersion"),
+		uidKey:             converter.BuildModelPath(modelPathSeparator, "meta", "uid"),
+	}
+
+	return MetaConverterMap
 }

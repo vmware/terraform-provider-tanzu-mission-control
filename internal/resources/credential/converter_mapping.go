@@ -17,32 +17,32 @@ import (
 )
 
 var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
-	NameKey:        "fullName.name",
-	common.MetaKey: common.MetaConverterMap,
+	NameKey:        tfModelConverterHelper.BuildDefaultModelPath("fullname", "name"),
+	common.MetaKey: common.GetMetaConverterMap(tfModelConverterHelper.DefaultModelPathSeparator),
 	specKey: &tfModelConverterHelper.BlockToStruct{
-		capabilityKey: "spec.capability",
-		providerKey:   "spec.meta.provider",
+		capabilityKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "capability"),
+		providerKey:   tfModelConverterHelper.BuildDefaultModelPath("spec", "meta", "provider"),
 		dataKey: &tfModelConverterHelper.BlockToStruct{
-			genericCredentialKey: "spec.data.genericCredential",
+			genericCredentialKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "genericCredential"),
 			awsCredentialKey: &tfModelConverterHelper.BlockToStruct{
-				awsAccountIDKey:      "spec.data.awsCredential.accountId",
-				genericCredentialKey: "spec.data.awsCredential.genericCredential",
+				awsAccountIDKey:      tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "awsCredential", "accountId"),
+				genericCredentialKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "awsCredential", "genericCredential"),
 				awsIAMRoleKey: &tfModelConverterHelper.BlockToStruct{
-					iamRoleARNKey:   "spec.data.awsCredential.iamRole.arn",
-					iamRoleExtIDKey: "spec.data.awsCredential.iamRole.extId",
+					iamRoleARNKey:   tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "awsCredential", "iamRole", "arn"),
+					iamRoleExtIDKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "awsCredential", "iamRole", "extId"),
 				},
 			},
 			keyValueKey: &tfModelConverterHelper.BlockToStruct{
 				dataKey: &tfModelConverterHelper.EvaluatedField{
-					Field:    "spec.data.keyValue.data",
+					Field:    tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "keyValue", "data"),
 					EvalFunc: tfModelConverterHelper.EvaluationFunc(keyValueEvalFunc),
 				},
-				typeKey: "spec.data.keyValue.type",
+				typeKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "keyValue", "type"),
 			},
 		},
 	},
 	statusKey: &tfModelConverterHelper.Map{
-		"*": "status.*",
+		tfModelConverterHelper.AllMapKeysFieldMarker: tfModelConverterHelper.BuildDefaultModelPath("status", tfModelConverterHelper.AllMapKeysFieldMarker),
 	},
 }
 

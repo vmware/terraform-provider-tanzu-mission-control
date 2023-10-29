@@ -19,8 +19,15 @@ type APIModel interface {
 }
 
 type TFSchemaModelConverter[T APIModel] struct {
-	TFModelMap *BlockToStruct
+	TFModelMap         *BlockToStruct
+	ModelPathSeparator string
 }
+
+const (
+	DefaultModelPathSeparator = "|"
+	ArrayFieldMarker          = "[]"
+	AllMapKeysFieldMarker     = "*"
+)
 
 // ### Public Funcs ###.
 
@@ -28,9 +35,9 @@ type TFSchemaModelConverter[T APIModel] struct {
 // Arguments for the function are:
 // data - a schema.ResourceData object.
 // buildOnlyKeys - a []string for specifying specific keys to be built in the model.
-// keys should be supplied relatively to the Terraform schema structure, for nested keys it should be supplied with "." separator.
+// keys should be supplied relatively to the Terraform schema structure, for nested keys it should be supplied with a separator.
 // If no keys supplied in the slice, the function will build the entire model.
-func (converter *TFSchemaModelConverter[T]) ConvertTFSchemaToAPIModel(data *schema.ResourceData, buildOnlyKeys []string) (modelPtr T) {
+func (converter *TFSchemaModelConverter[T]) ConvertTFSchemaToAPIModel(data *schema.ResourceData, buildOnlyKeys []string) (modelPtr T, err error) {
 	var (
 		arrIndexer ArrIndexer
 
@@ -43,19 +50,19 @@ func (converter *TFSchemaModelConverter[T]) ConvertTFSchemaToAPIModel(data *sche
 
 	if len(buildOnlyKeys) > 0 {
 		for _, subKey := range buildOnlyKeys {
-			converter.handleOffsetBuildModelField(&modelJSON, data, strings.Split(subKey, "."), &arrIndexer)
+			converter.handleOffsetBuildModelField(&modelJSON, data, strings.Split(subKey, converter.getModelPathSeparator()), &arrIndexer)
 		}
 	} else {
 		for mapKey, mapValue := range *converter.TFModelMap {
 			schemaData := data.Get(mapKey)
-			buildModelField(&modelJSON, schemaData, mapValue, &arrIndexer)
+			converter.buildModelField(&modelJSON, schemaData, mapValue, &arrIndexer)
 		}
 	}
 
 	jsonBytes, _ := json.Marshal(modelJSON)
-	_ = modelPtr.UnmarshalBinary(jsonBytes)
+	err = modelPtr.UnmarshalBinary(jsonBytes)
 
-	return modelPtr
+	return modelPtr, err
 }
 
 // FillTFSchema This function converts a given Swagger API Model to TF Schema data (aka schema.ResourceData) structure and fills the schema.
@@ -82,7 +89,7 @@ func (converter *TFSchemaModelConverter[T]) FillTFSchema(modelPtr T, data *schem
 	}
 
 	for mapKey, mapValue := range *converter.TFModelMap {
-		tfValue, err = buildTFValue(&modelJSONData, mapValue, &arrIndexer)
+		tfValue, err = converter.buildTFValue(&modelJSONData, mapValue, &arrIndexer)
 
 		if err != nil {
 			return err
@@ -105,7 +112,7 @@ func (converter *TFSchemaModelConverter[T]) FillTFSchema(modelPtr T, data *schem
 // As an example, if you have converter or converter mapping of an object like Target Location and you need to create another schema for a slice of Target Locations,
 // then you can use the converter or the mapping to unpack the schema for the higher level struct containing the list of Target Locations.
 func (converter *TFSchemaModelConverter[T]) UnpackSchema(prefix string) *BlockToStruct {
-	newTFModelMap := converter.TFModelMap.UnpackSchema(nil, prefix).(*BlockToStruct)
+	newTFModelMap := converter.TFModelMap.UnpackSchema(converter.getModelPathSeparator(), nil, prefix).(*BlockToStruct)
 
 	return newTFModelMap
 }
@@ -136,5 +143,13 @@ func (converter *TFSchemaModelConverter[T]) handleOffsetBuildModelField(rootMode
 		}
 	}
 
-	buildModelField(rootModelJSON, rootSchemaData, rootMapValue, arrIndexer)
+	converter.buildModelField(rootModelJSON, rootSchemaData, rootMapValue, arrIndexer)
+}
+
+func (converter *TFSchemaModelConverter[T]) getModelPathSeparator() string {
+	if converter.ModelPathSeparator == "" {
+		return DefaultModelPathSeparator
+	}
+
+	return converter.ModelPathSeparator
 }

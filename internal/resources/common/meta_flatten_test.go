@@ -36,7 +36,7 @@ func TestFlattenMeta(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					annotationsKey:     map[string]string{"test": "test"},
+					AnnotationsKey:     map[string]string{"test": "test"},
 					LabelsKey:          map[string]string{"test": "test"},
 					DescriptionKey:     "description of resource",
 					resourceVersionKey: "",
@@ -54,7 +54,7 @@ func TestFlattenMeta(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					annotationsKey:     map[string]string{"test": "test"},
+					AnnotationsKey:     map[string]string{"test": "test"},
 					LabelsKey:          map[string]string{},
 					DescriptionKey:     "description of resource",
 					resourceVersionKey: "",
@@ -72,7 +72,7 @@ func TestFlattenMeta(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					annotationsKey:     map[string]string{},
+					AnnotationsKey:     map[string]string{},
 					LabelsKey:          map[string]string{"test": "test"},
 					DescriptionKey:     "",
 					resourceVersionKey: "",

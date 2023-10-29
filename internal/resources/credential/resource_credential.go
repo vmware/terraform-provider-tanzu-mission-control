@@ -96,8 +96,12 @@ var dataSpec = &schema.Schema{
 
 func resourceCredentialCreate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
+	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(d, []string{})
 
-	model := tfModelResourceConverter.ConvertTFSchemaToAPIModel(d, []string{})
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "unable to create Tanzu Mission Control credential."))
+	}
+
 	request := &credentialsmodels.VmwareTanzuManageV1alpha1AccountCredentialCreateCredentialRequest{
 		Credential: model,
 	}
@@ -115,15 +119,19 @@ func resourceCredentialCreate(ctx context.Context, d *schema.ResourceData, m int
 
 func resourceCredentialDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	config := m.(authctx.TanzuContext)
-	namespaceName, _ := d.Get(NameKey).(string)
-	model := tfModelResourceConverter.ConvertTFSchemaToAPIModel(d, []string{NameKey})
+	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(d, []string{NameKey})
+
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "unable to create Tanzu Mission Control credential."))
+	}
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
-	err := config.TMCConnection.CredentialResourceService.CredentialResourceServiceDelete(model.FullName)
+	err = config.TMCConnection.CredentialResourceService.CredentialResourceServiceDelete(model.FullName)
+
 	if err != nil && !clienterrors.IsNotFoundError(err) {
-		return diag.FromErr(errors.Wrapf(err, "unable to delete Tanzu Mission Control credential entry, name : %s", namespaceName))
+		return diag.FromErr(errors.Wrapf(err, "unable to delete Tanzu Mission Control credential entry, name : %s", model.FullName.Name))
 	}
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but

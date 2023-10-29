@@ -17,10 +17,15 @@ const (
 	RefreshState Caller = "RefreshState"
 	CreateState  Caller = "CreateState"
 	UpdateState  Caller = "UpdateState"
+	DeleteState  Caller = "DeleteState"
 )
 
 func GetContextWithCaller(ctx context.Context, caller Caller) context.Context {
 	return context.WithValue(ctx, contextMethodKey{}, caller)
+}
+
+func IsContextCallerSet(ctx context.Context) bool {
+	return ctx.Value(contextMethodKey{}) != nil
 }
 
 func IsDataRead(ctx context.Context) bool {
@@ -37,4 +42,8 @@ func IsCreateState(ctx context.Context) bool {
 
 func IsUpdateState(ctx context.Context) bool {
 	return ctx.Value(contextMethodKey{}) == UpdateState
+}
+
+func IsDeleteState(ctx context.Context) bool {
+	return ctx.Value(contextMethodKey{}) == DeleteState
 }

@@ -10,68 +10,68 @@ import (
 	"strings"
 )
 
-func buildModelField(modelJSON *BlockToStruct, schemaData interface{}, mapValue interface{}, arrIndexer *ArrIndexer) {
+func (converter *TFSchemaModelConverter[T]) buildModelField(modelJSON *BlockToStruct, schemaData interface{}, mapValue interface{}, arrIndexer *ArrIndexer) {
 	if schemaData == nil || mapValue == nil {
 		return
 	}
 
 	switch mapValue := mapValue.(type) {
 	case *BlockToStruct:
-		modelHandleBlockStruct(modelJSON, schemaData, mapValue, arrIndexer)
+		converter.modelHandleBlockStruct(modelJSON, schemaData, mapValue, arrIndexer)
 	case *Map:
-		modelHandleBlockMap(modelJSON, schemaData, mapValue, arrIndexer)
+		converter.modelHandleBlockMap(modelJSON, schemaData, mapValue, arrIndexer)
 	case *BlockToStructSlice:
-		modelHandleBlockStructSlice(modelJSON, schemaData, mapValue, arrIndexer)
+		converter.modelHandleBlockStructSlice(modelJSON, schemaData, mapValue, arrIndexer)
 	case *BlockSliceToStructSlice:
-		modelHandleBlockSliceStructSlice(modelJSON, schemaData, mapValue, arrIndexer)
+		converter.modelHandleBlockSliceStructSlice(modelJSON, schemaData, mapValue, arrIndexer)
 	case *ListToStruct:
-		modelHandleListStruct(modelJSON, schemaData, mapValue, arrIndexer)
+		converter.modelHandleListStruct(modelJSON, schemaData, mapValue, arrIndexer)
 	case *EvaluatedField:
 		modelField := mapValue.Field
 		modelValue := mapValue.EvalFunc(ConstructModel, schemaData)
-		setModelValue(modelJSON, modelField, modelValue, arrIndexer)
+		converter.setModelValue(modelJSON, modelField, modelValue, arrIndexer)
 	case string:
 		modelField := mapValue
 		modelValue := schemaData
-		setModelValue(modelJSON, modelField, modelValue, arrIndexer)
+		converter.setModelValue(modelJSON, modelField, modelValue, arrIndexer)
 	}
 }
 
-func modelHandleBlockStruct(modelJSON *BlockToStruct, schemaData interface{}, mapValue *BlockToStruct, arrIndexer *ArrIndexer) {
+func (converter *TFSchemaModelConverter[T]) modelHandleBlockStruct(modelJSON *BlockToStruct, schemaData interface{}, mapValue *BlockToStruct, arrIndexer *ArrIndexer) {
 	if schemaDataSlice, ok := schemaData.([]interface{}); ok && len(schemaDataSlice) > 0 {
 		rootSchemaDict, _ := schemaDataSlice[0].(map[string]interface{})
 
 		for key, value := range *mapValue {
-			buildModelField(modelJSON, rootSchemaDict[key], value, arrIndexer)
+			converter.buildModelField(modelJSON, rootSchemaDict[key], value, arrIndexer)
 		}
 	}
 }
 
-func modelHandleBlockMap(modelJSON *BlockToStruct, schemaData interface{}, mapValue *Map, arrIndexer *ArrIndexer) {
+func (converter *TFSchemaModelConverter[T]) modelHandleBlockMap(modelJSON *BlockToStruct, schemaData interface{}, mapValue *Map, arrIndexer *ArrIndexer) {
 	if rootSchemaDict, ok := schemaData.(map[string]interface{}); ok {
-		definedKeysMapValue := mapValue.Copy([]string{"*"})
+		definedKeysMapValue := mapValue.Copy([]string{AllMapKeysFieldMarker})
 
-		if allKeysFlagMapValue, exists := (*mapValue)["*"]; exists {
+		if allKeysFlagMapValue, exists := (*mapValue)[AllMapKeysFieldMarker]; exists {
 			for key, value := range rootSchemaDict {
 				var dynamicMapValue interface{}
 
 				if allKeysFlagMapStr, ok := allKeysFlagMapValue.(string); ok {
-					dynamicMapValue = strings.ReplaceAll(allKeysFlagMapStr, "*", key)
+					dynamicMapValue = strings.ReplaceAll(allKeysFlagMapStr, AllMapKeysFieldMarker, key)
 				} else {
 					dynamicMapValue = allKeysFlagMapValue
 				}
 
-				buildModelField(modelJSON, value, dynamicMapValue, arrIndexer)
+				converter.buildModelField(modelJSON, value, dynamicMapValue, arrIndexer)
 			}
 		}
 
 		for key, value := range definedKeysMapValue {
-			buildModelField(modelJSON, rootSchemaDict[key], value, arrIndexer)
+			converter.buildModelField(modelJSON, rootSchemaDict[key], value, arrIndexer)
 		}
 	}
 }
 
-func modelHandleBlockStructSlice(modelJSON *BlockToStruct, schemaData interface{}, mapValue *BlockToStructSlice, arrIndexer *ArrIndexer) {
+func (converter *TFSchemaModelConverter[T]) modelHandleBlockStructSlice(modelJSON *BlockToStruct, schemaData interface{}, mapValue *BlockToStructSlice, arrIndexer *ArrIndexer) {
 	if len(schemaData.([]interface{})) > 0 {
 		arrIndexer.New()
 
@@ -81,10 +81,10 @@ func modelHandleBlockStructSlice(modelJSON *BlockToStruct, schemaData interface{
 
 				if schemaValue != nil {
 					if _, ok := elemMapValue.(*ListToStruct); ok {
-						buildModelField(modelJSON, schemaValue, elemMapValue, arrIndexer)
+						converter.buildModelField(modelJSON, schemaValue, elemMapValue, arrIndexer)
 					} else {
 						for _, item := range schemaValue.([]interface{}) {
-							buildModelField(modelJSON, []interface{}{item}, elemMapValue, arrIndexer)
+							converter.buildModelField(modelJSON, []interface{}{item}, elemMapValue, arrIndexer)
 							arrIndexer.IncrementLastIndex()
 						}
 					}
@@ -96,7 +96,7 @@ func modelHandleBlockStructSlice(modelJSON *BlockToStruct, schemaData interface{
 	}
 }
 
-func modelHandleBlockSliceStructSlice(modelJSON *BlockToStruct, schemaData interface{}, mapValue *BlockSliceToStructSlice, arrIndexer *ArrIndexer) {
+func (converter *TFSchemaModelConverter[T]) modelHandleBlockSliceStructSlice(modelJSON *BlockToStruct, schemaData interface{}, mapValue *BlockSliceToStructSlice, arrIndexer *ArrIndexer) {
 	if len(schemaData.([]interface{})) > 0 {
 		for _, elemTypeMap := range *mapValue {
 			arrIndexer.New()
@@ -105,7 +105,7 @@ func modelHandleBlockSliceStructSlice(modelJSON *BlockToStruct, schemaData inter
 				var _, ok = item.(map[string]interface{})
 
 				if ok {
-					buildModelField(modelJSON, []interface{}{item}, elemTypeMap, arrIndexer)
+					converter.buildModelField(modelJSON, []interface{}{item}, elemTypeMap, arrIndexer)
 					arrIndexer.IncrementLastIndex()
 				}
 			}
@@ -115,32 +115,34 @@ func modelHandleBlockSliceStructSlice(modelJSON *BlockToStruct, schemaData inter
 	}
 }
 
-func modelHandleListStruct(modelJSON *BlockToStruct, schemaData interface{}, mapValue *ListToStruct, arrIndexer *ArrIndexer) {
+func (converter *TFSchemaModelConverter[T]) modelHandleListStruct(modelJSON *BlockToStruct, schemaData interface{}, mapValue *ListToStruct, arrIndexer *ArrIndexer) {
 	if reflect.TypeOf(schemaData).Kind() == reflect.Slice {
 		sliceValue := reflect.ValueOf(schemaData)
 
 		for i := 0; i < sliceValue.Len(); i++ {
 			val := sliceValue.Index(i).Interface()
-			setModelValue(modelJSON, (*mapValue)[0], val, arrIndexer)
+			converter.setModelValue(modelJSON, (*mapValue)[0], val, arrIndexer)
 			arrIndexer.IncrementLastIndex()
 		}
 	}
 }
 
-func setModelValue(model *BlockToStruct, field string, value interface{}, arrIndexer *ArrIndexer) {
-	if !strings.Contains(field, ".") {
+func (converter *TFSchemaModelConverter[T]) setModelValue(model *BlockToStruct, field string, value interface{}, arrIndexer *ArrIndexer) {
+	modelPathSeparator := converter.getModelPathSeparator()
+
+	if !strings.Contains(field, modelPathSeparator) {
 		(*model)[field] = value
 	} else {
-		fieldPaths := strings.Split(field, ".")
+		fieldPaths := strings.Split(field, modelPathSeparator)
 		arrIndices := arrIndexer.GetAllIndexes()
-		leafField := strings.ReplaceAll(fieldPaths[len(fieldPaths)-1], "[]", "")
+		leafField := strings.ReplaceAll(fieldPaths[len(fieldPaths)-1], ArrayFieldMarker, "")
 		arrayFields := 0
 		parentField := *model
 
 		for i := 0; i < len(fieldPaths)-1; i++ {
 			fieldName := fieldPaths[i]
 
-			if !strings.Contains(fieldName, "[]") {
+			if !strings.Contains(fieldName, ArrayFieldMarker) {
 				if _, ok := parentField[fieldName]; !ok {
 					parentField[fieldName] = make(map[string]interface{})
 				}
@@ -149,7 +151,7 @@ func setModelValue(model *BlockToStruct, field string, value interface{}, arrInd
 			} else {
 				var object map[string]interface{}
 
-				fieldName = strings.ReplaceAll(fieldName, "[]", "")
+				fieldName = strings.ReplaceAll(fieldName, ArrayFieldMarker, "")
 				arrayIndex := arrIndices[arrayFields]
 
 				arrayFields++
