@@ -23,6 +23,7 @@ import (
 	packageclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/package"
 	policyclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/policy"
 	sourcesecretclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/sourcesecret"
+	clusterclassclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clusterclass"
 	clustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup"
 	continuousdeliveryclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/continuousdelivery"
 	gitrepositoryclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/gitrepository"
@@ -47,6 +48,7 @@ import (
 	iamorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/iam_policy"
 	policyorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/policy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
+	tanzukubernetesclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzukubernetescluster"
 	tanzupackageclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackage"
 	pkginstallclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackageinstall"
 	pkgrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository"
@@ -128,6 +130,8 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		OrganizationHelmChartsResourceService:         helmchartsorgclient.New(httpClient),
 		ClusterGroupSecretResourceService:             secretclustergroupclient.New(httpClient),
 		ClusterGroupSecretExportResourceService:       secretexportclustergroupclient.New(httpClient),
+		ClusterClassResourceService:                   clusterclassclient.New(httpClient),
+		TanzuKubernetesClusterResourceService:         tanzukubernetesclusterclient.New(httpClient),
 	}
 }
 
@@ -178,4 +182,6 @@ type TanzuMissionControl struct {
 	OrganizationHelmChartsResourceService         helmchartsorgclient.ClientService
 	ClusterGroupSecretResourceService             secretclustergroupclient.ClientService
 	ClusterGroupSecretExportResourceService       secretexportclustergroupclient.ClientService
+	ClusterClassResourceService                   clusterclassclient.ClientService
+	TanzuKubernetesClusterResourceService         tanzukubernetesclusterclient.ClientService
 }
