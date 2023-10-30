@@ -60,7 +60,7 @@ func resourceClusterCreate(ctx context.Context, data *schema.ResourceData, confi
 	ctx, cancel := context.WithTimeout(ctx, getTimeOut(data))
 	defer cancel()
 
-	if err := pollUntilReady(ctx, data, tc.TMCConnection, getPollInterval(ctx)); err != nil {
+	if err := PollUntilReady(ctx, data, tc.TMCConnection, getPollInterval(ctx)); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -244,10 +244,10 @@ func updateClusterConfig(ctx context.Context, data *schema.ResourceData, cluster
 	ctxTimeout, cancel := context.WithTimeout(ctx, getTimeOut(data))
 	defer cancel()
 
-	return pollUntilReady(ctxTimeout, data, tc.TMCConnection, getPollInterval(ctx))
+	return PollUntilReady(ctxTimeout, data, tc.TMCConnection, getPollInterval(ctx))
 }
 
-func pollUntilReady(ctx context.Context, data *schema.ResourceData, mc *client.TanzuMissionControl, interval time.Duration) error {
+func PollUntilReady(ctx context.Context, data *schema.ResourceData, mc *client.TanzuMissionControl, interval time.Duration) error {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 

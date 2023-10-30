@@ -52,6 +52,12 @@ func withStatusSuccess(c *models.VmwareTanzuManageV1alpha1AksCluster) {
 	}
 }
 
+func withStatusPending(c *models.VmwareTanzuManageV1alpha1AksCluster) {
+	c.Status = &models.VmwareTanzuManageV1alpha1AksclusterStatus{
+		Phase: models.VmwareTanzuManageV1alpha1AksclusterPhasePENDING.Pointer(),
+	}
+}
+
 func withNodepoolStatusSuccess(c *models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) {
 	c.Status = &models.VmwareTanzuManageV1alpha1AksclusterNodepoolStatus{
 		Phase: models.VmwareTanzuManageV1alpha1AksclusterNodepoolPhaseREADY.Pointer(),
@@ -489,6 +495,7 @@ type mockClusterClient struct {
 	AksUpdateClusterWasCalledWith             *models.VmwareTanzuManageV1alpha1AksCluster
 	getClusterByIDResp                        *models.VmwareTanzuManageV1alpha1AksCluster
 	AksClusterResourceServiceGetCallCount     int
+	AksClusterResourceServiceGetPendingFirst  bool
 	AksCreateClusterWasCalled                 bool
 	createErr                                 error
 	getErr                                    error
@@ -508,8 +515,16 @@ func (m *mockClusterClient) AksClusterResourceServiceGet(fn *models.VmwareTanzuM
 	m.AksClusterResourceServiceGetCalledWith = fn
 	m.AksClusterResourceServiceGetCallCount += 1
 
+	clusterResp := m.getClusterResp
+
+	if m.AksClusterResourceServiceGetPendingFirst {
+		if m.AksClusterResourceServiceGetCallCount == 1 {
+			clusterResp = aTestCluster(withStatusPending)
+		}
+	}
+
 	return &models.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{
-		AksCluster: m.getClusterResp,
+		AksCluster: clusterResp,
 	}, m.getErr
 }
 
