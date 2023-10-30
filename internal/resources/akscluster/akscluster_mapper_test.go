@@ -13,7 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 )
 
 func Test_ConstructAKSCluster(t *testing.T) {

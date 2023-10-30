@@ -20,7 +20,6 @@ import (
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 	configModels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubeconfig"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 )
 
 func dataDiffFrom(t *testing.T, original map[string]any, updated map[string]any) *schema.ResourceData {
@@ -49,6 +48,12 @@ type clusterWither func(c *models.VmwareTanzuManageV1alpha1AksCluster)
 func withStatusSuccess(c *models.VmwareTanzuManageV1alpha1AksCluster) {
 	c.Status = &models.VmwareTanzuManageV1alpha1AksclusterStatus{
 		Phase: models.VmwareTanzuManageV1alpha1AksclusterPhaseREADY.Pointer(),
+	}
+}
+
+func withStatusPending(c *models.VmwareTanzuManageV1alpha1AksCluster) {
+	c.Status = &models.VmwareTanzuManageV1alpha1AksclusterStatus{
+		Phase: models.VmwareTanzuManageV1alpha1AksclusterPhasePENDING.Pointer(),
 	}
 }
 
@@ -522,6 +527,7 @@ type mockClusterClient struct {
 	getClusterByIDResp                        *models.VmwareTanzuManageV1alpha1AksCluster
 	AksClusterResourceServiceGetCallCount     int
 	AksCreateClusterWasCalled                 bool
+	AksClusterResourceServiceGetPendingFirst  bool
 	createErr                                 error
 	getErr                                    error
 	updateErr                                 error
@@ -540,8 +546,15 @@ func (m *mockClusterClient) AksClusterResourceServiceGet(fn *models.VmwareTanzuM
 	m.AksClusterResourceServiceGetCalledWith = fn
 	m.AksClusterResourceServiceGetCallCount += 1
 
+	resp := m.getClusterResp
+	if m.AksClusterResourceServiceGetPendingFirst {
+		if m.AksClusterResourceServiceGetCallCount == 1 {
+			resp = aTestCluster(withStatusPending)
+		}
+	}
+
 	return &models.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{
-		AksCluster: m.getClusterResp,
+		AksCluster: resp,
 	}, m.getErr
 }
 
