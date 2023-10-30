@@ -92,20 +92,6 @@ func (s *ReadDatasourceTestSuite) Test_datasourceRead_waitFor_KubConfig() {
 	s.Assert().True(s.mocks.kubeConfigClient.KubeConfigServicedWasCalled, "kubeconfig client was not called")
 	s.Assert().Equal("my-agent-name", s.mocks.kubeConfigClient.KubeConfigServiceCalledWith.Name)
 	s.Assert().Equal("base64_kubeconfig", d.Get("kubeconfig"))
-
-	s.Assert().False(s.mocks.kubeConfigClient.KubeConfigServicedWasCalled, "kubeconfig client was called when not expected")
-}
-
-func (s *ReadDatasourceTestSuite) Test_datasourceRead_waitFor_KubConfig() {
-	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap(withWaitForHealthy))
-
-	result := s.datasource.ReadContext(s.ctx, d, s.config)
-
-	s.Assert().False(result.HasError())
-
-	s.Assert().True(s.mocks.kubeConfigClient.KubeConfigServicedWasCalled, "kubeconfig client was not called")
-	s.Assert().Equal("my-agent-name", s.mocks.kubeConfigClient.KubeConfigServiceCalledWith.Name)
-	s.Assert().Equal("base64_kubeconfig", d.Get("kubeconfig"))
 }
 
 func (s *ReadDatasourceTestSuite) Test_datasource_spec_should_be_optional() {
