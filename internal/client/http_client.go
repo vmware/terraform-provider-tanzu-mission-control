@@ -12,7 +12,9 @@ import (
 	aksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster"
 	aksnodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster/nodepool"
 	clusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster"
+	backupscheduleclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/backupschedule"
 	continuousdeliveryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/continuousdelivery"
+	dataprotectionclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/dataprotection"
 	gitrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/gitrepository"
 	helmfeatureclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/helmfeature"
 	helmreleaseclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/helmrelease"
@@ -52,6 +54,7 @@ import (
 	pkginstallclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackageinstall"
 	pkgrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository"
 	pkgrepoavailabilityclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository/packagerepositoryavailability"
+	targetlocationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/targetlocation"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	workspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace"
 	iamworkspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace/iam_policy"
@@ -130,6 +133,9 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterGroupSecretResourceService:             secretclustergroupclient.New(httpClient),
 		ClusterGroupSecretExportResourceService:       secretexportclustergroupclient.New(httpClient),
 		KubeConfigResourceService:                     kubeconfigclient.New(httpClient),
+		BackupScheduleService:                         backupscheduleclient.New(httpClient),
+		DataProtectionService:                         dataprotectionclient.New(httpClient),
+		TargetLocationService:                         targetlocationclient.New(httpClient),
 	}
 }
 
@@ -181,4 +187,7 @@ type TanzuMissionControl struct {
 	ClusterGroupSecretResourceService             secretclustergroupclient.ClientService
 	ClusterGroupSecretExportResourceService       secretexportclustergroupclient.ClientService
 	KubeConfigResourceService                     kubeconfigclient.ClientService
+	BackupScheduleService                         backupscheduleclient.ClientService
+	DataProtectionService                         dataprotectionclient.ClientService
+	TargetLocationService                         targetlocationclient.ClientService
 }

@@ -1,0 +1,40 @@
+---
+Title: "Target Location Resource"
+Description: |-
+   Creating a target location for data protection backups.
+---
+
+# Target Location (Backup Location) Resource
+
+This resource enables users to create and configure target locations for data protection backups.
+Once created, a target location can be used to store cluster backups.
+
+**NOTE**: The type of a target location is inherited from the configured credentials type which can be either "TMC Managed" or "Self Managed".
+
+For more information regarding target location, see [Target Location][target-location].
+
+[target-location]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-867683CE-8AF0-4DC7-9121-81AD507EDB3B.html
+
+
+# TMC Managed Target Location
+
+## Example Usage
+
+{{ tffile "examples/resources/targetlocation/resource_target_location_tmc_managed.tf" }}
+
+
+# Self Managed Target Location
+
+## AWS Target Location
+
+### Example Usage
+
+{{ tffile "examples/resources/targetlocation/resource_target_location_self_managed_aws.tf" }}
+
+## Azure Target Location
+
+### Example Usage
+
+{{ tffile "examples/resources/targetlocation/resource_target_location_self_managed_aws.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}

@@ -11,6 +11,8 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/backupschedule"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/dataprotection"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/integration"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/nodepools"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
@@ -42,6 +44,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/sourcesecret"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackageinstall"
 	packagerepository "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackagerepository"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/targetlocation"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/workspace"
 )
 
@@ -74,6 +77,9 @@ func Provider() *schema.Provider {
 			mutationpolicy.ResourceName:      mutationpolicyresource.ResourceMutationPolicy(),
 			helmrelease.ResourceName:         helmrelease.ResourceHelmRelease(),
 			helmfeature.ResourceName:         helmfeature.ResourceHelm(),
+			backupschedule.ResourceName:      backupschedule.ResourceBackupSchedule(),
+			dataprotection.ResourceName:      dataprotection.ResourceEnableDataProtection(),
+			targetlocation.ResourceName:      targetlocation.ResourceTargetLocation(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:             cluster.DataSourceTMCCluster(),
@@ -95,6 +101,8 @@ func Provider() *schema.Provider {
 			helmfeature.ResourceName:         helmfeature.DataSourceHelm(),
 			helmcharts.ResourceName:          helmcharts.DataSourceHelmCharts(),
 			helmrepository.ResourceName:      helmrepository.DataSourceHelmRepository(),
+			backupschedule.ResourceName:      backupschedule.DataSourceBackupSchedule(),
+			targetlocation.ResourceName:      targetlocation.DataSourceTargetLocations(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
