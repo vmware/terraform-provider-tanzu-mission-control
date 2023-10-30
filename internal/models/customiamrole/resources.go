@@ -11,7 +11,7 @@ import (
 
 // VmwareTanzuManageV1alpha1IamPermissionResource Resource Types.
 //
-//   - RESOURCE_UNSPECIFIED: Unkonwn.
+//   - RESOURCE_UNSPECIFIED: Unknown.
 //   - ORGANIZATION: Organization.
 //   - MANAGEMENT_CLUSTER: Management cluster.
 //   - PROVISIONER: Provisioner.

@@ -30,16 +30,16 @@ const (
 	RuleKey             = "rule"
 	TanzuPermissionsKey = "tanzu_permissions"
 
-	// Rule Directive Keys
+	// Rule Directive Keys.
 	APIGroupsKey     = "api_groups"
 	URLPathsKey      = "url_paths"
 	ResourceNamesKey = "resource_names"
 	VerbsKey         = "verbs"
 
-	// Aggregation Rule Directive Keys
+	// Aggregation Rule Directive Keys.
 	ClusterRoleSelectorKey = "cluster_role_selector"
 
-	// Cluster Role Selector Directive Keys
+	// Cluster Role Selector Directive Keys.
 	MatchLabelsKey     = "match_labels"
 	MatchExpressionKey = "match_expression"
 
