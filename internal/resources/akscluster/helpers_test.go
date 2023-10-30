@@ -3,7 +3,7 @@ Copyright 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package akscluster
+package akscluster_test
 
 import (
 	"context"
@@ -20,14 +20,15 @@ import (
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 	configModels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubeconfig"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 )
 
 func dataDiffFrom(t *testing.T, original map[string]any, updated map[string]any) *schema.ResourceData {
-	originalData := schema.TestResourceDataRaw(t, ClusterSchema, original)
+	originalData := schema.TestResourceDataRaw(t, akscluster.ClusterSchema, original)
 	originalData.SetId("test-uid")
 	state := originalData.State()
 
-	sm := schema.InternalMap(ClusterSchema)
+	sm := schema.InternalMap(akscluster.ClusterSchema)
 	diff, _ := sm.Diff(context.Background(), state, terraform.NewResourceConfigRaw(updated), nil, nil, false)
 	data, _ := sm.Data(state, diff)
 
@@ -48,12 +49,6 @@ type clusterWither func(c *models.VmwareTanzuManageV1alpha1AksCluster)
 func withStatusSuccess(c *models.VmwareTanzuManageV1alpha1AksCluster) {
 	c.Status = &models.VmwareTanzuManageV1alpha1AksclusterStatus{
 		Phase: models.VmwareTanzuManageV1alpha1AksclusterPhaseREADY.Pointer(),
-	}
-}
-
-func withStatusPending(c *models.VmwareTanzuManageV1alpha1AksCluster) {
-	c.Status = &models.VmwareTanzuManageV1alpha1AksclusterStatus{
-		Phase: models.VmwareTanzuManageV1alpha1AksclusterPhasePENDING.Pointer(),
 	}
 }
 
@@ -495,7 +490,6 @@ type mockClusterClient struct {
 	getClusterByIDResp                        *models.VmwareTanzuManageV1alpha1AksCluster
 	AksClusterResourceServiceGetCallCount     int
 	AksCreateClusterWasCalled                 bool
-	AksClusterResourceServiceGetPendingFirst  bool
 	createErr                                 error
 	getErr                                    error
 	updateErr                                 error
@@ -514,15 +508,8 @@ func (m *mockClusterClient) AksClusterResourceServiceGet(fn *models.VmwareTanzuM
 	m.AksClusterResourceServiceGetCalledWith = fn
 	m.AksClusterResourceServiceGetCallCount += 1
 
-	resp := m.getClusterResp
-	if m.AksClusterResourceServiceGetPendingFirst {
-		if m.AksClusterResourceServiceGetCallCount == 1 {
-			resp = aTestCluster(withStatusPending)
-		}
-	}
-
 	return &models.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{
-		AksCluster: resp,
+		AksCluster: m.getClusterResp,
 	}, m.getErr
 }
 
