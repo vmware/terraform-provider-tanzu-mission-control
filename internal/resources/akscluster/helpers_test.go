@@ -527,8 +527,8 @@ type mockClusterClient struct {
 	AksUpdateClusterWasCalledWith             *models.VmwareTanzuManageV1alpha1AksCluster
 	getClusterByIDResp                        *models.VmwareTanzuManageV1alpha1AksCluster
 	AksClusterResourceServiceGetCallCount     int
-	AksCreateClusterWasCalled                 bool
 	AksClusterResourceServiceGetPendingFirst  bool
+	AksCreateClusterWasCalled                 bool
 	createErr                                 error
 	getErr                                    error
 	updateErr                                 error
@@ -547,15 +547,16 @@ func (m *mockClusterClient) AksClusterResourceServiceGet(fn *models.VmwareTanzuM
 	m.AksClusterResourceServiceGetCalledWith = fn
 	m.AksClusterResourceServiceGetCallCount += 1
 
-	resp := m.getClusterResp
+	clusterResp := m.getClusterResp
+
 	if m.AksClusterResourceServiceGetPendingFirst {
 		if m.AksClusterResourceServiceGetCallCount == 1 {
-			resp = aTestCluster(withStatusPending)
+			clusterResp = aTestCluster(withStatusPending)
 		}
 	}
 
 	return &models.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{
-		AksCluster: resp,
+		AksCluster: clusterResp,
 	}, m.getErr
 }
 
