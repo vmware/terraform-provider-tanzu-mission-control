@@ -20,6 +20,7 @@ import (
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
 	configModels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubeconfig"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 )
 
 func dataDiffFrom(t *testing.T, original map[string]any, updated map[string]any) *schema.ResourceData {

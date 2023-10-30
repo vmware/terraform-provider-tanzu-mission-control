@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 )
 
 func Test_ConstructAKSCluster(t *testing.T) {
@@ -24,6 +25,20 @@ func Test_ConstructAKSCluster(t *testing.T) {
 	assert.NotNil(t, result, "no request created")
 	assert.Equal(t, expected.FullName, result.FullName, "unexpected full name")
 	assert.Equal(t, expected.Spec, result.Spec, "unexpected spec")
+}
+
+func Test_ConstructAKSCluster_withInvalidNetworkConfig(t *testing.T) {
+	tests := []*schema.ResourceData{
+		schema.TestResourceDataRaw(t, akscluster.ClusterSchema, aTestClusterDataMap(withNetworkPlugin("kubenet"))),
+		schema.TestResourceDataRaw(t, akscluster.ClusterSchema, aTestClusterDataMap(withNetworkPlugin("kubenet"), withoutNetworkDNSServiceIP)),
+		schema.TestResourceDataRaw(t, akscluster.ClusterSchema, aTestClusterDataMap(withNetworkPlugin("kubenet"), withoutNetworkServiceCIDR)),
+	}
+
+	for _, d := range tests {
+		_, err := akscluster.ConstructCluster(d)
+		assert.NotNil(t, err)
+		assert.Equal(t, err.Error(), "can not set network_config.dns_service_ip or network_config.service_cidr when network_config.network_plugin is set to kubenet")
+	}
 }
 
 func Test_FlattenToMap_nilSpec(t *testing.T) {
