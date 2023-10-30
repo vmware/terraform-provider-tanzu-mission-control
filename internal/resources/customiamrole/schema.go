@@ -186,7 +186,7 @@ var RuleSchema = &schema.Schema{
 			},
 			ResourcesKey: {
 				Type:        schema.TypeList,
-				Description: "Resources.",
+				Description: "Resources for the role.",
 				Optional:    true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
