@@ -61,7 +61,7 @@ func TestAcceptanceEnableDataProtectionResource(t *testing.T) {
 	},
 	)
 
-	t.Log("target location resource acceptance test complete!")
+	t.Log("data protection resource acceptance test complete!")
 }
 
 func verifyEnableDataProtectionResourceCreation(

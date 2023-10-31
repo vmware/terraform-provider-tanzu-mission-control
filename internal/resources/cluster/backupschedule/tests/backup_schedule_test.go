@@ -91,7 +91,7 @@ func TestAcceptanceBackupScheduleResource(t *testing.T) {
 	},
 	)
 
-	t.Log("target location resource acceptance test complete!")
+	t.Log("backup schedule resource acceptance test complete!")
 }
 
 func verifyBackupScheduleResourceCreation(
