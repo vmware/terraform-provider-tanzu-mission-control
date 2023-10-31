@@ -50,15 +50,15 @@ var ClusterSchema = map[string]*schema.Schema{
 		Default:     "default",
 		Optional:    true,
 	},
-	waitForHealthyKey: {
+	waitForKubeconfig: {
 		Type:        schema.TypeBool,
-		Description: "Wait for cluster to be healthy",
+		Description: "Wait until pinniped extension is ready to provide kubeconfig",
 		Default:     false,
 		Optional:    true,
 	},
 	kubeconfigKey: {
 		Type:        schema.TypeString,
-		Description: "Kubeconfig for connecting to newly created cluster base64 encoded. This will only be returned if you have elected to wait for cluster to be healthy.",
+		Description: "Kubeconfig for connecting to newly created cluster base64 encoded. This will only be returned if you have elected to wait for kubeconfig.",
 		Computed:    true,
 	},
 }

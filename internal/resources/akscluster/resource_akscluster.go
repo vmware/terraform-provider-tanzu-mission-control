@@ -307,7 +307,7 @@ func PollUntilReady(ctx context.Context, data *schema.ResourceData, mc *client.T
 }
 
 func pollForKubeConfig(ctx context.Context, data *schema.ResourceData, mc *client.TanzuMissionControl, interval time.Duration) error {
-	if !waitForKubeConfig(data) {
+	if !isWaitForKubeconfig(data) {
 		return nil
 	}
 
@@ -347,8 +347,8 @@ func kubeConfigReady(err error, resp *configModels.VmwareTanzuManageV1alpha1Clus
 	return err == nil && *resp.Status == configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusREADY
 }
 
-func waitForKubeConfig(data *schema.ResourceData) bool {
-	v := data.Get(waitForHealthyKey)
+func isWaitForKubeconfig(data *schema.ResourceData) bool {
+	v := data.Get(waitForKubeconfig)
 	if v != nil {
 		return v.(bool)
 	}

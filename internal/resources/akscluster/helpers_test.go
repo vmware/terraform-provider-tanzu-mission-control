@@ -195,7 +195,7 @@ func with5msTimeout(m map[string]any) {
 }
 
 func withWaitForHealthy(m map[string]any) {
-	m["wait_for_healthy"] = true
+	m["wait_for_kubeconfig"] = true
 }
 
 func withDNSPrefix(prefix string) mapWither {

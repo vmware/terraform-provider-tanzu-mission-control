@@ -22,7 +22,7 @@ const (
 	clusterSpecKey                             = "spec"
 	nodepoolSpecKey                            = "spec"
 	waitKey                                    = "ready_wait_timeout"
-	waitForHealthyKey                          = "wait_for_healthy"
+	waitForKubeconfig                          = "wait_for_kubeconfig"
 	clusterGroupKey                            = "cluster_group"
 	clusterGroupDefaultValue                   = "default"
 	proxyNameKey                               = "proxy"
