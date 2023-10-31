@@ -22,6 +22,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmrelease"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmrepository"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/iampolicy"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/iampolicytemplate"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kustomization"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/namespace"
@@ -74,6 +75,7 @@ func Provider() *schema.Provider {
 			mutationpolicy.ResourceName:      mutationpolicyresource.ResourceMutationPolicy(),
 			helmrelease.ResourceName:         helmrelease.ResourceHelmRelease(),
 			helmfeature.ResourceName:         helmfeature.ResourceHelm(),
+			iampolicytemplate.ResourceName:   iampolicytemplate.ResourceIAMPolicyTemplate(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:             cluster.DataSourceTMCCluster(),

@@ -37,6 +37,7 @@ import (
 	credentialclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/credential"
 	eksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster"
 	eksnodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster/nodepool"
+	iampolicytemplateclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/iampolicytemplate"
 	integrationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/integration"
 	secretclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubernetessecret"
 	secretexportclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubernetessecret/secretexport"
@@ -128,6 +129,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		OrganizationHelmChartsResourceService:         helmchartsorgclient.New(httpClient),
 		ClusterGroupSecretResourceService:             secretclustergroupclient.New(httpClient),
 		ClusterGroupSecretExportResourceService:       secretexportclustergroupclient.New(httpClient),
+		IAMPolicyTemplateResourceService:              iampolicytemplateclient.New(httpClient),
 	}
 }
 
@@ -178,4 +180,5 @@ type TanzuMissionControl struct {
 	OrganizationHelmChartsResourceService         helmchartsorgclient.ClientService
 	ClusterGroupSecretResourceService             secretclustergroupclient.ClientService
 	ClusterGroupSecretExportResourceService       secretexportclustergroupclient.ClientService
+	IAMPolicyTemplateResourceService              iampolicytemplateclient.ClientService
 }
