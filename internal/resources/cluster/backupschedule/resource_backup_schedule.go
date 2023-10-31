@@ -190,7 +190,7 @@ func resourceBackupScheduleImporter(ctx context.Context, data *schema.ResourceDa
 	resp, err := readResourceWait(ctx, &config, backupScheduleFn)
 
 	if err != nil || resp.Schedule == nil {
-		return nil, errors.Errorf("Couldn't read backup schedule.\nManagement Cluster Name: %s, Provisioner Name: %s, Cluster Name: %s, Schedule Name: %s",
+		return nil, errors.Errorf("Couldn't import backup schedule.\nManagement Cluster Name: %s, Provisioner Name: %s, Cluster Name: %s, Schedule Name: %s",
 			backupScheduleFn.ManagementClusterName, backupScheduleFn.ProvisionerName, backupScheduleFn.ClusterName, backupScheduleFn.Name)
 	} else {
 		userExcludedNamespaces := getExcludedNamespaces(data, ExcludedNamespacesKey)
@@ -207,8 +207,6 @@ func resourceBackupScheduleImporter(ctx context.Context, data *schema.ResourceDa
 			return nil, err
 		}
 
-		data.SetId(fmt.Sprintf("%s/%s/%s/%s", backupScheduleFn.ManagementClusterName, backupScheduleFn.ProvisionerName,
-			backupScheduleFn.ClusterName, backupScheduleFn.Name))
 		setSystemExcludedNamespaces(data, systemExcludedNamespaces)
 	}
 

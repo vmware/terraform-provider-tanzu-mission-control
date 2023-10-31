@@ -34,7 +34,7 @@ func dataSourceTargetLocationRead(ctx context.Context, data *schema.ResourceData
 	request, err := tfModelDataSourceRequestConverter.ConvertTFSchemaToAPIModel(data, []string{})
 
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "unable to read Tanzu Mission Control backup schedule."))
+		return diag.FromErr(errors.Wrapf(err, "Couldn't read Tanzu Mission Control backup schedule."))
 	}
 
 	resp, err = config.TMCConnection.BackupScheduleService.BackupScheduleResourceServiceList(request)

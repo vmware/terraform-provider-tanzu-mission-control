@@ -87,7 +87,7 @@ func resourceEnableDataProtectionRead(ctx context.Context, data *schema.Resource
 			}
 		}
 
-		return diag.FromErr(errors.Wrapf(err, "Couldn't find data protection configuration for cluster.\nManagement Cluster Name: %s, Provisioner Name: %s, Cluster Name: %s",
+		return diag.FromErr(errors.Wrapf(err, "Couldn't read data protection configuration for cluster.\nManagement Cluster Name: %s, Provisioner Name: %s, Cluster Name: %s",
 			dataProtectionFn.ManagementClusterName, dataProtectionFn.ProvisionerName, dataProtectionFn.ClusterName))
 	} else if resp != nil {
 		var (
@@ -127,7 +127,7 @@ func resourceEnableDataProtectionDelete(ctx context.Context, data *schema.Resour
 	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{ClusterNameKey, ProvisionerNameKey, ManagementClusterNameKey})
 
 	if err != nil {
-		return diag.FromErr(errors.Wrapf(err, "Couldn't read Tanzu Mission Control data protection configurations."))
+		return diag.FromErr(errors.Wrapf(err, "Couldn't delete Tanzu Mission Control data protection configurations."))
 	}
 
 	dataProtectionFn := model.FullName
@@ -191,26 +191,21 @@ func resourceEnableDataProtectionImporter(ctx context.Context, data *schema.Reso
 
 	resp, err := readResourceWait(ctx, &config, clusterFn)
 
-	if err != nil {
-		return nil, errors.Wrapf(err, "Unable to get data protection configuration for cluster: %s/%s/%s", clusterFn.ManagementClusterName,
-			clusterFn.ProvisionerName, clusterFn.ClusterName)
+	if err != nil || len(resp.DataProtections) == 0 {
+		return nil, errors.Wrapf(err, "Couldn't import data protection configuration.\nManagement Cluster Name: %s, Provisioner Name: %s, Cluster Name: %s",
+			clusterFn.ManagementClusterName, clusterFn.ProvisionerName, clusterFn.ClusterName)
 	}
 
-	if len(resp.DataProtections) == 0 {
-		err = errors.Errorf("Couldn't find data protection configuration for cluster: %s/%s/%s", clusterFn.ManagementClusterName,
-			clusterFn.ProvisionerName, clusterFn.ClusterName)
-	} else {
-		dataProtection := resp.DataProtections[0]
-		err = tfModelConverter.FillTFSchema(dataProtection, data)
+	dataProtection := resp.DataProtections[0]
+	err = tfModelConverter.FillTFSchema(dataProtection, data)
 
-		if err == nil {
-			if _, ok := data.GetOk(DeletionPolicyKey); !ok {
-				deletionPolicyMap := map[string]interface{}{
-					DeleteBackupsKey: false,
-				}
-
-				_ = data.Set(DeletionPolicyKey, []interface{}{deletionPolicyMap})
+	if err == nil {
+		if _, ok := data.GetOk(DeletionPolicyKey); !ok {
+			deletionPolicyMap := map[string]interface{}{
+				DeleteBackupsKey: false,
 			}
+
+			_ = data.Set(DeletionPolicyKey, []interface{}{deletionPolicyMap})
 		}
 	}
 
@@ -244,8 +239,9 @@ func readResourceWait(ctx context.Context, config *authctx.TanzuContext, resourc
 	}
 
 	if responseStatus == dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionStatusPhaseERROR {
-		err = errors.Errorf("data protection configurations errored for cluster: %s/%s/%s",
-			resourceFullName.ManagementClusterName, resourceFullName.ProvisionerName, resourceFullName.ClusterName)
+		dataProtectionFn := resp.DataProtections[0].FullName
+		err = errors.Errorf("data protection configurations errored.\nManagement Cluster Name: %s, Provisioner Name: %s, Cluster Name: %s",
+			dataProtectionFn.ManagementClusterName, dataProtectionFn.ProvisionerName, dataProtectionFn.ClusterName)
 
 		return nil, err
 	}

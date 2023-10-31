@@ -185,7 +185,6 @@ var configSchema = &schema.Schema{
 				Description: "AWS S3 and S3-compatible target location config block.",
 				Optional:    true,
 				MaxItems:    1,
-				MinItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						AwsS3ForcePathKey: {
@@ -212,7 +211,6 @@ var configSchema = &schema.Schema{
 				Description: "Azure target location config block.",
 				Optional:    true,
 				MaxItems:    1,
-				MinItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						AzureResourceGroupKey: {

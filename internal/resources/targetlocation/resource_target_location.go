@@ -35,7 +35,8 @@ func ResourceTargetLocation() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceTargetLocationImporter,
 		},
-		Schema: backupTargetLocationResourceSchema,
+		CustomizeDiff: validateSchema,
+		Schema:        backupTargetLocationResourceSchema,
 	}
 }
 
@@ -54,7 +55,7 @@ func resourceTargetLocationCreate(ctx context.Context, data *schema.ResourceData
 		return diag.FromErr(errors.Wrap(err, "Couldn't create Tanzu Mission Control backup target location."))
 	}
 
-	err = validateSchema(model, credentialsType)
+	err = validateSchemaByCredentials(model, credentialsType)
 
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "Couldn't create Tanzu Mission Control backup target location."))
@@ -168,7 +169,7 @@ func resourceTargetLocationUpdate(ctx context.Context, data *schema.ResourceData
 		return diag.FromErr(errors.Wrap(err, "Couldn't update Tanzu Mission Control backup target location."))
 	}
 
-	err = validateSchema(model, credentialsType)
+	err = validateSchemaByCredentials(model, credentialsType)
 
 	if credentialsType == credentialsmodels.VmwareTanzuManageV1alpha1AccountCredentialProviderAWSEC2 {
 		spec := data.Get(SpecKey).([]interface{})[0].(map[string]interface{})
@@ -230,6 +231,23 @@ func resourceTargetLocationImporter(ctx context.Context, data *schema.ResourceDa
 	return []*schema.ResourceData{data}, err
 }
 
+func validateSchema(ctx context.Context, data *schema.ResourceDiff, m interface{}) error {
+	specData := data.Get(SpecKey).([]interface{})[0].(map[string]interface{})
+	configData, configExists := specData[ConfigKey]
+
+	if configExists && len(configData.([]interface{})) > 0 {
+		configDataMap := configData.([]interface{})[0].(map[string]interface{})
+		awsConfigData, _ := configDataMap[AwsConfigKey].([]interface{})
+		azureConfigData, _ := configDataMap[AzureConfigKey].([]interface{})
+
+		if len(awsConfigData) > 0 && len(azureConfigData) > 0 {
+			return errors.New("Config should be set with either AWS or Azure blocks but not both.")
+		}
+	}
+
+	return nil
+}
+
 func readResourceWait(ctx context.Context, config *authctx.TanzuContext, resourceFullName *targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationFullName) (resp *targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationResponse, err error) {
 	stopStatuses := map[targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationStatusPhase]bool{
 		targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationStatusPhaseERROR: true,
@@ -264,7 +282,7 @@ func readResourceWait(ctx context.Context, config *authctx.TanzuContext, resourc
 	return resp, err
 }
 
-func validateSchema(tlModel *targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationBackupLocation, credentialsType credentialsmodels.VmwareTanzuManageV1alpha1AccountCredentialProvider) error {
+func validateSchemaByCredentials(tlModel *targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationBackupLocation, credentialsType credentialsmodels.VmwareTanzuManageV1alpha1AccountCredentialProvider) error {
 	if credentialsType == credentialsmodels.VmwareTanzuManageV1alpha1AccountCredentialProviderAWSEC2 {
 		if tlModel.Spec.Bucket != "" || tlModel.Spec.Config != nil {
 			return errors.Errorf("Bucket field and Config block should not be set when credentials are %s", credentialsType)
@@ -274,10 +292,6 @@ func validateSchema(tlModel *targetlocationmodels.VmwareTanzuManageV1alpha1Datap
 	} else {
 		if tlModel.Spec.Bucket == "" || tlModel.Spec.Config == nil {
 			return errors.Errorf("Bucket field and Config block must be set when credentials are %s", credentialsType)
-		}
-
-		if tlModel.Spec.Config.S3Config != nil && tlModel.Spec.Config.AzureConfig != nil {
-			return errors.New("Config should be set with either AWS or Azure blocks but not both.")
 		}
 
 		if tlModel.Spec.Config.S3Config != nil && tlModel.Spec.Region == "" {

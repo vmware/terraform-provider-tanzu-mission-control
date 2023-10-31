@@ -8,12 +8,14 @@ package targetlocation
 import (
 	tfModelConverterHelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper/converter"
 	targetlocationmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/targetlocation"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 var assignedGroupsArrayField = tfModelConverterHelper.BuildArrayField("assignedGroups")
 
 var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
-	NameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "name"),
+	NameKey:        tfModelConverterHelper.BuildDefaultModelPath("fullName", "name"),
+	common.MetaKey: common.GetMetaConverterMap(tfModelConverterHelper.DefaultModelPathSeparator),
 	SpecKey: &tfModelConverterHelper.BlockToStruct{
 		BucketKey:         tfModelConverterHelper.BuildDefaultModelPath("spec", "bucket"),
 		CaCertKey:         tfModelConverterHelper.BuildDefaultModelPath("spec", "caCert"),

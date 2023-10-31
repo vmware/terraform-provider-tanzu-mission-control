@@ -8,12 +8,14 @@ package dataprotection
 import (
 	tfModelConverterHelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper/converter"
 	dataprotectionmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/dataprotection"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 var tfModelMap = &tfModelConverterHelper.BlockToStruct{
 	ClusterNameKey:           tfModelConverterHelper.BuildDefaultModelPath("fullName", "clusterName"),
 	ManagementClusterNameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "managementClusterName"),
 	ProvisionerNameKey:       tfModelConverterHelper.BuildDefaultModelPath("fullName", "provisionerName"),
+	common.MetaKey:           common.GetMetaConverterMap(tfModelConverterHelper.DefaultModelPathSeparator),
 	SpecKey: &tfModelConverterHelper.BlockToStruct{
 		DisableResticKey:                   tfModelConverterHelper.BuildDefaultModelPath("spec", "disableRestic"),
 		EnableCSISnapshotsKey:              tfModelConverterHelper.BuildDefaultModelPath("spec", "enableCsiSnapshots"),
