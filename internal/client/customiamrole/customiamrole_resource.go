@@ -15,7 +15,7 @@ const (
 	iamRoleAPIVersionAndGroup = "v1alpha1/iam/roles"
 )
 
-// New creates a new cluster resource service API client.
+// New creates a new custom iam role resource service API client.
 func New(transport *transport.Client) ClientService {
 	return &Client{Client: transport}
 }
