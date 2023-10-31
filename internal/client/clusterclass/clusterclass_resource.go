@@ -20,13 +20,13 @@ const (
 	nameQueryParamKey  = "searchScope.name"
 )
 
-// New creates a new tanzu kubernetes cluster resource service API client.
+// New creates a new cluster class resource service API client.
 func New(transport *transport.Client) ClientService {
 	return &Client{Client: transport}
 }
 
 /*
-Client for tanzu kubernetes cluster resource service API.
+Client for cluster class resource service API.
 */
 type Client struct {
 	*transport.Client
