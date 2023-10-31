@@ -26,7 +26,7 @@ func New(transport *transport.Client) ClientService {
 }
 
 /*
-Client for credentials resource service API.
+Client for backup schedule resource service API.
 */
 type Client struct {
 	*transport.Client
