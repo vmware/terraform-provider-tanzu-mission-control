@@ -15,7 +15,7 @@ const (
 	iamPolicyTemplateAPIVersionAndGroup = "v1alpha1/policy/templates"
 )
 
-// New creates a new cluster resource service API client.
+// New creates a new iam policy template resource service API client.
 func New(transport *transport.Client) ClientService {
 	return &Client{Client: transport}
 }
