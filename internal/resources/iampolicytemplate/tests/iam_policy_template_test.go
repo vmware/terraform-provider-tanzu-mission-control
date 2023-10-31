@@ -69,7 +69,7 @@ func TestAcceptanceIAMPolicyTemplateResource(t *testing.T) {
 	},
 	)
 
-	t.Log("Tanzu kubernetes cluster resource acceptance test complete!")
+	t.Log("IAM policy template resource acceptance test complete!")
 }
 
 func verifyTanzuKubernetesClusterResource(
