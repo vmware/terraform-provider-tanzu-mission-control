@@ -21,7 +21,7 @@ func New(transport *transport.Client) ClientService {
 }
 
 /*
-Client for credentials resource service API.
+Client for custom iam role resource service API.
 */
 type Client struct {
 	*transport.Client
@@ -29,20 +29,19 @@ type Client struct {
 
 // ClientService is the interface for Client methods.
 type ClientService interface {
-	CustomIARoleResourceServiceCreate(request *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData) (*customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData, error)
+	CustomIAMRoleResourceServiceCreate(request *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData) (*customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData, error)
 
-	CustomIARoleResourceServiceUpdate(request *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData) (*customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData, error)
+	CustomIAMRoleResourceServiceUpdate(request *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData) (*customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData, error)
 
-	CustomIARoleResourceServiceDelete(fn *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleFullName) error
+	CustomIAMRoleResourceServiceDelete(fn *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleFullName) error
 
-	CustomIARoleResourceServiceGet(fn *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleFullName) (*customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData, error)
+	CustomIAMRoleResourceServiceGet(fn *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleFullName) (*customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData, error)
 }
 
 /*
-CustomIARoleResourceServiceList gets a target location.
+CustomIAMRoleResourceServiceGet gets a custom iam role.
 */
-
-func (c *Client) CustomIARoleResourceServiceGet(fullName *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleFullName) (*customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData, error) {
+func (c *Client) CustomIAMRoleResourceServiceGet(fullName *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleFullName) (*customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData, error) {
 	requestURL := helper.ConstructRequestURL(iamRoleAPIVersionAndGroup, fullName.Name).String()
 	resp := &customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData{}
 	err := c.Get(requestURL, resp)
@@ -51,9 +50,9 @@ func (c *Client) CustomIARoleResourceServiceGet(fullName *customiamrolemodels.Vm
 }
 
 /*
-CustomIARoleResourceServiceCreate creates a target location.
+CustomIAMRoleResourceServiceCreate creates a custom iam role.
 */
-func (c *Client) CustomIARoleResourceServiceCreate(request *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData) (*customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData, error) {
+func (c *Client) CustomIAMRoleResourceServiceCreate(request *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData) (*customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData, error) {
 	response := &customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData{}
 	requestURL := helper.ConstructRequestURL(iamRoleAPIVersionAndGroup).String()
 	err := c.Create(requestURL, request, response)
@@ -62,9 +61,9 @@ func (c *Client) CustomIARoleResourceServiceCreate(request *customiamrolemodels.
 }
 
 /*
-CustomIARoleResourceServiceUpdate updates a target location.
+CustomIAMRoleResourceServiceUpdate updates a custom iam role.
 */
-func (c *Client) CustomIARoleResourceServiceUpdate(request *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData) (*customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData, error) {
+func (c *Client) CustomIAMRoleResourceServiceUpdate(request *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData) (*customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData, error) {
 	response := &customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData{}
 	requestURL := helper.ConstructRequestURL(iamRoleAPIVersionAndGroup, request.Role.FullName.Name).String()
 	err := c.Update(requestURL, request, response)
@@ -73,9 +72,9 @@ func (c *Client) CustomIARoleResourceServiceUpdate(request *customiamrolemodels.
 }
 
 /*
-CustomIARoleResourceServiceDelete deletes a target location.
+CustomIAMRoleResourceServiceDelete deletes a custom iam role.
 */
-func (c *Client) CustomIARoleResourceServiceDelete(fullName *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleFullName) error {
+func (c *Client) CustomIAMRoleResourceServiceDelete(fullName *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleFullName) error {
 	requestURL := helper.ConstructRequestURL(iamRoleAPIVersionAndGroup, fullName.Name).String()
 
 	return c.Delete(requestURL)

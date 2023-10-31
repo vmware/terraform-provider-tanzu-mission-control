@@ -8,6 +8,7 @@ package customiamrole
 import (
 	tfModelConverterHelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper/converter"
 	customiamrolemodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/customiamrole"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 var (
@@ -17,7 +18,8 @@ var (
 )
 
 var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
-	NameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "name"),
+	NameKey:        tfModelConverterHelper.BuildDefaultModelPath("fullName", "name"),
+	common.MetaKey: common.GetMetaConverterMap(tfModelConverterHelper.DefaultModelPathSeparator),
 	SpecKey: &tfModelConverterHelper.BlockToStruct{
 		IsDeprecatedKey:     tfModelConverterHelper.BuildDefaultModelPath("spec", "isDeprecated"),
 		ResourcesKey:        tfModelConverterHelper.BuildDefaultModelPath("spec", "resources"),
