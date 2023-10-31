@@ -19,7 +19,7 @@ const (
 	dataProtectionPath = "dataprotection"
 )
 
-// New creates a new cluster resource service API client.
+// New creates a new data protection resource service API client.
 func New(transport *transport.Client) ClientService {
 	return &Client{Client: transport}
 }

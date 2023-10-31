@@ -23,7 +23,7 @@ const (
 	backupLocationsAPI               = "backuplocations"
 )
 
-// New creates a new cluster resource service API client.
+// New creates a new target location resource service API client.
 func New(transport *transport.Client) ClientService {
 	return &Client{Client: transport}
 }

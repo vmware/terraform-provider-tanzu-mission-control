@@ -20,7 +20,7 @@ const (
 	dataProtectionSchedulePath = "dataprotection/schedules"
 )
 
-// New creates a new cluster resource service API client.
+// New creates a new backup schedule resource service API client.
 func New(transport *transport.Client) ClientService {
 	return &Client{Client: transport}
 }
