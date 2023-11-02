@@ -3,7 +3,7 @@ Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package iampolicytemplate
+package custompolicytemplate
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	ResourceName = "tanzu-mission-control_iam_policy_template"
+	ResourceName = "tanzu-mission-control_custom_policy_template"
 
 	// Root Keys.
 	NameKey = "name"
@@ -31,7 +31,7 @@ const (
 	KindKey    = "kind"
 )
 
-var iamPolicyTemplateResourceSchema = map[string]*schema.Schema{
+var customPolicyTemplateResourceSchema = map[string]*schema.Schema{
 	NameKey:        nameSchema,
 	SpecKey:        specSchema,
 	common.MetaKey: common.Meta,
@@ -39,21 +39,21 @@ var iamPolicyTemplateResourceSchema = map[string]*schema.Schema{
 
 var nameSchema = &schema.Schema{
 	Type:        schema.TypeString,
-	Description: "The name of the iam policy template",
+	Description: "The name of the custom policy template",
 	Required:    true,
 	ForceNew:    true,
 }
 
 var specSchema = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "Spec block of the iam policy template",
+	Description: "Spec block of the custom policy template",
 	Required:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			IsDeprecatedKey: {
 				Type:        schema.TypeBool,
-				Description: "Flag representing whether the iam policy template is deprecated.",
+				Description: "Flag representing whether the custom policy template is deprecated.",
 				Default:     false,
 				Optional:    true,
 			},

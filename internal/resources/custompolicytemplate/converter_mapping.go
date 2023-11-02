@@ -3,11 +3,11 @@ Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package iampolicytemplate
+package custompolicytemplate
 
 import (
 	tfModelConverterHelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper/converter"
-	iampolicytemplatemodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/iampolicytemplate"
+	custompolicytemplatemodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/custompolicytemplate"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
@@ -33,6 +33,6 @@ var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
 	},
 }
 
-var tfModelConverter = tfModelConverterHelper.TFSchemaModelConverter[*iampolicytemplatemodels.VmwareTanzuManageV1alpha1PolicyTemplate]{
+var tfModelConverter = tfModelConverterHelper.TFSchemaModelConverter[*custompolicytemplatemodels.VmwareTanzuManageV1alpha1PolicyTemplate]{
 	TFModelMap: tfModelResourceMap,
 }
