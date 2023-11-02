@@ -129,7 +129,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		OrganizationHelmChartsResourceService:         helmchartsorgclient.New(httpClient),
 		ClusterGroupSecretResourceService:             secretclustergroupclient.New(httpClient),
 		ClusterGroupSecretExportResourceService:       secretexportclustergroupclient.New(httpClient),
-		IAMPolicyTemplateResourceService:              custompolicytemplateclient.New(httpClient),
+		CustomPolicyTemplateResourceService:           custompolicytemplateclient.New(httpClient),
 	}
 }
 
@@ -180,5 +180,5 @@ type TanzuMissionControl struct {
 	OrganizationHelmChartsResourceService         helmchartsorgclient.ClientService
 	ClusterGroupSecretResourceService             secretclustergroupclient.ClientService
 	ClusterGroupSecretExportResourceService       secretexportclustergroupclient.ClientService
-	IAMPolicyTemplateResourceService              custompolicytemplateclient.ClientService
+	CustomPolicyTemplateResourceService           custompolicytemplateclient.ClientService
 }
