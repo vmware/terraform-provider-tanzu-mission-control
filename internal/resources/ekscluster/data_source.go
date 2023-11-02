@@ -8,6 +8,7 @@ package ekscluster
 import (
 	"context"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -93,17 +94,16 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 	case "":
 		fallthrough
 	case "default":
-		timeoutValueData = "5m"
+		timeoutValueData = strconv.Itoa(minutesBasedDefaultTimeout) + "m"
 
 		fallthrough
 	default:
 		timeoutDuration, parseErr := time.ParseDuration(timeoutValueData)
 		if parseErr != nil {
-			defaultTimeoutInMinutes := defaultTimeout / time.Minute
 			log.Printf("[INFO] unable to parse the duration value for the key %s. Defaulting to %d minutes(%dm)"+
-				" Please refer to 'https://pkg.go.dev/time#ParseDuration' for providing the right value", waitKey, defaultTimeoutInMinutes, defaultTimeoutInMinutes)
+				" Please refer to 'https://pkg.go.dev/time#ParseDuration' for providing the right value", waitKey, minutesBasedDefaultTimeout, minutesBasedDefaultTimeout)
 
-			timeoutDuration = defaultTimeout
+			timeoutDuration = nanoSecondsBasedDefaultTimeout
 		}
 
 		_, err = helper.RetryUntilTimeout(getEksClusterResourceRetryableFn, 10*time.Second, timeoutDuration)
