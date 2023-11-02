@@ -18,6 +18,7 @@ import (
 	aksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster"
 	aksnodepool "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster/nodepool"
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	configModels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubeconfig"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 )
@@ -48,6 +49,12 @@ type clusterWither func(c *models.VmwareTanzuManageV1alpha1AksCluster)
 func withStatusSuccess(c *models.VmwareTanzuManageV1alpha1AksCluster) {
 	c.Status = &models.VmwareTanzuManageV1alpha1AksclusterStatus{
 		Phase: models.VmwareTanzuManageV1alpha1AksclusterPhaseREADY.Pointer(),
+	}
+}
+
+func withStatusPending(c *models.VmwareTanzuManageV1alpha1AksCluster) {
+	c.Status = &models.VmwareTanzuManageV1alpha1AksclusterStatus{
+		Phase: models.VmwareTanzuManageV1alpha1AksclusterPhasePENDING.Pointer(),
 	}
 }
 
@@ -185,6 +192,10 @@ func withoutNodepoolType(m map[string]any) {
 
 func with5msTimeout(m map[string]any) {
 	m["ready_wait_timeout"] = (5 * time.Millisecond).String()
+}
+
+func withWaitForHealthy(m map[string]any) {
+	m["wait_for_kubeconfig"] = true
 }
 
 func withDNSPrefix(prefix string) mapWither {
@@ -516,6 +527,7 @@ type mockClusterClient struct {
 	AksUpdateClusterWasCalledWith             *models.VmwareTanzuManageV1alpha1AksCluster
 	getClusterByIDResp                        *models.VmwareTanzuManageV1alpha1AksCluster
 	AksClusterResourceServiceGetCallCount     int
+	AksClusterResourceServiceGetPendingFirst  bool
 	AksCreateClusterWasCalled                 bool
 	createErr                                 error
 	getErr                                    error
@@ -535,8 +547,16 @@ func (m *mockClusterClient) AksClusterResourceServiceGet(fn *models.VmwareTanzuM
 	m.AksClusterResourceServiceGetCalledWith = fn
 	m.AksClusterResourceServiceGetCallCount += 1
 
+	clusterResp := m.getClusterResp
+
+	if m.AksClusterResourceServiceGetPendingFirst {
+		if m.AksClusterResourceServiceGetCallCount == 1 {
+			clusterResp = aTestCluster(withStatusPending)
+		}
+	}
+
 	return &models.VmwareTanzuManageV1alpha1AksclusterGetAksClusterResponse{
-		AksCluster: m.getClusterResp,
+		AksCluster: clusterResp,
 	}, m.getErr
 }
 
@@ -608,4 +628,18 @@ func (m *mockNodepoolClient) AksNodePoolResourceServiceDelete(req *models.Vmware
 	m.DeleteNodepoolWasCalledWith = req
 
 	return m.DeleteErr
+}
+
+type mockKubeConfigClient struct {
+	KubeConfigServicedWasCalled bool
+	KubeConfigServiceCalledWith *configModels.VmwareTanzuManageV1alpha1ClusterFullName
+	kubeConfigResponse          *configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponse
+	kubeConfigError             error
+}
+
+func (m *mockKubeConfigClient) KubeconfigServiceGet(fn *configModels.VmwareTanzuManageV1alpha1ClusterFullName) (*configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponse, error) {
+	m.KubeConfigServicedWasCalled = true
+	m.KubeConfigServiceCalledWith = fn
+
+	return m.kubeConfigResponse, m.kubeConfigError
 }

@@ -22,6 +22,7 @@ const (
 	clusterSpecKey                             = "spec"
 	nodepoolSpecKey                            = "spec"
 	waitKey                                    = "ready_wait_timeout"
+	waitForKubeconfig                          = "wait_for_kubeconfig"
 	clusterGroupKey                            = "cluster_group"
 	clusterGroupDefaultValue                   = "default"
 	proxyNameKey                               = "proxy"
@@ -104,4 +105,5 @@ const (
 	maxSpotPriceKey                            = "spot_max_price"
 	upgradeConfigKey                           = "upgrade_config"
 	maxSurgeKey                                = "max_surge"
+	kubeconfigKey                              = "kubeconfig"
 )

@@ -79,6 +79,11 @@ func dataSourceTMCAKSClusterRead(ctx context.Context, data *schema.ResourceData,
 		return diag.FromErr(stateErr)
 	}
 
+	// load kubeconfig data
+	if err := pollForKubeConfig(ctx, data, tc.TMCConnection, getPollInterval(ctx)); err != nil {
+		return diag.FromErr(err)
+	}
+
 	return diag.Diagnostics{}
 }
 

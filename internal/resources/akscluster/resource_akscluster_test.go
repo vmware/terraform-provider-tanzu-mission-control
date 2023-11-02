@@ -7,7 +7,9 @@ package akscluster_test
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 	"time"
 
@@ -17,17 +19,21 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	configModels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubeconfig"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 type mocks struct {
-	clusterClient  *mockClusterClient
-	nodepoolClient *mockNodepoolClient
+	clusterClient    *mockClusterClient
+	nodepoolClient   *mockNodepoolClient
+	kubeConfigClient *mockKubeConfigClient
 }
 
 func TestAKSClusterResource(t *testing.T) {
@@ -54,10 +60,17 @@ func (s *CreatClusterTestSuite) SetupTest() {
 	s.mocks.nodepoolClient = &mockNodepoolClient{
 		nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
 	}
+	s.mocks.kubeConfigClient = &mockKubeConfigClient{
+		kubeConfigResponse: &configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponse{
+			Status:     configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusREADY.Pointer(),
+			Kubeconfig: "base64_kubeconfig",
+		},
+	}
 	s.config = authctx.TanzuContext{
 		TMCConnection: &client.TanzuMissionControl{
 			AKSClusterResourceService:  s.mocks.clusterClient,
 			AKSNodePoolResourceService: s.mocks.nodepoolClient,
+			KubeConfigResourceService:  s.mocks.kubeConfigClient,
 		},
 	}
 	s.aksClusterResource = akscluster.ResourceTMCAKSCluster()
@@ -79,10 +92,12 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate() {
 
 	s.Assert().False(result.HasError())
 	s.Assert().True(s.mocks.clusterClient.AksCreateClusterWasCalled, "cluster create was not called")
-	s.Assert().Equal(s.mocks.nodepoolClient.CreateNodepoolWasCalledWith, expectedNP, "nodepool create was not called ")
+	s.Assert().Equal(s.mocks.nodepoolClient.CreateNodepoolWasCalledWith, expectedNP, "nodepool create was not called")
 	s.Assert().Equal(expectedFullName(), s.mocks.clusterClient.AksClusterResourceServiceGetCalledWith)
 	s.Assert().Equal(expectedFullName(), s.mocks.nodepoolClient.AksNodePoolResourceServiceListCalledWith)
 	s.Assert().Equal("test-uid", d.Id())
+
+	s.Assert().False(s.mocks.kubeConfigClient.KubeConfigServicedWasCalled, "kubeconfig client was called when not expected")
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_withPodCIDR() {
@@ -96,10 +111,38 @@ func (s *CreatClusterTestSuite) Test_resourceClusterCreate_withPodCIDR() {
 
 	s.Assert().False(result.HasError())
 	s.Assert().True(s.mocks.clusterClient.AksCreateClusterWasCalled, "cluster create was not called")
-	s.Assert().Equal(s.mocks.nodepoolClient.CreateNodepoolWasCalledWith, expectedNP, "nodepool create was not called ")
+	s.Assert().Equal(s.mocks.nodepoolClient.CreateNodepoolWasCalledWith, expectedNP, "nodepool create was not called")
 	s.Assert().Equal(expectedFullName(), s.mocks.clusterClient.AksClusterResourceServiceGetCalledWith)
 	s.Assert().Equal(expectedFullName(), s.mocks.nodepoolClient.AksNodePoolResourceServiceListCalledWith)
 	s.Assert().Equal("test-uid", d.Id())
+
+	s.Assert().False(s.mocks.kubeConfigClient.KubeConfigServicedWasCalled, "kubeconfig client was called when not expected")
+}
+
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_waitFor_KubConfig() {
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap(withWaitForHealthy))
+	expectedNP := aTestNodePool(forCluster(aTestCluster().FullName))
+
+	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
+
+	s.Assert().False(result.HasError())
+	s.Assert().True(s.mocks.clusterClient.AksCreateClusterWasCalled, "cluster create was not called")
+	s.Assert().Equal(s.mocks.nodepoolClient.CreateNodepoolWasCalledWith, expectedNP, "nodepool create was not called ")
+	s.Assert().Equal(expectedFullName(), s.mocks.clusterClient.AksClusterResourceServiceGetCalledWith)
+	s.Assert().Equal(expectedFullName(), s.mocks.nodepoolClient.AksNodePoolResourceServiceListCalledWith)
+	s.Assert().True(s.mocks.kubeConfigClient.KubeConfigServicedWasCalled, "kubeconfig client was not called")
+	s.Assert().Equal("my-agent-name", s.mocks.kubeConfigClient.KubeConfigServiceCalledWith.Name)
+	s.Assert().Equal("test-uid", d.Id())
+	s.Assert().Equal("base64_kubeconfig", d.Get("kubeconfig"))
+}
+
+func (s *CreatClusterTestSuite) Test_resourceClusterCreate_waitFor_KubConfig_Timeout() {
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap(withWaitForHealthy, with5msTimeout))
+	s.mocks.kubeConfigClient.kubeConfigError = errors.New("timeout")
+
+	result := s.aksClusterResource.CreateContext(s.ctx, d, s.config)
+
+	s.Assert().True(result.HasError())
 }
 
 func (s *CreatClusterTestSuite) Test_resourceClusterCreate_invalidConfig() {
@@ -699,4 +742,109 @@ func (s *ImportClusterTestSuite) Test_resourceClusterImport_GetNodepoolsFails() 
 	_, err := s.aksClusterResource.Importer.StateContext(s.ctx, d, s.config)
 
 	s.Assert().Error(err)
+}
+
+func Test_pollUntilReady(t *testing.T) {
+	type args struct {
+		timeOut  time.Duration
+		data     *schema.ResourceData
+		mc       *mocks
+		interval time.Duration
+	}
+
+	tests := []struct {
+		name       string
+		args       args
+		wantError  error
+		validation func(t *testing.T, args args)
+	}{
+		{
+			name: "success",
+			args: args{
+				timeOut: 2 * time.Second,
+				data:    schema.TestResourceDataRaw(t, akscluster.ClusterSchema, aTestClusterDataMap()),
+				mc: &mocks{
+					clusterClient: &mockClusterClient{
+						createClusterResp: aTestCluster(),
+						getClusterResp:    aTestCluster(withStatusSuccess),
+					},
+					nodepoolClient: &mockNodepoolClient{
+						nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
+					},
+				},
+				interval: 1 * time.Second,
+			},
+			wantError: nil,
+			validation: func(t *testing.T, args args) {
+				require.Equal(t, 1, args.mc.clusterClient.AksClusterResourceServiceGetCallCount, "wrong number of calls")
+			},
+		},
+		{
+			name: "success on a second call",
+			args: args{
+				timeOut: 3 * time.Second,
+				data:    schema.TestResourceDataRaw(t, akscluster.ClusterSchema, aTestClusterDataMap()),
+				mc: &mocks{
+					clusterClient: &mockClusterClient{
+						createClusterResp:                        aTestCluster(),
+						AksClusterResourceServiceGetPendingFirst: true,
+						getClusterResp:                           aTestCluster(withStatusSuccess),
+					},
+					nodepoolClient: &mockNodepoolClient{
+						nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
+					},
+				},
+				interval: 1 * time.Second,
+			},
+			wantError: nil,
+			validation: func(t *testing.T, args args) {
+				require.Equal(t, 2, args.mc.clusterClient.AksClusterResourceServiceGetCallCount, "wrong number of calls")
+			},
+		},
+		{
+			name: "time out",
+			args: args{
+				timeOut: 2 * time.Second,
+				data:    schema.TestResourceDataRaw(t, akscluster.ClusterSchema, aTestClusterDataMap()),
+				mc: &mocks{
+					clusterClient: &mockClusterClient{
+						createClusterResp: aTestCluster(),
+						getClusterResp:    aTestCluster(withStatusSuccess),
+					},
+					nodepoolClient: &mockNodepoolClient{
+						nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
+					},
+				},
+				interval: 3 * time.Second,
+			},
+			wantError: errors.New("Timed out waiting for READY"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// prepare TMC
+			tmc := &client.TanzuMissionControl{
+				AKSClusterResourceService:  tt.args.mc.clusterClient,
+				AKSNodePoolResourceService: tt.args.mc.nodepoolClient,
+			}
+
+			ctx, cancel := context.WithTimeout(context.Background(), tt.args.timeOut)
+			defer cancel()
+
+			gotErr := akscluster.PollUntilReady(ctx, tt.args.data, tmc, tt.args.interval)
+
+			// Compare errors, ordinary reflect.DeepEqual does work here because errors have different stack field data
+			if !strings.Contains(fmt.Sprintf("%v", gotErr), fmt.Sprintf("%v", tt.wantError)) {
+				if tt.wantError == nil {
+					t.Errorf("PollUntilReady() with duration: %v got unexpected error: %v", tt.args.interval, gotErr)
+				} else {
+					t.Errorf("PollUntilReady()with duration: %v. Error should be: %v, got: %v\"",
+						tt.args.interval, tt.wantError, gotErr)
+				}
+			}
+			if tt.validation != nil {
+				tt.validation(t, tt.args)
+			}
+		})
+	}
 }

@@ -7,6 +7,7 @@ package akscluster
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -19,6 +20,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	configModels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubeconfig"
 )
 
 func ResourceTMCAKSCluster() *schema.Resource {
@@ -68,11 +70,19 @@ func resourceClusterCreate(ctx context.Context, data *schema.ResourceData, confi
 	ctx, cancel := context.WithTimeout(ctx, getTimeOut(data))
 	defer cancel()
 
-	if err := pollUntilReady(ctx, data, tc.TMCConnection, getPollInterval(ctx)); err != nil {
+	if err := PollUntilReady(ctx, data, tc.TMCConnection, getPollInterval(ctx)); err != nil {
 		return diag.FromErr(err)
 	}
 
-	return dataSourceTMCAKSClusterRead(ctx, data, tc)
+	if diagErr := dataSourceTMCAKSClusterRead(ctx, data, tc); diagErr.HasError() {
+		return diagErr
+	}
+
+	if err := pollForKubeConfig(ctx, data, tc.TMCConnection, getPollInterval(ctx)); err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diag.Diagnostics{}
 }
 
 // resourceClusterRead read state of existing AKS cluster and assigned nodepools.
@@ -228,7 +238,7 @@ func updateClusterConfig(ctx context.Context, data *schema.ResourceData, cluster
 	ctxTimeout, cancel := context.WithTimeout(ctx, getTimeOut(data))
 	defer cancel()
 
-	return pollUntilReady(ctxTimeout, data, tc.TMCConnection, getPollInterval(ctx))
+	return PollUntilReady(ctxTimeout, data, tc.TMCConnection, getPollInterval(ctx))
 }
 
 // validateCluster returns an error configuration will result in a cluster that will fail to create.
@@ -261,7 +271,7 @@ func emptyStringArray(strArray []string) bool {
 	return true
 }
 
-func pollUntilReady(ctx context.Context, data *schema.ResourceData, mc *client.TanzuMissionControl, interval time.Duration) error {
+func PollUntilReady(ctx context.Context, data *schema.ResourceData, mc *client.TanzuMissionControl, interval time.Duration) error {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
@@ -294,6 +304,56 @@ func pollUntilReady(ctx context.Context, data *schema.ResourceData, mc *client.T
 			}
 		}
 	}
+}
+
+func pollForKubeConfig(ctx context.Context, data *schema.ResourceData, mc *client.TanzuMissionControl, interval time.Duration) error {
+	if !isWaitForKubeconfig(data) {
+		return nil
+	}
+
+	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return errors.New("Timed out trying to get KubeConfig")
+		case <-ticker.C:
+			name, ok := data.GetOk("spec.0.agent_name")
+			if !ok {
+				return errors.New("unable to get agent name for cluster")
+			}
+
+			fn := &configModels.VmwareTanzuManageV1alpha1ClusterFullName{
+				ManagementClusterName: "aks",
+				ProvisionerName:       "aks",
+				Name:                  name.(string),
+				OrgID:                 "",
+			}
+			resp, err := mc.KubeConfigResourceService.KubeconfigServiceGet(fn)
+
+			if kubeConfigReady(err, resp) {
+				if err = data.Set(kubeconfigKey, resp.Kubeconfig); err != nil {
+					return fmt.Errorf("failed to set kubeconfig, %w", err)
+				}
+
+				return nil
+			}
+		}
+	}
+}
+
+func kubeConfigReady(err error, resp *configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponse) bool {
+	return err == nil && *resp.Status == configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusREADY
+}
+
+func isWaitForKubeconfig(data *schema.ResourceData) bool {
+	v := data.Get(waitForKubeconfig)
+	if v != nil {
+		return v.(bool)
+	}
+
+	return false
 }
 
 func pollUntilClusterDeleted(ctx context.Context, data *schema.ResourceData, client akscluster.ClientService, interval time.Duration) error {
