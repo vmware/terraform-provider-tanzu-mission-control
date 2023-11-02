@@ -32,7 +32,7 @@ resource "tanzu-mission-control_mutation_policy" "cluster_label_mutation_policy"
         {
           key      = "component"
           operator = "NotIn"
-          values = [
+          values   = [
             "api-server",
             "agent-gateway"
           ]

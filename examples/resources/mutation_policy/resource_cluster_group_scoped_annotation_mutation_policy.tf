@@ -30,7 +30,7 @@ resource "tanzu-mission-control_mutation_policy" "cluster_group_annotation_mutat
         {
           key      = "component"
           operator = "NotIn"
-          values = [
+          values   = [
             "api-server",
             "agent-gateway"
           ]
