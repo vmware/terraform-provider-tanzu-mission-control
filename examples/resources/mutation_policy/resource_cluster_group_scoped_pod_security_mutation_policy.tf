@@ -64,7 +64,7 @@ resource "tanzu-mission-control_mutation_policy" "cluster_group_pod_security_mut
         {
           key      = "component"
           operator = "NotIn"
-          values = [
+          values   = [
             "api-server",
             "agent-gateway"
           ]
