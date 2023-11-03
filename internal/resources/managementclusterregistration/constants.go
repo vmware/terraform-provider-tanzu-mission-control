@@ -6,7 +6,10 @@ SPDX-License-Identifier: MPL-2.0
 package managementclusterregistration
 
 const (
-	NameKey = "name"
+	ResourceName = "tanzu-mission-control_management_cluster"
+
+	NameKey  = "name"
+	OrgIDKey = "org_id"
 
 	specKey            = "spec"
 	registerClusterKey = "register_management_cluster"

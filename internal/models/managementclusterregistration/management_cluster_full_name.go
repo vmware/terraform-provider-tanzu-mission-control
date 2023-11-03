@@ -10,6 +10,7 @@ package managementclusterregistration
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"fmt"
 	"github.com/go-openapi/swag"
 )
 
@@ -42,4 +43,12 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterFullName) UnmarshalBinary(b [
 	}
 	*m = res
 	return nil
+}
+
+func (m *VmwareTanzuManageV1alpha1ManagementclusterFullName) ToString() string {
+	if m == nil {
+		return ""
+	}
+
+	return fmt.Sprintf("%s:%s", m.OrgID, m.Name)
 }
