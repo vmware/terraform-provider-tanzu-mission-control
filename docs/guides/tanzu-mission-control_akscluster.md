@@ -32,7 +32,7 @@ You can use the following template as reference to write your own `tanzu-mission
 
 // Read Tanzu Mission Control Azure AKS cluster : fetch cluster details
 data "tanzu-mission-control_akscluster" "tf_aks_cluster" {
-  credential_name = "<aws-credential-name>" // Required
+  credential_name = "<aks-credential-name>" // Required
   subscription    = "<subscription>"        // Required
   resource_group  = "<resource-group>"      // Required
   name            = "<cluster-name>"        // Required
