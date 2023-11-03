@@ -25,6 +25,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmrelease"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmrepository"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/iampolicy"
+	inspections "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/inspections"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kustomization"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/managementcluster"
@@ -113,6 +114,8 @@ func Provider() *schema.Provider {
 			managementcluster.ResourceName:   managementcluster.DataSourceManagementClusterRegistration(),
 			clusterclass.ResourceName:        clusterclass.DataSourceClusterClass(),
 			provisioner.ResourceName:         provisioner.DataSourceProvisioner(),
+			inspections.ResourceNameInspections:       inspections.DataSourceInspections(),
+			inspections.ResourceNameInspectionResults: inspections.DataSourceInspectionResults(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}

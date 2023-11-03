@@ -73,7 +73,7 @@ func (converter *TFSchemaModelConverter[T]) tfHandleBlockMap(modelJSONData *map[
 			}
 		}
 
-		newBlock := BlockToStruct(mapValue.(*Map).Copy([]string{AllMapKeysFieldMarker}))
+		newBlock := BlockToStruct(*(mapValue.(*Map).Copy([]string{AllMapKeysFieldMarker})))
 		mapValue = &newBlock
 	}
 
