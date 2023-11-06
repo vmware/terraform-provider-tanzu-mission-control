@@ -31,7 +31,8 @@ type (
 
 var ignoredTagsPrefix = "tmc.cloud.vmware.com/"
 
-const defaultTimeout = 30 * time.Minute
+const minutesBasedDefaultTimeout = 30
+const nanoSecondsBasedDefaultTimeout = minutesBasedDefaultTimeout * time.Minute
 
 func ResourceTMCEKSCluster() *schema.Resource {
 	return &schema.Resource{
@@ -681,7 +682,7 @@ func getRetryTimeout(d *schema.ResourceData) time.Duration {
 		}
 	}
 
-	return defaultTimeout
+	return nanoSecondsBasedDefaultTimeout
 }
 
 func flattenClusterSpec(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec, nodepools []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) []interface{} {
