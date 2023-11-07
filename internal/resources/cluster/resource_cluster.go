@@ -589,7 +589,6 @@ func withMetaUpdate(d *schema.ResourceData, cluster *clustermodel.VmwareTanzuMan
 }
 
 func withTKGNodePoolUpdate(d *schema.ResourceData, nodepool *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolNodepool) bool {
-
 	switch {
 	case nodepool.Spec.TkgServiceVsphere != nil:
 		nodepools := d.Get(helper.GetFirstElementOf(SpecKey, tkgServiceVsphereKey, topologyKey, nodePoolKey)).([]interface{})[0].(map[string]interface{})
@@ -615,6 +614,7 @@ func withTKGNodePoolUpdate(d *schema.ResourceData, nodepool *nodepoolmodel.Vmwar
 			if incomingTkgServiceVsphereStorageClass != "" {
 				nodepool.Spec.TkgServiceVsphere.StorageClass = incomingTkgServiceVsphereStorageClass
 			}
+
 			log.Printf("[INFO] updating TKGs workload cluster nodepools")
 			return true
 		}
@@ -664,7 +664,7 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 
 		log.Printf("[INFO] cluster update successful")
 	}
-	//check default nodepool configuration update
+	// check default nodepool configuration update
 	npFullName := constructNpFullName(d)
 	npResp, err := config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceGet(npFullName)
 	if err != nil {
