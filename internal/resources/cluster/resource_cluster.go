@@ -595,6 +595,7 @@ func withTKGNodePoolUpdate(d *schema.ResourceData, nodepool *nodepoolmodel.Vmwar
 		poolSpec := nodepools[SpecKey].([]interface{})[0].(map[string]interface{})
 		// poolInfo := nodepools["info"].([]interface{})[0].(map[string]interface{})
 		tkgsSpec := poolSpec[tkgServiceVsphereKey].([]interface{})[0].(map[string]interface{})
+
 		if d.HasChange(helper.GetFirstElementOf(SpecKey, tkgServiceVsphereKey, topologyKey, nodePoolKey)) {
 
 			incomingWorkerNodeCount := poolSpec[workerNodeCountKey].(string)
@@ -616,17 +617,21 @@ func withTKGNodePoolUpdate(d *schema.ResourceData, nodepool *nodepoolmodel.Vmwar
 			}
 
 			log.Printf("[INFO] updating TKGs workload cluster nodepools")
+
 			return true
 		}
 	case nodepool.Spec.TkgVsphere != nil:
 		nodepools := d.Get(helper.GetFirstElementOf(SpecKey, tkgVsphereClusterKey, topologyKey, nodePoolKey)).([]interface{})[0].(map[string]interface{})
 		poolSpec := nodepools[SpecKey].([]interface{})[0].(map[string]interface{})
+
 		if d.HasChange(helper.GetFirstElementOf(SpecKey, tkgVsphereClusterKey, topologyKey, nodePoolKey)) {
 			incomingWorkerNodeCount := poolSpec[workerNodeCountKey].(string)
 
 			if incomingWorkerNodeCount != "" {
 				nodepool.Spec.WorkerNodeCount = incomingWorkerNodeCount
 			}
+
+			return true
 		}
 	}
 
@@ -666,6 +671,7 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 	}
 	// check default nodepool configuration update
 	npFullName := constructNpFullName(d)
+
 	npResp, err := config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceGet(npFullName)
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster node pool entry, name : %s", npFullName.Name))
