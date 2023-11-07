@@ -15,6 +15,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/nodepools"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/credential"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/custompolicytemplate"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/ekscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/gitrepository"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmcharts"
@@ -50,30 +51,31 @@ func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: authctx.ProviderAuthSchema(),
 		ResourcesMap: map[string]*schema.Resource{
-			cluster.ResourceName:             cluster.ResourceTMCCluster(),
-			ekscluster.ResourceName:          ekscluster.ResourceTMCEKSCluster(),
-			akscluster.ResourceName:          akscluster.ResourceTMCAKSCluster(),
-			workspace.ResourceName:           workspace.ResourceWorkspace(),
-			namespace.ResourceName:           namespace.ResourceNamespace(),
-			clustergroup.ResourceName:        clustergroup.ResourceClusterGroup(),
-			nodepools.ResourceName:           nodepools.ResourceNodePool(),
-			iampolicy.ResourceName:           iampolicy.ResourceIAMPolicy(),
-			custompolicy.ResourceName:        custompolicyresource.ResourceCustomPolicy(),
-			securitypolicy.ResourceName:      securitypolicyresource.ResourceSecurityPolicy(),
-			imagepolicy.ResourceName:         imagepolicyresource.ResourceImagePolicy(),
-			quotapolicy.ResourceName:         quotapolicyresource.ResourceQuotaPolicy(),
-			networkpolicy.ResourceName:       networkpolicyresource.ResourceNetworkPolicy(),
-			credential.ResourceName:          credential.ResourceCredential(),
-			integration.ResourceName:         integration.ResourceIntegration(),
-			gitrepository.ResourceName:       gitrepository.ResourceGitRepository(),
-			kustomization.ResourceName:       kustomization.ResourceKustomization(),
-			sourcesecret.ResourceName:        sourcesecret.ResourceSourceSecret(),
-			packagerepository.ResourceName:   packagerepository.ResourcePackageRepository(),
-			tanzupackageinstall.ResourceName: tanzupackageinstall.ResourcePackageInstall(),
-			kubernetessecret.ResourceName:    kubernetessecret.ResourceSecret(),
-			mutationpolicy.ResourceName:      mutationpolicyresource.ResourceMutationPolicy(),
-			helmrelease.ResourceName:         helmrelease.ResourceHelmRelease(),
-			helmfeature.ResourceName:         helmfeature.ResourceHelm(),
+			cluster.ResourceName:              cluster.ResourceTMCCluster(),
+			ekscluster.ResourceName:           ekscluster.ResourceTMCEKSCluster(),
+			akscluster.ResourceName:           akscluster.ResourceTMCAKSCluster(),
+			workspace.ResourceName:            workspace.ResourceWorkspace(),
+			namespace.ResourceName:            namespace.ResourceNamespace(),
+			clustergroup.ResourceName:         clustergroup.ResourceClusterGroup(),
+			nodepools.ResourceName:            nodepools.ResourceNodePool(),
+			iampolicy.ResourceName:            iampolicy.ResourceIAMPolicy(),
+			custompolicy.ResourceName:         custompolicyresource.ResourceCustomPolicy(),
+			securitypolicy.ResourceName:       securitypolicyresource.ResourceSecurityPolicy(),
+			imagepolicy.ResourceName:          imagepolicyresource.ResourceImagePolicy(),
+			quotapolicy.ResourceName:          quotapolicyresource.ResourceQuotaPolicy(),
+			networkpolicy.ResourceName:        networkpolicyresource.ResourceNetworkPolicy(),
+			credential.ResourceName:           credential.ResourceCredential(),
+			integration.ResourceName:          integration.ResourceIntegration(),
+			gitrepository.ResourceName:        gitrepository.ResourceGitRepository(),
+			kustomization.ResourceName:        kustomization.ResourceKustomization(),
+			sourcesecret.ResourceName:         sourcesecret.ResourceSourceSecret(),
+			packagerepository.ResourceName:    packagerepository.ResourcePackageRepository(),
+			tanzupackageinstall.ResourceName:  tanzupackageinstall.ResourcePackageInstall(),
+			kubernetessecret.ResourceName:     kubernetessecret.ResourceSecret(),
+			mutationpolicy.ResourceName:       mutationpolicyresource.ResourceMutationPolicy(),
+			helmrelease.ResourceName:          helmrelease.ResourceHelmRelease(),
+			helmfeature.ResourceName:          helmfeature.ResourceHelm(),
+			custompolicytemplate.ResourceName: custompolicytemplate.ResourceCustomPolicyTemplate(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:             cluster.DataSourceTMCCluster(),
