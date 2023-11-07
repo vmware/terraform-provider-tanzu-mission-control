@@ -597,7 +597,6 @@ func withTKGNodePoolUpdate(d *schema.ResourceData, nodepool *nodepoolmodel.Vmwar
 		tkgsSpec := poolSpec[tkgServiceVsphereKey].([]interface{})[0].(map[string]interface{})
 
 		if d.HasChange(helper.GetFirstElementOf(SpecKey, tkgServiceVsphereKey, topologyKey, nodePoolKey)) {
-
 			incomingWorkerNodeCount := poolSpec[workerNodeCountKey].(string)
 
 			if incomingWorkerNodeCount != "" {
