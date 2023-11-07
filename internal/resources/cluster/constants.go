@@ -27,4 +27,10 @@ const (
 	distributionKey                = "distribution"
 	versionKey                     = "version"
 	imageRegistryNameKey           = "image_registry"
+	topologyKey                    = "topology"
+	nodePoolKey                    = "node_pools"
+	clusterNameKey                 = "cluster_name"
+	workerNodeCountKey             = "worker_node_count"
+	classKey                       = "class"
+	storageClassKey                = "storage_class"
 )
