@@ -117,8 +117,13 @@ func constructNpFullName(d *schema.ResourceData) (fullname *nodepoolmodel.Vmware
 		fullname.ClusterName = value.(string)
 	}
 
-	if value, ok := d.Get(helper.GetFirstElementOf(SpecKey, tkgServiceVsphereKey, topologyKey, nodePoolKey)).([]interface{})[0].(map[string]interface{}); ok {
-		poolInfo := value["info"].([]interface{})[0].(map[string]interface{})
+	if value, ok := d.GetOk(helper.GetFirstElementOf(SpecKey, tkgServiceVsphereKey, topologyKey, nodePoolKey)); ok {
+		np := value.([]interface{})[0].(map[string]interface{})
+		poolInfo := np["info"].([]interface{})[0].(map[string]interface{})
+		fullname.Name = poolInfo["name"].(string)
+	} else if value, ok := d.GetOk(helper.GetFirstElementOf(SpecKey, tkgVsphereClusterKey, topologyKey, nodePoolKey)); ok {
+		np := value.([]interface{})[0].(map[string]interface{})
+		poolInfo := np["info"].([]interface{})[0].(map[string]interface{})
 		fullname.Name = poolInfo["name"].(string)
 	}
 
@@ -629,6 +634,8 @@ func withTKGNodePoolUpdate(d *schema.ResourceData, nodepool *nodepoolmodel.Vmwar
 			if incomingWorkerNodeCount != "" {
 				nodepool.Spec.WorkerNodeCount = incomingWorkerNodeCount
 			}
+
+			log.Printf("[INFO] updating TKGm workload cluster nodepools")
 
 			return true
 		}
