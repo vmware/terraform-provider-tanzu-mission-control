@@ -102,7 +102,7 @@ func constructFullname(d *schema.ResourceData) (fullname *clustermodel.VmwareTan
 	return fullname
 }
 
-func constructNpFullName(d *schema.ResourceData) (fullname *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolFullName) {
+func constructNodePoolFullName(d *schema.ResourceData) (fullname *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolFullName) {
 	fullname = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolFullName{}
 
 	if value, ok := d.GetOk(ManagementClusterNameKey); ok {
@@ -676,7 +676,7 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 		log.Printf("[INFO] cluster update successful")
 	}
 	// check default nodepool configuration update
-	npFullName := constructNpFullName(d)
+	npFullName := constructNodePoolFullName(d)
 
 	npResp, err := config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceGet(npFullName)
 	if err != nil {
