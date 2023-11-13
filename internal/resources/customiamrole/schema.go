@@ -24,13 +24,17 @@ const (
 	SpecKey = "spec"
 
 	// Spec Directive Keys.
-	ResourcesKey        = "resources"
-	AggregationRuleKey  = "aggregation_rule"
-	IsDeprecatedKey     = "is_deprecated"
-	RuleKey             = "rule"
-	TanzuPermissionsKey = "tanzu_permissions"
+	AllowedScopesKey         = "allowed_scopes"
+	AggregationRuleKey       = "aggregation_rule"
+	IsDeprecatedKey          = "is_deprecated"
+	TanzuPermissionsKey      = "tanzu_permissions"
+	KubernetesPermissionsKey = "kubernetes_permissions"
+
+	// Kubernetes Permissions Directive Keys.
+	RuleKey = "rule"
 
 	// Rule Directive Keys.
+	ResourcesKey     = "resources"
 	APIGroupsKey     = "api_groups"
 	URLPathsKey      = "url_paths"
 	ResourceNamesKey = "resource_names"
@@ -49,7 +53,7 @@ const (
 	MeValuesKey   = "values"
 )
 
-var ResourcesValidValues = []string{
+var AllowedScopesValidValues = []string{
 	string(customiamrolemodels.VmwareTanzuManageV1alpha1IamPermissionResourceORGANIZATION),
 	string(customiamrolemodels.VmwareTanzuManageV1alpha1IamPermissionResourceMANAGEMENTCLUSTER),
 	string(customiamrolemodels.VmwareTanzuManageV1alpha1IamPermissionResourcePROVISIONER),
@@ -79,9 +83,9 @@ var specSchema = &schema.Schema{
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			ResourcesKey:       ResourcesSchema,
-			AggregationRuleKey: AggregationRuleSchema,
-			RuleKey:            RuleSchema,
+			AllowedScopesKey:         AllowedScopesSchema,
+			AggregationRuleKey:       AggregationRuleSchema,
+			KubernetesPermissionsKey: KubernetesPermissionsSchema,
 			TanzuPermissionsKey: {
 				Type:        schema.TypeList,
 				Description: "Tanzu-specific permissions for the role.",
@@ -100,13 +104,13 @@ var specSchema = &schema.Schema{
 	},
 }
 
-var ResourcesSchema = &schema.Schema{
+var AllowedScopesSchema = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: fmt.Sprintf("The resources for the iam role.\nValid values are (%s)", strings.Join(ResourcesValidValues, ", ")),
+	Description: fmt.Sprintf("The allowed scopes for the iam role.\nValid values are (%s)", strings.Join(AllowedScopesValidValues, ", ")),
 	Required:    true,
 	Elem: &schema.Schema{
 		Type:             schema.TypeString,
-		ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice(ResourcesValidValues, false)),
+		ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice(AllowedScopesValidValues, false)),
 	},
 }
 
@@ -158,6 +162,18 @@ var AggregationRuleSchema = &schema.Schema{
 					},
 				},
 			},
+		},
+	},
+}
+
+var KubernetesPermissionsSchema = &schema.Schema{
+	Type:        schema.TypeList,
+	Description: "Kubernetes permissions for the iam role.",
+	MaxItems:    1,
+	Optional:    true,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			RuleKey: RuleSchema,
 		},
 	},
 }

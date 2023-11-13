@@ -22,15 +22,17 @@ var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
 	common.MetaKey: common.GetMetaConverterMap(tfModelConverterHelper.DefaultModelPathSeparator),
 	SpecKey: &tfModelConverterHelper.BlockToStruct{
 		IsDeprecatedKey:     tfModelConverterHelper.BuildDefaultModelPath("spec", "isDeprecated"),
-		ResourcesKey:        tfModelConverterHelper.BuildDefaultModelPath("spec", "resources"),
+		AllowedScopesKey:    tfModelConverterHelper.BuildDefaultModelPath("spec", "resources"),
 		TanzuPermissionsKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "tanzuPermissions"),
-		RuleKey: &tfModelConverterHelper.BlockSliceToStructSlice{
-			{
-				APIGroupsKey:     tfModelConverterHelper.BuildDefaultModelPath("spec", rulesArrayField, "apiGroups"),
-				URLPathsKey:      tfModelConverterHelper.BuildDefaultModelPath("spec", rulesArrayField, "nonResourceUrls"),
-				ResourceNamesKey: tfModelConverterHelper.BuildDefaultModelPath("spec", rulesArrayField, "resourceNames"),
-				ResourcesKey:     tfModelConverterHelper.BuildDefaultModelPath("spec", rulesArrayField, "resources"),
-				VerbsKey:         tfModelConverterHelper.BuildDefaultModelPath("spec", rulesArrayField, "verbs"),
+		KubernetesPermissionsKey: &tfModelConverterHelper.BlockToStruct{
+			RuleKey: &tfModelConverterHelper.BlockSliceToStructSlice{
+				{
+					APIGroupsKey:     tfModelConverterHelper.BuildDefaultModelPath("spec", rulesArrayField, "apiGroups"),
+					URLPathsKey:      tfModelConverterHelper.BuildDefaultModelPath("spec", rulesArrayField, "nonResourceUrls"),
+					ResourceNamesKey: tfModelConverterHelper.BuildDefaultModelPath("spec", rulesArrayField, "resourceNames"),
+					ResourcesKey:     tfModelConverterHelper.BuildDefaultModelPath("spec", rulesArrayField, "resources"),
+					VerbsKey:         tfModelConverterHelper.BuildDefaultModelPath("spec", rulesArrayField, "verbs"),
+				},
 			},
 		},
 		AggregationRuleKey: &tfModelConverterHelper.BlockToStruct{
