@@ -1,0 +1,19 @@
+---
+Title: "Custom IAM Role Resource"
+Description: |-
+   Creating a custom IAM role.
+---
+
+# Custom IAM Role Resource
+
+This resource enables users to create custom IAM roles in TMC.
+
+For more information regarding custom roles, see [Custom Role][custom-role].
+
+[custom-role]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-F314ED9E-2736-48CC-A1BB-CB9C32900B30.html
+
+## Example Usage
+
+{{ tffile "examples/resources/custom_iam_role/resource_custom_iam_role.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
