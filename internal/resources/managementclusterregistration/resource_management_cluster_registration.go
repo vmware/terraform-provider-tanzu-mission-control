@@ -154,6 +154,88 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		return diag.Errorf("error while retrieving Tanzu auth config")
 	}
 
+	createResponse, createError := createRegistrationResource(config, d)
+
+	if createError != nil {
+		return diag.FromErr(errors.Wrapf(createError, "Unable to create Management cluster registration, name : %s", d.Get(NameKey)))
+	}
+
+	d.SetId(createResponse.ManagementCluster.Meta.UID)
+
+	if v, ok := d.GetOk(registerClusterKey); ok {
+		var (
+			kubeClient *k8sClient.Client
+			err        error
+			kubeConfig interface{}
+			manifests  string
+		)
+
+		err = validateKubeConfig(v)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+
+		spec := constructSpec(d)
+		if *spec.KubernetesProviderType != "VMWARE_TANZU_KUBERNETES_GRID" {
+			return diag.Errorf("kubernetes_provider_type must have value VMWARE_TANZU_KUBERNETES_GRID so registration with kubeconfig would be possible")
+		}
+
+		isKubeConfigPresent := func(typeKey string) bool {
+			if value, ok := d.GetOk(helper.GetFirstElementOf(registerClusterKey, typeKey)); ok {
+				if value != nil {
+					kubeConfig = value
+					return true
+				}
+			}
+
+			return false
+		}
+
+		switch {
+		case isKubeConfigPresent(registerClusterKubeConfigPathForTKGmKey):
+			kubeConfigFile, _ := kubeConfig.(string)
+			kubeClient, err = getK8sClientFromFilePath(kubeConfigFile)
+
+		case isKubeConfigPresent(registerClusterKubeConfigRawForTKGmKey):
+			rawKubeConfig, _ := kubeConfig.(string)
+			kubeClient, err = getK8sClientFromRawInput(rawKubeConfig)
+		}
+
+		if err != nil {
+			log.Println("[ERROR] error while creating kubernetes client: ", err.Error())
+			return diag.FromErr(err)
+		}
+
+		if createResponse.ManagementCluster.Spec.ImageRegistry != "" || createResponse.ManagementCluster.Spec.ProxyName != "" {
+			clusterManifest, err := config.TMCConnection.ManagementClusterRegistrationResourceService.ManagementClusterManifestHelperGetManifest(constructFullname(d))
+			if err != nil {
+				return diag.FromErr(errors.Wrapf(err, "Unable to get manifest (%s), err : %s", clusterManifest.Manifest, err))
+			}
+
+			manifests = clusterManifest.Manifest
+		} else {
+			deploymentManifest, err := manifest.GetK8sManifest(createResponse.ManagementCluster.Status.RegistrationURL)
+			if err != nil {
+				return append(diags, diag.FromErr(err)...)
+			}
+
+			manifests = string(deploymentManifest)
+		}
+
+		log.Printf("[INFO] Applying %s manifest objects on to kubernetes cluster", constructFullname(d).ToString())
+
+		err = manifest.Create(kubeClient, manifests, true)
+		if err != nil {
+			return append(diags, diag.FromErr(err)...)
+		}
+
+		log.Printf("[INFO] Cluster registered successfully. Tanzu Mission Control resources(%s) applied successfully", constructFullname(d).ToString())
+	}
+
+	return append(diags, dataSourceClusterRead(context.WithValue(ctx, contextMethodKey{}, helper.CreateState), d, m)...)
+}
+
+func createRegistrationResource(config authctx.TanzuContext, d *schema.ResourceData) (*managementclusterregistrationmodel.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error) {
 	statusResponse, _ := config.TMCConnection.ManagementClusterRegistrationResourceService.ManagementClusterResourceServiceGet(constructFullname(d))
 
 	var (
@@ -175,109 +257,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		createResponse, createError = config.TMCConnection.ManagementClusterRegistrationResourceService.ManagementClusterResourceServiceCreate(registrationRequest)
 	}
 
-	if createError != nil {
-		return diag.FromErr(errors.Wrapf(createError, "Unable to create Management cluster registration, name : %s", d.Get(NameKey)))
-	}
-
-	d.SetId(createResponse.ManagementCluster.Meta.UID)
-
-	var (
-		k8sclient  *k8sClient.Client
-		err        error
-		kubeConfig interface{}
-		manifests  string
-	)
-
-	if v, ok := d.GetOk(registerClusterKey); ok {
-		if v == nil {
-			return diag.Errorf("data for registering cluster block not found: %v", v)
-		}
-
-		spec := constructSpec(d)
-		if *spec.KubernetesProviderType != "VMWARE_TANZU_KUBERNETES_GRID" {
-			return diag.Errorf("kubernetes_provider_type must have value VMWARE_TANZU_KUBERNETES_GRID so registration with kubeconfig would be possible")
-		}
-
-		err = validateKubeConfig(v)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-
-		isKubeConfigPresent := func(typeKey string) bool {
-			if value, ok := d.GetOk(helper.GetFirstElementOf(registerClusterKey, typeKey)); ok {
-				if value != nil {
-					kubeConfig = value
-					return true
-				}
-			}
-
-			return false
-		}
-
-		switch {
-		case isKubeConfigPresent(registerClusterKubeConfigPathForTKGmKey):
-			kubeConfigFile, _ := kubeConfig.(string)
-			if strings.TrimSpace(kubeConfigFile) == "" {
-				return diag.FromErr(fmt.Errorf("expected kubeconfig file path to not be an empty string or whitespace"))
-			}
-
-			k8sclient, err = getK8sClientFromFilePath(kubeConfigFile)
-
-		case isKubeConfigPresent(registerClusterKubeConfigRawForTKGmKey):
-			rawKubeConfig, _ := kubeConfig.(string)
-			if strings.TrimSpace(rawKubeConfig) == "" {
-				return diag.FromErr(fmt.Errorf("expected raw kubeconfig to not be an empty string or whitespace"))
-			}
-
-			k8sclient, err = getK8sClientFromRawInput(rawKubeConfig)
-		}
-
-		if err != nil {
-			log.Println("[ERROR] error while creating kubernetes client: ", err.Error())
-			return diag.FromErr(err)
-		}
-
-		if k8sclient == nil {
-			err = errors.New("error while obtaining k8s client from REST config")
-			log.Println("[ERROR] error while creating kubernetes client: ", err.Error())
-
-			return diag.FromErr(err)
-		}
-	}
-
-	if _, ok := d.GetOk(registerClusterKey); ok {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  "Kubernetes cluster's kubeconfig provided. Proceeding to attach the cluster TMC",
-		})
-
-		if createResponse.ManagementCluster.Spec.ImageRegistry != "" || createResponse.ManagementCluster.Spec.ProxyName != "" {
-			clusterManifest, err := config.TMCConnection.ManagementClusterRegistrationResourceService.ManagementClusterManifestHelperGetManifest(constructFullname(d))
-			if err != nil {
-				return diag.FromErr(errors.Wrapf(err, "Unable to get manifest (%s), err : %s", clusterManifest.Manifest, err))
-			}
-
-			manifests = clusterManifest.Manifest
-		} else {
-			deploymentManifest, err := manifest.GetK8sManifest(createResponse.ManagementCluster.Status.RegistrationURL)
-			if err != nil {
-				return append(diags, diag.FromErr(err)...)
-			}
-
-			manifests = string(deploymentManifest)
-		}
-
-		log.Printf("[INFO] Applying %s manifest objects on to kubernetes cluster", constructFullname(d).ToString())
-
-		err = manifest.Create(k8sclient, manifests, true)
-		if err != nil {
-			return append(diags, diag.FromErr(err)...)
-		}
-
-		log.Printf("[INFO] Cluster registered successfully. Tanzu Mission Control resources(%s) applied successfully", constructFullname(d).ToString())
-	}
-
-	return append(diags, dataSourceClusterRead(context.WithValue(ctx, contextMethodKey{}, helper.CreateState), d, m)...)
+	return createResponse, createError
 }
 
 func validateKubeConfig(value interface{}) error {
@@ -313,10 +293,18 @@ func validateKubeConfig(value interface{}) error {
 }
 
 func getK8sClientFromRawInput(rawConfiguration string) (*k8sClient.Client, error) {
+	if strings.TrimSpace(rawConfiguration) == "" {
+		return nil, fmt.Errorf("expected raw kubeconfig to not be an empty string or whitespace")
+	}
+
 	return getK8sClient("", rawConfiguration)
 }
 
 func getK8sClientFromFilePath(filePath string) (*k8sClient.Client, error) {
+	if strings.TrimSpace(filePath) == "" {
+		return nil, fmt.Errorf("expected kubeconfig file path to not be an empty string or whitespace")
+	}
+
 	return getK8sClient(filePath, "")
 }
 
