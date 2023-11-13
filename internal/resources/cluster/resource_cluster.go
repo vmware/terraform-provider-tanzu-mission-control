@@ -598,7 +598,6 @@ func withTKGNodePoolUpdate(d *schema.ResourceData, nodepool *nodepoolmodel.Vmwar
 	case nodepool.Spec.TkgServiceVsphere != nil:
 		nodepools := d.Get(helper.GetFirstElementOf(SpecKey, tkgServiceVsphereKey, topologyKey, nodePoolKey)).([]interface{})[0].(map[string]interface{})
 		poolSpec := nodepools[SpecKey].([]interface{})[0].(map[string]interface{})
-		// poolInfo := nodepools["info"].([]interface{})[0].(map[string]interface{})
 		tkgsSpec := poolSpec[tkgServiceVsphereKey].([]interface{})[0].(map[string]interface{})
 
 		if d.HasChange(helper.GetFirstElementOf(SpecKey, tkgServiceVsphereKey, topologyKey, nodePoolKey)) {
