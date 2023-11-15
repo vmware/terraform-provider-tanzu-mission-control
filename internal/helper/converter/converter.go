@@ -139,7 +139,7 @@ func (converter *TFSchemaModelConverter[T]) handleOffsetBuildModelField(rootMode
 				}
 			}
 
-			rootMapValue = rootMapValue.(BlockToStruct)[offsetPaths[i]]
+			rootMapValue = (*rootMapValue.(*BlockToStruct))[offsetPaths[i]]
 		}
 	}
 

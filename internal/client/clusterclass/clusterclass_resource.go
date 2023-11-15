@@ -34,14 +34,14 @@ type Client struct {
 
 // ClientService is the interface for Client methods.
 type ClientService interface {
-	ClusterClassResourceServiceGet(fn *clusterclassmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassFullName) (*clusterclassmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassListClusterClassesResponse, error)
+	ClusterClassResourceServiceGet(fn *clusterclassmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassFullName) (*clusterclassmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassListData, error)
 }
 
 /*
 ClusterClassResourceServiceGet gets or lists cluster classes.
 */
-func (c *Client) ClusterClassResourceServiceGet(fn *clusterclassmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassFullName) (*clusterclassmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassListClusterClassesResponse, error) {
-	response := &clusterclassmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassListClusterClassesResponse{}
+func (c *Client) ClusterClassResourceServiceGet(fn *clusterclassmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassFullName) (*clusterclassmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassListData, error) {
+	response := &clusterclassmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassListData{}
 	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, fn.ManagementClusterName, provisioners, fn.ProvisionerName, clusterClasses)
 
 	if fn.Name != "" {

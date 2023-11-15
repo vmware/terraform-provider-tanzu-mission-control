@@ -10,17 +10,17 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassVariableSchema VariableSchema defines the schema of a variable.
+// VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassVariableSchema VariableSchema defines the schema of a variable.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.managementcluster.provisioner.clusterclass.VariableSchema
-type VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassVariableSchema struct {
+type VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassVariableSchema struct {
 
 	// Template values in OpenAPI V3 schema format.
 	Template *K8sIoApimachineryPkgRuntimeRawExtension `json:"template,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassVariableSchema) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassVariableSchema) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -29,8 +29,8 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassVariab
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassVariableSchema) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassVariableSchema
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassVariableSchema) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassVariableSchema
 
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
@@ -60,7 +60,6 @@ func (m *K8sIoApimachineryPkgRuntimeRawExtension) MarshalBinary() ([]byte, error
 // UnmarshalBinary interface implementation.
 func (m *K8sIoApimachineryPkgRuntimeRawExtension) UnmarshalBinary(b []byte) error {
 	var res K8sIoApimachineryPkgRuntimeRawExtension
-
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

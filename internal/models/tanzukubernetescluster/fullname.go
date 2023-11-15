@@ -9,11 +9,11 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterFullName Full name of the cluster. This includes the object name along
+// VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterFullName Full name of the cluster. This includes the object name along
 // with any parents or further identifiers.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.managementcluster.provisioner.tanzukubernetescluster.FullName
-type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterFullName struct {
+type VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterFullName struct {
 
 	// Name of the management cluster.
 	ManagementClusterName string `json:"managementClusterName,omitempty"`
@@ -29,7 +29,7 @@ type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetescluster
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterFullName) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterFullName) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -38,8 +38,8 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclu
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterFullName) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterFullName
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterFullName) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterFullName
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

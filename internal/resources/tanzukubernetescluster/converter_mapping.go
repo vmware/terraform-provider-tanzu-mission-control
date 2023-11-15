@@ -29,13 +29,14 @@ var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
 		ImageRegistryKey:    tfModelConverterHelper.BuildDefaultModelPath("spec", "imageRegistry"),
 		ProxyNameKey:        tfModelConverterHelper.BuildDefaultModelPath("spec", "proxyName"),
 		TMCManagedKey:       tfModelConverterHelper.BuildDefaultModelPath("spec", "tmcManaged"),
+		KubeConfigKey:       tfModelConverterHelper.BuildDefaultModelPath("spec", "kubeconfig"),
 		TopologyKey: &tfModelConverterHelper.BlockToStruct{
 			ClusterClassKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", "clusterClass"),
 			VersionKey:      tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", "version"),
 			NodePoolKey: &tfModelConverterHelper.BlockSliceToStructSlice{
 				{
-					NameKey:        tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", nodePoolsArrayField, "info", "name"),
-					DescriptionKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", nodePoolsArrayField, "info", "description"),
+					NameKey:               tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", nodePoolsArrayField, "fullName", "name"),
+					common.DescriptionKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", nodePoolsArrayField, "meta", "description"),
 					SpecKey: &tfModelConverterHelper.BlockToStruct{
 						WorkerClassKey:   tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", nodePoolsArrayField, "spec", "class"),
 						FailureDomainKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", nodePoolsArrayField, "spec", "failureDomain"),
@@ -87,7 +88,7 @@ var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
 	},
 }
 
-var tfModelResourceConverter = tfModelConverterHelper.TFSchemaModelConverter[*tanzukubernetesclustermodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterTanzuKubernetesCluster]{
+var tfModelResourceConverter = tfModelConverterHelper.TFSchemaModelConverter[*tanzukubernetesclustermodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterTanzuKubernetesCluster]{
 	TFModelMap: tfModelResourceMap,
 }
 

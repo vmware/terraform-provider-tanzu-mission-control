@@ -11,10 +11,10 @@ import (
 	tkccommon "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzukubernetescluster/common"
 )
 
-// VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolSpec Spec for the cluster nodepool.
+// VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepoolSpec Spec for the cluster nodepool.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.managementcluster.provisioner.tanzukubernetescluster.nodepool.Spec
-type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolSpec struct {
+type VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepoolSpec struct {
 
 	// The name of the machine deployment class used to create the nodepool.
 	Class string `json:"class,omitempty"`
@@ -23,20 +23,20 @@ type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetescluster
 	FailureDomain string `json:"failureDomain,omitempty"`
 
 	// The metadata of the nodepool.
-	Metadata *tkccommon.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCommonClusterMetadata `json:"metadata,omitempty"`
+	Metadata *tkccommon.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterCommonClusterMetadata `json:"metadata,omitempty"`
 
 	// The OS image of the nodepool.
-	OsImage *tkccommon.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCommonClusterOSImage `json:"osImage,omitempty"`
+	OsImage *tkccommon.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterCommonClusterOSImage `json:"osImage,omitempty"`
 
 	// Overrides can be used to override cluster level variables.
-	Overrides []*tkccommon.VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCommonClusterClusterVariable `json:"overrides"`
+	Overrides []*tkccommon.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterCommonClusterClusterVariable `json:"overrides"`
 
 	// The replicas of the nodepool.
 	Replicas int32 `json:"replicas,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolSpec) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepoolSpec) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -45,8 +45,8 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclu
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolSpec) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolSpec
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepoolSpec) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepoolSpec
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
