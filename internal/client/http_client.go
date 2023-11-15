@@ -39,6 +39,7 @@ import (
 	sourcesecretclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/sourcesecret"
 	credentialclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/credential"
 	custompolicytemplateclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/custompolicytemplate"
+	customiamroleclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/customiamrole"
 	eksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster"
 	eksnodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster/nodepool"
 	inspectionsclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/inspections"
@@ -150,6 +151,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ProvisionerResourceService:                    provisionerclient.New(httpClient),
 		CustomPolicyTemplateResourceService:           custompolicytemplateclient.New(httpClient),
 		RecipeResourceService:                         recipeclient.New(httpClient),
+		CustomIAMRoleResourceService:                  customiamroleclient.New(httpClient),
 	}
 }
 
@@ -211,4 +213,5 @@ type TanzuMissionControl struct {
 	InspectionsResourceService                    inspectionsclient.ClientService
 	CustomPolicyTemplateResourceService           custompolicytemplateclient.ClientService
 	RecipeResourceService                         recipeclient.ClientService
+	CustomIAMRoleResourceService                  customiamroleclient.ClientService
 }
