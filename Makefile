@@ -22,7 +22,7 @@ ifeq ($(TEST_FLAGS),)
 endif
 
 ifeq ($(BUILD_TAGS),)
-	BUILD_TAGS := 'akscluster cluster clustergroup credential ekscluster gitrepository iampolicy kustomization namespace custompolicy imagepolicy networkpolicy quotapolicy securitypolicy sourcesecret workspace tanzupackage tanzupackages packagerepository packageinstall clustersecret integration mutationpolicy managementclusterregistration'
+	BUILD_TAGS := 'akscluster cluster clustergroup credential ekscluster gitrepository iampolicy kustomization namespace custompolicy imagepolicy networkpolicy quotapolicy securitypolicy sourcesecret workspace tanzupackage tanzupackages packagerepository packageinstall clustersecret integration mutationpolicy managementcluster'
 endif
 
 .PHONY: build clean-up test gofmt vet lint acc-test website-lint website-lint-fix

@@ -3,7 +3,7 @@ Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package managementclusterregistration
+package managementcluster
 
 import (
 	"context"
@@ -24,7 +24,7 @@ import (
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	clustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster"
-	managementclusterregistrationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/managementclusterregistration"
+	managementclusterregistrationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/managementcluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/manifest"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )

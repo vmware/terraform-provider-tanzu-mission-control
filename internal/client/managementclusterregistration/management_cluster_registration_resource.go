@@ -14,7 +14,7 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
-	registration "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/managementclusterregistration"
+	registration "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/managementcluster"
 )
 
 const (
@@ -59,22 +59,22 @@ type ClientService interface {
 ManagementClusterResourceServiceCreate creates a management cluster registration
 */
 func (c *Client) ManagementClusterResourceServiceCreate(request *registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterRequest) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error) {
-	namespaceResponse := &registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse{}
-	err := c.Create(apiVersionAndGroup, request, namespaceResponse)
+	response := &registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse{}
+	err := c.Create(apiVersionAndGroup, request, response)
 
-	return namespaceResponse, err
+	return response, err
 }
 
 /*
 ManagementClusterResourceReregisterService reregisters management cluster registration
 */
 func (c *Client) ManagementClusterResourceReregisterService(request *registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterRequest) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error) {
-	reregisterResponse := &registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse{}
+	response := &registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse{}
 	requestURL := helper.ConstructRequestURL(reregisterApiVersionAndGroup, request.ManagementCluster.FullName.Name).String()
 
-	err := c.Create(requestURL, request, reregisterResponse)
+	err := c.Create(requestURL, request, response)
 
-	return reregisterResponse, err
+	return response, err
 }
 
 /*

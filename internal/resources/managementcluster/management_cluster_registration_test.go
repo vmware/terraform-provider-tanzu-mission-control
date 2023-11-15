@@ -1,12 +1,12 @@
-//go:build managementclusterregistration
-// +build managementclusterregistration
+//go:build managementcluster
+// +build managementcluster
 
 /*
 Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package managementclusterregistration
+package managementcluster
 
 import (
 	"fmt"
@@ -21,18 +21,20 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
-	managementclusterregistrationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/managementclusterregistration"
+	registrationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/managementcluster"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
 func TestAcceptanceForManagementClusterRegistrationResource(t *testing.T) {
 	var provider = initTestProvider(t)
 
-	tKGsresourceName := fmt.Sprintf("%s.%s", "tanzu-mission-control_management_cluster", "test_tkgs")
-	tkgsName := acctest.RandomWithPrefix("a-tf-tkgs-test")
-
+	tKGsResourceName := fmt.Sprintf("%s.%s", "tanzu-mission-control_management_cluster", "test_tkgs")
 	tKGmResourceName := fmt.Sprintf("%s.%s", "tanzu-mission-control_management_cluster", "test_tkgm")
-	tkgmName := acctest.RandomWithPrefix("a-tf-tkgm-test")
+
+	tkgsSimpleName := acctest.RandomWithPrefix("a-tf-tkgs-simple-test")
+	tkgmSimpleName := acctest.RandomWithPrefix("a-tf-tkgm-simple-test")
+
+	tkgmKubeconfigFilePathName := acctest.RandomWithPrefix("a-tf-tkgm-kubeconfig-filepath-test")
 
 	kubeconfigPath := os.Getenv("KUBECONFIG")
 
@@ -42,16 +44,12 @@ func TestAcceptanceForManagementClusterRegistrationResource(t *testing.T) {
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
-				Config: getSimpleTKGsResourceWithDataSource(tkgsName),
-				Check: resource.ComposeTestCheckFunc(
-					checkResourceAttributes(provider, tKGsresourceName, tkgsName),
-				),
+				Config: getTKGsResourceWithoutKubeconfigWithDataSource(tkgsSimpleName),
+				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(provider, tKGsResourceName, tkgsSimpleName)),
 			},
 			{
-				Config: getSimpleTKGmResourceWithDataSource(tkgmName),
-				Check: resource.ComposeTestCheckFunc(
-					checkResourceAttributes(provider, tKGmResourceName, tkgmName),
-				),
+				Config: getTKGmResourceWithoutKubeconfigWithDataSource(tkgmSimpleName),
+				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(provider, tKGmResourceName, tkgmSimpleName)),
 			},
 			{
 				PreConfig: func() {
@@ -59,10 +57,8 @@ func TestAcceptanceForManagementClusterRegistrationResource(t *testing.T) {
 						t.Skip("KUBECONFIG env var is not set for management cluster registration acceptance test")
 					}
 				},
-				Config: getSimpleTKGmResourceWithDataSourceWithKubeConfig(tkgmName, kubeconfigPath),
-				Check: resource.ComposeTestCheckFunc(
-					checkResourceAttributes(provider, tKGmResourceName, tkgmName),
-				),
+				Config: getTKGmResourceWithDataSourceWithKubeConfigFilePath(tkgmKubeconfigFilePathName, kubeconfigPath),
+				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(provider, tKGmResourceName, tkgmKubeconfigFilePathName)),
 			},
 		},
 	},
@@ -70,7 +66,7 @@ func TestAcceptanceForManagementClusterRegistrationResource(t *testing.T) {
 	t.Log("management cluster registration resource acceptance test complete!")
 }
 
-func getSimpleTKGsResourceWithDataSource(name string) string {
+func getTKGsResourceWithoutKubeconfigWithDataSource(name string) string {
 	return fmt.Sprintf(`
 		resource "tanzu-mission-control_management_cluster" "test_tkgs" {
 		  name = "%s"
@@ -86,7 +82,7 @@ func getSimpleTKGsResourceWithDataSource(name string) string {
 		`, name)
 }
 
-func getSimpleTKGmResourceWithDataSource(name string) string {
+func getTKGmResourceWithoutKubeconfigWithDataSource(name string) string {
 	return fmt.Sprintf(`
 		resource "tanzu-mission-control_management_cluster" "test_tkgm" {
 		  name = "%s"
@@ -102,7 +98,7 @@ func getSimpleTKGmResourceWithDataSource(name string) string {
 		`, name)
 }
 
-func getSimpleTKGmResourceWithDataSourceWithKubeConfig(name string, kubeconfigPath string) string {
+func getTKGmResourceWithDataSourceWithKubeConfigFilePath(name string, kubeconfigPath string) string {
 	return fmt.Sprintf(`
 		resource "tanzu-mission-control_management_cluster" "test_tkgm" {
 		  name = "%s"
@@ -162,9 +158,11 @@ func verifyManagementClusterRegistrationResourceCreation(
 			return errors.Wrap(err, "unable to set the context")
 		}
 
-		request := &managementclusterregistrationclient.VmwareTanzuManageV1alpha1ManagementclusterFullName{
+		request := &registrationmodel.VmwareTanzuManageV1alpha1ManagementclusterFullName{
 			Name: name,
 		}
+
+		// TODO add extra check here to check status of the resource. Add method parameter for that. Implement this in acceptance and mock PR
 
 		resp, err := config.TMCConnection.ManagementClusterRegistrationResourceService.ManagementClusterResourceServiceGet(request)
 		if err != nil || resp == nil {

@@ -86,7 +86,7 @@ run:
     - tanzupackage
     - clustersecret
     - mutationpolicy
-    - managementclusterregistration
+    - managementcluster
 
 linters-settings:
   funlen:
