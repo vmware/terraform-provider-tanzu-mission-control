@@ -37,6 +37,40 @@ resource "tanzu-mission-control_credential" "aws_eks_cred" {
 }
 ```
 
+# Tanzu Mission Control Azure AKS credential
+
+## Example Usage
+
+```terraform
+# Create AZURE_AKS credential resource
+resource "tanzu-mission-control_credential" "azure_aks_cred" {
+  name = "tf-azure-aks-cred-test"
+
+  meta {
+    description = "Azure AKS credential for AKS cluster lifecycle management"
+    labels = {
+      "key1" : "value1",
+    }
+  }
+
+  spec {
+    capability = "MANAGED_K8S_PROVIDER"
+    provider   = "AZURE_AKS"
+    data {
+      azure_credential {
+        service_principal_with_certificate {
+          subscription_id    = "some_subscription_id"
+          tenant_id          = "some_tenant_id"
+          client_id          = "some_client_id"
+          client_certificate = "-----BEGIN PRIVATE KEY-----\nMIvIEFk\nv+FiTAfd5MYtJYjkuU7MVA==\n-----END PRIVATE KEY-----\n-----BEGIN CERTIFICATE-----\nMIICoTCCAYkCAgPoMA0GCSqGSIb3DQEBBQUAMXyNh2KI=\n-----END CERTIFICATE-----\n"
+        }
+      }
+    }
+  }
+  ready_wait_timeout = "5m" // Wait time for credential create operations to finish (default: 3m).
+}
+```
+
 # IMAGE REGISTRY credential
 
 ## Example Usage
@@ -205,6 +239,42 @@ resource "tanzu-mission-control_credential" "aws_eks_cred" {
 }
 ```
 
+# Credential for self provisioned storage Azure blob for Data protection
+
+## Example Usage
+
+```terraform
+# Create self provisioned storage Azure blob for Data protection.
+resource "tanzu-mission-control_credential" "azure_ad_cred" {
+  name = "tf-azure-ad-self-dp-test"
+
+  meta {
+    description = "Self provisioned storage Azure blob for Data protection"
+    labels = {
+      "key1" : "value1",
+    }
+  }
+
+  spec {
+    capability = "DATA_PROTECTION"
+    provider   = "AZURE_AD"
+    data {
+      azure_credential {
+        service_principal {
+          subscription_id  = "some_subscription_id"
+          tenant_id        = "some_tenant_id"
+          resource_group   = "dp-backup-rg"
+          client_id        = "some_client_id"
+          client_secret    = "some_client_id"
+          azure_cloud_name = "AzurePublicCloud"
+        }
+      }
+    }
+  }
+  ready_wait_timeout = "5m" // Wait time for credential create operations to finish (default: 3m).
+}
+```
+
 # Credential for Tanzu Observability
 
 ## Example Usage
@@ -286,6 +356,7 @@ Optional:
 Optional:
 
 - `aws_credential` (Block List, Max: 1) AWS credential data type (see [below for nested schema](#nestedblock--spec--data--aws_credential))
+- `azure_credential` (Block List, Max: 1) Azure credential (see [below for nested schema](#nestedblock--spec--data--azure_credential))
 - `generic_credential` (String) Generic credential data type used to hold a blob of data represented as string
 - `key_value` (Block List, Max: 1) Key Value credential (see [below for nested schema](#nestedblock--spec--data--key_value))
 
@@ -305,6 +376,47 @@ Optional:
 
 - `arn` (String) AWS IAM role ARN
 - `ext_id` (String) An external ID used to assume an AWS IAM role
+
+
+
+<a id="nestedblock--spec--data--azure_credential"></a>
+### Nested Schema for `spec.data.azure_credential`
+
+Optional:
+
+- `service_principal` (Block List, Max: 1) Azure service principal (see [below for nested schema](#nestedblock--spec--data--azure_credential--service_principal))
+- `service_principal_with_certificate` (Block List, Max: 1) Azure service principal (see [below for nested schema](#nestedblock--spec--data--azure_credential--service_principal_with_certificate))
+
+<a id="nestedblock--spec--data--azure_credential--service_principal"></a>
+### Nested Schema for `spec.data.azure_credential.service_principal`
+
+Required:
+
+- `client_id` (String) Client ID of the Service Principal
+- `resource_group` (String) Resource Group name
+- `subscription_id` (String) Subscription ID of the Azure credential
+- `tenant_id` (String) Tenant ID of the Azure credential
+
+Optional:
+
+- `azure_cloud_name` (String) Azure Cloud name
+- `client_secret` (String) Client Secret of the Service Principal
+
+
+<a id="nestedblock--spec--data--azure_credential--service_principal_with_certificate"></a>
+### Nested Schema for `spec.data.azure_credential.service_principal_with_certificate`
+
+Required:
+
+- `client_certificate` (String) Client certificate of the Service Principal
+- `client_id` (String) Client ID of the Service Principal
+- `subscription_id` (String) Subscription ID of the Azure credential
+- `tenant_id` (String) Tenant ID of the Azure credential
+
+Optional:
+
+- `azure_cloud_name` (String) Azure Cloud name
+- `managed_subscriptions` (List of String) IDs of the Azure Subscriptions that the Service Principal can manage
 
 
 
