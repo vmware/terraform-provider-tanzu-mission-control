@@ -7,11 +7,11 @@ package backupscheduletests
 
 import (
 	"fmt"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection/tests"
 	"strings"
 
 	clusterres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 	backupscheduleres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/backupschedule"
-	dataprotectiontests "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/dataprotection/tests"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 	targetlocationres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/targetlocation"
 	targetlocationtests "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/targetlocation/tests"

@@ -7,12 +7,12 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	dataprotection2 "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/backupschedule"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/dataprotection"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/integration"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/nodepools"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
@@ -78,7 +78,7 @@ func Provider() *schema.Provider {
 			helmrelease.ResourceName:         helmrelease.ResourceHelmRelease(),
 			helmfeature.ResourceName:         helmfeature.ResourceHelm(),
 			backupschedule.ResourceName:      backupschedule.ResourceBackupSchedule(),
-			dataprotection.ResourceName:      dataprotection.ResourceEnableDataProtection(),
+			dataprotection2.ResourceName:     dataprotection2.ResourceEnableDataProtection(),
 			targetlocation.ResourceName:      targetlocation.ResourceTargetLocation(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{

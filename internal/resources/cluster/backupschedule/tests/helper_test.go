@@ -9,6 +9,7 @@ SPDX-License-Identifier: MPL-2.0
 package backupscheduletests
 
 import (
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,7 +18,6 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 	backupscheduleres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/backupschedule"
-	dataprotectionres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/dataprotection"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 	targetlocationres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/targetlocation"
 )
@@ -36,7 +36,7 @@ func initTestProvider(t *testing.T) *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:           cluster.ResourceTMCCluster(),
 			targetlocationres.ResourceName: targetlocationres.ResourceTargetLocation(),
-			dataprotectionres.ResourceName: dataprotectionres.ResourceEnableDataProtection(),
+			dataprotection.ResourceName:    dataprotection.ResourceEnableDataProtection(),
 			backupscheduleres.ResourceName: backupscheduleres.ResourceBackupSchedule(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{

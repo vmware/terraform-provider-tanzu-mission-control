@@ -7,6 +7,9 @@ package dataprotection
 
 import (
 	"context"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
+	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
+	dataprotectionscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection/scope"
 	"strings"
 	"time"
 
@@ -17,7 +20,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
-	dataprotectionmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/dataprotection"
+	dataprotectionmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/dataprotection/cluster/dataprotection"
 )
 
 func ResourceEnableDataProtection() *schema.Resource {
@@ -35,10 +38,28 @@ func ResourceEnableDataProtection() *schema.Resource {
 
 func resourceEnableDataProtectionCreate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{})
+	/*model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{})
 
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't create Tanzu Mission Control data protection configurations."))
+	}*/
+
+	scopedFullNameData := dataprotectionscope.ConstructScope(data)
+
+	if scopedFullNameData == nil {
+		return diag.Errorf("Unable to enable Tanzu Mission Control Data Protection; Scope full name is empty")
+	}
+
+	var (
+		UID string
+		meta = common.ConstructMeta(data)
+	)
+
+	switch scopedFullNameData.Scope {
+	case commonscope.ClusterScope:
+		if scopedFullNameData.FullnameCluster != nil {
+			specVal, err := 
+		}
 	}
 
 	request := &dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionCreateDataProtectionRequest{

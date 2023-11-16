@@ -7,8 +7,9 @@ package dataprotection
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
+	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
+	dataprotectionscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection/scope"
 )
 
 const (
@@ -37,6 +38,7 @@ var enableDataProtectionSchema = map[string]*schema.Schema{
 	SpecKey:                  specSchema,
 	common.MetaKey:           common.Meta,
 	DeletionPolicyKey:        deletionPolicySchema,
+	commonscope.ScopeKey:     dataprotectionscope.ScopeSchema,
 }
 
 var clusterNameSchema = &schema.Schema{
