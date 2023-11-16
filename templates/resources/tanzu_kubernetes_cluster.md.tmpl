@@ -1,0 +1,36 @@
+---
+Title: "Tanzu Kubernetes Cluster (Class-based Cluster)"
+Description: |-
+   Creating a unified TKG cluster.
+---
+
+# Tanzu Kubernetes Cluster (Class-based Cluster) Resource
+
+This resource enables users to create and configure a TKG cluster for both TKGM & TKGS.
+In order to configure & reuse cluster variables and node pools overrides, it is recommended defining these values in a local variable named after the cluster type 
+and cluster class version.
+
+```
+locals {
+  tkgm_v110_cluster_variables = { ... }
+  tkgm_v110_nodepool_a_overrides = { ... }
+  tkgs_cluster_variables = { ... }
+  tkgs_nodepool_a_overrides = { ... }
+}
+```
+
+# TKGM
+
+## Example Usage
+
+{{ tffile "examples/resources/tanzukubernetescluster/tkgm_vsphere_v110_cluster_variables.tf" }}
+{{ tffile "examples/resources/tanzukubernetescluster/tkgm_vsphere_v110_cluster.tf" }}
+
+# TKGS
+
+## Example Usage
+
+{{ tffile "examples/resources/tanzukubernetescluster/tkgs_vsphere_cluster_variables.tf" }}
+{{ tffile "examples/resources/tanzukubernetescluster/tkgs_vsphere_cluster.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
