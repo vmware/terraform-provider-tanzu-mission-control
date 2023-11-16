@@ -11,7 +11,7 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
-	dataprotectionmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/dataprotection"
+	dataprotectionmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/dataprotection/cluster/dataprotection"
 )
 
 const (

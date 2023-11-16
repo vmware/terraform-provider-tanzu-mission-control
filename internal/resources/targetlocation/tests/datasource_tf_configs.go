@@ -7,8 +7,8 @@ package targetlocationtests
 
 import (
 	"fmt"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection/tests"
 
-	dataprotectiontests "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/dataprotection/tests"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 	targetlocationres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/targetlocation"
 )

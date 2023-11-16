@@ -9,6 +9,7 @@ SPDX-License-Identifier: MPL-2.0
 package targetlocationtests
 
 import (
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,7 +17,6 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
-	dataprotectionres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/dataprotection"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 	credentialres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/credential"
@@ -37,7 +37,7 @@ func initTestProvider(t *testing.T) *schema.Provider {
 		Schema: authctx.ProviderAuthSchema(),
 		ResourcesMap: map[string]*schema.Resource{
 			targetlocationres.ResourceName: targetlocationres.ResourceTargetLocation(),
-			dataprotectionres.ResourceName: dataprotectionres.ResourceEnableDataProtection(),
+			dataprotection.ResourceName:    dataprotection.ResourceEnableDataProtection(),
 			cluster.ResourceName:           cluster.ResourceTMCCluster(),
 			clustergroup.ResourceName:      clustergroup.ResourceClusterGroup(),
 			credentialres.ResourceName:     credentialres.ResourceCredential(),

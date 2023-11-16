@@ -7,7 +7,7 @@ package dataprotection
 
 import (
 	tfModelConverterHelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper/converter"
-	dataprotectionmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/dataprotection"
+	dataprotectionmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/dataprotection/cluster/dataprotection"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 

@@ -7,10 +7,10 @@ package dataprotectiontests
 
 import (
 	"fmt"
+	dataprotectionres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection"
 	"strings"
 
 	clusterres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
-	dataprotectionres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/dataprotection"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 )
 

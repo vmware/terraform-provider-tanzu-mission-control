@@ -14,7 +14,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
-	backupschedulemodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/backupschedule"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/dataprotection/cluster/backupschedule"
 )
 
 func DataSourceBackupSchedule() *schema.Resource {

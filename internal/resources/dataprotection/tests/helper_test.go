@@ -9,6 +9,7 @@ SPDX-License-Identifier: MPL-2.0
 package dataprotectiontests
 
 import (
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,7 +17,6 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
-	dataprotectionres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/dataprotection"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 )
 
@@ -28,8 +28,8 @@ func initTestProvider(t *testing.T) *schema.Provider {
 	testAccProvider := &schema.Provider{
 		Schema: authctx.ProviderAuthSchema(),
 		ResourcesMap: map[string]*schema.Resource{
-			dataprotectionres.ResourceName: dataprotectionres.ResourceEnableDataProtection(),
-			cluster.ResourceName:           cluster.ResourceTMCCluster(),
+			dataprotection.ResourceName: dataprotection.ResourceEnableDataProtection(),
+			cluster.ResourceName:        cluster.ResourceTMCCluster(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
