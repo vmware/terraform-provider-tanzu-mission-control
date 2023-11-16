@@ -63,7 +63,7 @@ func resourceEnableDataProtectionRead(ctx context.Context, data *schema.Resource
 	var resp *dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionListDataProtectionsResponse
 
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{ClusterNameKey, ProvisionerNameKey, ManagementClusterNameKey})
+	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{ScopeKey, ClusterScopeKey, ClusterNameKey, ProvisionerNameKey, ManagementClusterNameKey})
 
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't read Tanzu Mission Control data protection configurations."))
@@ -124,7 +124,7 @@ func resourceEnableDataProtectionRead(ctx context.Context, data *schema.Resource
 
 func resourceEnableDataProtectionDelete(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{ClusterNameKey, ProvisionerNameKey, ManagementClusterNameKey})
+	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{ScopeKey, ClusterScopeKey, ClusterNameKey, ProvisionerNameKey, ManagementClusterNameKey})
 
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't delete Tanzu Mission Control data protection configurations."))

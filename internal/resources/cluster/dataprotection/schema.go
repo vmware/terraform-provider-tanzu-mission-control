@@ -12,10 +12,14 @@ import (
 )
 
 const (
-	ResourceName = "tanzu-mission-control_enable_data_protection"
+	ResourceName         = "tanzu-mission-control_enable_data_protection"
+	ScopeKey             = "scope"
+	ClusterScopeKey      = "cluster"
+	ClusterGroupScopeKey = "cluster_group"
 
 	// Root Keys.
 	ClusterNameKey           = "cluster_name"
+	ClusterGroupNameKey      = "cluster_group_name"
 	ManagementClusterNameKey = "management_cluster_name"
 	ProvisionerNameKey       = "provisioner_name"
 	SpecKey                  = "spec"
@@ -31,33 +35,66 @@ const (
 )
 
 var enableDataProtectionSchema = map[string]*schema.Schema{
-	ClusterNameKey:           clusterNameSchema,
-	ManagementClusterNameKey: managementClusterNameSchema,
-	ProvisionerNameKey:       provisionerNameSchema,
-	SpecKey:                  specSchema,
-	common.MetaKey:           common.Meta,
-	DeletionPolicyKey:        deletionPolicySchema,
+	ScopeKey:          scopeSchema,
+	SpecKey:           specSchema,
+	common.MetaKey:    common.Meta,
+	DeletionPolicyKey: deletionPolicySchema,
 }
 
-var clusterNameSchema = &schema.Schema{
-	Type:        schema.TypeString,
-	Description: "Cluster name",
+var scopeSchema = &schema.Schema{
+	Type:        schema.TypeList,
+	Description: "Scope block for Data Protection (cluster/cluster group)",
 	Required:    true,
-	ForceNew:    true,
-}
-
-var managementClusterNameSchema = &schema.Schema{
-	Type:        schema.TypeString,
-	Description: "Management cluster name",
-	Required:    true,
-	ForceNew:    true,
-}
-
-var provisionerNameSchema = &schema.Schema{
-	Type:        schema.TypeString,
-	Description: "Cluster provisioner name",
-	Required:    true,
-	ForceNew:    true,
+	MaxItems:    1,
+	Optional:    false,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			ClusterGroupScopeKey: {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Cluster group scope block",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						ClusterGroupNameKey: {
+							Type:        schema.TypeString,
+							Description: "Cluster group name",
+							Required:    true,
+							ForceNew:    true,
+						},
+					},
+				},
+			},
+			ClusterScopeKey: {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Cluster scope block",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						ClusterNameKey: {
+							Type:        schema.TypeString,
+							Description: "Cluster name",
+							Required:    true,
+							ForceNew:    true,
+						},
+						ManagementClusterNameKey: {
+							Type:        schema.TypeString,
+							Description: "Management cluster name",
+							Required:    true,
+							ForceNew:    true,
+						},
+						ProvisionerNameKey: {
+							Type:        schema.TypeString,
+							Description: "Cluster provisioner name",
+							Required:    true,
+							ForceNew:    true,
+						},
+					},
+				},
+			},
+		},
+	},
 }
 
 var specSchema = &schema.Schema{
