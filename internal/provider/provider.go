@@ -20,6 +20,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/iampolicy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kustomization"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/managementcluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/namespace"
 	tanzupackage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/package"
 	tanzupackages "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/packages"
@@ -68,6 +69,7 @@ func Provider() *schema.Provider {
 			tanzupackageinstall.ResourceName: tanzupackageinstall.ResourcePackageInstall(),
 			kubernetessecret.ResourceName:    kubernetessecret.ResourceSecret(),
 			mutationpolicy.ResourceName:      mutationpolicyresource.ResourceMutationPolicy(),
+			managementcluster.ResourceName:   managementcluster.ResourceManagementClusterRegistration(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:             cluster.DataSourceTMCCluster(),
@@ -86,6 +88,7 @@ func Provider() *schema.Provider {
 			tanzupackages.ResourceName:       tanzupackages.DataSourceTanzuPackages(),
 			tanzupackageinstall.ResourceName: tanzupackageinstall.DataSourcePackageInstall(),
 			kubernetessecret.ResourceName:    kubernetessecret.DataSourceSecret(),
+			managementcluster.ResourceName:   managementcluster.DataSourceManagementClusterRegistration(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}

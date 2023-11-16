@@ -3,10 +3,13 @@ Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
-package managementclusterregistration
+package managementcluster
 
 const (
-	NameKey = "name"
+	ResourceName = "tanzu-mission-control_management_cluster"
+
+	NameKey  = "name"
+	OrgIDKey = "org_id"
 
 	specKey            = "spec"
 	registerClusterKey = "register_management_cluster"

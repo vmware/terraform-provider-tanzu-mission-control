@@ -14,11 +14,15 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
-	registration "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/managementclusterregistration"
+	registration "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/managementcluster"
 )
 
 const (
+	queryParamKeyForce = "force"
+
 	apiVersionAndGroup = "v1alpha1/managementclusters"
+
+	manifestApiVersionAndGroup = "v1alpha1/managementclusters:manifest"
 
 	reregisterApiVersionAndGroup = "v1alpha1/managementclusters:reregister"
 
@@ -38,43 +42,48 @@ func New(transport *transport.Client) ClientService {
 
 // ClientService is the interface for Client methods
 type ClientService interface {
-	ManagementClusterResourceServiceCreate(params *registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterRequest) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error)
+	ManagementClusterResourceServiceCreate(request *registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterRequest) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error)
 
-	ManagementClusterResourceReregisterService(params *registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterRequest) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error)
+	ManagementClusterResourceReregisterService(request *registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterRequest) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error)
 
-	ManagementClusterResourceServiceDelete(params *registration.ManagementClusterResourceServiceFullName) error
+	ManagementClusterResourceServiceDelete(request *registration.VmwareTanzuManageV1alpha1ManagementclusterFullName, force string) error
 
-	ManagementClusterResourceServiceGet(params *registration.ManagementClusterResourceServiceFullName) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error)
+	ManagementClusterResourceServiceGet(request *registration.VmwareTanzuManageV1alpha1ManagementclusterFullName) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error)
 
-	ManagementClusterResourceServiceUpdate(request *registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterRequest) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error)
+	ManagementClusterResourceServiceUpdate(reguest *registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterRequest) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error)
+
+	ManagementClusterManifestHelperGetManifest(request *registration.VmwareTanzuManageV1alpha1ManagementclusterFullName) (*registration.VmwareTanzuManageV1alpha1ManagementclusterManagementClusterGetManifestResponse, error)
 }
 
 /*
-ManagementClusterResourceServiceCreate creates a management cluster
+ManagementClusterResourceServiceCreate creates a management cluster registration
 */
 func (c *Client) ManagementClusterResourceServiceCreate(request *registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterRequest) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error) {
-	namespaceResponse := &registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse{}
-	err := c.Create(apiVersionAndGroup, request, namespaceResponse)
+	response := &registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse{}
+	err := c.Create(apiVersionAndGroup, request, response)
 
-	//TODO if err is returned with value 6 then execute method ManagementClusterResourceReregisterService - this will be implemented in the next PR
-
-	return namespaceResponse, err
-}
-
-func (c *Client) ManagementClusterResourceReregisterService(request *registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterRequest) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error) {
-	namespaceResponse := &registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse{}
-	requestURL := helper.ConstructRequestURL(reregisterApiVersionAndGroup, request.ManagementCluster.FullName.Name).String()
-
-	err := c.Create(requestURL, request, namespaceResponse)
-
-	return namespaceResponse, err
+	return response, err
 }
 
 /*
-ManagementClusterResourceServiceDelete deletes a management cluster
+ManagementClusterResourceReregisterService reregisters management cluster registration
 */
-func (a *Client) ManagementClusterResourceServiceDelete(fn *registration.ManagementClusterResourceServiceFullName) error {
-	queryParams := url.Values{}
+func (c *Client) ManagementClusterResourceReregisterService(request *registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterRequest) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error) {
+	response := &registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse{}
+	requestURL := helper.ConstructRequestURL(reregisterApiVersionAndGroup, request.ManagementCluster.FullName.Name).String()
+
+	err := c.Create(requestURL, request, response)
+
+	return response, err
+}
+
+/*
+ManagementClusterResourceServiceDelete deletes a management cluster registration
+*/
+func (a *Client) ManagementClusterResourceServiceDelete(fn *registration.VmwareTanzuManageV1alpha1ManagementclusterFullName, force string) error {
+	queryParams := url.Values{
+		queryParamKeyForce: []string{force},
+	}
 	if fn.OrgID != "" {
 		queryParams.Add(queryParamKeyOrgID, fn.OrgID)
 	}
@@ -85,9 +94,9 @@ func (a *Client) ManagementClusterResourceServiceDelete(fn *registration.Managem
 }
 
 /*
-ManagementClusterResourceServiceGet gets a management cluster
+ManagementClusterResourceServiceGet gets a management cluster registration
 */
-func (a *Client) ManagementClusterResourceServiceGet(params *registration.ManagementClusterResourceServiceFullName) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error) {
+func (a *Client) ManagementClusterResourceServiceGet(params *registration.VmwareTanzuManageV1alpha1ManagementclusterFullName) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error) {
 	queryParams := url.Values{}
 	if params.OrgID != "" {
 		queryParams.Add(queryParamKeyOrgID, params.OrgID)
@@ -101,7 +110,7 @@ func (a *Client) ManagementClusterResourceServiceGet(params *registration.Manage
 }
 
 /*
-ManagementClusterResourceServiceUpdate updates overwrite a management cluster
+ManagementClusterResourceServiceUpdate updates overwrite a management cluster registration
 */
 func (a *Client) ManagementClusterResourceServiceUpdate(request *registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterRequest) (*registration.VmwareTanzuManageV1alpha1ManagementclusterCreateManagementClusterResponse, error) {
 	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, request.ManagementCluster.FullName.Name).String()
@@ -109,4 +118,21 @@ func (a *Client) ManagementClusterResourceServiceUpdate(request *registration.Vm
 	err := a.Update(requestURL, request, clusterGroupResponse)
 
 	return clusterGroupResponse, err
+}
+
+/*
+ManagementClusterManifestHelperGetManifest obtains manifests that are associated with management cluster registration
+*/
+func (a *Client) ManagementClusterManifestHelperGetManifest(params *registration.VmwareTanzuManageV1alpha1ManagementclusterFullName) (*registration.VmwareTanzuManageV1alpha1ManagementclusterManagementClusterGetManifestResponse, error) {
+	queryParams := url.Values{}
+	if params.OrgID != "" {
+		queryParams.Add(queryParamKeyOrgID, params.OrgID)
+	}
+
+	requestURL := helper.ConstructRequestURL(manifestApiVersionAndGroup, params.Name).AppendQueryParams(queryParams).String()
+	response := &registration.VmwareTanzuManageV1alpha1ManagementclusterManagementClusterGetManifestResponse{}
+
+	err := a.Get(requestURL, response)
+
+	return response, err
 }
