@@ -6,13 +6,13 @@ SPDX-License-Identifier: MPL-2.0
 package tanzukubernetescluster
 
 import (
-	"encoding/base64"
 	"encoding/json"
 
 	"github.com/pkg/errors"
 
 	openapiv3 "github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper/openapi_v3_schema_validator"
 	clusterclassmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/clusterclass"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clusterclass"
 )
 
 type ClusterClassValidator struct {
@@ -23,34 +23,12 @@ type ClusterClassValidator struct {
 func NewClusterClassValidator(spec *clusterclassmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassSpec) *ClusterClassValidator {
 	validator := &ClusterClassValidator{
 		OpenAPIV3Validator: &openapiv3.OpenAPIV3SchemaValidator{
-			Schema: BuildClusterClassMap(spec),
+			Schema: clusterclass.BuildClusterClassMap(spec),
 		},
 		WorkerClasses: spec.WorkersClasses,
 	}
 
 	return validator
-}
-
-func BuildClusterClassMap(spec *clusterclassmodels.VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassSpec) map[string]interface{} {
-	openAPIV3Schema := make(map[string]interface{})
-
-	for _, v := range spec.Variables {
-		decodedTemplate, _ := base64.StdEncoding.DecodeString(v.Schema.Template.Raw.String())
-		templateJSON := make(map[string]interface{})
-		_ = json.Unmarshal(decodedTemplate, &templateJSON)
-		templateSchema := templateJSON["openAPIV3Schema"].(map[string]interface{})
-
-		_, defaultExist := templateSchema[string(openapiv3.DefaultKey)]
-		_, requiredExist := templateSchema[string(openapiv3.RequiredKey)]
-
-		if !requiredExist && !defaultExist && v.Required {
-			templateSchema[string(openapiv3.RequiredKey)] = true
-		}
-
-		openAPIV3Schema[v.Name] = templateSchema
-	}
-
-	return openAPIV3Schema
 }
 
 func (validator *ClusterClassValidator) ValidateClusterVariables(clusterVariables string, checkRequired bool) (errs []error) {

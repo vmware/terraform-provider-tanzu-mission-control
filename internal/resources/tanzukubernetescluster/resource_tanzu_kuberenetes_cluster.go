@@ -22,6 +22,7 @@ import (
 	clusterclassmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/clusterclass"
 	tanzukubernetesclustermodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzukubernetescluster"
 	tkcnodepoolmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzukubernetescluster/nodepool"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clusterclass"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
@@ -357,8 +358,10 @@ func resourceTanzuKubernetesClusterImporter(ctx context.Context, data *schema.Re
 			clusterClassFn.ManagementClusterName, clusterClassFn.ProvisionerName, clusterClassFn.Name)
 	}
 
-	clusterClassVariablesMap := BuildClusterClassMap(clusterClassResp.ClusterClasses[0].Spec)
+	clusterClassVariablesMap := clusterclass.BuildClusterClassMap(clusterClassResp.ClusterClasses[0].Spec)
+
 	modifyClusterClassVariables(clusterClassVariablesMap, clusterResp.TanzuKubernetesCluster, removeModelVariable)
+
 	err = tfModelResourceConverter.FillTFSchema(clusterResp.TanzuKubernetesCluster, data)
 
 	if err != nil {

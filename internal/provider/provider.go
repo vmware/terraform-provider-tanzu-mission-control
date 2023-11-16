@@ -13,6 +13,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/integration"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/nodepools"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clusterclass"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/credential"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/ekscluster"
@@ -97,6 +98,7 @@ func Provider() *schema.Provider {
 			helmfeature.ResourceName:         helmfeature.DataSourceHelm(),
 			helmcharts.ResourceName:          helmcharts.DataSourceHelmCharts(),
 			helmrepository.ResourceName:      helmrepository.DataSourceHelmRepository(),
+			clusterclass.ResourceName:        clusterclass.DataSourceClusterClass(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
