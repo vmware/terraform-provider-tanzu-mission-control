@@ -6,6 +6,7 @@ SPDX-License-Identifier: MPL-2.0
 package dataprotectionclient
 
 import (
+	"log"
 	"net/url"
 	"strconv"
 
@@ -49,6 +50,8 @@ func (c *Client) DataProtectionResourceServiceCreate(request *dataprotectionmode
 ) (*dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionCreateDataProtectionResponse, error) {
 	response := &dataprotectionmodels.VmwareTanzuManageV1alpha1ClusterDataprotectionCreateDataProtectionResponse{}
 	requestURL := helper.ConstructRequestURL(apiVersionAndGroup, request.DataProtection.FullName.ClusterName, dataProtectionPath).String()
+	log.Printf("[DEBUG] request URL is %s", requestURL)
+
 	err := c.Create(requestURL, request, response)
 
 	return response, err
