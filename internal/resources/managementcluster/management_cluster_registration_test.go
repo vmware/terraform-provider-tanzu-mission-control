@@ -11,6 +11,7 @@ package managementcluster
 import (
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
@@ -21,6 +22,7 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
+	clustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster"
 	registrationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/managementcluster"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
@@ -31,12 +33,40 @@ func TestAcceptanceForManagementClusterRegistrationResource(t *testing.T) {
 	tKGsResourceName := fmt.Sprintf("%s.%s", "tanzu-mission-control_management_cluster", "test_tkgs")
 	tKGmResourceName := fmt.Sprintf("%s.%s", "tanzu-mission-control_management_cluster", "test_tkgm")
 
-	tkgsSimpleName := acctest.RandomWithPrefix("a-tf-tkgs-simple-test")
-	tkgmSimpleName := acctest.RandomWithPrefix("a-tf-tkgm-simple-test")
+	tkgsSimpleName := acctest.RandomWithPrefix("a-tf-tkgs-test")
+	tkgmSimpleName := acctest.RandomWithPrefix("a-tf-tkgm-test")
 
 	tkgmKubeconfigFilePathName := acctest.RandomWithPrefix("a-tf-tkgm-kubeconfig-filepath-test")
 
 	kubeconfigPath := os.Getenv("KUBECONFIG")
+	_, enablePolicyEnvTest := os.LookupEnv("ENABLE_POLICY_ENV_TEST")
+
+	if !enablePolicyEnvTest {
+		os.Setenv("TF_ACC", "true")
+
+		endpoint := "play.abc.def.ghi.com"
+
+		os.Setenv(authctx.ServerEndpointEnvVar, endpoint)
+		os.Setenv("VMW_CLOUD_API_TOKEN", "dummy")
+		os.Setenv("VMW_CLOUD_ENDPOINT", "console.cloud.vmware.com")
+
+		setupHTTPMocks(t)
+		setUpOrgPolicyEndPointMocks(t, endpoint, tkgsSimpleName, clustermodel.NewVmwareTanzuManageV1alpha1CommonClusterKubernetesProviderType("VMWARE_TANZU_KUBERNETES_GRID_SERVICE"))
+		setUpOrgPolicyEndPointMocks(t, endpoint, tkgmSimpleName, clustermodel.NewVmwareTanzuManageV1alpha1CommonClusterKubernetesProviderType("VMWARE_TANZU_KUBERNETES_GRID"))
+	} else {
+		requiredVars := []string{
+			"VMW_CLOUD_ENDPOINT",
+			"TMC_ENDPOINT",
+			"VMW_CLOUD_API_TOKEN",
+			"ORG_ID",
+		}
+
+		for _, name := range requiredVars {
+			if _, found := os.LookupEnv(name); !found {
+				t.Errorf("required environment variable '%s' missing", name)
+			}
+		}
+	}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
@@ -45,20 +75,23 @@ func TestAcceptanceForManagementClusterRegistrationResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: getTKGsResourceWithoutKubeconfigWithDataSource(tkgsSimpleName),
-				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(provider, tKGsResourceName, tkgsSimpleName)),
+				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(provider, tKGsResourceName, tkgsSimpleName, false)),
 			},
 			{
 				Config: getTKGmResourceWithoutKubeconfigWithDataSource(tkgmSimpleName),
-				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(provider, tKGmResourceName, tkgmSimpleName)),
+				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(provider, tKGmResourceName, tkgmSimpleName, false)),
 			},
 			{
 				PreConfig: func() {
 					if kubeconfigPath == "" {
 						t.Skip("KUBECONFIG env var is not set for management cluster registration acceptance test")
 					}
+					if !enablePolicyEnvTest {
+						t.Skip("Acceptance tests against outside systems are not enabled")
+					}
 				},
 				Config: getTKGmResourceWithDataSourceWithKubeConfigFilePath(tkgmKubeconfigFilePathName, kubeconfigPath),
-				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(provider, tKGmResourceName, tkgmKubeconfigFilePathName)),
+				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(provider, tKGmResourceName, tkgmKubeconfigFilePathName, true)),
 			},
 		},
 	},
@@ -117,9 +150,9 @@ func getTKGmResourceWithDataSourceWithKubeConfigFilePath(name string, kubeconfig
 		`, name, kubeconfigPath)
 }
 
-func checkResourceAttributes(provider *schema.Provider, resourceName, name string) resource.TestCheckFunc {
+func checkResourceAttributes(provider *schema.Provider, resourceName, name string, checkReadyState bool) resource.TestCheckFunc {
 	var check = []resource.TestCheckFunc{
-		verifyManagementClusterRegistrationResourceCreation(provider, resourceName, name),
+		verifyManagementClusterRegistrationResourceCreation(provider, resourceName, name, checkReadyState),
 		resource.TestCheckResourceAttr(resourceName, "name", name),
 	}
 
@@ -130,43 +163,25 @@ func verifyManagementClusterRegistrationResourceCreation(
 	provider *schema.Provider,
 	resourceName string,
 	name string,
+	checkReadyState bool,
 ) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if provider == nil {
-			return fmt.Errorf("provider not initialised")
-		}
-
-		rs, ok := s.RootModule().Resources[resourceName]
-
-		if !ok {
-			return fmt.Errorf("not found resource %s", resourceName)
-		}
-
-		if rs.Primary.ID == "" {
-			return fmt.Errorf("ID not set, resource %s", resourceName)
-		}
-
-		config := authctx.TanzuContext{
-			ServerEndpoint:   os.Getenv(authctx.ServerEndpointEnvVar),
-			Token:            os.Getenv(authctx.VMWCloudAPITokenEnvVar),
-			VMWCloudEndPoint: os.Getenv(authctx.VMWCloudEndpointEnvVar),
-			TLSConfig:        &proxy.TLSConfig{},
-		}
-
-		err := config.Setup()
+		config, err := getContext(s, resourceName)
 		if err != nil {
-			return errors.Wrap(err, "unable to set the context")
+			return err
 		}
 
 		request := &registrationmodel.VmwareTanzuManageV1alpha1ManagementclusterFullName{
 			Name: name,
 		}
 
-		// TODO add extra check here to check status of the resource. Add method parameter for that. Implement this in acceptance and mock PR
-
 		resp, err := config.TMCConnection.ManagementClusterRegistrationResourceService.ManagementClusterResourceServiceGet(request)
 		if err != nil || resp == nil {
 			return fmt.Errorf("management cluster registration resource not found: %s", err)
+		}
+
+		if checkReadyState && !strings.EqualFold(string(registrationmodel.VmwareTanzuManageV1alpha1ManagementclusterPhaseREADY), string(*resp.ManagementCluster.Status.Phase)) {
+			return fmt.Errorf("registration has not finilalised, received non READY phase: %s", *resp.ManagementCluster.Status.Phase)
 		}
 
 		if resp == nil {
@@ -175,4 +190,38 @@ func verifyManagementClusterRegistrationResourceCreation(
 
 		return nil
 	}
+}
+
+func getContext(s *terraform.State, resourceName string) (*authctx.TanzuContext, error) {
+	rs, ok := s.RootModule().Resources[resourceName]
+	if !ok {
+		return nil, fmt.Errorf("not found resource: %s", resourceName)
+	}
+
+	if rs.Primary.ID == "" {
+		return nil, fmt.Errorf("ID not set, resource: %s", resourceName)
+	}
+
+	config := &authctx.TanzuContext{
+		ServerEndpoint:   os.Getenv(authctx.ServerEndpointEnvVar),
+		Token:            os.Getenv(authctx.VMWCloudAPITokenEnvVar),
+		VMWCloudEndPoint: os.Getenv(authctx.VMWCloudEndpointEnvVar),
+		TLSConfig:        &proxy.TLSConfig{},
+	}
+
+	err := getSetupConfig(config)
+
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to set the context")
+	}
+
+	return config, nil
+}
+
+func getSetupConfig(config *authctx.TanzuContext) error {
+	if _, found := os.LookupEnv("ENABLE_POLICY_ENV_TEST"); !found {
+		return config.SetupWithDefaultTransportForTesting()
+	}
+
+	return config.Setup()
 }
