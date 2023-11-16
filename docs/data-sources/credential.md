@@ -63,6 +63,7 @@ Optional:
 Optional:
 
 - `aws_credential` (Block List, Max: 1) AWS credential data type (see [below for nested schema](#nestedblock--spec--data--aws_credential))
+- `azure_credential` (Block List, Max: 1) Azure credential (see [below for nested schema](#nestedblock--spec--data--azure_credential))
 - `generic_credential` (String) Generic credential data type used to hold a blob of data represented as string
 - `key_value` (Block List, Max: 1) Key Value credential (see [below for nested schema](#nestedblock--spec--data--key_value))
 
@@ -82,6 +83,47 @@ Optional:
 
 - `arn` (String) AWS IAM role ARN
 - `ext_id` (String) An external ID used to assume an AWS IAM role
+
+
+
+<a id="nestedblock--spec--data--azure_credential"></a>
+### Nested Schema for `spec.data.azure_credential`
+
+Optional:
+
+- `service_principal` (Block List, Max: 1) Azure service principal (see [below for nested schema](#nestedblock--spec--data--azure_credential--service_principal))
+- `service_principal_with_certificate` (Block List, Max: 1) Azure service principal (see [below for nested schema](#nestedblock--spec--data--azure_credential--service_principal_with_certificate))
+
+<a id="nestedblock--spec--data--azure_credential--service_principal"></a>
+### Nested Schema for `spec.data.azure_credential.service_principal`
+
+Required:
+
+- `client_id` (String) Client ID of the Service Principal
+- `resource_group` (String) Resource Group name
+- `subscription_id` (String) Subscription ID of the Azure credential
+- `tenant_id` (String) Tenant ID of the Azure credential
+
+Optional:
+
+- `azure_cloud_name` (String) Azure Cloud name
+- `client_secret` (String) Client Secret of the Service Principal
+
+
+<a id="nestedblock--spec--data--azure_credential--service_principal_with_certificate"></a>
+### Nested Schema for `spec.data.azure_credential.service_principal_with_certificate`
+
+Required:
+
+- `client_certificate` (String) Client certificate of the Service Principal
+- `client_id` (String) Client ID of the Service Principal
+- `subscription_id` (String) Subscription ID of the Azure credential
+- `tenant_id` (String) Tenant ID of the Azure credential
+
+Optional:
+
+- `azure_cloud_name` (String) Azure Cloud name
+- `managed_subscriptions` (List of String) IDs of the Azure Subscriptions that the Service Principal can manage
 
 
 

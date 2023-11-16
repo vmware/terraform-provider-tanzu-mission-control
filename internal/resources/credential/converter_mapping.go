@@ -32,6 +32,24 @@ var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
 					iamRoleExtIDKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "awsCredential", "iamRole", "extId"),
 				},
 			},
+			azureCredentialKey: &tfModelConverterHelper.BlockToStruct{
+				servicePrincipalKey: &tfModelConverterHelper.BlockToStruct{
+					subscriptionIDKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "azureCredential", "servicePrincipal", "subscriptionId"),
+					tenantIDKey:       tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "azureCredential", "servicePrincipal", "tenantId"),
+					resourceGroupKey:  tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "azureCredential", "servicePrincipal", "resourceGroup"),
+					clientIDKey:       tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "azureCredential", "servicePrincipal", "clientId"),
+					clientSecretKey:   tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "azureCredential", "servicePrincipal", "clientSecret"),
+					azureCloudNameKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "azureCredential", "servicePrincipal", "azureCloudName"),
+				},
+				servicePrincipalWithCertKey: &tfModelConverterHelper.BlockToStruct{
+					subscriptionIDKey:       tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "azureCredential", "servicePrincipalWithCertificate", "subscriptionId"),
+					tenantIDKey:             tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "azureCredential", "servicePrincipalWithCertificate", "tenantId"),
+					clientIDKey:             tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "azureCredential", "servicePrincipalWithCertificate", "clientId"),
+					clientCertificateKey:    tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "azureCredential", "servicePrincipalWithCertificate", "clientCertificate"),
+					azureCloudNameKey:       tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "azureCredential", "servicePrincipalWithCertificate", "azureCloudName"),
+					managedSubscriptionsKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "azureCredential", "servicePrincipalWithCertificate", "managedSubscriptions"),
+				},
+			},
 			keyValueKey: &tfModelConverterHelper.BlockToStruct{
 				dataKey: &tfModelConverterHelper.EvaluatedField{
 					Field:    tfModelConverterHelper.BuildDefaultModelPath("spec", "data", "keyValue", "data"),
