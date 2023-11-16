@@ -1,0 +1,25 @@
+---
+Title: "Target Location Data Source"
+Description: |-
+    Listing target location by cluster or provider scope
+---
+
+# Target Location Data Source
+
+This data source enables users to list existing target locations by cluster or provider scope.
+
+**NOTE**: Listing target locations by cluster scope is supported only for clusters enabled with data protection.
+
+# Provider Scope
+
+## Example Usage
+
+{{ tffile "examples/data-sources/targetlocation/datasource_target_location_provider.tf" }}
+
+# Cluster Scope
+
+## Example Usage
+
+{{ tffile "examples/data-sources/targetlocation/datasource_target_location_cluster.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}

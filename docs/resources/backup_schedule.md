@@ -233,7 +233,7 @@ Format is the time number and time sign, example: "50s" (50 seconds)
 - `default_volumes_to_restic` (Boolean) Specifies whether restic should be used to take a backup of all pod volumes by default.
 (Default: False)
 - `excluded_namespaces` (List of String) The namespaces to be excluded in the backup.
-Can't be used if scope is SET_NAMESPACES or LABEL_SELECTOR
+Can't be used if scope is SET_NAMESPACES.
 - `excluded_resources` (List of String) The name list for the resources to be excluded in backup.
 - `hooks` (Block List, Max: 1) Hooks block represent custom actions that should be executed at different phases of the backup. (see [below for nested schema](#nestedblock--spec--template--hooks))
 - `include_cluster_resources` (Boolean) A flag which specifies whether cluster-scoped resources should be included for consideration in the backup.
@@ -244,13 +244,18 @@ For example, if a PersistentVolumeClaim is included in the backup, its associate
 (Default: False)
 - `included_namespaces` (List of String) The namespace to be included for backup from.
 If empty, all namespaces are included.
-Can't be used if scope is FULL_CLUSTER
+Can't be used if scope is FULL_CLUSTER.
+Required if scope is SET_NAMESPACES.
 - `included_resources` (List of String) The name list for the resources to be included into backup. If empty, all resources are included.
-- `label_selector` (Block List, Max: 1) The label selector to selectively adding individual objects.
-If not specified, all objects are included. (see [below for nested schema](#nestedblock--spec--template--label_selector))
-- `or_label_selector` (Block List) (Repeatable Block) A list of LabelSelectors to filter with when adding individual objects to the backup.
+- `label_selector` (Block List, Max: 1) The label selector to selectively adding individual objects to the backup schedule.
+If not specified, all objects are included.
+Can't be used if scope is FULL_CLUSTER or SET_NAMESPACES.
+Required if scope is LABEL_SELECTOR and Or Label Selectors are not defined (see [below for nested schema](#nestedblock--spec--template--label_selector))
+- `or_label_selector` (Block List) (Repeatable Block) A list of label selectors to filter with when adding individual objects to the backup.
 If multiple provided they will be joined by the OR operator.
-LabelSelector as well as OrLabelSelectors cannot co-exist in backup request, only one of them can be used. (see [below for nested schema](#nestedblock--spec--template--or_label_selector))
+LabelSelector as well as OrLabelSelectors cannot co-exist in backup request, only one of them can be used.
+Can't be used if scope is FULL_CLUSTER or SET_NAMESPACES.
+Required if scope is LABEL_SELECTOR and Label Selector is not defined (see [below for nested schema](#nestedblock--spec--template--or_label_selector))
 - `ordered_resources` (Map of String) Specifies the backup order of resources of specific Kind. The map key is the Kind name and value is a list of resource names separated by commas.
 Each resource name has format "namespace/resourcename".
 For cluster resources, simply use "resourcename".
@@ -283,7 +288,7 @@ Optional:
 - `excluded_namespaces` (List of String) Specifies the namespaces to which this hook spec does not apply.
 - `included_namespaces` (List of String) Specifies the namespaces to which this hook spec applies.
 If empty, it applies to all namespaces.
-- `label_selector` (Block List, Max: 1) The label selector to selectively adding individual objects.
+- `label_selector` (Block List, Max: 1) The label selector to selectively adding individual objects to the hook resource.
 If not specified, all objects are included. (see [below for nested schema](#nestedblock--spec--template--hooks--resource--label_selector))
 - `post_hook` (Block List) (Repeatable Block) A list of backup hooks to execute after storing the item in the backup.
 These are executed after all "additional items" from item actions are processed. (see [below for nested schema](#nestedblock--spec--template--hooks--resource--post_hook))

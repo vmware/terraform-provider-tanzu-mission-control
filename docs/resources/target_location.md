@@ -21,7 +21,7 @@ For more information regarding target location, see [Target Location][target-loc
 ## Example Usage
 
 ```terraform
-resource "tanzu-mission-control_target_location" "demo_azure" {
+resource "tanzu-mission-control_target_location" "demo_tmc_managed" {
   name          = "TARGET_LOCATION_NAME"
 
   spec {
@@ -57,7 +57,7 @@ resource "tanzu-mission-control_target_location" "demo_azure" {
 ### Example Usage
 
 ```terraform
-resource "tanzu-mission-control_target_location" "demo_azure" {
+resource "tanzu-mission-control_target_location" "demo_aws_self_provisioned" {
   name          = "TARGET_LOCATION_NAME"
 
   spec {
@@ -101,7 +101,7 @@ resource "tanzu-mission-control_target_location" "demo_azure" {
 ### Example Usage
 
 ```terraform
-resource "tanzu-mission-control_target_location" "demo_azure" {
+resource "tanzu-mission-control_target_location" "demo_aws_self_provisioned" {
   name          = "TARGET_LOCATION_NAME"
 
   spec {
