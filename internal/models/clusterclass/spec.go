@@ -16,7 +16,7 @@ type VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassSpec struc
 
 	// Variables defines the variables which can be configured
 	// in the Cluster topology and are then used in patches.
-	Variables []*VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassClusterClassVariable `json:"variables"`
+	Variables []*VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassVariable `json:"variables"`
 
 	// Workers classes is a collection of node types which can be used to create
 	// the worker nodes of the cluster.

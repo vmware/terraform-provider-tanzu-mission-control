@@ -9,10 +9,10 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassClusterClassVariable ClusterClassVariable defines a variable which can be configured in the Cluster topology.
+// VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassVariable ClusterClassVariable defines a variable which can be configured in the Cluster topology.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.managementcluster.provisioner.clusterclass.ClusterClassVariable
-type VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassClusterClassVariable struct {
+type VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassVariable struct {
 
 	// Name of the cluster class variable.
 	Name string `json:"name,omitempty"`
@@ -21,11 +21,11 @@ type VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassClusterCla
 	Required bool `json:"required,omitempty"`
 
 	// Schema defines the schema of the variable.
-	Schema *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassVariableSchema `json:"schema,omitempty"`
+	Schema *VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassVariableSchema `json:"schema,omitempty"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassClusterClassVariable) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassVariable) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -34,8 +34,8 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassCluste
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassClusterClassVariable) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassClusterClassVariable
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassVariable) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassVariable
 
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err

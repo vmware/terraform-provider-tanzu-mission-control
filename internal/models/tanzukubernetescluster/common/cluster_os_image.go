@@ -9,10 +9,10 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCommonClusterOSImage The OS image configuration.
+// VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterCommonClusterOSImage The OS image configuration.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.managementcluster.provisioner.tanzukubernetescluster.common.cluster.OSImage
-type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCommonClusterOSImage struct {
+type VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterCommonClusterOSImage struct {
 
 	// The arch of the OS image.
 	Arch string `json:"arch,omitempty"`
@@ -25,7 +25,7 @@ type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetescluster
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCommonClusterOSImage) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterCommonClusterOSImage) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -34,8 +34,8 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclu
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCommonClusterOSImage) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterCommonClusterOSImage
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterCommonClusterOSImage) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterCommonClusterOSImage
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

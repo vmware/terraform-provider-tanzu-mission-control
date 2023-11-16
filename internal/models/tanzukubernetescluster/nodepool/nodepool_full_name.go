@@ -9,10 +9,10 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolFullName Full name of the nodepool. This includes the object name along with any parents or further identifiers.
+// VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepoolFullName Full name of the nodepool. This includes the object name along with any parents or further identifiers.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.managementcluster.provisioner.tanzukubernetescluster.nodepool.FullName
-type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolFullName struct {
+type VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepoolFullName struct {
 	// Name of the management cluster.
 	ManagementClusterName string `json:"managementClusterName,omitempty"`
 
@@ -30,7 +30,7 @@ type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetescluster
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolFullName) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepoolFullName) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -39,8 +39,8 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclu
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolFullName) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolFullName
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepoolFullName) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepoolFullName
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

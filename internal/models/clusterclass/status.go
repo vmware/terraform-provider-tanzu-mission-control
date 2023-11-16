@@ -11,10 +11,10 @@ import (
 	statusmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/status"
 )
 
-// VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassStatus Status of the cluster class.
+// VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassStatus Status of the cluster class.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.managementcluster.provisioner.clusterclass.Status
-type VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassStatus struct {
+type VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassStatus struct {
 
 	// Conditions of the resource.
 	Conditions map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition `json:"conditions,omitempty"`
@@ -24,7 +24,7 @@ type VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassStatus str
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassStatus) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassStatus) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -33,8 +33,8 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassStatus
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassStatus) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerClusterclassStatus
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassStatus) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassStatus
 
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err

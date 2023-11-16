@@ -198,3 +198,32 @@ func ConvertToString(value interface{}, sliceSep string) string {
 
 	return outputStr
 }
+
+func IsEmptyInterface(value interface{}) bool {
+	if value == nil {
+		return true
+	}
+
+	switch value := value.(type) {
+	case map[string]interface{}:
+		return len(value) == 0
+	case []interface{}:
+		return len(value) == 0
+	case string:
+		return value == ""
+	}
+
+	return false
+}
+
+func GetAllMapsKeys(maps ...map[string]interface{}) map[string]bool {
+	keys := make(map[string]bool)
+
+	for _, m := range maps {
+		for key := range m {
+			keys[key] = true
+		}
+	}
+
+	return keys
+}

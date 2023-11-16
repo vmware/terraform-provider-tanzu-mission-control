@@ -7,12 +7,14 @@ package tanzukubernetescluster
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
@@ -20,17 +22,17 @@ const (
 	ResourceName = "tanzu-mission-control_tanzu_kubernetes_cluster"
 
 	// Common Keys.
-	NameKey        = "name"
-	SpecKey        = "spec"
-	DescriptionKey = "description"
-	VersionKey     = "version"
-	ReplicasKey    = "replicas"
-	OSImageKey     = "os_image"
-	OSArchKey      = "arch"
+	NameKey     = "name"
+	SpecKey     = "spec"
+	VersionKey  = "version"
+	ReplicasKey = "replicas"
+	OSImageKey  = "os_image"
+	OSArchKey   = "arch"
 
 	// Root Keys.
 	ManagementClusterNameKey = "management_cluster_name"
 	ProvisionerNameKey       = "provisioner_name"
+	TimeoutPolicyKey         = "timeout_policy"
 
 	// Spec Directive Keys.
 	ClusterGroupNameKey = "cluster_group_name"
@@ -38,6 +40,12 @@ const (
 	ProxyNameKey        = "proxy_name"
 	ImageRegistryKey    = "image_registry"
 	TopologyKey         = "topology"
+	KubeConfigKey       = "kubeconfig"
+
+	// Timeout Policy Directive Keys.
+	TimeoutKey           = "timeout"
+	WaitForKubeConfigKey = "wait_for_kubeconfig"
+	FailOnTimeOutKey     = "fail_on_timeout"
 
 	// Topology Directive Keys.
 	ClusterClassKey     = "cluster_class"
@@ -60,6 +68,11 @@ const (
 	// Core Addon Directive Keys.
 	TypeKey     = "type"
 	ProviderKey = "provider"
+
+	// Timeout Policy Default Values.
+	TimeoutDefaultValue           = 60
+	WaitForKubeConfigDefaultValue = true
+	FailOnTimeOutDefaultValue     = true
 )
 
 var tanzuKubernetesClusterSchema = map[string]*schema.Schema{
@@ -68,6 +81,7 @@ var tanzuKubernetesClusterSchema = map[string]*schema.Schema{
 	ProvisionerNameKey:       provisionerNameSchema,
 	SpecKey:                  specSchema,
 	common.MetaKey:           common.Meta,
+	TimeoutPolicyKey:         timeoutPolicySchema,
 }
 
 var clusterNameSchema = &schema.Schema{
@@ -93,7 +107,7 @@ var provisionerNameSchema = &schema.Schema{
 
 var specSchema = &schema.Schema{
 	Type:        schema.TypeList,
-	Description: "Spec of tanzu kubernetes cluster (Unified TKG)",
+	Description: "Spec of tanzu kubernetes cluster.",
 	Required:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
@@ -109,6 +123,11 @@ var specSchema = &schema.Schema{
 				Description: "TMC-managed flag indicates if the cluster is managed by tmc.\n(Default: False)",
 				Computed:    true,
 			},
+			KubeConfigKey: {
+				Type:        schema.TypeString,
+				Description: "Cluster's kubeconfig.",
+				Computed:    true,
+			},
 			ProxyNameKey: {
 				Type:        schema.TypeString,
 				Description: "Name of the proxy configuration to use.",
@@ -120,6 +139,35 @@ var specSchema = &schema.Schema{
 				Optional:    true,
 			},
 			TopologyKey: TopologySchema,
+		},
+	},
+}
+
+var timeoutPolicySchema = &schema.Schema{
+	Type:        schema.TypeList,
+	Description: "Timeout policy for Tanzu Kubernetes cluster.",
+	Optional:    true,
+	MaxItems:    1,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			TimeoutKey: {
+				Type:        schema.TypeInt,
+				Description: fmt.Sprintf("Timeout in minutes for tanzu kubernetes creation process. A value of 0 means that no timeout is set. (Default: %d)", TimeoutDefaultValue),
+				Default:     TimeoutDefaultValue,
+				Optional:    true,
+			},
+			WaitForKubeConfigKey: {
+				Type:        schema.TypeBool,
+				Description: fmt.Sprintf("Wait for kubeconfig. (Default = %v)", WaitForKubeConfigDefaultValue),
+				Default:     WaitForKubeConfigDefaultValue,
+				Optional:    true,
+			},
+			FailOnTimeOutKey: {
+				Type:        schema.TypeBool,
+				Description: fmt.Sprintf("Fail on timeout if timeout is reached and cluster is not ready. (Default = %v)", FailOnTimeOutDefaultValue),
+				Default:     FailOnTimeOutDefaultValue,
+				Optional:    true,
+			},
 		},
 	},
 }
@@ -148,7 +196,7 @@ var TopologySchema = &schema.Schema{
 				Required:              true,
 				ValidateDiagFunc:      validateJSONString,
 				DiffSuppressOnRefresh: true,
-				DiffSuppressFunc:      checkVariablesValues,
+				DiffSuppressFunc:      isVariablesValuesEqual,
 			},
 			CoreAddonKey: {
 				Type:        schema.TypeList,
@@ -225,6 +273,7 @@ var ControlPlaneSchema = &schema.Schema{
 var NodePoolSchema = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "(Repeatable Block) Node pool definition for the cluster.",
+	MinItems:    1,
 	Required:    true,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -233,9 +282,9 @@ var NodePoolSchema = &schema.Schema{
 				Description: "Name of the node pool.",
 				Required:    true,
 			},
-			DescriptionKey: {
+			common.DescriptionKey: {
 				Type:        schema.TypeString,
-				Description: "Description for the node pool.",
+				Description: "Description of the node pool.",
 				Optional:    true,
 			},
 			SpecKey: NodePoolSpecSchema,
@@ -246,7 +295,7 @@ var NodePoolSchema = &schema.Schema{
 var NodePoolSpecSchema = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "Spec for the node pool.",
-	MaxItems:    1,
+	MinItems:    1,
 	Required:    true,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
@@ -266,11 +315,34 @@ var NodePoolSpecSchema = &schema.Schema{
 				Optional:              true,
 				ValidateDiagFunc:      validateJSONString,
 				DiffSuppressOnRefresh: true,
-				DiffSuppressFunc:      checkVariablesValues,
+				DiffSuppressFunc:      isVariablesValuesEqual,
 			},
-			ReplicasKey:    ReplicasSchema,
-			OSImageKey:     OSImageSchema,
-			common.MetaKey: common.Meta,
+			ReplicasKey: ReplicasSchema,
+			OSImageKey:  OSImageSchema,
+			common.MetaKey: {
+				Type:        schema.TypeList,
+				Description: "Metadata for the resource",
+				Computed:    true,
+				Optional:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						common.AnnotationsKey: {
+							Type:        schema.TypeMap,
+							Description: "Annotations for the resource",
+							Optional:    true,
+							Computed:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+						common.LabelsKey: {
+							Type:        schema.TypeMap,
+							Description: "Labels for the resource",
+							Optional:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+					},
+				},
+			},
 		},
 	},
 }
@@ -318,7 +390,7 @@ func validateJSONString(value interface{}, path cty.Path) diag.Diagnostics {
 	return nil
 }
 
-func checkVariablesValues(k, oldValue, newValue string, d *schema.ResourceData) bool {
+func isVariablesValuesEqual(_, oldValue, newValue string, _ *schema.ResourceData) bool {
 	if oldValue == "" && newValue != "" {
 		return false
 	}
@@ -327,7 +399,7 @@ func checkVariablesValues(k, oldValue, newValue string, d *schema.ResourceData) 
 	newValuesJSON := make(map[string]interface{})
 	_ = json.Unmarshal([]byte(oldValue), &oldValueJSON)
 	_ = json.Unmarshal([]byte(newValue), &newValuesJSON)
-	allMapKeys := getAllKeys(oldValueJSON, newValuesJSON)
+	allMapKeys := helper.GetAllMapsKeys(oldValueJSON, newValuesJSON)
 
 	for k := range allMapKeys {
 		isVariableEqual := isVariableEqual(oldValueJSON[k], newValuesJSON[k])
@@ -374,7 +446,7 @@ func isVariableEqual(oldVar interface{}, newVar interface{}) bool {
 				return false
 			}
 
-			allMapKeys := getAllKeys(oldVar, newVar)
+			allMapKeys := helper.GetAllMapsKeys(oldVar, newVar)
 
 			for k := range allMapKeys {
 				if !isVariableEqual(oldVar[k], newVar[k]) {
@@ -387,16 +459,4 @@ func isVariableEqual(oldVar interface{}, newVar interface{}) bool {
 	}
 
 	return true
-}
-
-func getAllKeys(maps ...map[string]interface{}) map[string]bool {
-	keys := make(map[string]bool)
-
-	for _, m := range maps {
-		for key := range m {
-			keys[key] = true
-		}
-	}
-
-	return keys
 }

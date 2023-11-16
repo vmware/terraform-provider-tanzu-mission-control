@@ -9,17 +9,17 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNetworkRanges NetworkRanges describes a collection of IP addresses as a list of ranges.
+// VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNetworkRanges NetworkRanges describes a collection of IP addresses as a list of ranges.
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.managementcluster.provisioner.tanzukubernetescluster.NetworkRanges
-type VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNetworkRanges struct {
+type VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNetworkRanges struct {
 
 	// CIDRBlocks specifies one or more ranges of IP addresses.
 	CidrBlocks []string `json:"cidrBlocks"`
 }
 
 // MarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNetworkRanges) MarshalBinary() ([]byte, error) {
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNetworkRanges) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -28,8 +28,8 @@ func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclu
 }
 
 // UnmarshalBinary interface implementation.
-func (m *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNetworkRanges) UnmarshalBinary(b []byte) error {
-	var res VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNetworkRanges
+func (m *VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNetworkRanges) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNetworkRanges
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
