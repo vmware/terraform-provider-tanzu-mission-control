@@ -7,7 +7,7 @@ package backupschedule
 
 import (
 	tfModelConverterHelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper/converter"
-	backupschedulemodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/backupschedule"
+	backupschedulemodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/dataprotection/cluster/backupschedule"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
