@@ -12,6 +12,10 @@ With Tanzu Kubernetes clusters, you can also provision resources to create new w
 
 Before creating a Tanzu Kubernetes Grid Service workload cluster in vSphere with Tanzu using this Terraform provider we need the following prerequisites.
 
+~> **Note:**
+Current version of `tanzu-mission-control_cluster` resource in Tanzu Mission Control provider supports creation of deafult nodepool and updates to some fields specifically `worker_node_count, class, storage_class` in case of Tanzu Kubernetes Grid Service workload cluster and updation of `worker_node_count` in case Tanzu Kubernetes Grid vSphere Workload Cluster of default nodepool. Deletion of the default nodepool is not yet supported via this resource and will be added in the upcoming releases.
+All other nodepools except the default nodepool can be managed via `tanzu-mission-control_cluster_node_pool` resource.
+
 **Prerequisites:**
 
 - Register the Tanzu Kubernetes Grid Service management cluster in Tanzu Mission Control.
