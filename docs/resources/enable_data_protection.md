@@ -17,9 +17,13 @@ For more information regarding data protection, see [Data Protection][data-prote
 
 ```terraform
 resource "tanzu-mission-control_enable_data_protection" "demo" {
-  cluster_name            = "CLS_NAME"
-  management_cluster_name = "MGMT_CLS_NAME"
-  provisioner_name        = "PROVISIONER_NAME"
+  scope {
+    cluster {
+      cluster_name            = "CLS_NAME"
+      management_cluster_name = "MGMT_CLS_NAME"
+      provisioner_name        = "PROVISIONER_NAME"
+    }
+  }
 
   spec {
     disable_restic                       = false
@@ -38,9 +42,7 @@ resource "tanzu-mission-control_enable_data_protection" "demo" {
 
 ### Required
 
-- `cluster_name` (String) Cluster name
-- `management_cluster_name` (String) Management cluster name
-- `provisioner_name` (String) Cluster provisioner name
+- `scope` (Block List, Min: 1, Max: 1) Scope block for Data Protection (cluster) (see [below for nested schema](#nestedblock--scope))
 
 ### Optional
 
@@ -51,6 +53,24 @@ resource "tanzu-mission-control_enable_data_protection" "demo" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--scope"></a>
+### Nested Schema for `scope`
+
+Optional:
+
+- `cluster` (Block List, Max: 1) Cluster scope block (see [below for nested schema](#nestedblock--scope--cluster))
+
+<a id="nestedblock--scope--cluster"></a>
+### Nested Schema for `scope.cluster`
+
+Required:
+
+- `cluster_name` (String) Cluster name
+- `management_cluster_name` (String) Management cluster name
+- `provisioner_name` (String) Cluster provisioner name
+
+
 
 <a id="nestedblock--deletion_policy"></a>
 ### Nested Schema for `deletion_policy`
