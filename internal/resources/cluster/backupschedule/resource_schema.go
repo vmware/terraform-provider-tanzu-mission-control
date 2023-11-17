@@ -33,7 +33,7 @@ const (
 	SpecKey                  = "spec"
 	ProvisionerNameKey       = "provisioner_name"
 	ManagementClusterNameKey = "management_cluster_name"
-	ScopeKey                 = "scope"
+	BackupScopeKey           = "backup_scope"
 
 	// Spec Directive Keys.
 	PausedKey   = "paused"
@@ -96,14 +96,53 @@ var (
 	}
 )
 
+var scopeSchema = &schema.Schema{
+	Type:        schema.TypeList,
+	Description: "Scope block for Back up schedule (cluster/cluster group)",
+	Required:    true,
+	MaxItems:    1,
+	Optional:    false,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			ClusterGroupScopeKey: {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Cluster group scope block",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						ClusterGroupNameKey: {
+							Type:        schema.TypeString,
+							Description: "Cluster group name",
+							Required:    true,
+							ForceNew:    true,
+						},
+					},
+				},
+			},
+			ClusterScopeKey: {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Cluster scope block",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						ClusterNameKey:           clusterNameSchema,
+						ManagementClusterNameKey: managementClusterNameSchema,
+						ProvisionerNameKey:       provisionerNameSchema,
+					},
+				},
+			},
+		},
+	},
+}
+
 var backupScheduleResourceSchema = map[string]*schema.Schema{
-	NameKey:                  nameSchema,
-	ManagementClusterNameKey: managementClusterNameSchema,
-	ProvisionerNameKey:       provisionerNameSchema,
-	ClusterNameKey:           clusterNameSchema,
-	ScopeKey:                 backupScopeSchema,
-	SpecKey:                  specSchema,
-	common.MetaKey:           common.Meta,
+	NameKey:        nameSchema,
+	ScopeKey:       scopeSchema,
+	BackupScopeKey: backupScopeSchema,
+	SpecKey:        specSchema,
+	common.MetaKey: common.Meta,
 }
 
 var nameSchema = &schema.Schema{

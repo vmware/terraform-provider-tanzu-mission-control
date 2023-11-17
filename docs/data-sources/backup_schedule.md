@@ -13,11 +13,13 @@ Listing target locations by cluster scope is supported only for clusters enabled
 
 ```terraform
 data "tanzu-mission-control_backup_schedule" "demo" {
+  name                    = "BACKUP_SCHEDULE_NAME"
   scope {
-    management_cluster_name = "MGMT_CLS_NAME"
-    provisioner_name        = "PROVISIONER_NAME"
-    cluster_name            = "CLS_NAME"
-    name                    = "TARGET_LOCATION_NAME"
+    cluster {
+      management_cluster_name = "MGMT_CLS_NAME"
+      provisioner_name        = "PROVISIONER_NAME"
+      cluster_name            = "CLS_NAME"
+    }
   }
 
   query         = "QUERY"
@@ -32,11 +34,12 @@ data "tanzu-mission-control_backup_schedule" "demo" {
 ### Required
 
 - `scope` (Block List, Min: 1, Max: 1) Search scope block (see [below for nested schema](#nestedblock--scope))
+- `name` (String) The name of the backup schedule
 
 ### Optional
 
 - `include_total_count` (Boolean) Whether to include total count of backups.
-(Default: True)
+  (Default: True)
 - `query` (String) Define a query for listing backups
 - `sort_by` (String) Sort backups by field.
 
@@ -49,15 +52,19 @@ data "tanzu-mission-control_backup_schedule" "demo" {
 <a id="nestedblock--scope"></a>
 ### Nested Schema for `scope`
 
+Optional:
+
+- `cluster` (Block List, Max: 1) Cluster scope block (see [below for nested schema](#nestedblock--scope--cluster))
+
+<a id="nestedblock--scope--cluster"></a>
+### Nested Schema for `scope.cluster`
+
 Required:
 
 - `cluster_name` (String) Cluster name
-
-Optional:
-
 - `management_cluster_name` (String) Management cluster name
-- `name` (String) The name of the backup schedule
 - `provisioner_name` (String) Cluster provisioner name
+
 
 
 <a id="nestedatt--schedules"></a>
@@ -65,12 +72,10 @@ Optional:
 
 Read-Only:
 
-- `cluster_name` (String)
-- `management_cluster_name` (String)
-- `meta` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--meta))
 - `name` (String)
-- `provisioner_name` (String)
-- `scope` (String)
+- `backup_scope` (String)
+- `meta` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--meta))
+- `scope` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--scope))
 - `spec` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--spec))
 
 <a id="nestedobjatt--schedules--meta"></a>
@@ -83,6 +88,24 @@ Read-Only:
 - `labels` (Map of String)
 - `resource_version` (String)
 - `uid` (String)
+
+
+<a id="nestedobjatt--schedules--scope"></a>
+### Nested Schema for `schedules.scope`
+
+Read-Only:
+
+- `cluster` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--scope--cluster))
+
+<a id="nestedobjatt--schedules--scope--cluster"></a>
+### Nested Schema for `schedules.scope.cluster`
+
+Read-Only:
+
+- `cluster_name` (String)
+- `management_cluster_name` (String)
+- `provisioner_name` (String)
+
 
 
 <a id="nestedobjatt--schedules--spec"></a>

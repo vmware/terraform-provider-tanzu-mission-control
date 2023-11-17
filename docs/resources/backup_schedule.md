@@ -24,11 +24,15 @@ For more information regarding scheduled backups, see [Scheduled Backups][backup
 ```terraform
 resource "tanzu-mission-control_backup_schedule" "sample-full" {
   name                    = "full-weekly"
-  management_cluster_name = "MGMT_CLS_NAME"
-  provisioner_name        = "PROVISIONER_NAME"
-  cluster_name            = "CLS_NAME"
+  scope {
+    cluster {
+      management_cluster_name = "MGMT_CLS_NAME"
+      provisioner_name        = "PROVISIONER_NAME"
+      cluster_name            = "CLS_NAME"
+    }
+  }
 
-  scope = "FULL_CLUSTER"
+  backup_scope = "FULL_CLUSTER"
 
   spec {
     schedule {
@@ -62,12 +66,15 @@ resource "tanzu-mission-control_backup_schedule" "sample-full" {
 ```terraform
 resource "tanzu-mission-control_backup_schedule" "sample-full" {
   name                    = "namespaces-hourly"
-  management_cluster_name = "MGMT_CLS_NAME"
-  provisioner_name        = "PROVISIONER_NAME"
-  cluster_name            = "CLS_NAME"
+  scope {
+    cluster {
+      management_cluster_name = "MGMT_CLS_NAME"
+      provisioner_name        = "PROVISIONER_NAME"
+      cluster_name            = "CLS_NAME"
+    }
+  }
 
-  scope                   = "SET_NAMESPACES"
-
+  backup_scope                   = "SET_NAMESPACES"
 
   spec {
     schedule {
@@ -144,11 +151,15 @@ resource "tanzu-mission-control_backup_schedule" "sample-full" {
 ```terraform
 resource "tanzu-mission-control_backup_schedule" "sample-full" {
   name                    = "label-based-no-storage"
-  management_cluster_name = "MGMT_CLS_NAME"
-  provisioner_name        = "PROVISIONER_NAME"
-  cluster_name            = "CLS_NAME"
+  scope {
+    cluster {
+      management_cluster_name = "MGMT_CLS_NAME"
+      provisioner_name        = "PROVISIONER_NAME"
+      cluster_name            = "CLS_NAME"
+    }
+  }
 
-  scope                   = "LABEL_SELECTOR"
+  backup_scope                   = "LABEL_SELECTOR"
 
 
   spec {
@@ -183,12 +194,10 @@ resource "tanzu-mission-control_backup_schedule" "sample-full" {
 
 ### Required
 
-- `cluster_name` (String) Cluster name
-- `management_cluster_name` (String) Management cluster name
 - `name` (String) The name of the backup schedule
-- `provisioner_name` (String) Cluster provisioner name
-- `scope` (String) Scope for backup schedule.
-Valid values are (FULL_CLUSTER, SET_NAMESPACES, LABEL_SELECTOR)
+- `backup_scope` (String) Scope for backup schedule.
+  Valid values are (FULL_CLUSTER, SET_NAMESPACES, LABEL_SELECTOR)
+- `scope` (Block List, Min: 1, Max: 1) Scope block for Back up schedule (cluster/cluster group) (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Backup schedule spec block (see [below for nested schema](#nestedblock--spec))
 
 ### Optional
@@ -198,6 +207,24 @@ Valid values are (FULL_CLUSTER, SET_NAMESPACES, LABEL_SELECTOR)
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--scope"></a>
+### Nested Schema for `scope`
+
+Optional:
+
+- `cluster` (Block List, Max: 1) Cluster scope block (see [below for nested schema](#nestedblock--scope--cluster))
+
+<a id="nestedblock--scope--cluster"></a>
+### Nested Schema for `scope.cluster`
+
+Required:
+
+- `cluster_name` (String) Cluster name
+- `management_cluster_name` (String) Management cluster name
+- `provisioner_name` (String) Cluster provisioner name
+
+
 
 <a id="nestedblock--spec"></a>
 ### Nested Schema for `spec`
@@ -226,42 +253,42 @@ Optional:
 
 - `backup_ttl` (String) The backup retention period.
 - `csi_snapshot_timeout` (String) Specifies the time used to wait for CSI VolumeSnapshot status turns to ReadyToUse during creation, before returning error as timeout.
-The default value is 10 minute.
-Format is the time number and time sign, example: "50s" (50 seconds)
+  The default value is 10 minute.
+  Format is the time number and time sign, example: "50s" (50 seconds)
 - `default_volumes_to_fs_backup` (Boolean) Specifies whether all pod volumes should be backed up via file system backup by default.
-(Default: True)
+  (Default: True)
 - `default_volumes_to_restic` (Boolean) Specifies whether restic should be used to take a backup of all pod volumes by default.
-(Default: False)
+  (Default: False)
 - `excluded_namespaces` (List of String) The namespaces to be excluded in the backup.
-Can't be used if scope is SET_NAMESPACES.
+  Can't be used if scope is SET_NAMESPACES.
 - `excluded_resources` (List of String) The name list for the resources to be excluded in backup.
 - `hooks` (Block List, Max: 1) Hooks block represent custom actions that should be executed at different phases of the backup. (see [below for nested schema](#nestedblock--spec--template--hooks))
 - `include_cluster_resources` (Boolean) A flag which specifies whether cluster-scoped resources should be included for consideration in the backup.
-If set to true, all cluster-scoped resources will be backed up. If set to false, all cluster-scoped resources will be excluded from the backup.
-If unset, all cluster-scoped resources are included if and only if all namespaces are included and there are no excluded namespaces.
-Otherwise, only cluster-scoped resources associated with namespace-scoped resources included in the backup spec are backed up.
-For example, if a PersistentVolumeClaim is included in the backup, its associated PersistentVolume (which is cluster-scoped) would also be backed up.
-(Default: False)
+  If set to true, all cluster-scoped resources will be backed up. If set to false, all cluster-scoped resources will be excluded from the backup.
+  If unset, all cluster-scoped resources are included if and only if all namespaces are included and there are no excluded namespaces.
+  Otherwise, only cluster-scoped resources associated with namespace-scoped resources included in the backup spec are backed up.
+  For example, if a PersistentVolumeClaim is included in the backup, its associated PersistentVolume (which is cluster-scoped) would also be backed up.
+  (Default: False)
 - `included_namespaces` (List of String) The namespace to be included for backup from.
-If empty, all namespaces are included.
-Can't be used if scope is FULL_CLUSTER.
-Required if scope is SET_NAMESPACES.
+  If empty, all namespaces are included.
+  Can't be used if scope is FULL_CLUSTER.
+  Required if scope is SET_NAMESPACES.
 - `included_resources` (List of String) The name list for the resources to be included into backup. If empty, all resources are included.
 - `label_selector` (Block List, Max: 1) The label selector to selectively adding individual objects to the backup schedule.
-If not specified, all objects are included.
-Can't be used if scope is FULL_CLUSTER or SET_NAMESPACES.
-Required if scope is LABEL_SELECTOR and Or Label Selectors are not defined (see [below for nested schema](#nestedblock--spec--template--label_selector))
+  If not specified, all objects are included.
+  Can't be used if scope is FULL_CLUSTER or SET_NAMESPACES.
+  Required if scope is LABEL_SELECTOR and Or Label Selectors are not defined (see [below for nested schema](#nestedblock--spec--template--label_selector))
 - `or_label_selector` (Block List) (Repeatable Block) A list of label selectors to filter with when adding individual objects to the backup.
-If multiple provided they will be joined by the OR operator.
-LabelSelector as well as OrLabelSelectors cannot co-exist in backup request, only one of them can be used.
-Can't be used if scope is FULL_CLUSTER or SET_NAMESPACES.
-Required if scope is LABEL_SELECTOR and Label Selector is not defined (see [below for nested schema](#nestedblock--spec--template--or_label_selector))
+  If multiple provided they will be joined by the OR operator.
+  LabelSelector as well as OrLabelSelectors cannot co-exist in backup request, only one of them can be used.
+  Can't be used if scope is FULL_CLUSTER or SET_NAMESPACES.
+  Required if scope is LABEL_SELECTOR and Label Selector is not defined (see [below for nested schema](#nestedblock--spec--template--or_label_selector))
 - `ordered_resources` (Map of String) Specifies the backup order of resources of specific Kind. The map key is the Kind name and value is a list of resource names separated by commas.
-Each resource name has format "namespace/resourcename".
-For cluster resources, simply use "resourcename".
+  Each resource name has format "namespace/resourcename".
+  For cluster resources, simply use "resourcename".
 - `snapshot_volumes` (Boolean) A flag which specifies whether to take cloud snapshots of any PV's referenced in the set of objects included in the Backup.
-If set to true, snapshots will be taken, otherwise, snapshots will be skipped.
-If left unset, snapshots will be attempted if volume snapshots are configured for the cluster.
+  If set to true, snapshots will be taken, otherwise, snapshots will be skipped.
+  If left unset, snapshots will be attempted if volume snapshots are configured for the cluster.
 - `storage_location` (String) The name of a BackupStorageLocation where the backup should be stored.
 - `volume_snapshot_locations` (List of String) A list containing names of VolumeSnapshotLocations associated with this backup.
 
@@ -287,13 +314,13 @@ Optional:
 
 - `excluded_namespaces` (List of String) Specifies the namespaces to which this hook spec does not apply.
 - `included_namespaces` (List of String) Specifies the namespaces to which this hook spec applies.
-If empty, it applies to all namespaces.
+  If empty, it applies to all namespaces.
 - `label_selector` (Block List, Max: 1) The label selector to selectively adding individual objects to the hook resource.
-If not specified, all objects are included. (see [below for nested schema](#nestedblock--spec--template--hooks--resource--label_selector))
+  If not specified, all objects are included. (see [below for nested schema](#nestedblock--spec--template--hooks--resource--label_selector))
 - `post_hook` (Block List) (Repeatable Block) A list of backup hooks to execute after storing the item in the backup.
-These are executed after all "additional items" from item actions are processed. (see [below for nested schema](#nestedblock--spec--template--hooks--resource--post_hook))
+  These are executed after all "additional items" from item actions are processed. (see [below for nested schema](#nestedblock--spec--template--hooks--resource--post_hook))
 - `pre_hook` (Block List) (Repeatable Block) A list of backup hooks to execute after storing the item in the backup.
-These are executed after all "additional items" from item actions are processed. (see [below for nested schema](#nestedblock--spec--template--hooks--resource--pre_hook))
+  These are executed after all "additional items" from item actions are processed. (see [below for nested schema](#nestedblock--spec--template--hooks--resource--pre_hook))
 
 <a id="nestedblock--spec--template--hooks--resource--label_selector"></a>
 ### Nested Schema for `spec.template.hooks.resource.label_selector`
@@ -302,7 +329,7 @@ Optional:
 
 - `match_expression` (Block List) (Repeatable Block) A list of label selector requirements. The requirements are ANDed. (see [below for nested schema](#nestedblock--spec--template--hooks--resource--label_selector--match_expression))
 - `match_labels` (Map of String) A map of {key,value} pairs. A single {key,value} in the map is equivalent to an element of match_expressions, whose key field is "key", the operator is "In" and the values array contains only "value".
-The requirements are ANDed.
+  The requirements are ANDed.
 
 <a id="nestedblock--spec--template--hooks--resource--label_selector--match_expression"></a>
 ### Nested Schema for `spec.template.hooks.resource.label_selector.match_expression`
@@ -311,14 +338,14 @@ Required:
 
 - `key` (String) Key is the label key that the selector applies to.
 - `operator` (String) Operator represents a key's relationship to a set of values.
-Valid operators are "In", "NotIn", "Exists" and "DoesNotExist".
+  Valid operators are "In", "NotIn", "Exists" and "DoesNotExist".
 
 Optional:
 
 - `values` (List of String) Values is an array of string values.
-If the operator is "In" or "NotIn", the values array must be non-empty.
-If the operator is "Exists" or "DoesNotExist", the values array must be empty.
-This array is replaced during a strategic merge patch.
+  If the operator is "In" or "NotIn", the values array must be non-empty.
+  If the operator is "Exists" or "DoesNotExist", the values array must be empty.
+  This array is replaced during a strategic merge patch.
 
 
 
@@ -336,12 +363,12 @@ Required:
 
 - `command` (List of String) The command and arguments to execute.
 - `container` (String) The container in the pod where the command should be executed.
-If not specified, the pod's first container is used.
+  If not specified, the pod's first container is used.
 
 Optional:
 
 - `on_error` (String) Specifies how Velero should behave if it encounters an error executing this hook.
-Valid values are (FAIL, CONTINUE)
+  Valid values are (FAIL, CONTINUE)
 - `timeout` (String) Defines the maximum amount of time Velero should wait for the hook to complete before considering the execution a failure.
 
 
@@ -360,12 +387,12 @@ Required:
 
 - `command` (List of String) The command and arguments to execute.
 - `container` (String) The container in the pod where the command should be executed.
-If not specified, the pod's first container is used.
+  If not specified, the pod's first container is used.
 
 Optional:
 
 - `on_error` (String) Specifies how Velero should behave if it encounters an error executing this hook.
-Valid values are (FAIL, CONTINUE)
+  Valid values are (FAIL, CONTINUE)
 - `timeout` (String) Defines the maximum amount of time Velero should wait for the hook to complete before considering the execution a failure.
 
 
@@ -379,7 +406,7 @@ Optional:
 
 - `match_expression` (Block List) (Repeatable Block) A list of label selector requirements. The requirements are ANDed. (see [below for nested schema](#nestedblock--spec--template--label_selector--match_expression))
 - `match_labels` (Map of String) A map of {key,value} pairs. A single {key,value} in the map is equivalent to an element of match_expressions, whose key field is "key", the operator is "In" and the values array contains only "value".
-The requirements are ANDed.
+  The requirements are ANDed.
 
 <a id="nestedblock--spec--template--label_selector--match_expression"></a>
 ### Nested Schema for `spec.template.label_selector.match_expression`
@@ -388,14 +415,14 @@ Required:
 
 - `key` (String) Key is the label key that the selector applies to.
 - `operator` (String) Operator represents a key's relationship to a set of values.
-Valid operators are "In", "NotIn", "Exists" and "DoesNotExist".
+  Valid operators are "In", "NotIn", "Exists" and "DoesNotExist".
 
 Optional:
 
 - `values` (List of String) Values is an array of string values.
-If the operator is "In" or "NotIn", the values array must be non-empty.
-If the operator is "Exists" or "DoesNotExist", the values array must be empty.
-This array is replaced during a strategic merge patch.
+  If the operator is "In" or "NotIn", the values array must be non-empty.
+  If the operator is "Exists" or "DoesNotExist", the values array must be empty.
+  This array is replaced during a strategic merge patch.
 
 
 
@@ -406,7 +433,7 @@ Optional:
 
 - `match_expression` (Block List) (Repeatable Block) A list of label selector requirements. The requirements are ANDed. (see [below for nested schema](#nestedblock--spec--template--or_label_selector--match_expression))
 - `match_labels` (Map of String) A map of {key,value} pairs. A single {key,value} in the map is equivalent to an element of match_expressions, whose key field is "key", the operator is "In" and the values array contains only "value".
-The requirements are ANDed.
+  The requirements are ANDed.
 
 <a id="nestedblock--spec--template--or_label_selector--match_expression"></a>
 ### Nested Schema for `spec.template.or_label_selector.match_expression`
@@ -415,14 +442,14 @@ Required:
 
 - `key` (String) Key is the label key that the selector applies to.
 - `operator` (String) Operator represents a key's relationship to a set of values.
-Valid operators are "In", "NotIn", "Exists" and "DoesNotExist".
+  Valid operators are "In", "NotIn", "Exists" and "DoesNotExist".
 
 Optional:
 
 - `values` (List of String) Values is an array of string values.
-If the operator is "In" or "NotIn", the values array must be non-empty.
-If the operator is "Exists" or "DoesNotExist", the values array must be empty.
-This array is replaced during a strategic merge patch.
+  If the operator is "In" or "NotIn", the values array must be non-empty.
+  If the operator is "Exists" or "DoesNotExist", the values array must be empty.
+  This array is replaced during a strategic merge patch.
 
 
 

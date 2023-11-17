@@ -42,7 +42,7 @@ func resourceBackupScheduleCreate(ctx context.Context, data *schema.ResourceData
 		return diag.FromErr(errors.Wrapf(err, "Couldn't create Tanzu Mission Control backup schedule."))
 	}
 
-	diags = validateSchema(model, BackupScope(data.Get(ScopeKey).(string)))
+	diags = validateSchema(model, BackupScope(data.Get(BackupScopeKey).(string)))
 
 	if diags.HasError() {
 		return diags
@@ -66,13 +66,20 @@ func resourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData, 
 	var resp *backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleResponse
 
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey, ClusterNameKey, ManagementClusterNameKey, ProvisionerNameKey})
+	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{ScopeKey, ClusterScopeKey, ClusterNameKey, ManagementClusterNameKey, ProvisionerNameKey})
 
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't read Tanzu Mission Control backup schedule."))
 	}
 
 	backupScheduleFn := model.FullName
+
+	if name, ok := data.GetOk(NameKey); ok {
+		backupScheduleFn.Name = name.(string)
+	} else {
+		return diag.Errorf("Couldn't read Tanzu Mission Control backup name.")
+	}
+
 	resp, err = readResourceWait(ctx, &config, backupScheduleFn)
 
 	if err != nil {
@@ -119,13 +126,20 @@ func resourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData, 
 
 func resourceBackupScheduleDelete(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey, ClusterNameKey, ManagementClusterNameKey, ProvisionerNameKey})
+	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{ScopeKey, ClusterScopeKey, ClusterNameKey, ManagementClusterNameKey, ProvisionerNameKey})
 
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't delete Tanzu Mission Control backup schedule."))
 	}
 
 	backupScheduleFn := model.FullName
+
+	if name, ok := data.GetOk(NameKey); ok {
+		backupScheduleFn.Name = name.(string)
+	} else {
+		return diag.Errorf("Couldn't read Tanzu Mission Control backup name.")
+	}
+
 	err = config.TMCConnection.BackupScheduleService.BackupScheduleResourceServiceDelete(backupScheduleFn)
 
 	if err != nil && !clienterrors.IsNotFoundError(err) {
@@ -144,7 +158,7 @@ func resourceBackupScheduleUpdate(ctx context.Context, data *schema.ResourceData
 		return diag.FromErr(errors.Wrapf(err, "Couldn't update Tanzu Mission Control backup schedule."))
 	}
 
-	diags = validateSchema(model, BackupScope(data.Get(ScopeKey).(string)))
+	diags = validateSchema(model, BackupScope(data.Get(BackupScopeKey).(string)))
 
 	if diags.HasError() {
 		return diags
