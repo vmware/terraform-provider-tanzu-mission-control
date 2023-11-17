@@ -66,7 +66,11 @@ func (builder *ResourceTFConfigBuilder) GetEnableDataProtectionConfig() string {
 		%s
 
 		resource "%s" "%s" {
-			%s
+			scope {
+				cluster {
+					%s
+				}
+			}
 		}
 		`,
 		builder.ClusterRequiredResource,

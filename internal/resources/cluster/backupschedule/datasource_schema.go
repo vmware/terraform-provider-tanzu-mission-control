@@ -16,16 +16,78 @@ const (
 	IncludeTotalCountKey = "include_total_count"
 	SchedulesKey         = "schedules"
 	TotalCountKey        = "total_count"
+	ScopeKey             = "scope"
+	ClusterScopeKey      = "cluster"
+	ClusterGroupScopeKey = "cluster_group"
+	ClusterGroupNameKey  = "cluster_group_name"
 )
 
-var backupScheduleDataSourceSchema = map[string]*schema.Schema{
-	ScopeKey:             searchScopeSchema,
-	SortByKey:            sortBySchema,
-	QueryKey:             querySchema,
-	IncludeTotalCountKey: includeTotalSchema,
-	SchedulesKey:         schedulesSchema,
-	TotalCountKey:        totalCountSchema,
-}
+var (
+	nameDSSchema = &schema.Schema{
+		Type:        schema.TypeString,
+		Description: "The name of the backup schedule",
+		Required:    true,
+		ForceNew:    true,
+	}
+
+	managementClusterNameDSSchema = &schema.Schema{
+		Type:        schema.TypeString,
+		Description: "Management cluster name",
+		Required:    true,
+		ForceNew:    true,
+	}
+
+	provisionerNameDSSchema = &schema.Schema{
+		Type:        schema.TypeString,
+		Description: "Cluster provisioner name",
+		Required:    true,
+		ForceNew:    true,
+	}
+
+	sortBySchema = &schema.Schema{
+		Type:        schema.TypeString,
+		Description: "Sort backups by field.",
+		Optional:    true,
+	}
+
+	querySchema = &schema.Schema{
+		Type:        schema.TypeString,
+		Description: "Define a query for listing backups",
+		Optional:    true,
+	}
+
+	includeTotalSchema = &schema.Schema{
+		Type:        schema.TypeBool,
+		Description: "Whether to include total count of backups.\n(Default: True)",
+		Optional:    true,
+		Default:     true,
+	}
+
+	schedulesSchema = &schema.Schema{
+		Type:        schema.TypeList,
+		Description: "A list of schedules returned",
+		Computed:    true,
+		Elem: &schema.Resource{
+			Schema: backupScheduleResourceSchema,
+		},
+	}
+
+	totalCountSchema = &schema.Schema{
+		Type:        schema.TypeString,
+		Description: "Total count of schedules returned",
+		Computed:    true,
+	}
+
+	backupScheduleDataSourceSchema = map[string]*schema.Schema{
+		NameKey:              nameDSSchema,
+		ScopeKey:             searchScopeSchema,
+		SortByKey:            sortBySchema,
+		QueryKey:             querySchema,
+		IncludeTotalCountKey: includeTotalSchema,
+		SchedulesKey:         schedulesSchema,
+		TotalCountKey:        totalCountSchema,
+	}
+)
 
 var searchScopeSchema = &schema.Schema{
 	Type:        schema.TypeList,
@@ -34,62 +96,35 @@ var searchScopeSchema = &schema.Schema{
 	Required:    true,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			ClusterNameKey:           clusterNameSchema,
-			ManagementClusterNameKey: managementClusterNameDSSchema,
-			ProvisionerNameKey:       provisionerNameDSSchema,
-			NameKey:                  nameDSSchema,
+			ClusterGroupScopeKey: {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Cluster group scope block",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						ClusterGroupNameKey: {
+							Type:        schema.TypeString,
+							Description: "Cluster group name",
+							Required:    true,
+							ForceNew:    true,
+						},
+					},
+				},
+			},
+			ClusterScopeKey: {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Cluster scope block",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						ClusterNameKey:           clusterNameSchema,
+						ManagementClusterNameKey: managementClusterNameDSSchema,
+						ProvisionerNameKey:       provisionerNameDSSchema,
+					},
+				},
+			},
 		},
 	},
-}
-
-var nameDSSchema = &schema.Schema{
-	Type:        schema.TypeString,
-	Description: "The name of the backup schedule",
-	Optional:    true,
-}
-
-var managementClusterNameDSSchema = &schema.Schema{
-	Type:        schema.TypeString,
-	Description: "Management cluster name",
-	Optional:    true,
-}
-
-var provisionerNameDSSchema = &schema.Schema{
-	Type:        schema.TypeString,
-	Description: "Cluster provisioner name",
-	Optional:    true,
-}
-
-var sortBySchema = &schema.Schema{
-	Type:        schema.TypeString,
-	Description: "Sort backups by field.",
-	Optional:    true,
-}
-
-var querySchema = &schema.Schema{
-	Type:        schema.TypeString,
-	Description: "Define a query for listing backups",
-	Optional:    true,
-}
-
-var includeTotalSchema = &schema.Schema{
-	Type:        schema.TypeBool,
-	Description: "Whether to include total count of backups.\n(Default: True)",
-	Optional:    true,
-	Default:     true,
-}
-
-var schedulesSchema = &schema.Schema{
-	Type:        schema.TypeList,
-	Description: "A list of schedules returned",
-	Computed:    true,
-	Elem: &schema.Resource{
-		Schema: backupScheduleResourceSchema,
-	},
-}
-
-var totalCountSchema = &schema.Schema{
-	Type:        schema.TypeString,
-	Description: "Total count of schedules returned",
-	Computed:    true,
 }

@@ -104,9 +104,14 @@ func (builder *ResourceTFConfigBuilder) GetFullClusterBackupScheduleConfig() str
 		%s
 
 		resource "%s" "%s" {
-		  name         = "%s"
-		  scope = "%s"
-          %s
+			name = "%s"
+			scope {
+				cluster {
+                      %s
+				}
+			}
+
+          backup_scope = "%s"
 
 		  spec {
 			schedule {
@@ -137,8 +142,8 @@ func (builder *ResourceTFConfigBuilder) GetFullClusterBackupScheduleConfig() str
 		backupscheduleres.ResourceName,
 		FullClusterBackupScheduleResourceName,
 		FullClusterBackupScheduleName,
-		backupscheduleres.FullClusterBackupScope,
 		builder.ClusterInfo,
+		backupscheduleres.FullClusterBackupScope,
 		builder.TargetLocationInfo,
 		dataprotectiontests.EnableDataProtectionResourceFullName,
 		targetlocationtests.TmcManagedResourceFullName)
@@ -151,9 +156,14 @@ func (builder *ResourceTFConfigBuilder) GetNamespacesBackupScheduleConfig() stri
 		%s
 		
 		resource "%s" "%s" {
-		  name         = "%s"
-		  scope = "%s"
-          %s
+			name = "%s"
+			scope {
+				cluster {
+					%s
+				}
+			}
+
+          backup_scope = "%s"
 		
 		  spec {
 			schedule {
@@ -222,8 +232,8 @@ func (builder *ResourceTFConfigBuilder) GetNamespacesBackupScheduleConfig() stri
 		backupscheduleres.ResourceName,
 		NamespacesBackupScheduleResourceName,
 		NamespacesBackupScheduleName,
-		backupscheduleres.NamespacesBackupScope,
 		builder.ClusterInfo,
+		backupscheduleres.NamespacesBackupScope,
 		builder.TargetLocationInfo,
 		dataprotectiontests.EnableDataProtectionResourceFullName,
 		targetlocationtests.TmcManagedResourceFullName)
@@ -236,9 +246,14 @@ func (builder *ResourceTFConfigBuilder) GetLabelsBackupScheduleConfig() string {
 		%s
 
 		resource "%s" "%s" {
-		  name         = "%s"
-		  scope = "%s"
-          %s
+		  name = "%s"
+		  scope {
+			cluster {
+				%s
+			  }
+		  }
+
+		  backup_scope = "%s"
 
           spec {
 			schedule {
@@ -271,8 +286,8 @@ func (builder *ResourceTFConfigBuilder) GetLabelsBackupScheduleConfig() string {
 		backupscheduleres.ResourceName,
 		LabelsBackupScheduleResourceName,
 		LabelsBackupScheduleName,
-		backupscheduleres.LabelSelectorBackupScope,
 		builder.ClusterInfo,
+		backupscheduleres.LabelSelectorBackupScope,
 		builder.TargetLocationInfo,
 		dataprotectiontests.EnableDataProtectionResourceFullName,
 		targetlocationtests.TmcManagedResourceFullName)

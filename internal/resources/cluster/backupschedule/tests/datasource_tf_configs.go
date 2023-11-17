@@ -52,9 +52,11 @@ func (builder *DataSourceTFConfigBuilder) GetDataSourceConfig() string {
 		%s
 
 		data "%s" "%s" {
+          name = "%s"
 		  scope {
-			%s
-			name = "%s"
+			cluster {
+				%s
+			}
 		  }
 
           depends_on = [%s]
@@ -63,7 +65,7 @@ func (builder *DataSourceTFConfigBuilder) GetDataSourceConfig() string {
 		builder.BackupScheduleRequiredResource,
 		backupscheduleres.ResourceName,
 		DataSourceName,
-		builder.ClusterInfo,
 		LabelsBackupScheduleName,
+		builder.ClusterInfo,
 		LabelsBackupScheduleResourceFullName)
 }

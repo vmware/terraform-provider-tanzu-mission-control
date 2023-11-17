@@ -20,11 +20,18 @@ var (
 )
 
 var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
-	NameKey:                  tfModelConverterHelper.BuildDefaultModelPath("fullName", "name"),
-	ClusterNameKey:           tfModelConverterHelper.BuildDefaultModelPath("fullName", "clusterName"),
-	ManagementClusterNameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "managementClusterName"),
-	ProvisionerNameKey:       tfModelConverterHelper.BuildDefaultModelPath("fullName", "provisionerName"),
-	common.MetaKey:           common.GetMetaConverterMap(tfModelConverterHelper.DefaultModelPathSeparator),
+	NameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "name"),
+	ScopeKey: &tfModelConverterHelper.BlockToStruct{
+		ClusterGroupScopeKey: &tfModelConverterHelper.BlockToStruct{
+			ClusterGroupNameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "clusterGroupName"),
+		},
+		ClusterScopeKey: &tfModelConverterHelper.BlockToStruct{
+			ClusterNameKey:           tfModelConverterHelper.BuildDefaultModelPath("fullName", "clusterName"),
+			ManagementClusterNameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "managementClusterName"),
+			ProvisionerNameKey:       tfModelConverterHelper.BuildDefaultModelPath("fullName", "provisionerName"),
+		},
+	},
+	common.MetaKey: common.GetMetaConverterMap(tfModelConverterHelper.DefaultModelPathSeparator),
 	SpecKey: &tfModelConverterHelper.BlockToStruct{
 		PausedKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "paused"),
 		ScheduleKey: &tfModelConverterHelper.BlockToStruct{
@@ -121,11 +128,16 @@ var tfModelDataSourceRequestMap = &tfModelConverterHelper.BlockToStruct{
 	SortByKey:            "sortBy",
 	QueryKey:             "query",
 	IncludeTotalCountKey: "includeTotal",
+	NameKey:              tfModelConverterHelper.BuildDefaultModelPath("fullName", "name"),
 	ScopeKey: &tfModelConverterHelper.BlockToStruct{
-		ClusterNameKey:           tfModelConverterHelper.BuildDefaultModelPath("searchScope", "clusterName"),
-		ManagementClusterNameKey: tfModelConverterHelper.BuildDefaultModelPath("searchScope", "managementClusterName"),
-		ProvisionerNameKey:       tfModelConverterHelper.BuildDefaultModelPath("searchScope", "provisionerName"),
-		NameKey:                  tfModelConverterHelper.BuildDefaultModelPath("searchScope", "name"),
+		ClusterGroupScopeKey: &tfModelConverterHelper.BlockToStruct{
+			ClusterGroupNameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "clusterGroupName"),
+		},
+		ClusterScopeKey: &tfModelConverterHelper.BlockToStruct{
+			ClusterNameKey:           tfModelConverterHelper.BuildDefaultModelPath("fullName", "clusterName"),
+			ManagementClusterNameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "managementClusterName"),
+			ProvisionerNameKey:       tfModelConverterHelper.BuildDefaultModelPath("fullName", "provisionerName"),
+		},
 	},
 }
 
