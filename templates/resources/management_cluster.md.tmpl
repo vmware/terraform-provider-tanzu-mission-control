@@ -1,0 +1,75 @@
+---
+Title: "Management Cluster Registration Resource"
+Description: |-
+  Creating management cluster registration resource.
+---
+
+# Management Cluster Registration
+
+Manage a cluster registration using this Terraform module.
+
+Registering a management cluster enables you to use VMware Tanzu Mission Control to manage cluster lifecycle on various
+infrastructure platforms.
+
+For registering management cluster, you must have `managementcluster.admin` permissions in Tanzu Mission Control.
+For more information, see [Register a Management Cluster with Tanzu Mission Control.][registration]
+
+[registration]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-EB507AAF-5F4F-400F-9623-BA611233E0BD.html
+
+## Create registration for Tanzu Kubernetes Grid management cluster
+
+Registration output contains registration URL which could be applied according to following
+tutorial [Complete the Registration][grid-registration]
+
+[grid-registration]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-CC6E721E-43BF-4066-AA0A-F744280D6A03.html
+
+### Example Usage
+
+{{ tffile "examples/resources/management_cluster/resource_management_cluster_registration_minimal_tkgm.tf" }}
+
+## Create registration for Tanzu Kubernetes Grid management cluster with image registry and proxy
+
+Registration output contains registration URL which could be applied according to following
+tutorial [Complete the Registration][grid-registration]
+
+[grid-registration]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-CC6E721E-43BF-4066-AA0A-F744280D6A03.html
+
+### Example Usage
+
+{{ tffile "examples/resources/management_cluster/resource_management_cluster_registration_tkgm.tf" }}
+
+## Register Tanzu Kubernetes Grid management cluster with provided kubeconfig file path
+
+### Example Usage
+
+{{ tffile "examples/resources/management_cluster/resource_management_cluster_registration_with_kubeconfig_file_path.tf" }}
+
+## Register Tanzu Kubernetes Grid management cluster with provided kubeconfig
+
+### Example Usage
+
+{{ tffile "examples/resources/management_cluster/resource_management_cluster_registration_with_kubeconfig_raw_input.tf" }}
+
+## Register vSphere with Tanzu management cluster
+
+Registration output contains registration URL which could be applied according to following
+tutorial [Complete the Registration][vpshere-registration]
+
+[vpshere-registration]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-D85335D2-1430-4662-ABF6-722B7C6276FA.html
+
+### Example Usage
+
+{{ tffile "examples/resources/management_cluster/resource_management_cluster_registration_minimal_tkgs.tf" }}
+
+## Register vSphere with Tanzu management cluster with image registry and proxy
+
+Registration output contains registration URL which could be applied according to following
+tutorial [Complete the Registration][vpshere-registration]
+
+[vpshere-registration]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-D85335D2-1430-4662-ABF6-722B7C6276FA.html
+
+### Example Usage
+
+{{ tffile "examples/resources/management_cluster/resource_management_cluster_registration_tkgs.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
