@@ -81,7 +81,7 @@ func Provider() *schema.Provider {
 			backupschedule.ResourceName:      backupschedule.ResourceBackupSchedule(),
 			dataprotection.ResourceName:      dataprotection.ResourceEnableDataProtection(),
 			targetlocation.ResourceName:      targetlocation.ResourceTargetLocation(),
-      managementcluster.ResourceName:   managementcluster.ResourceManagementClusterRegistration(),
+			managementcluster.ResourceName:   managementcluster.ResourceManagementClusterRegistration(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:             cluster.DataSourceTMCCluster(),
@@ -105,7 +105,7 @@ func Provider() *schema.Provider {
 			helmrepository.ResourceName:      helmrepository.DataSourceHelmRepository(),
 			backupschedule.ResourceName:      backupschedule.DataSourceBackupSchedule(),
 			targetlocation.ResourceName:      targetlocation.DataSourceTargetLocations(),
-      managementcluster.ResourceName:   managementcluster.DataSourceManagementClusterRegistration(),
+			managementcluster.ResourceName:   managementcluster.DataSourceManagementClusterRegistration(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
