@@ -11,7 +11,14 @@ Manage a cluster registration using this Terraform module.
 Registering a management cluster enables you to use VMware Tanzu Mission Control to manage cluster lifecycle on various
 infrastructure platforms.
 
-For registering management cluster, you must have `managementcluster.admin` permissions in Tanzu Mission Control.
+### TKGm flow options
+- Registration link is provided after management cluster registration resource has been created.
+- When kubeconfig as input is provided then provider will finalize the registration of the resource.
+
+### TKGs flow options
+- Registration link is provided after management cluster registration resource has been created.
+
+For creating management cluster registration resource, you must have `managementcluster.admin` permissions in Tanzu Mission Control.
 For more information, see [Register a Management Cluster with Tanzu Mission Control.][registration]
 
 [registration]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-EB507AAF-5F4F-400F-9623-BA611233E0BD.html
