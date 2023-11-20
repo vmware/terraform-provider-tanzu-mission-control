@@ -74,7 +74,6 @@ func setUpOrgPolicyEndPointMocks(t *testing.T, endpoint string, resourceName str
 		nil))
 }
 
-// nolint: unparam
 func bodyInspectingResponder(t *testing.T, expectedContent interface{}, successResponse int, successResponseBody interface{}) httpmock.Responder {
 	return func(r *http.Request) (*http.Response, error) {
 		successFunc := func() (*http.Response, error) {

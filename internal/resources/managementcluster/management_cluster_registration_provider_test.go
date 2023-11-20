@@ -31,7 +31,7 @@ func initTestProvider(t *testing.T) *schema.Provider {
 }
 
 func getConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	if _, found := os.LookupEnv("ENABLE_POLICY_ENV_TEST"); !found {
+	if _, found := os.LookupEnv("ENABLE_MANAGEMENT_CLUSTER_ENV_TEST"); !found {
 		return authctx.ProviderConfigureContextWithDefaultTransportForTesting
 	}
 

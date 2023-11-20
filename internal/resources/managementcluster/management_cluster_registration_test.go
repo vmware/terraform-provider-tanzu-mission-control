@@ -39,7 +39,7 @@ func TestAcceptanceForManagementClusterRegistrationResource(t *testing.T) {
 	tkgmKubeconfigFilePathName := acctest.RandomWithPrefix("a-tf-tkgm-kubeconfig-filepath-test")
 
 	kubeconfigPath := os.Getenv("KUBECONFIG")
-	_, enablePolicyEnvTest := os.LookupEnv("ENABLE_POLICY_ENV_TEST")
+	_, enablePolicyEnvTest := os.LookupEnv("ENABLE_MANAGEMENT_CLUSTER_ENV_TEST")
 
 	if !enablePolicyEnvTest {
 		os.Setenv("TF_ACC", "true")
@@ -219,7 +219,7 @@ func getContext(s *terraform.State, resourceName string) (*authctx.TanzuContext,
 }
 
 func getSetupConfig(config *authctx.TanzuContext) error {
-	if _, found := os.LookupEnv("ENABLE_POLICY_ENV_TEST"); !found {
+	if _, found := os.LookupEnv("ENABLE_MANAGEMENT_CLUSTER_ENV_TEST"); !found {
 		return config.SetupWithDefaultTransportForTesting()
 	}
 
