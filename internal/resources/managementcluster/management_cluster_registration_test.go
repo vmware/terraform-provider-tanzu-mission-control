@@ -16,7 +16,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/pkg/errors"
 
@@ -75,11 +74,11 @@ func TestAcceptanceForManagementClusterRegistrationResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: getTKGsResourceWithoutKubeconfigWithDataSource(tkgsSimpleName),
-				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(provider, tKGsResourceName, tkgsSimpleName, false)),
+				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(tKGsResourceName, tkgsSimpleName, false)),
 			},
 			{
 				Config: getTKGmResourceWithoutKubeconfigWithDataSource(tkgmSimpleName),
-				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(provider, tKGmResourceName, tkgmSimpleName, false)),
+				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(tKGmResourceName, tkgmSimpleName, false)),
 			},
 			{
 				PreConfig: func() {
@@ -91,7 +90,7 @@ func TestAcceptanceForManagementClusterRegistrationResource(t *testing.T) {
 					}
 				},
 				Config: getTKGmResourceWithDataSourceWithKubeConfigFilePath(tkgmKubeconfigFilePathName, kubeconfigPath),
-				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(provider, tKGmResourceName, tkgmKubeconfigFilePathName, true)),
+				Check:  resource.ComposeTestCheckFunc(checkResourceAttributes(tKGmResourceName, tkgmKubeconfigFilePathName, true)),
 			},
 		},
 	},
@@ -150,9 +149,9 @@ func getTKGmResourceWithDataSourceWithKubeConfigFilePath(name string, kubeconfig
 		`, name, kubeconfigPath)
 }
 
-func checkResourceAttributes(provider *schema.Provider, resourceName, name string, checkReadyState bool) resource.TestCheckFunc {
+func checkResourceAttributes(resourceName, name string, checkReadyState bool) resource.TestCheckFunc {
 	var check = []resource.TestCheckFunc{
-		verifyManagementClusterRegistrationResourceCreation(provider, resourceName, name, checkReadyState),
+		verifyManagementClusterRegistrationResourceCreation(resourceName, name, checkReadyState),
 		resource.TestCheckResourceAttr(resourceName, "name", name),
 	}
 
@@ -160,7 +159,6 @@ func checkResourceAttributes(provider *schema.Provider, resourceName, name strin
 }
 
 func verifyManagementClusterRegistrationResourceCreation(
-	provider *schema.Provider,
 	resourceName string,
 	name string,
 	checkReadyState bool,
