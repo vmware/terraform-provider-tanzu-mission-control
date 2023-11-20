@@ -137,7 +137,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		BackupScheduleService:                         backupscheduleclient.New(httpClient),
 		DataProtectionService:                         dataprotectionclient.New(httpClient),
 		TargetLocationService:                         targetlocationclient.New(httpClient),
-    ManagementClusterRegistrationResourceService:  managementclusterregistrationclient.New(httpClient),
+		ManagementClusterRegistrationResourceService:  managementclusterregistrationclient.New(httpClient),
 	}
 }
 
@@ -192,5 +192,5 @@ type TanzuMissionControl struct {
 	BackupScheduleService                         backupscheduleclient.ClientService
 	DataProtectionService                         dataprotectionclient.ClientService
 	TargetLocationService                         targetlocationclient.ClientService
-  ManagementClusterRegistrationResourceService  managementclusterregistrationclient.ClientService
+	ManagementClusterRegistrationResourceService  managementclusterregistrationclient.ClientService
 }
