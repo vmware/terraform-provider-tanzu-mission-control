@@ -11,12 +11,18 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/backupschedule"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/dataprotection"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/integration"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/nodepools"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/credential"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/ekscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/gitrepository"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmcharts"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmfeature"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmrelease"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmrepository"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/iampolicy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kustomization"
@@ -39,6 +45,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/sourcesecret"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackageinstall"
 	packagerepository "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackagerepository"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/targetlocation"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/workspace"
 )
 
@@ -69,7 +76,12 @@ func Provider() *schema.Provider {
 			tanzupackageinstall.ResourceName: tanzupackageinstall.ResourcePackageInstall(),
 			kubernetessecret.ResourceName:    kubernetessecret.ResourceSecret(),
 			mutationpolicy.ResourceName:      mutationpolicyresource.ResourceMutationPolicy(),
-			managementcluster.ResourceName:   managementcluster.ResourceManagementClusterRegistration(),
+			helmrelease.ResourceName:         helmrelease.ResourceHelmRelease(),
+			helmfeature.ResourceName:         helmfeature.ResourceHelm(),
+			backupschedule.ResourceName:      backupschedule.ResourceBackupSchedule(),
+			dataprotection.ResourceName:      dataprotection.ResourceEnableDataProtection(),
+			targetlocation.ResourceName:      targetlocation.ResourceTargetLocation(),
+      managementcluster.ResourceName:   managementcluster.ResourceManagementClusterRegistration(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:             cluster.DataSourceTMCCluster(),
@@ -88,7 +100,12 @@ func Provider() *schema.Provider {
 			tanzupackages.ResourceName:       tanzupackages.DataSourceTanzuPackages(),
 			tanzupackageinstall.ResourceName: tanzupackageinstall.DataSourcePackageInstall(),
 			kubernetessecret.ResourceName:    kubernetessecret.DataSourceSecret(),
-			managementcluster.ResourceName:   managementcluster.DataSourceManagementClusterRegistration(),
+			helmfeature.ResourceName:         helmfeature.DataSourceHelm(),
+			helmcharts.ResourceName:          helmcharts.DataSourceHelmCharts(),
+			helmrepository.ResourceName:      helmrepository.DataSourceHelmRepository(),
+			backupschedule.ResourceName:      backupschedule.DataSourceBackupSchedule(),
+			targetlocation.ResourceName:      targetlocation.DataSourceTargetLocations(),
+      managementcluster.ResourceName:   managementcluster.DataSourceManagementClusterRegistration(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}

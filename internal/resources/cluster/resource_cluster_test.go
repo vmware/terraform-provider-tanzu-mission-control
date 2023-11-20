@@ -53,36 +53,80 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					checkResourceAttributes(provider, clusterConfig["attachWithKubeConfig"]...),
 				),
+				SkipFunc: func() (bool, error) {
+					if os.Getenv("ATTACH_KUBECONFIG") == "" {
+						t.Log("ATTACH_KUBECONFIG env var is not set")
+						return true, nil
+					}
+					return false, nil
+				},
 			},
 			{
 				Config: testGetResourceClusterDefinition(t, clusterConfig["attachWithKubeConfigImageRegistry"]...),
 				Check: resource.ComposeTestCheckFunc(
 					checkResourceAttributes(provider, clusterConfig["attachWithKubeConfigImageRegistry"]...),
 				),
+				SkipFunc: func() (bool, error) {
+					if os.Getenv("ATTACH_WITH_IMAGE_REGISTRY_KUBECONFIG") == "" || os.Getenv("IMAGE_REGISTRY") == "" {
+						t.Log("ATTACH_WITH_IMAGE_REGISTRY_KUBECONFIG or IMAGE_REGISTRY env var is not set")
+						return true, nil
+					}
+					return false, nil
+				},
 			},
 			{
 				Config: testGetResourceClusterDefinition(t, clusterConfig["attachWithKubeConfigProxy"]...),
 				Check: resource.ComposeTestCheckFunc(
 					checkResourceAttributes(provider, clusterConfig["attachWithKubeConfigProxy"]...),
 				),
+				SkipFunc: func() (bool, error) {
+					if os.Getenv("ATTACH_WITH_PROXY_KUBECONFIG") == "" || os.Getenv("PROXY") == "" {
+						t.Log("ATTACH_WITH_PROXY_KUBECONFIG or PROXY env var is not set")
+						return true, nil
+					}
+					return false, nil
+				},
 			},
 			{
 				Config: testGetResourceClusterDefinition(t, clusterConfig["tkgAWS"]...),
 				Check: resource.ComposeTestCheckFunc(
 					checkResourceAttributes(provider, clusterConfig["tkgAWS"]...),
 				),
+				SkipFunc: func() (bool, error) {
+					if os.Getenv("TKGM_AWS_MANAGEMENT_CLUSTER") == "" || os.Getenv("TKGM_AWS_PROVISIONER_NAME") == "" {
+						t.Log("TKGM_AWS_MANAGEMENT_CLUSTER or TKGM_AWS_PROVISIONER_NAME env var is not set for TKGm AWS acceptance test")
+						return true, nil
+					}
+					return false, nil
+				},
 			},
 			{
 				Config: testGetResourceClusterDefinition(t, clusterConfig["tkgs"]...),
 				Check: resource.ComposeTestCheckFunc(
 					checkResourceAttributes(provider, clusterConfig["tkgs"]...),
 				),
+				SkipFunc: func() (bool, error) {
+					if os.Getenv("TKGS_MANAGEMENT_CLUSTER") == "" || os.Getenv("TKGS_PROVISIONER_NAME") == "" ||
+						os.Getenv("VERSION") == "" || os.Getenv("STORAGE_CLASS") == "" {
+						t.Log("TKGS_MANAGEMENT_CLUSTER, TKGS_PROVISIONER_NAME, VERSION or STORAGE CLASS env var is not set for TKGs acceptance test")
+						return true, nil
+					}
+					return false, nil
+				},
 			},
 			{
 				Config: testGetResourceClusterDefinition(t, clusterConfig["tkgVsphere"]...),
 				Check: resource.ComposeTestCheckFunc(
 					checkResourceAttributes(provider, clusterConfig["tkgVsphere"]...),
 				),
+				ExpectNonEmptyPlan: true,
+				SkipFunc: func() (bool, error) {
+					if os.Getenv("TKGM_VSPHERE_MANAGEMENT_CLUSTER") == "" || os.Getenv("TKGM_VSPHERE_PROVISIONER_NAME") == "" {
+						t.Log("TKGM_VSPHERE_MANAGEMENT_CLUSTER or TKGM_VSPHERE_PROVISIONER_NAME env var is not set for TKGm Vsphere acceptance test")
+						return true, nil
+					}
+					return false, nil
+				},
 			},
 		},
 	})
@@ -93,38 +137,6 @@ func testGetResourceClusterDefinition(t *testing.T, opts ...testhelper.TestAccep
 	templateConfig := testhelper.TestGetDefaultAcceptanceConfig()
 	for _, option := range opts {
 		option(templateConfig)
-	}
-
-	switch templateConfig.AccTestType {
-	case testhelper.AttachClusterTypeWithKubeConfig:
-		if templateConfig.KubeConfigPath == "" {
-			t.Skipf("KUBECONFIG env var is not set: %s", templateConfig.KubeConfigPath)
-		}
-
-	case testhelper.AttachClusterTypeWithKubeconfigImageRegistry:
-		if templateConfig.KubeConfigPath == "" || templateConfig.ImageRegistry == "" {
-			t.Skipf("KUBECONFIG or IMAGE_REGISTRY env var is not set")
-		}
-
-	case testhelper.AttachClusterTypeWithKubeconfigProxy:
-		if templateConfig.KubeConfigPath == "" || templateConfig.Proxy == "" {
-			t.Skipf("KUBECONFIG or PROXY env var is not set")
-		}
-
-	case testhelper.TkgAWSCluster:
-		if templateConfig.ManagementClusterName == "" || templateConfig.ProvisionerName == "" {
-			t.Skip("MANAGEMENT CLUSTER or PROVISIONER env var is not set for TKGm AWS acceptance test")
-		}
-
-	case testhelper.TkgVsphereCluster:
-		if templateConfig.ManagementClusterName == "" || templateConfig.ProvisionerName == "" || templateConfig.ControlPlaneEndPoint == "" {
-			t.Skip("MANAGEMENT CLUSTER, PROVISIONER or CONTROL PLANE ENDPOINT env var is not set for TKGm Vsphere acceptance test")
-		}
-
-	case testhelper.TkgsCluster:
-		if templateConfig.ManagementClusterName == "" || templateConfig.ProvisionerName == "" || templateConfig.Version == "" || templateConfig.StorageClass == "" {
-			t.Skip("MANAGEMENT CLUSTER, PROVISIONER, VERSION or STORAGE CLASS env var is not set for TKGs acceptance test")
-		}
 	}
 
 	definition, err := testhelper.Parse(templateConfig, templateConfig.TemplateData)

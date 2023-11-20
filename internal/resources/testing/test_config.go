@@ -308,7 +308,7 @@ const testTKGsClusterScript = `
 		name                    = "{{.Name}}"
 		
 		spec {
-			cluster_group = "e2e-cvs-cg"
+			cluster_group = "default"
 			tkg_service_vsphere {
 				settings {
 					network {
@@ -325,9 +325,8 @@ const testTKGsClusterScript = `
 					}
 					storage {
 						classes = [
-							"wcpglobal-storage-profile",
+							"{{.StorageClass}}",
 						]
-						default_class = "wcpglobal-storage-profile"
 					}
 				}
 			
@@ -337,15 +336,8 @@ const testTKGsClusterScript = `
 			
 				topology {
 					control_plane {
-						class             = "best-effort-2xlarge"
+						class             = "best-effort-large"
 						storage_class     = "{{.StorageClass}}"
-						high_availability = false
-						volumes {
-							capacity          = 4
-							mount_path        = "/var/lib/etcd"
-							name              = "etcd-0"
-							pvc_storage_class = "wcpglobal-storage-profile"
-						}
 					}
 					node_pools {
 						spec {
@@ -357,15 +349,8 @@ const testTKGsClusterScript = `
 							}
 							worker_node_count = "1"
 							tkg_service_vsphere {
-								class = "best-effort-2xlarge"
+								class = "best-effort-large"
 								storage_class = "{{.StorageClass}}"
-								failure_domain = ""
-								volumes {
-									capacity          = 4
-									mount_path        = "/var/lib/etcd"
-									name              = "etcd-0"
-									pvc_storage_class = "wcpglobal-storage-profile"
-								}
 							}
 						}
 						info {
@@ -387,10 +372,6 @@ const testTKGmVsphereClusterScript = `
 		spec {
 			cluster_group = "default"
 			tkg_vsphere {
-			advanced_configs {
-				key = "key-1"
-				value = "val-1"
-			}
 			settings {
 				network {
 					pods {
@@ -403,8 +384,6 @@ const testTKGmVsphereClusterScript = `
 							"10.96.0.0/16",
 						]
 					}
-					api_server_port = 6443
-					control_plane_end_point = "{{.ControlPlaneEndPoint}}"
 				}
 				security {
 					ssh_key = "default"
@@ -412,10 +391,10 @@ const testTKGmVsphereClusterScript = `
 			}
 			
 				distribution {
-					os_arch = "amd"
- 					os_name = "photon"
- 					os_version = "3"
-					version = "v1.20.5+vmware.2-tkg.1"
+					os_arch = "amd64"
+					os_name = "ubuntu"
+					os_version = "20.04"
+					version = "v1.23.10+vmware.1-tkg.1"
 					workspace {
 					  datacenter        = "/dc0" 
 					  datastore         = "/dc0/datastore/local-0" 
@@ -432,7 +411,6 @@ const testTKGmVsphereClusterScript = `
 							disk_size = "20" 
 							memory    = "4096" 
 						}
-						high_availability = false
 					}
 					node_pools {
 						spec {

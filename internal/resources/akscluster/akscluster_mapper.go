@@ -6,8 +6,6 @@ SPDX-License-Identifier: MPL-2.0
 package akscluster
 
 import (
-	"errors"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
@@ -16,10 +14,7 @@ import (
 )
 
 func ConstructCluster(data *schema.ResourceData) (*models.VmwareTanzuManageV1alpha1AksCluster, error) {
-	spec, err := constructAKSClusterSpec(data)
-	if err != nil {
-		return nil, err
-	}
+	spec := constructAKSClusterSpec(data)
 
 	return &models.VmwareTanzuManageV1alpha1AksCluster{
 		FullName: extractClusterFullName(data),
@@ -28,7 +23,7 @@ func ConstructCluster(data *schema.ResourceData) (*models.VmwareTanzuManageV1alp
 	}, nil
 }
 
-func constructAKSClusterSpec(data *schema.ResourceData) (*models.VmwareTanzuManageV1alpha1AksclusterSpec, error) {
+func constructAKSClusterSpec(data *schema.ResourceData) *models.VmwareTanzuManageV1alpha1AksclusterSpec {
 	specData := extractClusterSpec(data)
 
 	spec := &models.VmwareTanzuManageV1alpha1AksclusterSpec{}
@@ -42,13 +37,7 @@ func constructAKSClusterSpec(data *schema.ResourceData) (*models.VmwareTanzuMana
 
 	if v, ok := specData[configKey]; ok {
 		configData, _ := v.([]any)
-		v, err := constructConfig(configData)
-
-		if err != nil {
-			return nil, err
-		} else {
-			spec.Config = v
-		}
+		spec.Config = constructConfig(configData)
 	}
 
 	if v, ok := specData[agentNameKey]; ok {
@@ -59,7 +48,7 @@ func constructAKSClusterSpec(data *schema.ResourceData) (*models.VmwareTanzuMana
 		helper.SetPrimitiveValue(v, &spec.ResourceID, resourceIDKey)
 	}
 
-	return spec, nil
+	return spec
 }
 
 func extractClusterSpec(data *schema.ResourceData) map[string]any {
@@ -77,9 +66,9 @@ func extractClusterSpec(data *schema.ResourceData) map[string]any {
 	return dataSpec[0].(map[string]any)
 }
 
-func constructConfig(data []any) (*models.VmwareTanzuManageV1alpha1AksclusterClusterConfig, error) {
+func constructConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterClusterConfig {
 	if len(data) < 1 {
-		return nil, nil
+		return nil
 	}
 
 	// Config schema defines max 1
@@ -134,13 +123,7 @@ func constructConfig(data []any) (*models.VmwareTanzuManageV1alpha1AksclusterClu
 
 	if v, ok := configData[networkConfigKey]; ok {
 		data, _ := v.([]any)
-		v, err := constructNetworkConfig(data)
-
-		if err != nil {
-			return nil, err
-		} else {
-			config.NetworkConfig = v
-		}
+		config.NetworkConfig = constructNetworkConfig(data)
 	}
 
 	if v, ok := configData[skuKey]; ok {
@@ -157,7 +140,7 @@ func constructConfig(data []any) (*models.VmwareTanzuManageV1alpha1AksclusterClu
 		helper.SetPrimitiveValue(v, &config.NodeResourceGroupName, nodeResourceGroupNameKey)
 	}
 
-	return config, nil
+	return config
 }
 
 func constructSku(data []any) *models.VmwareTanzuManageV1alpha1AksclusterClusterSKU {
@@ -217,7 +200,7 @@ func constructAPIServerAccessConfig(data []any) *models.VmwareTanzuManageV1alpha
 	apiServerAccessConfig := &models.VmwareTanzuManageV1alpha1AksclusterAPIServerAccessConfig{}
 
 	if v, ok := apiServerAccessConfigData[authorizedIPRangesKey]; ok {
-		apiServerAccessConfig.AuthorizedIPRanges = helper.SetPrimitiveList[string](v)
+		apiServerAccessConfig.AuthorizedIPRanges = helper.SetPrimitiveList[string](v, authorizedIPRangesKey)
 	}
 
 	if v, ok := apiServerAccessConfigData[enablePrivateClusterKey]; ok {
@@ -241,15 +224,15 @@ func constructLinuxConfig(data []any) *models.VmwareTanzuManageV1alpha1Akscluste
 	}
 
 	if v, ok := linuxConfigData[sshkeysKey]; ok {
-		linuxConfig.SSHKeys = helper.SetPrimitiveList[string](v)
+		linuxConfig.SSHKeys = helper.SetPrimitiveList[string](v, sshkeysKey)
 	}
 
 	return linuxConfig
 }
 
-func constructNetworkConfig(data []any) (*models.VmwareTanzuManageV1alpha1AksclusterNetworkConfig, error) {
+func constructNetworkConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterNetworkConfig {
 	if len(data) < 1 {
-		return nil, nil
+		return nil
 	}
 
 	// NetworkConfig schema defines max 1
@@ -258,6 +241,10 @@ func constructNetworkConfig(data []any) (*models.VmwareTanzuManageV1alpha1Aksclu
 
 	if v, ok := networkConfigData[networkPluginKey]; ok {
 		helper.SetPrimitiveValue(v, &networkConfig.NetworkPlugin, networkPluginKey)
+	}
+
+	if v, ok := networkConfigData[networkPluginModeKey]; ok {
+		helper.SetPrimitiveValue(v, &networkConfig.NetworkPluginMode, networkPluginModeKey)
 	}
 
 	if v, ok := networkConfigData[networkPolicyKey]; ok {
@@ -281,18 +268,14 @@ func constructNetworkConfig(data []any) (*models.VmwareTanzuManageV1alpha1Aksclu
 	}
 
 	if v, ok := networkConfigData[serviceCidrKey]; ok {
-		networkConfig.ServiceCidrs = helper.SetPrimitiveList[string](v.([]any))
+		networkConfig.ServiceCidrs = helper.SetPrimitiveList[string](v.([]any), serviceCidrKey)
 	}
 
 	if v, ok := networkConfigData[podCidrKey]; ok {
-		networkConfig.PodCidrs = helper.SetPrimitiveList[string](v.([]any))
+		networkConfig.PodCidrs = helper.SetPrimitiveList[string](v.([]any), podCidrKey)
 	}
 
-	if networkConfig.NetworkPlugin == "kubenet" && (networkConfig.DNSServiceIP != "" || networkConfig.ServiceCidrs != nil) {
-		return networkConfig, errors.New("can not set network_config.dns_service_ip or network_config.service_cidr when network_config.network_plugin is set to kubenet")
-	}
-
-	return networkConfig, nil
+	return networkConfig
 }
 
 func constructStorageConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterStorageConfig {
@@ -355,7 +338,7 @@ func constructAadConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterA
 	aadConfig := &models.VmwareTanzuManageV1alpha1AksclusterAADConfig{}
 
 	if v, ok := aadConfigData[adminGroupIDsKey]; ok {
-		aadConfig.AdminGroupObjectIds = helper.SetPrimitiveList[string](v)
+		aadConfig.AdminGroupObjectIds = helper.SetPrimitiveList[string](v, adminGroupIDsKey)
 	}
 
 	if v, ok := aadConfigData[enableAzureRbacKey]; ok {
@@ -575,6 +558,7 @@ func toNetworkConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterNetwor
 	data := make(map[string]any)
 	data[loadBalancerSkuKey] = config.LoadBalancerSku
 	data[networkPluginKey] = config.NetworkPlugin
+	data[networkPluginModeKey] = config.NetworkPluginMode
 	data[networkPolicyKey] = config.NetworkPolicy
 	data[dnsPrefixKey] = config.DNSPrefix
 	data[dnsServiceIPKey] = config.DNSServiceIP

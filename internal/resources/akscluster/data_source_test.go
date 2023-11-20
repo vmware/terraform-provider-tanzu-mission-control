@@ -24,6 +24,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	models "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/akscluster"
+	configModels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubeconfig"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
@@ -48,10 +49,18 @@ func (s *ReadDatasourceTestSuite) SetupTest() {
 	s.mocks.nodepoolClient = &mockNodepoolClient{
 		nodepoolListResp: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool{aTestNodePool()},
 	}
+	s.mocks.kubeConfigClient = &mockKubeConfigClient{
+		kubeConfigResponse: &configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponse{
+			Status:     configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusREADY.Pointer(),
+			Kubeconfig: "base64_kubeconfig",
+		},
+	}
+
 	s.config = authctx.TanzuContext{
 		TMCConnection: &client.TanzuMissionControl{
 			AKSClusterResourceService:  s.mocks.clusterClient,
 			AKSNodePoolResourceService: s.mocks.nodepoolClient,
+			KubeConfigResourceService:  s.mocks.kubeConfigClient,
 		},
 	}
 	s.datasource = akscluster.DataSourceTMCAKSCluster()
@@ -69,6 +78,27 @@ func (s *ReadDatasourceTestSuite) Test_datasourceRead() {
 	s.Assert().Equal("test-uid", d.Id(), "expect id from REST request")
 	s.Assert().NotNil(d.Get(common.MetaKey), "expected metadata from REST request")
 	s.Assert().NotNil(d.Get("spec"), "expected cluster spec from REST request")
+
+	s.Assert().False(s.mocks.kubeConfigClient.KubeConfigServicedWasCalled, "kubeconfig client was called when not expected")
+}
+
+func (s *ReadDatasourceTestSuite) Test_datasourceRead_waitFor_KubConfig() {
+	d := schema.TestResourceDataRaw(s.T(), akscluster.ClusterSchema, aTestClusterDataMap(withWaitForHealthy))
+
+	result := s.datasource.ReadContext(s.ctx, d, s.config)
+
+	s.Assert().False(result.HasError())
+
+	s.Assert().True(s.mocks.kubeConfigClient.KubeConfigServicedWasCalled, "kubeconfig client was not called")
+	s.Assert().Equal("my-agent-name", s.mocks.kubeConfigClient.KubeConfigServiceCalledWith.Name)
+	s.Assert().Equal("base64_kubeconfig", d.Get("kubeconfig"))
+}
+
+func (s *ReadDatasourceTestSuite) Test_datasource_spec_should_be_optional() {
+	dataSourceSchema := s.datasource
+
+	s.Assert().False(dataSourceSchema.Schema["spec"].Required)
+	s.Assert().True(dataSourceSchema.Schema["spec"].Optional)
 }
 
 func (s *ReadDatasourceTestSuite) Test_datasourceRead_invalidConfig() {

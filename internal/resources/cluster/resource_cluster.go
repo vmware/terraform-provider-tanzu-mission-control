@@ -24,6 +24,8 @@ import (
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	clustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster"
+	nodepoolmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
+
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/manifest"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgaws"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/tkgservicevsphere"
@@ -96,6 +98,34 @@ func constructFullname(d *schema.ResourceData) (fullname *clustermodel.VmwareTan
 	fullname.ManagementClusterName, _ = d.Get(ManagementClusterNameKey).(string)
 	fullname.ProvisionerName, _ = d.Get(ProvisionerNameKey).(string)
 	fullname.Name, _ = d.Get(NameKey).(string)
+
+	return fullname
+}
+
+func constructNodePoolFullName(d *schema.ResourceData) (fullname *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolFullName) {
+	fullname = &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolFullName{}
+
+	if value, ok := d.GetOk(ManagementClusterNameKey); ok {
+		fullname.ManagementClusterName = value.(string)
+	}
+
+	if value, ok := d.GetOk(ProvisionerNameKey); ok {
+		fullname.ProvisionerName = value.(string)
+	}
+
+	if value, ok := d.GetOk(NameKey); ok {
+		fullname.ClusterName = value.(string)
+	}
+
+	if value, ok := d.GetOk(helper.GetFirstElementOf(SpecKey, tkgServiceVsphereKey, topologyKey, nodePoolKey)); ok {
+		np := value.([]interface{})[0].(map[string]interface{})
+		poolInfo := np["info"].([]interface{})[0].(map[string]interface{})
+		fullname.Name = poolInfo["name"].(string)
+	} else if value, ok := d.GetOk(helper.GetFirstElementOf(SpecKey, tkgVsphereClusterKey, topologyKey, nodePoolKey)); ok {
+		np := value.([]interface{})[0].(map[string]interface{})
+		poolInfo := np["info"].([]interface{})[0].(map[string]interface{})
+		fullname.Name = poolInfo["name"].(string)
+	}
 
 	return fullname
 }
@@ -563,6 +593,56 @@ func withMetaUpdate(d *schema.ResourceData, cluster *clustermodel.VmwareTanzuMan
 	return true
 }
 
+func withTKGNodePoolUpdate(d *schema.ResourceData, nodepool *nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolNodepool) bool {
+	switch {
+	case nodepool.Spec.TkgServiceVsphere != nil:
+		nodepools := d.Get(helper.GetFirstElementOf(SpecKey, tkgServiceVsphereKey, topologyKey, nodePoolKey)).([]interface{})[0].(map[string]interface{})
+		poolSpec := nodepools[SpecKey].([]interface{})[0].(map[string]interface{})
+		tkgsSpec := poolSpec[tkgServiceVsphereKey].([]interface{})[0].(map[string]interface{})
+
+		if d.HasChange(helper.GetFirstElementOf(SpecKey, tkgServiceVsphereKey, topologyKey, nodePoolKey)) {
+			incomingWorkerNodeCount := poolSpec[workerNodeCountKey].(string)
+
+			if incomingWorkerNodeCount != "" {
+				nodepool.Spec.WorkerNodeCount = incomingWorkerNodeCount
+			}
+
+			incomingTkgServiceVsphereClass := tkgsSpec[classKey].(string)
+
+			if incomingTkgServiceVsphereClass != "" {
+				nodepool.Spec.TkgServiceVsphere.Class = incomingTkgServiceVsphereClass
+			}
+
+			incomingTkgServiceVsphereStorageClass := tkgsSpec[storageClassKey].(string)
+
+			if incomingTkgServiceVsphereStorageClass != "" {
+				nodepool.Spec.TkgServiceVsphere.StorageClass = incomingTkgServiceVsphereStorageClass
+			}
+
+			log.Printf("[INFO] updating TKGs workload cluster nodepools")
+
+			return true
+		}
+	case nodepool.Spec.TkgVsphere != nil:
+		nodepools := d.Get(helper.GetFirstElementOf(SpecKey, tkgVsphereClusterKey, topologyKey, nodePoolKey)).([]interface{})[0].(map[string]interface{})
+		poolSpec := nodepools[SpecKey].([]interface{})[0].(map[string]interface{})
+
+		if d.HasChange(helper.GetFirstElementOf(SpecKey, tkgVsphereClusterKey, topologyKey, nodePoolKey)) {
+			incomingWorkerNodeCount := poolSpec[workerNodeCountKey].(string)
+
+			if incomingWorkerNodeCount != "" {
+				nodepool.Spec.WorkerNodeCount = incomingWorkerNodeCount
+			}
+
+			log.Printf("[INFO] updating TKGm workload cluster nodepools")
+
+			return true
+		}
+	}
+
+	return false
+}
+
 func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
 
@@ -593,6 +673,26 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 		}
 
 		log.Printf("[INFO] cluster update successful")
+	}
+	// check default nodepool configuration update
+	npFullName := constructNodePoolFullName(d)
+
+	npResp, err := config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceGet(npFullName)
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to get Tanzu Mission Control cluster node pool entry, name : %s", npFullName.Name))
+	}
+
+	if withTKGNodePoolUpdate(d, npResp.Nodepool) {
+		_, err = config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceUpdate(
+			&nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolCreateNodepoolRequest{
+				Nodepool: npResp.Nodepool,
+			},
+		)
+		if err != nil {
+			return diag.FromErr(errors.Wrapf(err, "Unable to update tanzu cluster node pool entry"))
+		}
+
+		log.Printf("[INFO] node pool update successful")
 	}
 
 	return dataSourceClusterRead(ctx, d, m)

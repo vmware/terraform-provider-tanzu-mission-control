@@ -10,20 +10,21 @@ Manage a Kubernetes Secret using this Terraform module.
 
 In managed clusters, both attached and provisioned, you can create Kubernetes Secret that you can manage through Tanzu Mission Control.
 
-To create a cluster secret, you must be associated with the cluster.admin role
+To create a kubernetes secret, you must be associated with the cluster.admin or clustergroup.admin role.
 
-[cluster Secret]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-BBE2404D-C2EE-41C7-B639-C0322783A74D.html
+[kubernetes Secret]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-BBE2404D-C2EE-41C7-B639-C0322783A74D.html
 
-## Policy Scope and Inheritance
+## Kubernetes Secret Scope and Inheritance
 
-In the Tanzu Mission Control resource hierarchy, there is currently one levels at which you can specify cluster secret resources:
-- **Kubernetes objects** - `cluster` block under `scope` sub-resource   
+In the Tanzu Mission Control resource hierarchy, there are two levels at which you can specify kubernetes secret resources:
+- **object groups** - `cluster_group` block under `scope` sub-resource
+- **Kubernetes objects** - `cluster` block under `scope` sub-resource    
 
 **Note:**
 The scope parameter is mandatory in the schema and the user needs to add one of the defined scopes to the script for the provider to function.
 Only one scope per resource is allowed.
 
-## Cluster scoped cluster secret
+## Cluster scoped kubernetes secret
 
 ## Example Usage
 
@@ -35,7 +36,7 @@ data "tanzu-mission-control_kubernetes_secret" "read_secret" {
 
   scope {
     cluster {
-      cluster_name            = "testcluster" # Required
+      name                    = "testcluster" # Required
       provisioner_name        = "attached"    # Default: attached
       management_cluster_name = "attached"    # Default: attached
     }
@@ -50,7 +51,7 @@ data "tanzu-mission-control_kubernetes_secret" "read_secret" {
 
 - `name` (String) Name of the secret resource.
 - `namespace_name` (String) Name of Namespace where secret will be created.
-- `scope` (Block List, Min: 1, Max: 1) Scope for the secret having one of the valid scopes for secret: currently we have only cluster scope (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the kubernetes secret, having one of the valid scopes: cluster, cluster_group. (see [below for nested schema](#nestedblock--scope))
 
 ### Optional
 
@@ -62,26 +63,136 @@ data "tanzu-mission-control_kubernetes_secret" "read_secret" {
 - `export` (Boolean) Export the secret to all namespaces.
 - `id` (String) The ID of this resource.
 - `spec` (List of Object) Spec for the kubernetes secret (see [below for nested schema](#nestedatt--spec))
-- `status` (Map of String) Status for the Secret Export.
+- `status` (Map of String) Status for the kubernetes Secret.
 
 <a id="nestedblock--scope"></a>
 ### Nested Schema for `scope`
 
 Optional:
 
-- `cluster` (Block List, Max: 1) The schema for cluster secret full name (see [below for nested schema](#nestedblock--scope--cluster))
+- `cluster` (Block List, Max: 1) The schema for cluster full name (see [below for nested schema](#nestedblock--scope--cluster))
+- `cluster_group` (Block List, Max: 1) The schema for cluster group full name (see [below for nested schema](#nestedblock--scope--cluster_group))
 
 <a id="nestedblock--scope--cluster"></a>
 ### Nested Schema for `scope.cluster`
 
 Required:
 
-- `cluster_name` (String) Name of this cluster
+- `name` (String) Name of this cluster
 
 Optional:
 
 - `management_cluster_name` (String) Name of the management cluster
 - `provisioner_name` (String) Provisioner of the cluster
+
+
+<a id="nestedblock--scope--cluster_group"></a>
+### Nested Schema for `scope.cluster_group`
+
+Required:
+
+- `name` (String) Name of the cluster group
+
+
+
+<a id="nestedblock--meta"></a>
+### Nested Schema for `meta`
+
+Optional:
+
+- `annotations` (Map of String) Annotations for the resource
+- `description` (String) Description of the resource
+- `labels` (Map of String) Labels for the resource
+
+Read-Only:
+
+- `resource_version` (String) Resource version of the resource
+- `uid` (String) UID of the resource
+
+
+<a id="nestedatt--spec"></a>
+### Nested Schema for `spec`
+
+Read-Only:
+
+- `docker_config_json` (List of Object) (see [below for nested schema](#nestedobjatt--spec--docker_config_json))
+
+<a id="nestedobjatt--spec--docker_config_json"></a>
+### Nested Schema for `spec.docker_config_json`
+
+Read-Only:
+
+- `image_registry_url` (String)
+- `password` (String)
+- `username` (String)
+
+
+## Cluster Group scoped kubernetes secret
+
+## Example Usage
+
+```terraform
+# Read Tanzu Mission Control kubernetes secret : fetch namespace details
+data "tanzu-mission-control_kubernetes_secret" "read_secret" {
+  name           = "tf-secret"                # Required
+  namespace_name = "tf-secret-namespace-name" # Required 
+
+  scope {
+    cluster_group {
+      name = "default" # Required
+    }
+  }
+}
+```
+
+<!-- schema generated by tfplugindocs -->
+## Schema
+
+### Required
+
+- `name` (String) Name of the secret resource.
+- `namespace_name` (String) Name of Namespace where secret will be created.
+- `scope` (Block List, Min: 1, Max: 1) Scope for the kubernetes secret, having one of the valid scopes: cluster, cluster_group. (see [below for nested schema](#nestedblock--scope))
+
+### Optional
+
+- `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
+- `org_id` (String) ID of Organization.
+
+### Read-Only
+
+- `export` (Boolean) Export the secret to all namespaces.
+- `id` (String) The ID of this resource.
+- `spec` (List of Object) Spec for the kubernetes secret (see [below for nested schema](#nestedatt--spec))
+- `status` (Map of String) Status for the kubernetes Secret.
+
+<a id="nestedblock--scope"></a>
+### Nested Schema for `scope`
+
+Optional:
+
+- `cluster` (Block List, Max: 1) The schema for cluster full name (see [below for nested schema](#nestedblock--scope--cluster))
+- `cluster_group` (Block List, Max: 1) The schema for cluster group full name (see [below for nested schema](#nestedblock--scope--cluster_group))
+
+<a id="nestedblock--scope--cluster"></a>
+### Nested Schema for `scope.cluster`
+
+Required:
+
+- `name` (String) Name of this cluster
+
+Optional:
+
+- `management_cluster_name` (String) Name of the management cluster
+- `provisioner_name` (String) Provisioner of the cluster
+
+
+<a id="nestedblock--scope--cluster_group"></a>
+### Nested Schema for `scope.cluster_group`
+
+Required:
+
+- `name` (String) Name of the cluster group
 
 
 

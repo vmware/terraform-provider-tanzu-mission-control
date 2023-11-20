@@ -18,7 +18,7 @@ const (
 	arrayCannotBeReachedMsg = "arrays can't be reached"
 )
 
-func buildTFValue(modelJSONData *map[string]interface{}, mapValue interface{}, arrIndexer *ArrIndexer) (interface{}, error) {
+func (converter *TFSchemaModelConverter[T]) buildTFValue(modelJSONData *map[string]interface{}, mapValue interface{}, arrIndexer *ArrIndexer) (interface{}, error) {
 	if modelJSONData == nil || mapValue == nil {
 		return nil, nil
 	}
@@ -30,35 +30,37 @@ func buildTFValue(modelJSONData *map[string]interface{}, mapValue interface{}, a
 
 	switch mapValue := mapValue.(type) {
 	case *BlockToStruct, *Map:
-		return tfHandleBlockMap(modelJSONData, mapValue, arrIndexer)
+		return converter.tfHandleBlockMap(modelJSONData, mapValue, arrIndexer)
 	case *BlockToStructSlice:
-		return tfHandleBlockStructSlice(modelJSONData, mapValue, arrIndexer)
+		return converter.tfHandleBlockStructSlice(modelJSONData, mapValue, arrIndexer)
 	case *BlockSliceToStructSlice:
-		return tfHandleBlockSliceStructSlice(modelJSONData, mapValue, arrIndexer)
+		return converter.tfHandleBlockSliceStructSlice(modelJSONData, mapValue, arrIndexer)
 	case *ListToStruct:
-		return tfHandleListStruct(modelJSONData, mapValue, arrIndexer)
+		return converter.tfHandleListStruct(modelJSONData, mapValue, arrIndexer)
 	case *EvaluatedField:
 		var modelValue interface{}
 
 		modelField := mapValue.Field
-		modelValue, err = getModelValue(modelJSONData, modelField, arrIndexer)
+		modelValue, err = converter.getModelValue(modelJSONData, modelField, arrIndexer)
 
 		if err == nil {
 			tfSchemaValue = mapValue.EvalFunc(ConstructTFSchema, modelValue)
+		} else if strings.Contains(err.Error(), arrayCannotBeReachedMsg) && strings.HasSuffix(modelField, ArrayFieldMarker) {
+			err = nil
 		}
 	case string:
-		tfSchemaValue, err = getModelValue(modelJSONData, mapValue, arrIndexer)
+		tfSchemaValue, err = converter.getModelValue(modelJSONData, mapValue, arrIndexer)
 	}
 
 	return tfSchemaValue, err
 }
 
-func tfHandleBlockMap(modelJSONData *map[string]interface{}, mapValue interface{}, arrIndexer *ArrIndexer) (tfSchemaValue interface{}, err error) {
+func (converter *TFSchemaModelConverter[T]) tfHandleBlockMap(modelJSONData *map[string]interface{}, mapValue interface{}, arrIndexer *ArrIndexer) (tfSchemaValue interface{}, err error) {
 	_, isMap := mapValue.(*Map)
 
 	if isMap {
-		if allFlagsKeyValue, exists := (*mapValue.(*Map))["*"]; exists {
-			modelValue, _ := buildTFValue(modelJSONData, allFlagsKeyValue, arrIndexer)
+		if allFlagsKeyValue, exists := (*mapValue.(*Map))[AllMapKeysFieldMarker]; exists {
+			modelValue, _ := converter.buildTFValue(modelJSONData, allFlagsKeyValue, arrIndexer)
 
 			if modelValue != nil {
 				if tfSchemaValue == nil {
@@ -71,12 +73,12 @@ func tfHandleBlockMap(modelJSONData *map[string]interface{}, mapValue interface{
 			}
 		}
 
-		newBlock := BlockToStruct(mapValue.(*Map).Copy([]string{"*"}))
+		newBlock := BlockToStruct(mapValue.(*Map).Copy([]string{AllMapKeysFieldMarker}))
 		mapValue = &newBlock
 	}
 
 	for elemKey, elemValue := range *mapValue.(*BlockToStruct) {
-		modelValue, err := buildTFValue(modelJSONData, elemValue, arrIndexer)
+		modelValue, err := converter.buildTFValue(modelJSONData, elemValue, arrIndexer)
 
 		if modelValue != nil {
 			if tfSchemaValue == nil {
@@ -96,7 +98,7 @@ func tfHandleBlockMap(modelJSONData *map[string]interface{}, mapValue interface{
 	return tfSchemaValue, err
 }
 
-func tfHandleBlockStructSlice(modelJSONData *map[string]interface{}, mapValue *BlockToStructSlice, arrIndexer *ArrIndexer) (tfSchemaValue interface{}, err error) {
+func (converter *TFSchemaModelConverter[T]) tfHandleBlockStructSlice(modelJSONData *map[string]interface{}, mapValue *BlockToStructSlice, arrIndexer *ArrIndexer) (tfSchemaValue interface{}, err error) {
 	var (
 		modelValue  interface{}
 		tfElemValue map[string]interface{}
@@ -106,7 +108,7 @@ func tfHandleBlockStructSlice(modelJSONData *map[string]interface{}, mapValue *B
 		arrIndexer.New()
 
 		for err == nil {
-			modelValue, err = buildTFValue(modelJSONData, elemMap, arrIndexer)
+			modelValue, err = converter.buildTFValue(modelJSONData, elemMap, arrIndexer)
 
 			if modelValue != nil {
 				if tfElemValue == nil {
@@ -178,14 +180,14 @@ func tfHandleBlockStructSlice(modelJSONData *map[string]interface{}, mapValue *B
 	return tfSchemaValue, err
 }
 
-func tfHandleBlockSliceStructSlice(modelJSONData *map[string]interface{}, mapValue *BlockSliceToStructSlice, arrIndexer *ArrIndexer) (tfSchemaValue interface{}, err error) {
+func (converter *TFSchemaModelConverter[T]) tfHandleBlockSliceStructSlice(modelJSONData *map[string]interface{}, mapValue *BlockSliceToStructSlice, arrIndexer *ArrIndexer) (tfSchemaValue interface{}, err error) {
 	var modelValue interface{}
 
 	for i, elemMap := range *mapValue {
 		arrIndexer.New()
 
 		for err == nil {
-			modelValue, err = buildTFValue(modelJSONData, elemMap, arrIndexer)
+			modelValue, err = converter.buildTFValue(modelJSONData, elemMap, arrIndexer)
 
 			if modelValue != nil {
 				if tfSchemaValue == nil {
@@ -230,14 +232,14 @@ func tfHandleBlockSliceStructSlice(modelJSONData *map[string]interface{}, mapVal
 	return tfSchemaValue, err
 }
 
-func tfHandleListStruct(modelJSONData *map[string]interface{}, mapValue *ListToStruct, arrIndexer *ArrIndexer) (tfSchemaValue interface{}, err error) {
+func (converter *TFSchemaModelConverter[T]) tfHandleListStruct(modelJSONData *map[string]interface{}, mapValue *ListToStruct, arrIndexer *ArrIndexer) (tfSchemaValue interface{}, err error) {
 	var (
 		arr        []interface{}
 		modelValue interface{}
 	)
 
 	for err == nil {
-		modelValue, err = getModelValue(modelJSONData, (*mapValue)[0], arrIndexer)
+		modelValue, err = converter.getModelValue(modelJSONData, (*mapValue)[0], arrIndexer)
 		arrIndexer.IncrementLastIndex()
 
 		if modelValue != nil {
@@ -252,20 +254,20 @@ func tfHandleListStruct(modelJSONData *map[string]interface{}, mapValue *ListToS
 	return tfSchemaValue, err
 }
 
-func getModelValue(modelJSONData *map[string]interface{}, mapValue string, arrIndexer *ArrIndexer) (interface{}, error) {
+func (converter *TFSchemaModelConverter[T]) getModelValue(modelJSONData *map[string]interface{}, mapValue string, arrIndexer *ArrIndexer) (interface{}, error) {
 	var (
 		err                error
 		lastIndex          int
 		arrIndexerPosition int
 
 		modelRootValue  interface{} = *modelJSONData
-		modelValuePaths             = strings.Split(mapValue, ".")
+		modelValuePaths             = strings.Split(mapValue, converter.getModelPathSeparator())
 	)
 
 	for i := 0; i < len(modelValuePaths); i++ {
-		nextModelPath := strings.ReplaceAll(modelValuePaths[i], "[]", "")
+		nextModelPath := strings.ReplaceAll(modelValuePaths[i], ArrayFieldMarker, "")
 
-		if nextModelPath == "*" {
+		if nextModelPath == AllMapKeysFieldMarker {
 			newMap := make(map[string]interface{})
 
 			for k, v := range modelRootValue.(map[string]interface{}) {
@@ -303,7 +305,7 @@ func getModelValue(modelJSONData *map[string]interface{}, mapValue string, arrIn
 		}
 
 		if modelRootValue == nil {
-			arraysCount := strings.Count(mapValue, "[]")
+			arraysCount := strings.Count(mapValue, ArrayFieldMarker)
 
 			switch {
 			case err != nil:

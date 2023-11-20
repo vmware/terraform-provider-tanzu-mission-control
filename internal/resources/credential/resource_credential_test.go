@@ -49,6 +49,18 @@ func TestAcceptanceForCredentialResource(t *testing.T) {
 					checkResourceAttributes(provider, resourceName, credentialName),
 				),
 			},
+			{
+				Config: getTestResourceCredentialAzureADValue(credentialName),
+				Check: resource.ComposeTestCheckFunc(
+					checkResourceAttributes(provider, resourceName, credentialName),
+				),
+			},
+			{
+				Config: getTestResourceCredentialAzureAKSValue(credentialName),
+				Check: resource.ComposeTestCheckFunc(
+					checkResourceAttributes(provider, resourceName, credentialName),
+				),
+			},
 		},
 	},
 	)
@@ -101,6 +113,56 @@ resource "%s" "%s" {
 			iam_role{
 				arn = "arn:aws:iam::4987398738934:role/clusterlifecycle-test.tmc.cloud.vmware.com"
 				ext_id =""
+			}
+		}
+	}
+ }
+
+}
+`, credentialResource, credentialResourceVar, credentialName)
+}
+
+func getTestResourceCredentialAzureADValue(credentialName string) string {
+	return fmt.Sprintf(`
+resource "%s" "%s" {
+  name = "%s"
+
+ spec {
+    capability = "DATA_PROTECTION"
+	provider = "AZURE_AD"
+    data {
+		azure_credential {
+			service_principal {
+				subscription_id    = "some_subscription_id"
+          		tenant_id = "some_tenant_id"
+          		resource_group = "dp-backup-rg"
+          		client_id = "some_client_id"
+          		client_secret = "dummysecret"
+				azure_cloud_name = "AzurePublicCloud"
+			}
+		}
+	}
+ }
+
+}
+`, credentialResource, credentialResourceVar, credentialName)
+}
+
+func getTestResourceCredentialAzureAKSValue(credentialName string) string {
+	return fmt.Sprintf(`
+resource "%s" "%s" {
+  name = "%s"
+
+ spec {
+    capability = "DATA_PROTECTION"
+	provider = "AZURE_AD"
+    data {
+		azure_credential {
+			service_principal_with_certificate {
+				subscription_id    = "some_subscription_id"
+          		tenant_id = "some_tenant_id"
+          		client_id = "some_client_id"
+          		client_certificate = "dummycert"
 			}
 		}
 	}

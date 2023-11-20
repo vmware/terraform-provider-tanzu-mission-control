@@ -12,8 +12,13 @@ import (
 	aksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster"
 	aksnodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/akscluster/nodepool"
 	clusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster"
+	backupscheduleclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/backupschedule"
 	continuousdeliveryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/continuousdelivery"
+	dataprotectionclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/dataprotection"
 	gitrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/gitrepository"
+	helmfeatureclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/helmfeature"
+	helmreleaseclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/helmrelease"
+	helmrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/helmrepository"
 	iamclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/iam_policy"
 	kustomizationclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/kustomization"
 	manifestclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/manifest"
@@ -23,7 +28,11 @@ import (
 	clustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup"
 	continuousdeliveryclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/continuousdelivery"
 	gitrepositoryclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/gitrepository"
+	helmfeatureclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/helmfeature"
+	helmreleaseclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/helmrelease"
 	iamclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/iam_policy"
+	secretclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/kubernetessecret"
+	secretexportclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/kubernetessecret/secretexport"
 	kustomizationclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/kustomization"
 	policyclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/policy"
 	sourcesecretclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/sourcesecret"
@@ -31,12 +40,14 @@ import (
 	eksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster"
 	eksnodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster/nodepool"
 	integrationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/integration"
+	kubeconfigclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubeconfig"
 	secretclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubernetessecret"
 	secretexportclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubernetessecret/secretexport"
 	managementclusterregistrationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/managementclusterregistration"
 	namespaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/namespace"
 	iamnamespaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/namespace/iam_policy"
 	nodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/nodepool"
+	helmchartsorgclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/helmcharts"
 	iamorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/iam_policy"
 	policyorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/policy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
@@ -44,6 +55,7 @@ import (
 	pkginstallclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackageinstall"
 	pkgrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository"
 	pkgrepoavailabilityclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository/packagerepositoryavailability"
+	targetlocationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/targetlocation"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	workspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace"
 	iamworkspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace/iam_policy"
@@ -113,7 +125,19 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterTanzuPackageService:                    tanzupackageclusterclient.New(httpClient),
 		TanzupackageResourceService:                   packageclusterclient.New(httpClient),
 		PackageInstallResourceService:                 pkginstallclusterclient.New(httpClient),
-		ManagementClusterRegistrationResourceService:  managementclusterregistrationclient.New(httpClient),
+		ClusterHelmReleaseResourceService:             helmreleaseclusterclient.New(httpClient),
+		ClusterGroupHelmReleaseResourceService:        helmreleaseclustergroupclient.New(httpClient),
+		ClusterHelmResourceService:                    helmfeatureclusterclient.New(httpClient),
+		ClusterGroupHelmResourceService:               helmfeatureclustergroupclient.New(httpClient),
+		ClusterHelmRepositoryResourceService:          helmrepositoryclusterclient.New(httpClient),
+		OrganizationHelmChartsResourceService:         helmchartsorgclient.New(httpClient),
+		ClusterGroupSecretResourceService:             secretclustergroupclient.New(httpClient),
+		ClusterGroupSecretExportResourceService:       secretexportclustergroupclient.New(httpClient),
+		KubeConfigResourceService:                     kubeconfigclient.New(httpClient),
+		BackupScheduleService:                         backupscheduleclient.New(httpClient),
+		DataProtectionService:                         dataprotectionclient.New(httpClient),
+		TargetLocationService:                         targetlocationclient.New(httpClient),
+    ManagementClusterRegistrationResourceService:  managementclusterregistrationclient.New(httpClient),
 	}
 }
 
@@ -156,5 +180,17 @@ type TanzuMissionControl struct {
 	ClusterTanzuPackageService                    tanzupackageclusterclient.ClientService
 	TanzupackageResourceService                   packageclusterclient.ClientService
 	PackageInstallResourceService                 pkginstallclusterclient.ClientService
-	ManagementClusterRegistrationResourceService  managementclusterregistrationclient.ClientService
+	ClusterGroupHelmReleaseResourceService        helmreleaseclustergroupclient.ClientService
+	ClusterHelmReleaseResourceService             helmreleaseclusterclient.ClientService
+	ClusterHelmResourceService                    helmfeatureclusterclient.ClientService
+	ClusterGroupHelmResourceService               helmfeatureclustergroupclient.ClientService
+	ClusterHelmRepositoryResourceService          helmrepositoryclusterclient.ClientService
+	OrganizationHelmChartsResourceService         helmchartsorgclient.ClientService
+	ClusterGroupSecretResourceService             secretclustergroupclient.ClientService
+	ClusterGroupSecretExportResourceService       secretexportclustergroupclient.ClientService
+	KubeConfigResourceService                     kubeconfigclient.ClientService
+	BackupScheduleService                         backupscheduleclient.ClientService
+	DataProtectionService                         dataprotectionclient.ClientService
+	TargetLocationService                         targetlocationclient.ClientService
+  ManagementClusterRegistrationResourceService  managementclusterregistrationclient.ClientService
 }

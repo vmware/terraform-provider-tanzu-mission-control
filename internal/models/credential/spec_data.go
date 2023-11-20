@@ -24,6 +24,9 @@ type VmwareTanzuManageV1alpha1AccountCredentialData struct {
 	// AWS credential.
 	AwsCredential *VmwareTanzuManageV1alpha1AccountCredentialTypeAwsSpec `json:"awsCredential,omitempty"`
 
+	// Azure credential.
+	AzureCredential *VmwareTanzuManageV1alpha1AccountCredentialTypeAzureSpec `json:"azureCredential,omitempty"`
+
 	// Generic credential.
 	GenericCredential string `json:"genericCredential,omitempty"`
 
@@ -95,7 +98,7 @@ const (
 	VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpecSecretTypeDOCKERCONFIGJSONSECRETTYPE VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpecSecretType = "DOCKERCONFIGJSON_SECRET_TYPE"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpecSecretTypeEnum []interface{}
 
 func init() {

@@ -1,0 +1,39 @@
+---
+Title: "Backup Schedule Resource"
+Description: |-
+   Creating a backup schedule for cluster.
+---
+
+# Backup Schedule Resource
+
+This resource enables users to create and configure scheduled backups in a cluster.
+Backups can be applied in 3 levels:
+
+* Entire Cluster
+* Selected Namespaces
+* Resources Selection By Label Selector
+
+For more information regarding scheduled backups, see [Scheduled Backups][backup-schedule].
+
+[backup-schedule]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-89926F80-050A-4F1C-9D04-D56D5F453995.html?hWord=N4IghgNiBcIEZgMYGsCuAHABAZ0QCwFMATVCAkAXyA
+
+# Entire Cluster Weekly Backup Schedule
+
+## Example Usage
+
+{{ tffile "examples/resources/backupschedule/resource_backup_schedule_full_cluster.tf" }}
+
+
+# Selected Namespaces Hourly Backup Schedule
+
+## Example Usage
+
+{{ tffile "examples/resources/backupschedule/resource_backup_schedule_namespaces.tf" }}
+
+# Resources Selection By Label Selector Backup Schedule
+
+## Example Usage
+
+{{ tffile "examples/resources/backupschedule/resource_backup_schedule_labels.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}

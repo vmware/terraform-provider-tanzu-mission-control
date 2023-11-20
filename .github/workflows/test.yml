@@ -3,8 +3,7 @@ name: Test and coverage
 on: [pull_request, push]
 
 env:
-  BUILD_TAGS: 'akscluster cluster clustergroup credential ekscluster gitrepository iampolicy kustomization namespace custompolicy imagepolicy networkpolicy quotapolicy securitypolicy sourcesecret workspace tanzupackage tanzupackages packagerepository packageinstall clustersecret integration mutationpolicy managementcluster'
-
+  BUILD_TAGS: 'akscluster cluster clustergroup credential ekscluster gitrepository iampolicy kustomization namespace custompolicy imagepolicy networkpolicy quotapolicy securitypolicy sourcesecret workspace tanzupackage tanzupackages packagerepository packageinstall clustersecret integration mutationpolicy backupschedule targetlocation dataprotection managementcluster'
 jobs:
   build:
     name: Test and coverage

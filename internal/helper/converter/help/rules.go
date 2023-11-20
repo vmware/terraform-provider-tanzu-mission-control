@@ -14,7 +14,7 @@ In order to use that, one should simply create a BlockToStruct type object (See 
 	- Keys are always strings and should always be set to the name of the scoped Terraform resource field. (e.g: "target_provider")
 	- The following values are valid:
 	  - For every Primitive data type in a Swagger model (int, string, []string/int.., ...) the value (String) should always be the full json name along the entire hierarchy
-			of the Root Swagger Model (struct) concatenated by "."
+			of the Root Swagger Model (struct) concatenated by "|"
         	e.g: "spec.bucket", "fullName.name"
       - For every Struct data type in a swagger model there are these are the valid (Mapping) values:
         - BlockToStruct - Most common use-case, this definition maps a terraform block (Type=TypeList, MaxItems=1) to a Swagger API Model (Struct)

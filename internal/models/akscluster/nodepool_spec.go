@@ -76,9 +76,13 @@ type VmwareTanzuManageV1alpha1AksclusterNodepoolSpec struct {
 	// The size of the nodepool VMs.
 	VMSize string `json:"vmSize,omitempty"`
 
-	// If this is not specified, a VNET and subnet will be generated and used. If no podSubnetID is specified, this applies to
-	// nodes and pods, otherwise it applies to just nodes. This is of the form:
+	// The ID of a subnet in an existing VNet into which to deploy the cluster. If this is not specified, a VNET and subnet will be generated and used.
+	// If no podSubnetID is specified, this applies to nodes and pods, otherwise it applies to just nodes.
 	VnetSubnetID string `json:"vnetSubnetId,omitempty"`
+
+	// The ID of a subnet in an existing VNet into which to assign pods in the cluster.
+	// Requires network-plugin to be azure and not compatible with network-plugin-mode overlay
+	PodSubnetID string `json:"podSubnetId,omitempty"`
 }
 
 // MarshalBinary interface implementation.

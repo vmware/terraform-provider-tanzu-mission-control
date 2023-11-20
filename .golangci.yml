@@ -86,6 +86,8 @@ run:
     - tanzupackage
     - clustersecret
     - mutationpolicy
+    - helmfeature
+    - helmrelease
     - managementcluster
 
 linters-settings:

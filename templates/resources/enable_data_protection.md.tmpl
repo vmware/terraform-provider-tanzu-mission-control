@@ -1,0 +1,20 @@
+---
+Title: "Data Protection Resource"
+Description: |-
+   Enabling data protection on a cluster.
+---
+
+# Cluster Data Protection Resource
+
+This resource enables users to activate and set up data protection for a cluster.
+Once enabled, users can create instant backups or schedule backups for later.
+
+For more information regarding data protection, see [Data Protection][data-protection].
+
+[data-protection]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-C16557BC-EB1B-4414-8E63-28AD92E0CAE5.html
+
+## Example Usage
+
+{{ tffile "examples/resources/dataprotection/resource_enable_data_protection.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}

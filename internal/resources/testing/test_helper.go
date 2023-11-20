@@ -81,8 +81,8 @@ func WithClusterName(name string) TestAcceptanceOption {
 
 func WithTKGmAWSCluster() TestAcceptanceOption {
 	return func(config *TestAcceptanceConfig) {
-		config.ManagementClusterName = os.Getenv("MANAGEMENT_CLUSTER")
-		config.ProvisionerName = os.Getenv("PROVISIONER_NAME")
+		config.ManagementClusterName = os.Getenv("TKGM_AWS_MANAGEMENT_CLUSTER")
+		config.ProvisionerName = os.Getenv("TKGM_AWS_PROVISIONER_NAME")
 		config.AccTestType = TkgAWSCluster
 		config.TemplateData = testTKGmAWSClusterScript
 	}
@@ -90,8 +90,8 @@ func WithTKGmAWSCluster() TestAcceptanceOption {
 
 func WithTKGsCluster() TestAcceptanceOption {
 	return func(config *TestAcceptanceConfig) {
-		config.ManagementClusterName = os.Getenv("MANAGEMENT_CLUSTER")
-		config.ProvisionerName = os.Getenv("PROVISIONER_NAME")
+		config.ManagementClusterName = os.Getenv("TKGS_MANAGEMENT_CLUSTER")
+		config.ProvisionerName = os.Getenv("TKGS_PROVISIONER_NAME")
 		config.Version = os.Getenv("VERSION")
 		config.StorageClass = os.Getenv("STORAGE_CLASS")
 		config.AccTestType = TkgsCluster
@@ -101,9 +101,8 @@ func WithTKGsCluster() TestAcceptanceOption {
 
 func WithTKGmVsphereCluster() TestAcceptanceOption {
 	return func(config *TestAcceptanceConfig) {
-		config.ManagementClusterName = os.Getenv("MANAGEMENT_CLUSTER")
-		config.ProvisionerName = os.Getenv("PROVISIONER_NAME")
-		config.ControlPlaneEndPoint = os.Getenv("CONTROL_PLANE_ENDPOINT")
+		config.ManagementClusterName = os.Getenv("TKGM_VSPHERE_MANAGEMENT_CLUSTER")
+		config.ProvisionerName = os.Getenv("TKGM_VSPHERE_PROVISIONER_NAME")
 		config.AccTestType = TkgVsphereCluster
 		config.TemplateData = testTKGmVsphereClusterScript
 	}
@@ -157,7 +156,7 @@ func WithKubeConfig() TestAcceptanceOption {
 
 func WithKubeConfigImageRegistry() TestAcceptanceOption {
 	return func(config *TestAcceptanceConfig) {
-		config.KubeConfigPath = os.Getenv("KUBECONFIG")
+		config.KubeConfigPath = os.Getenv("ATTACH_WITH_IMAGE_REGISTRY_KUBECONFIG")
 		config.ImageRegistry = os.Getenv("IMAGE_REGISTRY")
 		config.AccTestType = AttachClusterTypeWithKubeconfigImageRegistry
 		config.TemplateData = testAttachClusterWithKubeConfigScriptImageRegistry
@@ -166,7 +165,7 @@ func WithKubeConfigImageRegistry() TestAcceptanceOption {
 
 func WithKubeConfigProxy() TestAcceptanceOption {
 	return func(config *TestAcceptanceConfig) {
-		config.KubeConfigPath = os.Getenv("KUBECONFIG")
+		config.KubeConfigPath = os.Getenv("ATTACH_WITH_PROXY_KUBECONFIG")
 		config.Proxy = os.Getenv("PROXY")
 		config.AccTestType = AttachClusterTypeWithKubeconfigProxy
 		config.TemplateData = testAttachClusterWithKubeConfigScriptProxy
