@@ -12,6 +12,7 @@ const (
 	TMCBlockNodeportServiceKey     = "tmc_block_nodeport_service"
 	TMCBlockResourcesKey           = "tmc_block_resources"
 	TMCHTTPSIngressKey             = "tmc_https_ingress"
+	TMCCustomKey                   = "custom"
 	AuditKey                       = "audit"
 	TargetKubernetesResourcesKey   = "target_kubernetes_resources"
 	ParametersKey                  = "parameters"
@@ -24,4 +25,5 @@ const (
 	disallowedSubjectsKey          = "disallowed_subjects"
 	kindKey                        = "kind"
 	nameKey                        = "name"
+	TemplateNameKey                = "template_name"
 )
