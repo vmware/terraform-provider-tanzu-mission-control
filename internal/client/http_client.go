@@ -43,6 +43,7 @@ import (
 	kubeconfigclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubeconfig"
 	secretclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubernetessecret"
 	secretexportclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubernetessecret/secretexport"
+	managementclusterregistrationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/managementclusterregistration"
 	namespaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/namespace"
 	iamnamespaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/namespace/iam_policy"
 	nodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/nodepool"
@@ -136,6 +137,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		BackupScheduleService:                         backupscheduleclient.New(httpClient),
 		DataProtectionService:                         dataprotectionclient.New(httpClient),
 		TargetLocationService:                         targetlocationclient.New(httpClient),
+		ManagementClusterRegistrationResourceService:  managementclusterregistrationclient.New(httpClient),
 	}
 }
 
@@ -190,4 +192,5 @@ type TanzuMissionControl struct {
 	BackupScheduleService                         backupscheduleclient.ClientService
 	DataProtectionService                         dataprotectionclient.ClientService
 	TargetLocationService                         targetlocationclient.ClientService
+	ManagementClusterRegistrationResourceService  managementclusterregistrationclient.ClientService
 }

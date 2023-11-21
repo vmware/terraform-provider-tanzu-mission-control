@@ -26,6 +26,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/iampolicy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kubernetessecret"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/kustomization"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/managementcluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/namespace"
 	tanzupackage "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/package"
 	tanzupackages "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/packages"
@@ -80,6 +81,7 @@ func Provider() *schema.Provider {
 			backupschedule.ResourceName:      backupschedule.ResourceBackupSchedule(),
 			dataprotection.ResourceName:      dataprotection.ResourceEnableDataProtection(),
 			targetlocation.ResourceName:      targetlocation.ResourceTargetLocation(),
+			managementcluster.ResourceName:   managementcluster.ResourceManagementClusterRegistration(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:             cluster.DataSourceTMCCluster(),
@@ -103,6 +105,7 @@ func Provider() *schema.Provider {
 			helmrepository.ResourceName:      helmrepository.DataSourceHelmRepository(),
 			backupschedule.ResourceName:      backupschedule.DataSourceBackupSchedule(),
 			targetlocation.ResourceName:      targetlocation.DataSourceTargetLocations(),
+			managementcluster.ResourceName:   managementcluster.DataSourceManagementClusterRegistration(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
