@@ -1,0 +1,16 @@
+---
+Title: "Cluster Class Data Source"
+Description: |-
+    Get cluster class info
+---
+
+# Cluster Class Data Source
+
+This data source enables users to get information about a cluster class which includes allowed worker classes, cluster variables OpenAPIV3 Schema
+an an example template of such cluster variables.
+
+## Example Usage
+
+{{ tffile "examples/data-sources/cluster_class/datasource_cluster_class.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
