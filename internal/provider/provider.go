@@ -15,6 +15,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/dataprotection"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/integration"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/nodepools"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clusterclass"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/credential"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/ekscluster"
@@ -42,6 +43,7 @@ import (
 	securitypolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 	securitypolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security/resource"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/sourcesecret"
+	utkgresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzukubernetescluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackageinstall"
 	packagerepository "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackagerepository"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/targetlocation"
@@ -80,6 +82,7 @@ func Provider() *schema.Provider {
 			backupschedule.ResourceName:      backupschedule.ResourceBackupSchedule(),
 			dataprotection.ResourceName:      dataprotection.ResourceEnableDataProtection(),
 			targetlocation.ResourceName:      targetlocation.ResourceTargetLocation(),
+			utkgresource.ResourceName:        utkgresource.ResourceTanzuKubernetesCluster(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:             cluster.DataSourceTMCCluster(),
@@ -103,6 +106,7 @@ func Provider() *schema.Provider {
 			helmrepository.ResourceName:      helmrepository.DataSourceHelmRepository(),
 			backupschedule.ResourceName:      backupschedule.DataSourceBackupSchedule(),
 			targetlocation.ResourceName:      targetlocation.DataSourceTargetLocations(),
+			clusterclass.ResourceName:        clusterclass.DataSourceClusterClass(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
