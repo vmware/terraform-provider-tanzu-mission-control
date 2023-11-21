@@ -18,6 +18,7 @@ In the Tanzu Mission Control custom policy resource, there are six system define
 - **tmc-external-ips**
 - **tmc-https-ingress**
 - **tmc-require-labels**
+- **Any custom template defined in TMC**
 
 ## Policy Scope and Inheritance
 
@@ -96,6 +97,12 @@ target_kubernetes_resources {
 
 {{ tffile "examples/resources/custom_policy/resource_cluster_tmc_require_labels_custom_policy.tf" }}
 
+## Cluster scoped Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_cluster_tmc_custom.tf" }}
+
 ## Cluster group scoped TMC-block-nodeport-service Custom Policy
 
 ### Example Usage
@@ -132,6 +139,12 @@ target_kubernetes_resources {
 
 {{ tffile "examples/resources/custom_policy/resource_cluster_group_tmc_require_labels_custom_policy.tf" }}
 
+## Cluster group scoped Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_cluster_group_tmc_custom.tf" }}
+
 ## Organization scoped TMC-block-nodeport-service Custom Policy
 
 ### Example Usage
@@ -167,5 +180,11 @@ target_kubernetes_resources {
 ### Example Usage
 
 {{ tffile "examples/resources/custom_policy/resource_organization_tmc_require_labels_custom_policy.tf" }}
+
+## Organization scoped Custom Policy
+
+### Example Usage
+
+{{ tffile "examples/resources/custom_policy/resource_organization_tmc_custom.tf" }}
 
 {{ .SchemaMarkdown | trimspace }}

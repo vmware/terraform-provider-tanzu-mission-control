@@ -24,4 +24,5 @@ const (
 	TMCExternalIPSRecipe              Recipe = reciperesource.TMCExternalIPSKey
 	TMCHTTPSIngressRecipe             Recipe = reciperesource.TMCHTTPSIngressKey
 	TMCRequireLabelsRecipe            Recipe = reciperesource.TMCRequireLabelsKey
+	TMCCustomRecipe                   Recipe = reciperesource.TMCCustomKey
 )
