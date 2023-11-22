@@ -17,8 +17,8 @@ data "tanzu-mission-control_permission_template" "data_protection_permissions" {
 
 resource "aws_cloudformation_stack" "crendetials_permission_template" {
   name          = local.credentials_name
-  parameters    = data.tanzu-mission-control_permission_template.eks_permissions.template_values != null ? data.tanzu-mission-control_permission_template.eks_permissions.template_values : {}
-  template_body = base64decode(data.tanzu-mission-control_permission_template.eks_permissions.template)
+  parameters    = data.tanzu-mission-control_permission_template.data_protection_permissions.template_values != null ? data.tanzu-mission-control_permission_template.data_protection_permissions.template_values : {}
+  template_body = base64decode(data.tanzu-mission-control_permission_template.data_protection_permissions.template)
   capabilities  = ["CAPABILITY_NAMED_IAM"]
 }
 
