@@ -31,6 +31,9 @@ var (
 		VMWCloudEndPoint: os.Getenv(authctx.VMWCloudEndpointEnvVar),
 		TLSConfig:        &proxy.TLSConfig{},
 	}
+
+	dataProtectionPermissionTemplateDataSourceFullName = fmt.Sprintf("data.%s.%s", permissiontemplateres.ResourceName, dataProtectionPermissionTemplateDataSourceName)
+	eksPermissionTemplateDataSourceFullName            = fmt.Sprintf("data.%s.%s", permissiontemplateres.ResourceName, eksPermissionTemplateDataSourceName)
 )
 
 func TestAcceptancePermissionTemplateDataSource(t *testing.T) {

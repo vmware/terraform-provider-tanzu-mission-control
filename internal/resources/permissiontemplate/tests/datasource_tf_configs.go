@@ -16,11 +16,6 @@ const (
 	eksPermissionTemplateDataSourceName            = "eks_permissions"
 )
 
-var (
-	dataProtectionPermissionTemplateDataSourceFullName = fmt.Sprintf("data.%s.%s", permissiontemplateres.ResourceName, dataProtectionPermissionTemplateDataSourceName) //nolint:unused
-	eksPermissionTemplateDataSourceFullName            = fmt.Sprintf("data.%s.%s", permissiontemplateres.ResourceName, eksPermissionTemplateDataSourceName)            //nolint:unused
-)
-
 func GetDataProtectionPermissionTemplateConfig() string {
 	return fmt.Sprintf(`	
 		data "%s" "%s" {
