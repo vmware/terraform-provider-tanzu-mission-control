@@ -32,6 +32,11 @@ func ResourceTOIntegration() *schema.Resource {
 	}
 }
 
+var supportedScopes = []string{
+	string(integrationscope.ClusterScopeType),
+	string(integrationscope.ClusterGroupScopeType),
+}
+
 func resourceTOIntegrationCreate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	scopeData := data.Get(integrationschema.ScopeKey).([]interface{})[0].(map[string]interface{})
 	clusterScopeData, _ := scopeData[integrationschema.ClusterScopeKey].([]interface{})
@@ -43,16 +48,16 @@ func resourceTOIntegrationCreate(ctx context.Context, data *schema.ResourceData,
 	}
 }
 
-func resourceTOIntegrationUpdate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
-	// scopeData := data.Get(integrationschema.ScopeKey).([]interface{})[0].(map[string]interface{})
-	// clusterScopeData, _ := scopeData[integrationschema.ClusterScopeKey].([]interface{})
-	//
-	// if len(clusterScopeData) > 0 {
-	// 	return clusterintegration.ClusterTOIntegrationUpdate(ctx, data, m)
-	// } else {
-	// 	return clustergroupintegration.ClusterGroupTOIntegrationUpdate(ctx, data, m)
-	// }
+// scopeData := data.Get(integrationschema.ScopeKey).([]interface{})[0].(map[string]interface{})
+// clusterScopeData, _ := scopeData[integrationschema.ClusterScopeKey].([]interface{})
+//
+// if len(clusterScopeData) > 0 {
+// 	return clusterintegration.ClusterTOIntegrationUpdate(ctx, data, m)
+// } else {
+// 	return clustergroupintegration.ClusterGroupTOIntegrationUpdate(ctx, data, m)
+// }
 
+func resourceTOIntegrationUpdate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	return diag.FromErr(errors.New("Update of tanzu observability integration is not supported."))
 }
 
@@ -87,10 +92,6 @@ func resourceTOIntegrationImporter(ctx context.Context, data *schema.ResourceDat
 			return nil, errors.New("Couldn't import tanzu observability integration because ID is invalid.\nScope ID can't be empty.")
 		}
 
-		supportedScopes := []string{
-			string(integrationscope.ClusterScopeType),
-			string(integrationscope.ClusterGroupScopeType),
-		}
 		scope := integrationscope.SupportedScopes(scopeType)
 
 		switch scope {
