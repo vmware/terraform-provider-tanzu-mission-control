@@ -1,0 +1,49 @@
+/*
+Copyright © 2023 VMware, Inc. All Rights Reserved.
+SPDX-License-Identifier: MPL-2.0
+*/
+
+package clustergroupintegrationmodels
+
+import (
+	"github.com/go-openapi/swag"
+
+	statusmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/status"
+)
+
+// VmwareTanzuManageV1alpha1ClusterGroupIntegrationStatus Status of the Cluster Group integration.
+//
+// swagger:model vmware.tanzu.manage.v1alpha1.clustergroup.integration.Status
+type VmwareTanzuManageV1alpha1ClusterGroupIntegrationStatus struct {
+
+	// Details contains information about the Cluster Group integration being applied on member Clusters.
+	Details *statusmodel.VmwareTanzuManageV1alpha1CommonBatchDetails `json:"details,omitempty"`
+
+	// Generation value at the time this status was updated.
+	ObservedGeneration string `json:"observedGeneration,omitempty"`
+
+	// Phase of the Cluster Group integration application on member Clusters.
+	Phase *statusmodel.VmwareTanzuManageV1alpha1CommonBatchPhase `json:"phase,omitempty"`
+}
+
+// MarshalBinary interface implementation.
+func (m *VmwareTanzuManageV1alpha1ClusterGroupIntegrationStatus) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation.
+func (m *VmwareTanzuManageV1alpha1ClusterGroupIntegrationStatus) UnmarshalBinary(b []byte) error {
+	var res VmwareTanzuManageV1alpha1ClusterGroupIntegrationStatus
+
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+
+	*m = res
+
+	return nil
+}

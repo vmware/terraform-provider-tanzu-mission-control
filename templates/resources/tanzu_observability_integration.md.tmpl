@@ -1,0 +1,40 @@
+---
+Title: "Tanzu Observability Integration Resource"
+Description: |-
+   Enabling Tanzu Observability integration on a cluster or cluster group.
+---
+
+# Tanzu Observability Integration Resource
+
+This resource enables users to activate Tanzu Observability integration on a cluster or cluster group.
+
+For more information regarding Tanzu Observability integration, see [Tanzu Observability][tanzu-observability].
+
+[tanzu-observability]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-B985DAF8-B0F0-4100-A544-382520D1FCAC.html
+
+# Cluster Scope Integration
+
+## Example Usage
+
+{{ tffile "examples/resources/tanzuobservabilityintegration/resource_cluster_integration.tf" }}
+
+# Cluster Group Scope Integration
+
+## Example Usage
+
+{{ tffile "examples/resources/tanzuobservabilityintegration/resource_cluster_group_integration.tf" }}
+
+# Import Tanzu Observability Integration
+The resource ID for importing an existing Tanzu Observability integration should be defined by a scope type (cluster or cluster_group) followed by a colon and a proper ID according to the scope type.
+
+## Cluster Scope Import Example
+```bash
+terraform import tanzu-mission-control_tanzu_observability_integration.cluster_integration cluster:MANAGEMENT_CLUSTERNAME/PROVISIONER_NAME/CLUSTER_NAME
+```
+
+## Cluster Group Scope Import Example
+```bash
+terraform import tanzu-mission-control_tanzu_observability_integration.cluster_group_integration cluster_group:CLUSTER_GROUP_NAME
+```
+
+{{ .SchemaMarkdown | trimspace }}
