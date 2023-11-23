@@ -7,13 +7,13 @@ package clusterintegration
 
 import (
 	"context"
-	"encoding/json"
 	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
+
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
@@ -221,44 +221,44 @@ func readResourceWait(ctx context.Context, config *authctx.TanzuContext, resourc
 	return resp, err
 }
 
-func getModifiedSpec(oldSpec []interface{}, newSpec []interface{}) interface{} {
-	oldConfigurations := oldSpec[0].(map[string]interface{})[integrationschema.ConfigurationsKey].(string)
-	newConfigurations := newSpec[0].(map[string]interface{})[integrationschema.ConfigurationsKey].(string)
-
-	if oldConfigurations == "" && newConfigurations != "" {
-		newSpec[0].(map[string]interface{})[integrationschema.ConfigurationsKey] = oldConfigurations
-	} else if oldConfigurations != "" && newConfigurations != "" {
-		oldConfigurationsJSON := make(map[string]interface{})
-		newConfigurationsJSON := make(map[string]interface{})
-
-		_ = json.Unmarshal([]byte(oldConfigurations), &oldConfigurationsJSON)
-		_ = json.Unmarshal([]byte(newConfigurations), &newConfigurationsJSON)
-
-		newSpec[0].(map[string]interface{})[integrationschema.ConfigurationsKey] = modifyConfigurations(oldConfigurationsJSON, newConfigurationsJSON)
-	}
-
-	return newSpec
-}
-
-func modifyConfigurations(oldConfigValue interface{}, newConfigValue interface{}) interface{} {
-	switch typedOldConfigValue := oldConfigValue.(type) {
-	case map[string]interface{}:
-		modifiedMap := make(map[string]interface{})
-
-		for k, v := range typedOldConfigValue {
-			newValue, keyExists := newConfigValue.(map[string]interface{})[k]
-
-			if keyExists {
-				modifiedMap[k] = modifyConfigurations(v, newValue)
-			}
-		}
-
-		return modifiedMap
-	default:
-		if !helper.IsEmptyInterface(oldConfigValue) && helper.IsEmptyInterface(typedOldConfigValue) {
-			return oldConfigValue
-		}
-	}
-
-	return newConfigValue
-}
+// func getModifiedSpec(oldSpec []interface{}, newSpec []interface{}) interface{} {
+// 	oldConfigurations := oldSpec[0].(map[string]interface{})[integrationschema.ConfigurationsKey].(string)
+// 	newConfigurations := newSpec[0].(map[string]interface{})[integrationschema.ConfigurationsKey].(string)
+//
+// 	if oldConfigurations == "" && newConfigurations != "" {
+// 		newSpec[0].(map[string]interface{})[integrationschema.ConfigurationsKey] = oldConfigurations
+// 	} else if oldConfigurations != "" && newConfigurations != "" {
+// 		oldConfigurationsJSON := make(map[string]interface{})
+// 		newConfigurationsJSON := make(map[string]interface{})
+//
+// 		_ = json.Unmarshal([]byte(oldConfigurations), &oldConfigurationsJSON)
+// 		_ = json.Unmarshal([]byte(newConfigurations), &newConfigurationsJSON)
+//
+// 		newSpec[0].(map[string]interface{})[integrationschema.ConfigurationsKey] = modifyConfigurations(oldConfigurationsJSON, newConfigurationsJSON)
+// 	}
+//
+// 	return newSpec
+// }
+//
+// func modifyConfigurations(oldConfigValue interface{}, newConfigValue interface{}) interface{} {
+// 	switch typedOldConfigValue := oldConfigValue.(type) {
+// 	case map[string]interface{}:
+// 		modifiedMap := make(map[string]interface{})
+//
+// 		for k, v := range typedOldConfigValue {
+// 			newValue, keyExists := newConfigValue.(map[string]interface{})[k]
+//
+// 			if keyExists {
+// 				modifiedMap[k] = modifyConfigurations(v, newValue)
+// 			}
+// 		}
+//
+// 		return modifiedMap
+// 	default:
+// 		if !helper.IsEmptyInterface(oldConfigValue) && helper.IsEmptyInterface(typedOldConfigValue) {
+// 			return oldConfigValue
+// 		}
+// 	}
+//
+// 	return newConfigValue
+// }

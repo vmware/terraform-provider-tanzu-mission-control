@@ -44,7 +44,6 @@ func resourceTOIntegrationCreate(ctx context.Context, data *schema.ResourceData,
 }
 
 func resourceTOIntegrationUpdate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
-	return diag.FromErr(errors.New("Update of tanzu observability integration is not supported."))
 	// scopeData := data.Get(integrationschema.ScopeKey).([]interface{})[0].(map[string]interface{})
 	// clusterScopeData, _ := scopeData[integrationschema.ClusterScopeKey].([]interface{})
 	//
@@ -53,6 +52,8 @@ func resourceTOIntegrationUpdate(ctx context.Context, data *schema.ResourceData,
 	// } else {
 	// 	return clustergroupintegration.ClusterGroupTOIntegrationUpdate(ctx, data, m)
 	// }
+
+	return diag.FromErr(errors.New("Update of tanzu observability integration is not supported."))
 }
 
 func resourceTOIntegrationDelete(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
@@ -92,11 +93,12 @@ func resourceTOIntegrationImporter(ctx context.Context, data *schema.ResourceDat
 		}
 		scope := integrationscope.SupportedScopes(scopeType)
 
-		if scope == integrationscope.ClusterScopeType {
+		switch scope {
+		case integrationscope.ClusterScopeType:
 			return clusterintegration.ClusterTOIntegrationImporter(scopeID, ctx, data, m)
-		} else if scope == integrationscope.ClusterGroupScopeType {
+		case integrationscope.ClusterGroupScopeType:
 			return clustergroupintegration.ClusterGroupTOIntegrationImporter(scopeID, ctx, data, m)
-		} else {
+		default:
 			return nil, errors.Errorf("Couldn't import tanzu observability integration because the provided scope is not supported.\nSupported scopes are: %v", supportedScopes)
 		}
 	} else {

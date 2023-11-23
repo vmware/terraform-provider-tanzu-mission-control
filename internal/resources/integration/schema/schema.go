@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
 const (
@@ -45,14 +44,11 @@ var specAtLeastOneOf = []string{
 	strings.Join([]string{SpecKey, "0", CredentialsKey}, "."),
 }
 
-var credentialsConflictsWith = []string{strings.Join([]string{SpecKey, "0", SecretsKey}, ".")}
-
 var clusterScopeConflictsWith = []string{strings.Join([]string{ScopeKey, "0", ClusterGroupScopeKey}, ".")}
 
 var TOIntegrationSchema = map[string]*schema.Schema{
-	ScopeKey:       scopeSchema,
-	SpecKey:        specSchema,
-	common.MetaKey: common.Meta,
+	ScopeKey: scopeSchema,
+	SpecKey:  specSchema,
 }
 
 var scopeSchema = &schema.Schema{
@@ -119,12 +115,10 @@ var specSchema = &schema.Schema{
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			CredentialsKey: {
-				Type:        schema.TypeString,
-				Description: "Credential name is the name of the Organization's Account Credential to be used instead of secrets to add an integration.",
-				Optional:    true,
-				// AtLeastOneOf: specAtLeastOneOf,
+				Type:         schema.TypeString,
+				Description:  "Credential name is the name of the Organization's Account Credential to be used instead of secrets to add an integration.",
+				Optional:     true,
 				ExactlyOneOf: specAtLeastOneOf,
-				// ConflictsWith: credentialsConflictsWith,
 			},
 			ConfigurationsKey: {
 				Type:        schema.TypeString,
@@ -135,8 +129,7 @@ var specSchema = &schema.Schema{
 				Type:        schema.TypeMap,
 				Description: "Secrets are for sensitive configurations. The values are write-only and will be masked when read.",
 				Optional:    true,
-				// ExactlyOneOf: specAtLeastOneOf,
-				Elem: &schema.Schema{Type: schema.TypeString},
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 		},
 	},
