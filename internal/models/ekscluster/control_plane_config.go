@@ -31,6 +31,9 @@ type VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig struct {
 
 	// VPC config.
 	Vpc *VmwareTanzuManageV1alpha1EksclusterVPCConfig `json:"vpc,omitempty"`
+
+	// EKS addons configuration.
+	AddonsConfig *VmwareTanzuManageV1alpha1EksclusterAddonsConfig `json:"addonsConfig,omitempty"`
 }
 
 // MarshalBinary interface implementation.

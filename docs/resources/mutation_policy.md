@@ -92,7 +92,7 @@ resource "tanzu-mission-control_mutation_policy" "cluster_annotation_mutation_po
         {
           key      = "component"
           operator = "NotIn"
-          values   = [
+          values = [
             "api-server",
             "agent-gateway"
           ]
@@ -142,7 +142,7 @@ resource "tanzu-mission-control_mutation_policy" "cluster_label_mutation_policy"
         {
           key      = "component"
           operator = "NotIn"
-          values   = [
+          values = [
             "api-server",
             "agent-gateway"
           ]
@@ -226,7 +226,7 @@ resource "tanzu-mission-control_mutation_policy" "cluster_pod_security_mutation_
         {
           key      = "component"
           operator = "NotIn"
-          values   = [
+          values = [
             "api-server",
             "agent-gateway"
           ]
@@ -274,7 +274,7 @@ resource "tanzu-mission-control_mutation_policy" "cluster_group_annotation_mutat
         {
           key      = "component"
           operator = "NotIn"
-          values   = [
+          values = [
             "api-server",
             "agent-gateway"
           ]
@@ -322,7 +322,7 @@ resource "tanzu-mission-control_mutation_policy" "cluster_group_label_mutation_p
         {
           key      = "component"
           operator = "NotIn"
-          values   = [
+          values = [
             "api-server",
             "agent-gateway"
           ]
@@ -404,7 +404,7 @@ resource "tanzu-mission-control_mutation_policy" "cluster_group_pod_security_mut
         {
           key      = "component"
           operator = "NotIn"
-          values   = [
+          values = [
             "api-server",
             "agent-gateway"
           ]
@@ -452,7 +452,7 @@ resource "tanzu-mission-control_mutation_policy" "org_annotation_mutation_policy
         {
           key      = "component"
           operator = "NotIn"
-          values   = [
+          values = [
             "api-server",
             "agent-gateway"
           ]
@@ -500,7 +500,7 @@ resource "tanzu-mission-control_mutation_policy" "org_label_mutation_policy" {
         {
           key      = "component"
           operator = "NotIn"
-          values   = [
+          values = [
             "api-server",
             "agent-gateway"
           ]
@@ -582,7 +582,7 @@ resource "tanzu-mission-control_mutation_policy" "org_pod_security_mutation_poli
         {
           key      = "component"
           operator = "NotIn"
-          values   = [
+          values = [
             "api-server",
             "agent-gateway"
           ]
@@ -599,7 +599,7 @@ resource "tanzu-mission-control_mutation_policy" "org_pod_security_mutation_poli
 ### Required
 
 - `name` (String) Name of the mutation policy
-- `scope` (Block List, Min: 1, Max: 1) Scope for the mutation, custom, security, image, network and namespace quota policy, having one of the valid scopes for mutation, custom, security and namespace quota policy: cluster, cluster_group or organization and valid scopes for image and network policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
+- `scope` (Block List, Min: 1, Max: 1) Scope for the custom, security, image, network, namespace quota and mutation policy, having one of the valid scopes for custom, security, mutation, and namespace quota policy: cluster, cluster_group or organization and valid scopes for image and network policy: workspace or organization. (see [below for nested schema](#nestedblock--scope))
 - `spec` (Block List, Min: 1, Max: 1) Spec for the mutation policy (see [below for nested schema](#nestedblock--spec))
 
 ### Optional
@@ -618,6 +618,7 @@ Optional:
 - `cluster` (Block List, Max: 1) The schema for cluster policy full name (see [below for nested schema](#nestedblock--scope--cluster))
 - `cluster_group` (Block List, Max: 1) The schema for cluster group policy full name (see [below for nested schema](#nestedblock--scope--cluster_group))
 - `organization` (Block List, Max: 1) The schema for organization policy full name (see [below for nested schema](#nestedblock--scope--organization))
+- `workspace` (Block List, Max: 1) The schema for workspace policy full name (see [below for nested schema](#nestedblock--scope--workspace))
 
 <a id="nestedblock--scope--cluster"></a>
 ### Nested Schema for `scope.cluster`
@@ -648,13 +649,21 @@ Required:
 - `organization` (String) ID of this organization
 
 
+<a id="nestedblock--scope--workspace"></a>
+### Nested Schema for `scope.workspace`
+
+Required:
+
+- `workspace` (String) Name of this workspace
+
+
 
 <a id="nestedblock--spec"></a>
 ### Nested Schema for `spec`
 
 Required:
 
-- `input` (Block List, Min: 1, Max: 1) Input for the mutation policy, having one of the valid recipes: annotation, label or pod-security. (see [below for nested schema](#nestedblock--spec--input))
+- `input` (Block List, Min: 1, Max: 1) Input for the mutation policy. (see [below for nested schema](#nestedblock--spec--input))
 
 Optional:
 
@@ -665,9 +674,9 @@ Optional:
 
 Optional:
 
-- `annotation` (Block List, Max: 1) The input schema for mutation policy annotation recipe version v1 (see [below for nested schema](#nestedblock--spec--input--annotation))
-- `label` (Block List, Max: 1) The input schema for mutation policy label recipe version v1 (see [below for nested schema](#nestedblock--spec--input--label))
-- `pod_security` (Block List, Max: 1) The input schema for mutation policy pod_security recipe version v1 (see [below for nested schema](#nestedblock--spec--input--pod_security))
+- `annotation` (Block List, Max: 1) The input schema for custom policy tmc_block_nodeport_service recipe version v1 (see [below for nested schema](#nestedblock--spec--input--annotation))
+- `label` (Block List, Max: 1) The input schema for custom policy tmc_block_nodeport_service recipe version v1 (see [below for nested schema](#nestedblock--spec--input--label))
+- `pod_security` (Block List, Max: 1) The pod security schema (see [below for nested schema](#nestedblock--spec--input--pod_security))
 
 <a id="nestedblock--spec--input--annotation"></a>
 ### Nested Schema for `spec.input.annotation`
@@ -675,11 +684,11 @@ Optional:
 Required:
 
 - `target_kubernetes_resources` (Block List, Min: 1) A list of kubernetes api resources on which the policy will be enforced, identified using apiGroups and kinds. (see [below for nested schema](#nestedblock--spec--input--annotation--target_kubernetes_resources))
-- `annotation` (Block List, Min: 1) Annotation key and value pair. (see [below for nested schema](#nestedblock--spec--input--annotation--annotation))
 
 Optional:
 
-- `scope` (String) Scope of the resource. (`*`, `Cluster`, `Namespaced`)
+- `annotation` (Block List, Max: 1) (see [below for nested schema](#nestedblock--spec--input--annotation--annotation))
+- `scope` (String) Scope
 
 <a id="nestedblock--spec--input--annotation--target_kubernetes_resources"></a>
 ### Nested Schema for `spec.input.annotation.target_kubernetes_resources`
@@ -689,13 +698,16 @@ Required:
 - `api_groups` (List of String) APIGroup is a group containing the resource type.
 - `kinds` (List of String) Kind is the name of the object schema (resource type).
 
+
 <a id="nestedblock--spec--input--annotation--annotation"></a>
 ### Nested Schema for `spec.input.annotation.annotation`
 
 Required:
 
-- `key` Key segment of the annotation.
-- `value` Value segment of the annotation.
+- `key` (String)
+- `value` (String)
+
+
 
 <a id="nestedblock--spec--input--label"></a>
 ### Nested Schema for `spec.input.label`
@@ -703,11 +715,11 @@ Required:
 Required:
 
 - `target_kubernetes_resources` (Block List, Min: 1) A list of kubernetes api resources on which the policy will be enforced, identified using apiGroups and kinds. (see [below for nested schema](#nestedblock--spec--input--label--target_kubernetes_resources))
-- `label` (Block List, Min: 1) Annotation key and value pair. (see [below for nested schema](#nestedblock--spec--input--label--label))
 
 Optional:
 
-- `scope` (String) Scope of the resource. (`*`, `Cluster`, `Namespaced`)
+- `label` (Block List, Max: 1) (see [below for nested schema](#nestedblock--spec--input--label--label))
+- `scope` (String) Scope
 
 <a id="nestedblock--spec--input--label--target_kubernetes_resources"></a>
 ### Nested Schema for `spec.input.label.target_kubernetes_resources`
@@ -717,124 +729,145 @@ Required:
 - `api_groups` (List of String) APIGroup is a group containing the resource type.
 - `kinds` (List of String) Kind is the name of the object schema (resource type).
 
+
 <a id="nestedblock--spec--input--label--label"></a>
 ### Nested Schema for `spec.input.label.label`
 
 Required:
 
-- `key` Key segment of the label.
-- `value` Value segment of the label.
+- `key` (String)
+- `value` (String)
+
+
 
 <a id="nestedblock--spec--input--pod_security"></a>
 ### Nested Schema for `spec.input.pod_security`
 
 Optional:
 
-- `allow_privilege_escalation` (Block List, Max: 1) Allow privilege escalation (see [below for nested schema](#nestedblock--spec--input--pod_security--allow_privilege_escalation))
-- `capabilities_add` (Block List, Max: 1) Capabilities add (see [below for nested schema](#nestedblock--spec--input--pod_security--capabilities_add))
-- `capabilities_drop` (Block List, Max: 1) Capabilities drop (see [below for nested schema](#nestedblock--spec--input--pod_security--capabilities_drop))
-- `fs_group` (Block List, Max: 1) fsGroup (see [below for nested schema](#nestedblock--spec--input--pod_security--fs_group))
-- `privileged` (Block List, Max: 1) Privileged (see [below for nested schema](#nestedblock--spec--input--pod_security--privileged))
-- `read_only_root_filesystem` (Block List, Max: 1) Read only root filesystem (see [below for nested schema](#nestedblock--spec--input--pod_security--read_only_root_filesystem))
-- `run_as_group` (Block List, Max: 1) Run as group (see [below for nested schema](#nestedblock--spec--input--pod_security--run_as_group))
-- `run_as_non_root` (Block List, Max: 1) Run as non-root (see [below for nested schema](#nestedblock--spec--input--pod_security--run_as_non_root))
-- `run_as_user` (Block List, Max: 1) Run as user (see [below for nested schema](#nestedblock--spec--input--pod_security--run_as_user))
-- `se_linux_options` (Block List, Max: 1) SE Linux options (see [below for nested schema](#nestedblock--spec--input--pod_security--se_linux_options))
-- `supplemental_groups` (Block List, Max: 1) Supplemental groups (see [below for nested schema](#nestedblock--spec--input--pod_security--supplemental_groups))
+- `allow_privilege_escalation` (Block List, Max: 1) (see [below for nested schema](#nestedblock--spec--input--pod_security--allow_privilege_escalation))
+- `capabilities_add` (Block List, Max: 1) Run as user (see [below for nested schema](#nestedblock--spec--input--pod_security--capabilities_add))
+- `capabilities_drop` (Block List, Max: 1) Run as user (see [below for nested schema](#nestedblock--spec--input--pod_security--capabilities_drop))
+- `fs_group` (Block List, Max: 1) (see [below for nested schema](#nestedblock--spec--input--pod_security--fs_group))
+- `privileged` (Block List, Max: 1) (see [below for nested schema](#nestedblock--spec--input--pod_security--privileged))
+- `read_only_root_filesystem` (Block List, Max: 1) (see [below for nested schema](#nestedblock--spec--input--pod_security--read_only_root_filesystem))
+- `run_as_group` (Block List, Max: 1) (see [below for nested schema](#nestedblock--spec--input--pod_security--run_as_group))
+- `run_as_non_root` (Block List, Max: 1) (see [below for nested schema](#nestedblock--spec--input--pod_security--run_as_non_root))
+- `run_as_user` (Block List, Max: 1) (see [below for nested schema](#nestedblock--spec--input--pod_security--run_as_user))
+- `se_linux_options` (Block List) Allowed selinux options (see [below for nested schema](#nestedblock--spec--input--pod_security--se_linux_options))
+- `supplemental_groups` (Block List, Max: 1) (see [below for nested schema](#nestedblock--spec--input--pod_security--supplemental_groups))
 
 <a id="nestedblock--spec--input--pod_security--allow_privilege_escalation"></a>
 ### Nested Schema for `spec.input.pod_security.allow_privilege_escalation`
 
 Required:
 
-- `condition` (String) Defined condition, Always, IfFieldExists or IfFieldDoesNotExist.
-- `value` (Boolean) Value of defined condition.
+- `condition` (String)
+- `value` (Boolean)
+
 
 <a id="nestedblock--spec--input--pod_security--capabilities_add"></a>
 ### Nested Schema for `spec.input.pod_security.capabilities_add`
 
 Required:
 
-- `operation` (String) Option to either override the list or merge values into the list or prune values from the list.
-- `values` (Map of String) List of values to override/merge/prune in capabilities.add field in container security context.
+- `values` (List of String) Values is an array of string values
+
+Optional:
+
+- `operation` (String) Rule
+
 
 <a id="nestedblock--spec--input--pod_security--capabilities_drop"></a>
 ### Nested Schema for `spec.input.pod_security.capabilities_drop`
 
 Required:
 
-- `operation` (String) Option to either override the list or merge values into the list or prune values from the list.
-- `values` (Map of String) List of values to override/merge/prune in capabilities.drop field in container security context
+- `values` (List of String) Values is an array of string values
+
+Optional:
+
+- `operation` (String) Rule
+
 
 <a id="nestedblock--spec--input--pod_security--fs_group"></a>
 ### Nested Schema for `spec.input.pod_security.fs_group`
 
 Required:
 
-- `condition` (String) Value to set for fsGroup field in pod security context.
-- `value` (Number) Condition specifies whether to always mutate/set this value or only if pod security context contains or does not contain this field
+- `condition` (String)
+- `value` (Number)
+
 
 <a id="nestedblock--spec--input--pod_security--privileged"></a>
 ### Nested Schema for `spec.input.pod_security.privileged`
 
 Required:
 
-- `condition` (String) Condition specifies whether to always mutate/set this value or only if container security context contains or does not contain this field.
-- `value` (Boolean) Value to set for privileged field in container security context.
+- `condition` (String)
+- `value` (Boolean)
+
 
 <a id="nestedblock--spec--input--pod_security--read_only_root_filesystem"></a>
 ### Nested Schema for `spec.input.pod_security.read_only_root_filesystem`
 
 Required:
 
-- `condition` (String) Condition specifies whether to always mutate/set this value or only if container security context contains or does not contain this field.
-- `value` (Boolean) Value to set for privileged field
+- `condition` (String)
+- `value` (Boolean)
+
 
 <a id="nestedblock--spec--input--pod_security--run_as_group"></a>
 ### Nested Schema for `spec.input.pod_security.run_as_group`
 
 Required:
 
-- `condition` (String) Condition specifies whether to always mutate/set this value or only if container security context contains or does not contain this field.
-- `value` (Number) Value to set for runAsGroup field in container security context.
+- `condition` (String)
+- `value` (Number)
+
 
 <a id="nestedblock--spec--input--pod_security--run_as_non_root"></a>
 ### Nested Schema for `spec.input.pod_security.run_as_non_root`
 
 Required:
 
-- `condition` (String) Condition specifies whether to always mutate/set this value or only if container security context contains or does not contain this field.
-- `value` (Boolean) Value to set for run_as_non_root field in container security context
+- `condition` (String)
+- `value` (Boolean)
+
 
 <a id="nestedblock--spec--input--pod_security--run_as_user"></a>
 ### Nested Schema for `spec.input.pod_security.run_as_user`
 
 Required:
 
-- `condition` (String) Condition specifies whether to always mutate/set this value or only if container security context contains or does not contain this field
-- `value` (Number) Value to set for run_as_user field in container security context
+- `condition` (String)
+- `value` (Number)
+
 
 <a id="nestedblock--spec--input--pod_security--se_linux_options"></a>
 ### Nested Schema for `spec.input.pod_security.se_linux_options`
 
-Required:
-
-- `condition` (String) Condition specifies whether to always mutate/set this value or only if container security context contains or does not contain this field.
-
 Optional:
 
+- `condition` (String) SELinux condition
 - `level` (String) SELinux level
 - `role` (String) SELinux role
 - `type` (String) SELinux type
 - `user` (String) SELinux user
+
 
 <a id="nestedblock--spec--input--pod_security--supplemental_groups"></a>
 ### Nested Schema for `spec.input.pod_security.supplemental_groups`
 
 Required:
 
-- `condition` (String) Condition specifies whether to always mutate/set this value or only if container security context contains or does not contain this field
-- `values` (Map of Number) List of values to set for supplemental_groups field in pod security context.
+- `values` (List of Number)
+
+Optional:
+
+- `condition` (String)
+
+
 
 
 <a id="nestedblock--spec--namespace_selector"></a>
@@ -855,6 +888,8 @@ Optional:
 
 - `key` (String) Key is the label key that the selector applies to
 - `operator` (String) Operator represents a key's relationship to a set of values
+
+
 
 
 <a id="nestedblock--meta"></a>

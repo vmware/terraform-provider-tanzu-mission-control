@@ -79,6 +79,23 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
           "subnet-06897e1063cc0cf4e",
         ]
       }
+
+      addons_config {
+        vpc_cni_config {
+          eni_config {
+            id = "subnet-0a680171b6330619f" // Required, should belong to the same VPC as the cluster
+            security_groups = [
+              "sg-00c96ad9d02a22522",
+            ]
+          }
+          eni_config {
+            id = "subnet-06feb0bb0451cda78" // Required, should belong to the same VPC as the cluster
+            security_groups = [
+              "sg-00c96ad9d02a22522",
+            ]
+          }
+        }
+      }      
     }
 
     nodepool {
@@ -241,6 +258,7 @@ Required:
 
 Optional:
 
+- `addons_config` (Block List, Max: 1) Addons config contains the configuration for all the addons of the cluster, which support customization of addon configuration (see [below for nested schema](#nestedblock--spec--config--addons_config))
 - `kubernetes_network_config` (Block List, Max: 1) Kubernetes Network Config (see [below for nested schema](#nestedblock--spec--config--kubernetes_network_config))
 - `logging` (Block List, Max: 1) EKS logging configuration (see [below for nested schema](#nestedblock--spec--config--logging))
 - `tags` (Map of String) The metadata to apply to the cluster to assist with categorization and organization
@@ -258,6 +276,34 @@ Optional:
 - `enable_public_access` (Boolean) Enable cluster API server access from the internet. You can, optionally, limit the CIDR blocks that can access the public endpoint using public_access_cidrs (see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))
 - `public_access_cidrs` (Set of String) Specify which addresses from the internet can communicate to the public endpoint, if public endpoint is enabled (see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html))
 - `security_groups` (Set of String) Security groups for the cluster VMs
+
+
+<a id="nestedblock--spec--config--addons_config"></a>
+### Nested Schema for `spec.config.addons_config`
+
+Optional:
+
+- `vpc_cni_config` (Block List, Max: 1) VPC CNI addon config contains the configuration for the VPC CNI addon of the cluster. (see [below for nested schema](#nestedblock--spec--config--addons_config--vpc_cni_config))
+
+<a id="nestedblock--spec--config--addons_config--vpc_cni_config"></a>
+### Nested Schema for `spec.config.addons_config.vpc_cni_config`
+
+Optional:
+
+- `eni_config` (Block List) ENI config is the VPC CNI Elastic Network Interface config for providing the configuration of subnet and security groups for pods in each AZ.  Subnets need not be in the same VPC as the cluster. The subnets provided across eniConfigs should be in different availability zones. Nodepool subnets need to be in the same AZ as the AZs used in ENIConfig. (see [below for nested schema](#nestedblock--spec--config--addons_config--vpc_cni_config--eni_config))
+
+<a id="nestedblock--spec--config--addons_config--vpc_cni_config--eni_config"></a>
+### Nested Schema for `spec.config.addons_config.vpc_cni_config.eni_config`
+
+Required:
+
+- `id` (String) Subnet Id for the pods running in all Nodes in a given AZ.
+
+Optional:
+
+- `security_groups` (Set of String) List of security group is optional and if not provided default security group created by EKS will be used. 
+
+
 
 
 <a id="nestedblock--spec--config--kubernetes_network_config"></a>

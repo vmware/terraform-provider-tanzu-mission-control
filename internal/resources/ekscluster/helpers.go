@@ -47,7 +47,59 @@ func clusterConfigEqual(config1, config2 *eksmodel.VmwareTanzuManageV1alpha1Eksc
 		config1.RoleArn == config2.RoleArn &&
 		mapEqual(config1.Tags, config2.Tags) &&
 		config1.Version == config2.Version &&
-		clusterVPCConfigEqual(config1.Vpc, config2.Vpc)
+		clusterVPCConfigEqual(config1.Vpc, config2.Vpc) &&
+		clusterAddonsConfigEqual(config1.AddonsConfig, config2.AddonsConfig)
+}
+
+func clusterAddonsConfigEqual(addonsConfig1, addonsConfig2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterAddonsConfig) bool {
+	if addonsConfig1 == nil {
+		return addonsConfig2 == nil
+	}
+
+	if addonsConfig2 == nil {
+		return false
+	}
+
+	return vpcCniAddonConfigEqual(addonsConfig1.VpcCniAddonConfig, addonsConfig2.VpcCniAddonConfig)
+}
+
+func vpcCniAddonConfigEqual(vpcCniAddonConfig1, vpcCniAddonConfig2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig) bool {
+	if vpcCniAddonConfig1 == nil {
+		return vpcCniAddonConfig2 == nil
+	}
+
+	if vpcCniAddonConfig2 == nil {
+		return false
+	}
+
+	return eniConfigsEqual(vpcCniAddonConfig1.EniConfigs, vpcCniAddonConfig2.EniConfigs)
+}
+
+func eniConfigsEqual(eniConfigs1, eniConfigs2 []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig) bool {
+	if len(eniConfigs1) != len(eniConfigs2) {
+		return false
+	}
+
+	matched := make(map[int]bool)
+	// nolint: wsl
+	for _, config1 := range eniConfigs1 {
+		foundMatch := false
+
+		for j, config2 := range eniConfigs2 {
+			if !matched[j] && config1.SubnetID == config2.SubnetID && setEquality(config1.SecurityGroupIds, config2.SecurityGroupIds) {
+				matched[j] = true
+				foundMatch = true
+
+				break
+			}
+		}
+
+		if !foundMatch {
+			return false
+		}
+	}
+
+	return true
 }
 
 func clusterVPCConfigEqual(vpc1, vpc2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterVPCConfig) bool {

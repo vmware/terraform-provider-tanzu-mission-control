@@ -1,9 +1,9 @@
 resource "tanzu-mission-control_target_location" "demo_tmc_managed" {
-  name          = "TARGET_LOCATION_NAME"
+  name = "TARGET_LOCATION_NAME"
 
   spec {
     target_provider = "TARGET_PROVIDER_NAME"
-    credential      = {
+    credential = {
       name = "CREDENTIAL_NAME"
     }
 
