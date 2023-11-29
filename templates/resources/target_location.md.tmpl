@@ -37,4 +37,11 @@ For more information regarding target location, see [Target Location][target-loc
 
 {{ tffile "examples/resources/targetlocation/resource_target_location_self_managed_aws.tf" }}
 
+## Import Target Location
+The resource ID for importing an existing target location should be a target location name.
+
+```bash
+terraform import tanzu-mission-control_target_location.demo_target_location TARGET_LOCATION
+```
+
 {{ .SchemaMarkdown | trimspace }}
