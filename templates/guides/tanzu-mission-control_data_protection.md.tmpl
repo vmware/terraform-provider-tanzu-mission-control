@@ -1,0 +1,45 @@
+---
+Title: "Data Protection of a Tanzu Kubernetes Cluster"
+Description: |-
+    An example of using Data Protection Feature for a Tanzu Kubernetes Cluster
+---
+# Enable Data Protection
+
+The `tanzu-mission-control_enable_data_protection` resource enables users to activate and set up data protection for a Tanzu Kubernetes Cluster.
+Once enabled, users can create instant backups or schedule backups for later.
+
+For more information regarding data protection, see [Data Protection][data-protection].
+
+[data-protection]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-C16557BC-EB1B-4414-8E63-28AD92E0CAE5.html
+
+
+# Target Location
+
+The `"tanzu-mission-control_target_location` resource enables users to create and configure target locations for data protection backups.
+Once created, a target location can be used to store cluster backups.
+
+**NOTE**: The type of a target location is inherited from the configured credentials type which can be either "TMC Managed" or "Self Managed".
+
+For more information regarding target location, see [Target Location][target-location].
+
+[target-location]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-867683CE-8AF0-4DC7-9121-81AD507EDB3B.html
+
+# Backup Schedule
+
+The `tanzu-mission-control_backup_schedule` resource enables users to create and configure scheduled backups in a cluster.
+
+Backups can be applied in 3 levels:
+
+* Entire/Full Cluster
+* Selected Namespaces
+* Resources Selection By Label Selector
+
+For more information regarding scheduled backups, see [Scheduled Backups][backup-schedule].
+
+[backup-schedule]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-89926F80-050A-4F1C-9D04-D56D5F453995.html?hWord=N4IghgNiBcIEZgMYGsCuAHABAZ0QCwFMATVCAkAXyA
+
+## Sample usage of Data Protection
+
+You can use the following template as reference for enabling all stages of data protection feature of Tanzu Mission Control using Terraform (i.e.) Enable data-protection for cluster, Set a Target Location of backup and finally, set a backup schedule for periodic data protection.
+
+{{ tffile "resource_templates/data_protection_feature.tf" }}
