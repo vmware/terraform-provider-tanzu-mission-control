@@ -1,17 +1,21 @@
 ---
 Title: "Tanzu Kubernetes Cluster (Class-based Cluster)"
 Description: |-
-   Creating a unified TKG cluster.
+   Creating a unified Tanzu Kubernetes Grid cluster.
 ---
 
 # Tanzu Kubernetes Cluster (Class-based Cluster) Resource
 
-This resource enables users to create and configure a TKG cluster for both TKGM & TKGS.
+This resource "tanzu-mission-control_tanzu_kubernetes_cluster" enables users to create and manage a Tanzu Kubernetes Grid cluster for both Tanzu Kubernetes Grid Vsphere 2.x & Tanzu Kubernetes Grid Service 2.x.
+
+For more information about creating or managing the workload clusters on TMC refer to [Provision a Cluster using a Cluster Class][provision-cluster-class-cluster].
+
 Cluster variables and node pool overrides are determined by the cluster class defined in the resource.
 For identifying the structure of the cluster variables supported in the cluster class, users can utilize the cluster class [data source][cluster-class-datasource].
-In order to configure & reuse cluster variables and node pools overrides, it is recommended defining these values in a local variable named after the cluster type 
+In order to configure & reuse cluster variables and node pools overrides, it is recommended defining these values in a local variable named after the cluster type
 and cluster class version.
 
+[provision-cluster-class-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-C778E447-DDBB-49FC-B0B2-A8012AC56B0E.html
 [cluster-class-datasource]: https://registry.terraform.io/providers/vmware/tanzu-mission-control/latest/docs/data-sources/cluster_class
 
 ```
@@ -23,7 +27,7 @@ locals {
 }
 ```
 
-# TKGM
+# Tanzu Kubernetes Grid Vsphere
 
 ## Example Usage
 
@@ -207,7 +211,7 @@ resource "tanzu-mission-control_tanzu_kubernetes_cluster" "tkgm_cluster" {
 }
 ```
 
-# TKGS
+# Tanzu Kubernetes Grid Service
 
 ## Example Usage
 
@@ -322,8 +326,8 @@ resource "tanzu-mission-control_tanzu_kubernetes_cluster" "tkgs_cluster" {
 }
 ```
 
-## Import TKG Cluster
-The resource ID for importing an existing TKG cluster should be comprised of a full cluster name separated by '/'.
+## Import Tanzu Kubernetes Grid Cluster
+The resource ID for importing an existing Tanzu Kubernetes Grid 2.x cluster class based cluster should be comprised of a full cluster name separated by '/'.
 
 ```bash
 terraform import tanzu-mission-control_tanzu_kubernetes_cluster.demo_cluster MANAGEMENT_CLUSTER_NAME/PROVISIONER_NAME/CLUSTER_NAME
