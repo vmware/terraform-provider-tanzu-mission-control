@@ -18,9 +18,6 @@ var tfModelMap = &tfModelConverterHelper.BlockToStruct{
 			ManagementClusterNameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "managementClusterName"),
 			ProvisionerNameKey:       tfModelConverterHelper.BuildDefaultModelPath("fullName", "provisionerName"),
 		},
-		ClusterGroupScopeKey: &tfModelConverterHelper.BlockToStruct{
-			ClusterGroupNameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "clusterGroupName"),
-		},
 	},
 	common.MetaKey: common.GetMetaConverterMap(tfModelConverterHelper.DefaultModelPathSeparator),
 	SpecKey: &tfModelConverterHelper.BlockToStruct{

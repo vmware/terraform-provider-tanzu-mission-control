@@ -40,7 +40,7 @@ resource "tanzu-mission-control_backup_schedule" "sample-full" {
     }
 
     template {
-      backup_ttl          = "2592000s"
+      backup_ttl = "2592000s"
       excluded_namespaces = [
         "app-01",
         "app-02",
@@ -169,9 +169,9 @@ resource "tanzu-mission-control_backup_schedule" "sample-full" {
 
     template {
       default_volumes_to_fs_backup = false
-      include_cluster_resources = true
-      backup_ttl = "604800s"
-      storage_location = "TARGET_LOCATION_NAME"
+      include_cluster_resources    = true
+      backup_ttl                   = "604800s"
+      storage_location             = "TARGET_LOCATION_NAME"
 
       label_selector {
         match_expression {
@@ -221,7 +221,6 @@ Valid values are (FULL_CLUSTER, SET_NAMESPACES, LABEL_SELECTOR)
 Optional:
 
 - `cluster` (Block List, Max: 1) Cluster scope block (see [below for nested schema](#nestedblock--scope--cluster))
-- `cluster_group` (Block List, Max: 1) Cluster group scope block (see [below for nested schema](#nestedblock--scope--cluster_group))
 
 <a id="nestedblock--scope--cluster"></a>
 ### Nested Schema for `scope.cluster`
@@ -231,14 +230,6 @@ Required:
 - `cluster_name` (String) Cluster name
 - `management_cluster_name` (String) Management cluster name
 - `provisioner_name` (String) Cluster provisioner name
-
-
-<a id="nestedblock--scope--cluster_group"></a>
-### Nested Schema for `scope.cluster_group`
-
-Required:
-
-- `cluster_group_name` (String) Cluster group name
 
 
 
