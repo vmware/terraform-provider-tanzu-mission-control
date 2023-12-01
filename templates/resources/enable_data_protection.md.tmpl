@@ -17,4 +17,11 @@ For more information regarding data protection, see [Data Protection][data-prote
 
 {{ tffile "examples/resources/dataprotection/resource_enable_data_protection.tf" }}
 
+## Import Data Protection
+The resource ID for importing an existing data protection should be comprised of a full cluster name and a backup schedule name separated by '/'.
+
+```bash
+terraform import tanzu-mission-control_backup_schedule.demo_backup MANAGEMENT_CLUSTER_NAME/PROVISIONER_NAME/CLUSTER_NAME/BACKUP_SCHEDULE_NAME
+```
+
 {{ .SchemaMarkdown | trimspace }}

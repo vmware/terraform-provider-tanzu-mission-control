@@ -36,4 +36,11 @@ For more information regarding scheduled backups, see [Scheduled Backups][backup
 
 {{ tffile "examples/resources/backupschedule/resource_backup_schedule_labels.tf" }}
 
+## Import Backup Schedule
+The resource ID for importing an existing backup schedule should be comprised of a full cluster name and a backup schedule name separated by '/'.
+
+```bash
+terraform import tanzu-mission-control_backup_schedule.demo_backup MANAGEMENT_CLUSTER_NAME/PROVISIONER_NAME/CLUSTER_NAME/BACKUP_SCHEDULE_NAME
+```
+
 {{ .SchemaMarkdown | trimspace }}
