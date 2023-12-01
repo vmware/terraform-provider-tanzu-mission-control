@@ -40,7 +40,7 @@ var packageSchema = map[string]*schema.Schema{
 	},
 	namespaceKey: {
 		Type:        schema.TypeString,
-		Description: "Namespae of package.",
+		Description: "Namespace of package.",
 		Computed:    true,
 	},
 	metadataNameKey: {

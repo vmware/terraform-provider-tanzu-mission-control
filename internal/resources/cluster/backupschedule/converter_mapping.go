@@ -22,9 +22,6 @@ var (
 var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
 	NameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "name"),
 	ScopeKey: &tfModelConverterHelper.BlockToStruct{
-		ClusterGroupScopeKey: &tfModelConverterHelper.BlockToStruct{
-			ClusterGroupNameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "clusterGroupName"),
-		},
 		ClusterScopeKey: &tfModelConverterHelper.BlockToStruct{
 			ClusterNameKey:           tfModelConverterHelper.BuildDefaultModelPath("fullName", "clusterName"),
 			ManagementClusterNameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "managementClusterName"),

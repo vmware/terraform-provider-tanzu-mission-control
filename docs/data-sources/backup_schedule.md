@@ -33,13 +33,13 @@ data "tanzu-mission-control_backup_schedule" "demo" {
 
 ### Required
 
-- `scope` (Block List, Min: 1, Max: 1) Search scope block (see [below for nested schema](#nestedblock--scope))
 - `name` (String) The name of the backup schedule
+- `scope` (Block List, Min: 1, Max: 1) Search scope block (see [below for nested schema](#nestedblock--scope))
 
 ### Optional
 
 - `include_total_count` (Boolean) Whether to include total count of backups.
-  (Default: True)
+(Default: True)
 - `query` (String) Define a query for listing backups
 - `sort_by` (String) Sort backups by field.
 
@@ -72,9 +72,9 @@ Required:
 
 Read-Only:
 
-- `name` (String)
 - `backup_scope` (String)
 - `meta` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--meta))
+- `name` (String)
 - `scope` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--scope))
 - `spec` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--spec))
 

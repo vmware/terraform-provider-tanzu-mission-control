@@ -67,7 +67,6 @@ terraform import tanzu-mission-control_backup_schedule.demo_backup MANAGEMENT_CL
 Optional:
 
 - `cluster` (Block List, Max: 1) Cluster scope block (see [below for nested schema](#nestedblock--scope--cluster))
-- `cluster_group` (Block List, Max: 1) Cluster group scope block (see [below for nested schema](#nestedblock--scope--cluster_group))
 
 <a id="nestedblock--scope--cluster"></a>
 ### Nested Schema for `scope.cluster`
@@ -77,14 +76,6 @@ Required:
 - `cluster_name` (String) Cluster name
 - `management_cluster_name` (String) Management cluster name
 - `provisioner_name` (String) Cluster provisioner name
-
-
-<a id="nestedblock--scope--cluster_group"></a>
-### Nested Schema for `scope.cluster_group`
-
-Required:
-
-- `cluster_group_name` (String) Cluster group name
 
 
 
