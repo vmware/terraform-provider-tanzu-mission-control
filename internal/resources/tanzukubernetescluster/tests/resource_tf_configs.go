@@ -39,7 +39,7 @@ func InitResourceTFConfigBuilder() *ResourceTFConfigBuilder {
 			spec {
 			  worker_class = "%s"
 			  replicas     = 1
-			  overrides    = "%s"
+			  overrides    = jsonencode(%s)
 	
 			  meta {
 				labels      = { "key" : "value" }
@@ -74,7 +74,7 @@ func (builder *ResourceTFConfigBuilder) GetTKGMClusterConfig(tkgmEnvVars map[Clu
 			topology {
 			  version           = "%s"
 			  cluster_class     = "%s"
-			  cluster_variables = "%s"
+			  cluster_variables = jsonencode(%s)
 		
 			  control_plane {
 				replicas = 1
@@ -154,7 +154,7 @@ func (builder *ResourceTFConfigBuilder) GetTKGSClusterConfig(tkgsEnvVars map[Clu
 			topology {
 			  version           = "%s"
 			  cluster_class     = "%s"
-			  cluster_variables = "%s"
+			  cluster_variables = jsonencode(%s)
 		
 			  control_plane {
 				replicas = 1
