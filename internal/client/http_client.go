@@ -28,6 +28,7 @@ import (
 	clusterclassclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clusterclass"
 	clustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup"
 	continuousdeliveryclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/continuousdelivery"
+	dataprotectionclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/dataprotection"
 	gitrepositoryclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/gitrepository"
 	helmfeatureclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/helmfeature"
 	helmreleaseclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/helmrelease"
@@ -144,6 +145,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterClassResourceService:                   clusterclassclient.New(httpClient),
 		TanzuKubernetesClusterResourceService:         tanzukubernetesclusterclient.New(httpClient),
 		ProvisionerResourceService:                    provisionerclient.New(httpClient),
+		ClusterGroupDataProtectionService:             dataprotectionclustergroupclient.New(httpClient),
 	}
 }
 
@@ -202,4 +204,5 @@ type TanzuMissionControl struct {
 	ClusterClassResourceService                   clusterclassclient.ClientService
 	TanzuKubernetesClusterResourceService         tanzukubernetesclusterclient.ClientService
 	ProvisionerResourceService                    provisionerclient.ClientService
+	ClusterGroupDataProtectionService             dataprotectionclustergroupclient.ClientService
 }
