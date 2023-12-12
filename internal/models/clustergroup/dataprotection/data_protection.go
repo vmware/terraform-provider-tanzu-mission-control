@@ -47,7 +47,7 @@ func (m *VmwareTanzuManageV1alpha1ClustergroupDataprotectionDataProtection) Mars
 	return swag.WriteJSON(m)
 }
 
-// UnmarshalBinary interface implementation.
+// UnmarshalBinary interface implementation
 func (m *VmwareTanzuManageV1alpha1ClustergroupDataprotectionDataProtection) UnmarshalBinary(b []byte) error {
 	var res VmwareTanzuManageV1alpha1ClustergroupDataprotectionDataProtection
 	if err := swag.ReadJSON(b, &res); err != nil {
