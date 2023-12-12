@@ -9,33 +9,38 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection/scope"
 )
 
 const (
-	ResourceName         = "tanzu-mission-control_enable_data_protection"
-	ScopeKey             = "scope"
-	ClusterScopeKey      = "cluster"
-	ClusterGroupScopeKey = "cluster_group"
+	ResourceName = "tanzu-mission-control_enable_data_protection"
 
 	// Root Keys.
-	ClusterNameKey           = "cluster_name"
-	ClusterGroupNameKey      = "cluster_group_name"
-	ManagementClusterNameKey = "management_cluster_name"
-	ProvisionerNameKey       = "provisioner_name"
-	SpecKey                  = "spec"
-	DeletionPolicyKey        = "deletion_policy"
+	SpecKey           = "spec"
+	DeletionPolicyKey = "deletion_policy"
 
 	// Spec Directive Keys.
 	EnableCSISnapshotsKey              = "enable_csi_snapshots"
 	DisableResticKey                   = "disable_restic"
 	EnableAllAPIGroupVersionsBackupKey = "enable_all_api_group_versions_backup"
+	SelectorKey                        = "selector"
+
+	// Selector keys.
+	ExcludedNamesKey    = "excludednames"
+	NamesKey            = "names"
+	LabelSelectorKey    = "labelselector"
+	MatchExpressionsKey = "matchexpressions"
+	KeyKey              = "key"
+	OperatorKey         = "operator"
+	ValuesKey           = "values"
 
 	// Deletion Policy Directive Keys.
 	DeleteBackupsKey = "delete_backups"
+	ForceDeleteKey   = "force"
 )
 
 var enableDataProtectionSchema = map[string]*schema.Schema{
-	ScopeKey:          scopeSchema,
+	scope.ScopeKey:    scopeSchema,
 	SpecKey:           specSchema,
 	common.MetaKey:    common.Meta,
 	DeletionPolicyKey: deletionPolicySchema,
@@ -49,26 +54,42 @@ var scopeSchema = &schema.Schema{
 	Optional:    false,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			ClusterScopeKey: {
+			scope.ClusterGroupKey: {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Cluster group scope block",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						scope.ClusterGroupNameKey: {
+							Type:        schema.TypeString,
+							Description: "Cluster group name",
+							Required:    true,
+							ForceNew:    true,
+						},
+					},
+				},
+			},
+			scope.ClusterKey: {
 				Type:        schema.TypeList,
 				Optional:    true,
 				Description: "Cluster scope block",
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						ClusterNameKey: {
+						scope.ClusterNameKey: {
 							Type:        schema.TypeString,
 							Description: "Cluster name",
 							Required:    true,
 							ForceNew:    true,
 						},
-						ManagementClusterNameKey: {
+						scope.ManagementClusterNameKey: {
 							Type:        schema.TypeString,
 							Description: "Management cluster name",
 							Required:    true,
 							ForceNew:    true,
 						},
-						ProvisionerNameKey: {
+						scope.ProvisionerNameKey: {
 							Type:        schema.TypeString,
 							Description: "Cluster provisioner name",
 							Required:    true,
@@ -91,20 +112,69 @@ var specSchema = &schema.Schema{
 			EnableCSISnapshotsKey: {
 				Type:        schema.TypeBool,
 				Description: "A flag to indicate whether to install CSI snapshotting related capabilities.\n(Default: False)",
-				Default:     false,
 				Optional:    true,
+				Computed:    true,
 			},
 			DisableResticKey: {
 				Type:        schema.TypeBool,
 				Description: "A flag to indicate whether to skip installation of restic server (https://github.com/restic/restic).\nOtherwise, restic would be enabled by default as part of Data Protection installation.\n(Default: False)",
-				Default:     false,
 				Optional:    true,
+				Computed:    true,
 			},
 			EnableAllAPIGroupVersionsBackupKey: {
 				Type:        schema.TypeBool,
 				Description: "A flag to indicate whether to backup all the supported API Group versions of a resource on the cluster.\n(Default: False)",
-				Default:     false,
 				Optional:    true,
+				Computed:    true,
+			},
+			SelectorKey: {
+				Type:        schema.TypeList,
+				Description: "A selector to include/exclude specific clusters in a cluster group (optional)",
+				Optional:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						ExcludedNamesKey: {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+						},
+						LabelSelectorKey: {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									MatchExpressionsKey: {
+										Type:     schema.TypeList,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												KeyKey: {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												OperatorKey: {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												ValuesKey: {
+													Type:     schema.TypeList,
+													Required: true,
+													Elem:     &schema.Schema{Type: schema.TypeString},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+						NamesKey: {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+						},
+					},
+				},
 			},
 		},
 	},
@@ -122,6 +192,12 @@ var deletionPolicySchema = &schema.Schema{
 				Description: "Destroy backups upon deleting data protection.\n(default: false)",
 				Default:     false,
 				Optional:    true,
+			},
+			ForceDeleteKey: {
+				Type:        schema.TypeBool,
+				Description: "Disable data protection on all clusters in the cluster group even if cluster level schedules present.",
+				Optional:    true,
+				Computed:    true,
 			},
 		},
 	},
