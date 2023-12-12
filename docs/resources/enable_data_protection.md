@@ -13,7 +13,7 @@ For more information regarding data protection, see [Data Protection][data-prote
 
 [data-protection]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-C16557BC-EB1B-4414-8E63-28AD92E0CAE5.html
 
-## Example Usage
+## Cluster Scope Example Usage
 
 ```terraform
 resource "tanzu-mission-control_enable_data_protection" "demo" {
@@ -33,6 +33,42 @@ resource "tanzu-mission-control_enable_data_protection" "demo" {
 
   deletion_policy {
     delete_backups = false
+  }
+}
+```
+
+## Cluster Group Scope Example Usage
+
+```terraform
+resource "tanzu-mission-control_enable_data_protection" "cgdemo" {
+  scope {
+    cluster_group {
+      cluster_group_name            = "default"
+    }
+  }
+
+  spec {
+    disable_restic                       = false
+    enable_csi_snapshots                 = false
+    enable_all_api_group_versions_backup = false
+
+    selector {
+        labelselector {
+            matchexpressions {
+                key      = "site"
+                operator = "NotIn"
+                values   = [
+                    "one",
+                    "two"
+                ]
+            }
+        }
+    }
+  }
+
+  deletion_policy {
+    delete_backups = false
+    force = true
   }
 }
 ```
@@ -67,6 +103,7 @@ terraform import tanzu-mission-control_backup_schedule.demo_backup MANAGEMENT_CL
 Optional:
 
 - `cluster` (Block List, Max: 1) Cluster scope block (see [below for nested schema](#nestedblock--scope--cluster))
+- `cluster_group` (Block List, Max: 1) Cluster group scope block (see [below for nested schema](#nestedblock--scope--cluster_group))
 
 <a id="nestedblock--scope--cluster"></a>
 ### Nested Schema for `scope.cluster`
@@ -78,6 +115,14 @@ Required:
 - `provisioner_name` (String) Cluster provisioner name
 
 
+<a id="nestedblock--scope--cluster_group"></a>
+### Nested Schema for `scope.cluster_group`
+
+Required:
+
+- `cluster_group_name` (String) Cluster group name
+
+
 
 <a id="nestedblock--deletion_policy"></a>
 ### Nested Schema for `deletion_policy`
@@ -86,6 +131,7 @@ Optional:
 
 - `delete_backups` (Boolean) Destroy backups upon deleting data protection.
 (default: false)
+- `force` (Boolean) Disable data protection on all clusters in the cluster group even if cluster level schedules present.
 
 
 <a id="nestedblock--meta"></a>
@@ -115,3 +161,32 @@ Otherwise, restic would be enabled by default as part of Data Protection install
 (Default: False)
 - `enable_csi_snapshots` (Boolean) A flag to indicate whether to install CSI snapshotting related capabilities.
 (Default: False)
+- `selector` (Block List, Max: 1) A selector to include/exclude specific clusters in a cluster group (optional) (see [below for nested schema](#nestedblock--spec--selector))
+
+<a id="nestedblock--spec--selector"></a>
+### Nested Schema for `spec.selector`
+
+Optional:
+
+- `excludednames` (List of String)
+- `labelselector` (Block List) (see [below for nested schema](#nestedblock--spec--selector--labelselector))
+- `names` (List of String)
+
+<a id="nestedblock--spec--selector--labelselector"></a>
+### Nested Schema for `spec.selector.labelselector`
+
+Optional:
+
+- `matchexpressions` (Block List) (see [below for nested schema](#nestedblock--spec--selector--labelselector--matchexpressions))
+
+<a id="nestedblock--spec--selector--labelselector--matchexpressions"></a>
+### Nested Schema for `spec.selector.labelselector.matchexpressions`
+
+Required:
+
+- `values` (List of String)
+
+Optional:
+
+- `key` (String)
+- `operator` (String)
