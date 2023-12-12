@@ -16,8 +16,9 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
-	dataprotectionres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/dataprotection"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
+	dataprotectionres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection"
 )
 
 var (
@@ -30,6 +31,7 @@ func initTestProvider(t *testing.T) *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			dataprotectionres.ResourceName: dataprotectionres.ResourceEnableDataProtection(),
 			cluster.ResourceName:           cluster.ResourceTMCCluster(),
+			clustergroup.ResourceName:      clustergroup.ResourceClusterGroup(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
