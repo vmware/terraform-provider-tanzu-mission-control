@@ -23,6 +23,7 @@ const (
 	EnableCSISnapshotsKey              = "enable_csi_snapshots"
 	DisableResticKey                   = "disable_restic"
 	EnableAllAPIGroupVersionsBackupKey = "enable_all_api_group_versions_backup"
+	UseNodeAgentKey                    = "use_node_agent"
 	SelectorKey                        = "selector"
 
 	// Selector keys.
@@ -124,6 +125,12 @@ var specSchema = &schema.Schema{
 			EnableAllAPIGroupVersionsBackupKey: {
 				Type:        schema.TypeBool,
 				Description: "A flag to indicate whether to backup all the supported API Group versions of a resource on the cluster.\n(Default: False)",
+				Optional:    true,
+				Computed:    true,
+			},
+			UseNodeAgentKey: {
+				Type:        schema.TypeBool,
+				Description: "A flag to indicate whether to install the node agent daemonset which is responsible for volume data transfer to the target location.",
 				Optional:    true,
 				Computed:    true,
 			},

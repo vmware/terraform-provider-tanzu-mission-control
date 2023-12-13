@@ -22,6 +22,10 @@ type VmwareTanzuManageV1alpha1ClusterDataprotectionSpec struct {
 
 	// A flag to indicate whether to install CSI snapshotting related capabilities.
 	EnableCsiSnapshots bool `json:"enableCsiSnapshots"`
+
+	// A flag to indicate whether to install the node agent daemonset which is responsible for data transfer
+	// to the target location.
+	UseNodeAgent bool `json:"useNodeAgent,omitempty"`
 }
 
 // MarshalBinary interface implementation.
