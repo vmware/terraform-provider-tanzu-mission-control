@@ -73,7 +73,6 @@ resource "tanzu-mission-control_enable_data_protection" "cgdemo" {
 }
 ```
 
-
 ## Import Cluster Scope Data Protection
 The resource ID for importing an existing data protection should be comprised of a full cluster name separated by '/'.
 
