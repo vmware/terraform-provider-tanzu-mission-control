@@ -36,6 +36,7 @@ func getTFModelMapCommon(forClusterGroup bool) *tfModelConverterHelper.BlockToSt
 			DisableResticKey:                   tfModelConverterHelper.BuildDefaultModelPath("spec", "atomicSpec", "disableRestic"),
 			EnableCSISnapshotsKey:              tfModelConverterHelper.BuildDefaultModelPath("spec", "atomicSpec", "enableCsiSnapshots"),
 			EnableAllAPIGroupVersionsBackupKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "atomicSpec", "enableAllApiGroupVersionsBackup"),
+			UseNodeAgentKey:                    tfModelConverterHelper.BuildDefaultModelPath("spec", "atomicSpec", "useNodeAgent"),
 			SelectorKey: &tfModelConverterHelper.BlockToStruct{
 				NamesKey:         tfModelConverterHelper.BuildDefaultModelPath("spec", "selector", "names"),
 				ExcludedNamesKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "selector", "excludedNames"),
@@ -55,6 +56,7 @@ func getTFModelMapCommon(forClusterGroup bool) *tfModelConverterHelper.BlockToSt
 			DisableResticKey:                   tfModelConverterHelper.BuildDefaultModelPath("spec", "disableRestic"),
 			EnableCSISnapshotsKey:              tfModelConverterHelper.BuildDefaultModelPath("spec", "enableCsiSnapshots"),
 			EnableAllAPIGroupVersionsBackupKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "enableAllApiGroupVersionsBackup"),
+			UseNodeAgentKey:                    tfModelConverterHelper.BuildDefaultModelPath("spec", "useNodeAgent"),
 		}
 	}
 
