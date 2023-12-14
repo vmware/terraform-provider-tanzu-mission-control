@@ -87,6 +87,7 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 			clusterResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(clusFullName)
 			if err != nil {
 				log.Printf("Unable to get Tanzu Mission Control cluster entry, name : %s", clusterFn.Name)
+				return true, nil
 			}
 
 			if !isManagemetClusterHealthy(clusterResp) {
