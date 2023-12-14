@@ -10,8 +10,6 @@ import (
 	"log"
 	"strconv"
 	"time"
-	// "os"
-	// "strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -84,19 +82,18 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 			return true, nil
 		}
 
-		// if val := os.Getenv("WAIT_FOR_HEALTHY"); strings.EqualFold(val, "TRUE") || val == "" {
 		if isWaitForKubeconfig(d) {
-			clusFullName := &clustermodel.VmwareTanzuManageV1alpha1ClusterFullName { Name: resp.EksCluster.Spec.AgentName, OrgID: clusterFn.OrgID, ManagementClusterName: "eks", ProvisionerName: "eks" }
+			clusFullName := &clustermodel.VmwareTanzuManageV1alpha1ClusterFullName{Name: resp.EksCluster.Spec.AgentName, OrgID: clusterFn.OrgID, ManagementClusterName: "eks", ProvisionerName: "eks"}
 			clusterResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(clusFullName)
 			if err != nil {
 				log.Printf("Unable to get Tanzu Mission Control cluster entry, name : %s", clusterFn.Name)
 			}
-	
+
 			if !isManagemetClusterHealthy(clusterResp) {
 				log.Printf("[DEBUG] waiting for cluster(%s) to be in Healthy status", clusterFn.Name)
 				return true, nil
 			}
-			
+
 			fn := &configModels.VmwareTanzuManageV1alpha1ClusterFullName{
 				ManagementClusterName: "eks",
 				ProvisionerName:       "eks",
@@ -112,7 +109,7 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 				}
 			}
 		}
-		
+
 		return false, nil
 	}
 
@@ -159,7 +156,7 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 }
 
 func isManagemetClusterHealthy(cluster *clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse) bool {
-	return cluster.Cluster.Status.Health != nil && *cluster.Cluster.Status.Health == clustermodel.VmwareTanzuManageV1alpha1CommonClusterHealthHEALTHY 
+	return cluster.Cluster.Status.Health != nil && *cluster.Cluster.Status.Health == clustermodel.VmwareTanzuManageV1alpha1CommonClusterHealthHEALTHY
 }
 
 func kubeConfigReady(err error, resp *configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponse) bool {

@@ -10,8 +10,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	eksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/ekscluster"
 	clustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster"
+	eksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/ekscluster"
 )
 
 func TestNodepoolPosMap(t *testing.T) {
@@ -63,10 +63,10 @@ func TestNodepoolPosMap(t *testing.T) {
 
 func TestIsManagemetClusterHealthy(t *testing.T) {
 	tests := []struct {
-		name    string
-		cluster *clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse
+		name     string
+		cluster  *clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse
 		response bool
-		err     error
+		err      error
 	}{
 		{
 			name: "Not healthy",
@@ -78,7 +78,7 @@ func TestIsManagemetClusterHealthy(t *testing.T) {
 				},
 			},
 			response: false,
-			err: nil,
+			err:      nil,
 		},
 		{
 			name: "Healthy",
@@ -88,9 +88,9 @@ func TestIsManagemetClusterHealthy(t *testing.T) {
 						Health: clustermodel.NewVmwareTanzuManageV1alpha1CommonClusterHealth(clustermodel.VmwareTanzuManageV1alpha1CommonClusterHealthHEALTHY),
 					},
 				},
-			},		
-			response: true,	
-			err: nil,
+			},
+			response: true,
+			err:      nil,
 		},
 	}
 

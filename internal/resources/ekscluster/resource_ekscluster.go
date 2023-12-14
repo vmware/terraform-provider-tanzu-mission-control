@@ -96,7 +96,7 @@ var clusterSchema = map[string]*schema.Schema{
 		Type:        schema.TypeString,
 		Description: "Kubeconfig for connecting to newly created cluster base64 encoded. This will only be returned if you have elected to wait for kubeconfig.",
 		Computed:    true,
-	},	
+	},
 }
 
 var clusterSpecSchema = &schema.Schema{
