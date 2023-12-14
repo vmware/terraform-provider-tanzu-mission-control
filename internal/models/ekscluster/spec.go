@@ -28,6 +28,12 @@ type VmwareTanzuManageV1alpha1EksclusterSpec struct {
 	// Optional proxy name is the name of the Proxy Config
 	// to be used for the cluster.
 	ProxyName string `json:"proxyName,omitempty"`
+
+	// Agent name of the cluster.
+	AgentName string `json:"agentName,omitempty"`
+
+	// Arn of the cluster.
+	Arn string `json:"arn,omitempty"`
 }
 
 // MarshalBinary interface implementation

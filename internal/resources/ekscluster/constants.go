@@ -69,4 +69,6 @@ const (
 	releaseVersionKey           = "release_version"
 	readyCondition              = "Ready"
 	errorSeverity               = "ERROR"
+	waitForKubeconfig           = "wait_for_kubeconfig"
+	kubeconfigKey               = "kubeconfig"
 )

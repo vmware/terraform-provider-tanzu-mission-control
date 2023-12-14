@@ -1,6 +1,3 @@
-//go:build ekscluster
-// +build ekscluster
-
 /*
 Copyright 2022 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
@@ -14,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	eksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/ekscluster"
+	clustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster"
 )
 
 func TestNodepoolPosMap(t *testing.T) {
@@ -59,6 +57,48 @@ func TestNodepoolPosMap(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			require.Equal(t, test.res, nodepoolPosMap(test.nps), "expected function output to match")
+		})
+	}
+}
+
+func TestIsManagemetClusterHealthy(t *testing.T) {
+	tests := []struct {
+		name    string
+		cluster *clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse
+		response bool
+		err     error
+	}{
+		{
+			name: "Not healthy",
+			cluster: &clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse{
+				Cluster: &clustermodel.VmwareTanzuManageV1alpha1ClusterCluster{
+					Status: &clustermodel.VmwareTanzuManageV1alpha1ClusterStatus{
+						Health: clustermodel.NewVmwareTanzuManageV1alpha1CommonClusterHealth(clustermodel.VmwareTanzuManageV1alpha1CommonClusterHealthUNHEALTHY),
+					},
+				},
+			},
+			response: false,
+			err: nil,
+		},
+		{
+			name: "Healthy",
+			cluster: &clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse{
+				Cluster: &clustermodel.VmwareTanzuManageV1alpha1ClusterCluster{
+					Status: &clustermodel.VmwareTanzuManageV1alpha1ClusterStatus{
+						Health: clustermodel.NewVmwareTanzuManageV1alpha1CommonClusterHealth(clustermodel.VmwareTanzuManageV1alpha1CommonClusterHealthHEALTHY),
+					},
+				},
+			},		
+			response: true,	
+			err: nil,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if test.response != isManagemetClusterHealthy(test.cluster) {
+				t.Errorf("expected function output to match")
+			}
 		})
 	}
 }

@@ -10,6 +10,8 @@ import (
 	"log"
 	"strconv"
 	"time"
+	// "os"
+	// "strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -20,6 +22,9 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	eksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/ekscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
+
+	clustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster"
+	configModels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubeconfig"
 )
 
 func DataSourceTMCEKSCluster() *schema.Resource {
@@ -79,6 +84,35 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 			return true, nil
 		}
 
+		// if val := os.Getenv("WAIT_FOR_HEALTHY"); strings.EqualFold(val, "TRUE") || val == "" {
+		if isWaitForKubeconfig(d) {
+			clusFullName := &clustermodel.VmwareTanzuManageV1alpha1ClusterFullName { Name: resp.EksCluster.Spec.AgentName, OrgID: clusterFn.OrgID, ManagementClusterName: "eks", ProvisionerName: "eks" }
+			clusterResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(clusFullName)
+			if err != nil {
+				log.Printf("Unable to get Tanzu Mission Control cluster entry, name : %s", clusterFn.Name)
+			}
+	
+			if !isManagemetClusterHealthy(clusterResp) {
+				log.Printf("[DEBUG] waiting for cluster(%s) to be in Healthy status", clusterFn.Name)
+				return true, nil
+			}
+			
+			fn := &configModels.VmwareTanzuManageV1alpha1ClusterFullName{
+				ManagementClusterName: "eks",
+				ProvisionerName:       "eks",
+				Name:                  resp.EksCluster.Spec.AgentName,
+				OrgID:                 "",
+			}
+			resp, err := config.TMCConnection.KubeConfigResourceService.KubeconfigServiceGet(fn)
+
+			if kubeConfigReady(err, resp) {
+				if err = d.Set(kubeconfigKey, resp.Kubeconfig); err != nil {
+					log.Printf("Failed to set Kubeconfig")
+					return true, nil
+				}
+			}
+		}
+		
 		return false, nil
 	}
 
@@ -122,6 +156,14 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 	}
 
 	return diags
+}
+
+func isManagemetClusterHealthy(cluster *clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse) bool {
+	return cluster.Cluster.Status.Health != nil && *cluster.Cluster.Status.Health == clustermodel.VmwareTanzuManageV1alpha1CommonClusterHealthHEALTHY 
+}
+
+func kubeConfigReady(err error, resp *configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponse) bool {
+	return err == nil && *resp.Status == configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusREADY
 }
 
 func setResourceData(d *schema.ResourceData, eksCluster *eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster, remoteNodepools []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool) error {
