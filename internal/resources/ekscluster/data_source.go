@@ -85,6 +85,7 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 		if isWaitForKubeconfig(d) {
 			clusFullName := &clustermodel.VmwareTanzuManageV1alpha1ClusterFullName{Name: resp.EksCluster.Spec.AgentName, OrgID: clusterFn.OrgID, ManagementClusterName: "eks", ProvisionerName: "eks"}
 			clusterResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(clusFullName)
+			// nolint: wsl
 			if err != nil {
 				log.Printf("Unable to get Tanzu Mission Control cluster entry, name : %s", clusterFn.Name)
 				return true, nil
