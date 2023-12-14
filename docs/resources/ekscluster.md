@@ -80,22 +80,19 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
         ]
       }
 
-      addons_config {
+      addons_config { // this whole section is optional
         vpc_cni_config {
           eni_config {
-            id = "subnet-0a680171b6330619f" // Required, should belong to the same VPC as the cluster
-            security_groups = [
+            id = "subnet-0a680171b6330619f" // Required, need not belong to the same VPC as the cluster, subnets provided in vpc_cni_config are expected to be in different AZs
+            security_groups = [ //optional, if not provided, the cluster security group will be used
               "sg-00c96ad9d02a22522",
             ]
           }
           eni_config {
-            id = "subnet-06feb0bb0451cda78" // Required, should belong to the same VPC as the cluster
-            security_groups = [
-              "sg-00c96ad9d02a22522",
-            ]
+            id = "subnet-06feb0bb0451cda79" // Required, need not belong to the same VPC as the cluster, subnets provided in vpc_cni_config are expected to be in different AZs
           }
         }
-      }      
+      }
     }
 
     nodepool {
@@ -213,10 +210,12 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
 - `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
 - `ready_wait_timeout` (String) Wait timeout duration until cluster resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero
 - `spec` (Block List, Max: 1) Spec for the cluster (see [below for nested schema](#nestedblock--spec))
+- `wait_for_kubeconfig` (Boolean) Wait until pinniped extension is ready to provide kubeconfig
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `kubeconfig` (String) Kubeconfig for connecting to newly created cluster base64 encoded. This will only be returned if you have elected to wait for kubeconfig.
 - `status` (Map of String) Status of the cluster
 
 <a id="nestedblock--meta"></a>
@@ -283,14 +282,14 @@ Optional:
 
 Optional:
 
-- `vpc_cni_config` (Block List, Max: 1) VPC CNI addon config contains the configuration for the VPC CNI addon of the cluster. (see [below for nested schema](#nestedblock--spec--config--addons_config--vpc_cni_config))
+- `vpc_cni_config` (Block List, Max: 1) VPC CNI addon config contains the configuration for the VPC CNI addon of the cluster (see [below for nested schema](#nestedblock--spec--config--addons_config--vpc_cni_config))
 
 <a id="nestedblock--spec--config--addons_config--vpc_cni_config"></a>
 ### Nested Schema for `spec.config.addons_config.vpc_cni_config`
 
 Optional:
 
-- `eni_config` (Block List) ENI config is the VPC CNI Elastic Network Interface config for providing the configuration of subnet and security groups for pods in each AZ.  Subnets need not be in the same VPC as the cluster. The subnets provided across eniConfigs should be in different availability zones. Nodepool subnets need to be in the same AZ as the AZs used in ENIConfig. (see [below for nested schema](#nestedblock--spec--config--addons_config--vpc_cni_config--eni_config))
+- `eni_config` (Block List) ENI config is the VPC CNI Elastic Network Interface config for providing the configuration of subnet and security groups for pods in each AZ.  Subnets need not be in the same VPC as the cluster. The subnets provided across eniConfigs should be in different availability zones. Nodepool subnets need to be in the same AZ as the AZs used in ENIConfig.  (see [below for nested schema](#nestedblock--spec--config--addons_config--vpc_cni_config--eni_config))
 
 <a id="nestedblock--spec--config--addons_config--vpc_cni_config--eni_config"></a>
 ### Nested Schema for `spec.config.addons_config.vpc_cni_config.eni_config`
@@ -301,7 +300,7 @@ Required:
 
 Optional:
 
-- `security_groups` (Set of String) List of security group is optional and if not provided default security group created by EKS will be used. 
+- `security_groups` (Set of String) List of security group is optional and if not provided default security group created by EKS will be used.
 
 
 
