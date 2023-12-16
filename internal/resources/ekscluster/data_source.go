@@ -84,10 +84,10 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 
 		if isWaitForKubeconfig(d) {
 			clusFullName := &clustermodel.VmwareTanzuManageV1alpha1ClusterFullName{
-				Name: resp.EksCluster.Spec.AgentName, 
-				OrgID: clusterFn.OrgID, 
-				ManagementClusterName: "eks", 
-				ProvisionerName: "eks",
+				Name:                  resp.EksCluster.Spec.AgentName,
+				OrgID:                 clusterFn.OrgID,
+				ManagementClusterName: "eks",
+				ProvisionerName:       "eks",
 			}
 			clusterResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(clusFullName)
 			// nolint: wsl
@@ -100,11 +100,9 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 			if err != nil {
 				log.Printf("[DEBUG] waiting for cluster(%s) to be in Healthy status", clusterFn.Name)
 				return true, nil
-			} else {
-				if !mgmtClusterHealthy {
-					log.Printf("[DEBUG] waiting for cluster(%s) to be in Healthy status", clusterFn.Name)
-					return true, nil
-				}
+			} else if !mgmtClusterHealthy {
+				log.Printf("[DEBUG] waiting for cluster(%s) to be in Healthy status", clusterFn.Name)
+				return true, nil
 			}
 
 			fn := &configModels.VmwareTanzuManageV1alpha1ClusterFullName{
@@ -113,6 +111,7 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 				Name:                  resp.EksCluster.Spec.AgentName,
 			}
 			resp, err := config.TMCConnection.KubeConfigResourceService.KubeconfigServiceGet(fn)
+			// nolint: wsl
 			if err != nil {
 				log.Printf("Unable to get Tanzu Mission Control Kubeconfig entry, name : %s, error :  %s", fn.Name, err.Error())
 				return true, err
