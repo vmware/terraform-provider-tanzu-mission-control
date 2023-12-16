@@ -8,6 +8,7 @@ package ekscluster
 import (
 	"testing"
 
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 
 	clustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster"
@@ -92,11 +93,26 @@ func TestIsManagemetClusterHealthy(t *testing.T) {
 			response: true,
 			err:      nil,
 		},
+		{
+			name: "Error",
+			cluster: &clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse{
+				Cluster: &clustermodel.VmwareTanzuManageV1alpha1ClusterCluster{
+					Status: nil,
+				},
+			},
+			response: false,
+			err:      errors.New("cluster data is invalid or nil"),
+		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			if test.response != isManagemetClusterHealthy(test.cluster) {
+			result, err := isManagemetClusterHealthy(test.cluster)
+			if err != nil {
+				if err.Error() != test.err.Error() {
+					t.Errorf("expected error to match")
+				}
+			} else if test.response != result {
 				t.Errorf("expected function output to match")
 			}
 		})
