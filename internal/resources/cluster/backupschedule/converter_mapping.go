@@ -125,15 +125,12 @@ var tfModelDataSourceRequestMap = &tfModelConverterHelper.BlockToStruct{
 	SortByKey:            "sortBy",
 	QueryKey:             "query",
 	IncludeTotalCountKey: "includeTotal",
-	NameKey:              tfModelConverterHelper.BuildDefaultModelPath("fullName", "name"),
+	NameKey:              tfModelConverterHelper.BuildDefaultModelPath("searchScope", "name"),
 	ScopeKey: &tfModelConverterHelper.BlockToStruct{
-		ClusterGroupScopeKey: &tfModelConverterHelper.BlockToStruct{
-			ClusterGroupNameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "clusterGroupName"),
-		},
 		ClusterScopeKey: &tfModelConverterHelper.BlockToStruct{
-			ClusterNameKey:           tfModelConverterHelper.BuildDefaultModelPath("fullName", "clusterName"),
-			ManagementClusterNameKey: tfModelConverterHelper.BuildDefaultModelPath("fullName", "managementClusterName"),
-			ProvisionerNameKey:       tfModelConverterHelper.BuildDefaultModelPath("fullName", "provisionerName"),
+			ClusterNameKey:           tfModelConverterHelper.BuildDefaultModelPath("searchScope", "clusterName"),
+			ManagementClusterNameKey: tfModelConverterHelper.BuildDefaultModelPath("searchScope", "managementClusterName"),
+			ProvisionerNameKey:       tfModelConverterHelper.BuildDefaultModelPath("searchScope", "provisionerName"),
 		},
 	},
 }
