@@ -109,6 +109,7 @@ Optional:
 - `api_server_access_config` (Block List, Max: 1) API Server Access Config (see [below for nested schema](#nestedblock--spec--config--api_server_access_config))
 - `auto_upgrade_config` (Block List, Max: 1) Auto Upgrade Config (see [below for nested schema](#nestedblock--spec--config--auto_upgrade_config))
 - `disk_encryption_set` (String) Resource ID of the disk encryption set to use for enabling
+- `identity_config` (Block List, Max: 1) Managed Identity Config (see [below for nested schema](#nestedblock--spec--config--identity_config))
 - `linux_config` (Block List, Max: 1) Linux Config (see [below for nested schema](#nestedblock--spec--config--linux_config))
 - `node_resource_group_name` (String) Name of the resource group containing nodepools.
 - `sku` (Block List, Max: 1) Azure Kubernetes Service SKU (see [below for nested schema](#nestedblock--spec--config--sku))
@@ -210,6 +211,23 @@ Optional:
 Optional:
 
 - `upgrade_channel` (String) Upgrade Channel. Allowed values include: NONE, PATCH, STABLE, RAPID or NODE_IMAGE
+
+
+<a id="nestedblock--spec--config--identity_config"></a>
+### Nested Schema for `spec.config.identity_config`
+
+Optional:
+
+- `type` (String) Type of managed identity used by the cluster (default IDENTITY_TYPE_SYSTEM_ASSIGNED). Allowed values include: IDENTITY_TYPE_SYSTEM_ASSIGNED or IDENTITY_TYPE_USER_ASSIGNED
+- `user_assigned` (Block List, Max: 1) User Assigned Managed Identity Config (see [below for nested schema](#nestedblock--spec--config--identity_config--user_assigned))
+
+<a id="nestedblock--spec--config--identity_config--user_assigned"></a>
+### Nested Schema for `spec.config.identity_config.user_assigned`
+
+Required:
+
+- `resource_id` (String) The ARM resource ID of user assigned identity in the form: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'
+
 
 
 <a id="nestedblock--spec--config--linux_config"></a>
