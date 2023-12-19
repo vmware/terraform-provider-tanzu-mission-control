@@ -372,6 +372,7 @@ func aTestClusterDataMap(w ...mapWither) map[string]any {
 				"auto_upgrade_config": []any{map[string]any{
 					"upgrade_channel": "STABLE",
 				}},
+				"identity_config": []any{},
 			}},
 			"nodepool": []any{
 				aTestNodepoolDataMap(),

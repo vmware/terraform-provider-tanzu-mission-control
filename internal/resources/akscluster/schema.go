@@ -205,6 +205,13 @@ var ClusterConfig = &schema.Resource{
 			MaxItems:    1,
 			Elem:        AutoUpgradeConfig,
 		},
+		identityConfigKey: {
+			Type:        schema.TypeList,
+			Description: "Managed Identity Config",
+			Optional:    true,
+			MaxItems:    1,
+			Elem:        ManagedIdentityConfig,
+		},
 	},
 }
 
@@ -510,6 +517,38 @@ var AutoUpgradeConfig = &schema.Resource{
 				string(aksmodel.VmwareTanzuManageV1alpha1AksclusterChannelRAPID),
 				string(aksmodel.VmwareTanzuManageV1alpha1AksclusterChannelNODEIMAGE),
 			}, false)),
+		},
+	},
+}
+
+var ManagedIdentityConfig = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		typeKey: {
+			Type:        schema.TypeString,
+			Description: "Type of managed identity used by the cluster (default IDENTITY_TYPE_SYSTEM_ASSIGNED). Allowed values include: IDENTITY_TYPE_SYSTEM_ASSIGNED or IDENTITY_TYPE_USER_ASSIGNED",
+			Optional:    true,
+			Default:     "IDENTITY_TYPE_SYSTEM_ASSIGNED",
+			ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+				string(aksmodel.VmwareTanzuManageV1alpha1AksclusterManagedIdentityTypeSYSTEMASSIGNED),
+				string(aksmodel.VmwareTanzuManageV1alpha1AksclusterManagedIdentityTypeUSERASSIGNED),
+			}, false)),
+		},
+		userAssignedKey: {
+			Type:        schema.TypeList,
+			Description: "User Assigned Managed Identity Config",
+			Optional:    true,
+			MaxItems:    1,
+			Elem:        UserAssignedManagedIdentityConfig,
+		},
+	},
+}
+
+var UserAssignedManagedIdentityConfig = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		resourceIDKey: {
+			Type:        schema.TypeString,
+			Description: "The ARM resource ID of user assigned identity in the form: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'",
+			Required:    true,
 		},
 	},
 }

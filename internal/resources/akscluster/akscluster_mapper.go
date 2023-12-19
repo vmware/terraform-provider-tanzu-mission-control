@@ -140,6 +140,11 @@ func constructConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterClus
 		helper.SetPrimitiveValue(v, &config.NodeResourceGroupName, nodeResourceGroupNameKey)
 	}
 
+	if v, ok := configData[identityConfigKey]; ok {
+		data, _ := v.([]any)
+		config.IdentityConfig = constructManagedIdentityConfig(data)
+	}
+
 	return config
 }
 
@@ -433,6 +438,44 @@ func constructAutoUpgradeConfig(data []any) *models.VmwareTanzuManageV1alpha1Aks
 	return autoUpgradeConfig
 }
 
+func constructManagedIdentityConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterManagedIdentityConfig {
+	if len(data) < 1 {
+		return nil
+	}
+
+	// ManagedIdentityConfig schema defines max 1
+	managedIdentityConfigData, _ := data[0].(map[string]any)
+	managedIdentityConfig := &models.VmwareTanzuManageV1alpha1AksclusterManagedIdentityConfig{}
+
+	if v, ok := managedIdentityConfigData[typeKey]; ok {
+		identityType := models.VmwareTanzuManageV1alpha1AksclusterManagedIdentityType(v.(string))
+		managedIdentityConfig.Type = &identityType
+	}
+
+	if v, ok := managedIdentityConfigData[userAssignedKey]; ok {
+		data, _ := v.([]any)
+		managedIdentityConfig.UserAssignedIdentityType = constructUserAssignedIdentityConfig(data)
+	}
+
+	return managedIdentityConfig
+}
+
+func constructUserAssignedIdentityConfig(data []any) *models.VmwareTanzuManageV1alpha1AksclusterUserAssignedIdentityTypeConfig {
+	if len(data) < 1 {
+		return nil
+	}
+
+	// UserAssignedIdentityConfig schema defines max 1
+	userAssignedIdentityConfigData, _ := data[0].(map[string]any)
+	userAssignedIdentityConfig := &models.VmwareTanzuManageV1alpha1AksclusterUserAssignedIdentityTypeConfig{}
+
+	if v, ok := userAssignedIdentityConfigData[resourceIDKey]; ok {
+		helper.SetPrimitiveValue(v, &userAssignedIdentityConfig.ManagedResourceID, resourceIDKey)
+	}
+
+	return userAssignedIdentityConfig
+}
+
 func ToAKSClusterMap(cluster *models.VmwareTanzuManageV1alpha1AksCluster, nodepools []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolNodepool) any {
 	if cluster == nil {
 		return []any{}
@@ -483,6 +526,7 @@ func toConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterClusterConfig
 	data[storageConfigKey] = toStorageConfigMap(config.StorageConfig)
 	data[addonsConfigKey] = toAddonConfigMap(config.AddonsConfig)
 	data[autoUpgradeConfigKey] = toAutoUpgradeConfigMap(config.AutoUpgradeConfig)
+	data[identityConfigKey] = toManagedIdentityConfigMap(config.IdentityConfig)
 
 	return []any{data}
 }
@@ -638,6 +682,29 @@ func toAutoUpgradeConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterAu
 
 	data := make(map[string]any)
 	data[upgradeChannelKey] = helper.PtrString(config.Channel)
+
+	return []any{data}
+}
+
+func toManagedIdentityConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterManagedIdentityConfig) []any {
+	if config == nil {
+		return []any{}
+	}
+
+	data := make(map[string]any)
+	data[typeKey] = helper.PtrString(config.Type)
+	data[userAssignedKey] = toUserAssignedIdentityTypeConfigMap(config.UserAssignedIdentityType)
+
+	return []any{data}
+}
+
+func toUserAssignedIdentityTypeConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterUserAssignedIdentityTypeConfig) []any {
+	if config == nil {
+		return []any{}
+	}
+
+	data := make(map[string]any)
+	data[resourceIDKey] = config.ManagedResourceID
 
 	return []any{data}
 }

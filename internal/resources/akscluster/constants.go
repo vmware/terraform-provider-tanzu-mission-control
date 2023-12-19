@@ -106,4 +106,6 @@ const (
 	upgradeConfigKey                           = "upgrade_config"
 	maxSurgeKey                                = "max_surge"
 	kubeconfigKey                              = "kubeconfig"
+	identityConfigKey                          = "identity_config"
+	userAssignedKey                            = "user_assigned"
 )
