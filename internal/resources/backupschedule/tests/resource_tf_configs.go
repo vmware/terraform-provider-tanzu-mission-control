@@ -9,8 +9,10 @@ import (
 	"fmt"
 	"strings"
 
+	backupscheduleres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/backupschedule"
 	clusterres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
-	backupscheduleres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/backupschedule"
+
+	cgres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 	dataprotectiontests "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection/tests"
 	targetlocationres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/targetlocation"
@@ -48,6 +50,7 @@ type ResourceTFConfigBuilder struct {
 	TargetLocationRequiredResource string
 	ClusterInfo                    string
 	TargetLocationInfo             string
+	ClusterGroupInfo               string
 }
 
 func InitResourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, bMode ResourceBuildMode, tmcManageCredentials string) *ResourceTFConfigBuilder {
@@ -85,6 +88,12 @@ func InitResourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, 
 		backupscheduleres.ManagementClusterNameKey, mgmtClusterName,
 		backupscheduleres.ProvisionerNameKey, provisionerName)
 
+	cgName := fmt.Sprintf("%s.%s", scopeHelper.ClusterGroup.ResourceName, cgres.NameKey)
+	cgInfo := fmt.Sprintf(`
+		%s = %s
+		`,
+		backupscheduleres.ClusterGroupNameKey, cgName)
+
 	targetLocationInfo := fmt.Sprintf("storage_location = %s.%s", targetlocationtests.TmcManagedResourceFullName, targetlocationres.NameKey)
 
 	tfConfigBuilder := &ResourceTFConfigBuilder{
@@ -92,6 +101,7 @@ func InitResourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, 
 		TargetLocationRequiredResource: strings.Trim(targetLocationRequiredResource, " "),
 		ClusterInfo:                    clusterInfo,
 		TargetLocationInfo:             targetLocationInfo,
+		ClusterGroupInfo:               cgInfo,
 	}
 
 	return tfConfigBuilder
@@ -287,6 +297,202 @@ func (builder *ResourceTFConfigBuilder) GetLabelsBackupScheduleConfig() string {
 		LabelsBackupScheduleResourceName,
 		LabelsBackupScheduleName,
 		builder.ClusterInfo,
+		backupscheduleres.LabelSelectorBackupScope,
+		builder.TargetLocationInfo,
+		dataprotectiontests.EnableDataProtectionResourceFullName,
+		targetlocationtests.TmcManagedResourceFullName)
+}
+
+func (builder *ResourceTFConfigBuilder) GetFullClusterCGBackupScheduleConfig() string {
+	return fmt.Sprintf(`
+		%s
+
+		%s
+
+		resource "%s" "%s" {
+			name = "%s"
+			scope {
+				cluster_group {
+                      %s
+				}
+			}
+
+          backup_scope = "%s"
+
+		  spec {
+			schedule {
+			  rate = "0 12 * * 1"
+			}
+		
+			template {
+              %s
+			  backup_ttl = "2592000s"
+			  excluded_namespaces = [
+				"app-01",
+				"app-02",
+				"app-03",
+				"app-04"
+			  ]
+			  excluded_resources = [
+				"secrets",
+				"configmaps"
+			  ]
+			}
+		  }
+
+          depends_on = [%s, %s]
+		}
+		`,
+		builder.DataProtectionRequiredResource,
+		builder.TargetLocationRequiredResource,
+		backupscheduleres.ResourceName,
+		FullClusterBackupScheduleResourceName,
+		FullClusterBackupScheduleName,
+		builder.ClusterGroupInfo,
+		backupscheduleres.FullClusterBackupScope,
+		builder.TargetLocationInfo,
+		dataprotectiontests.EnableDataProtectionResourceFullName,
+		targetlocationtests.TmcManagedResourceFullName)
+}
+
+func (builder *ResourceTFConfigBuilder) GetNamespacesCGBackupScheduleConfig() string {
+	return fmt.Sprintf(`
+		%s
+		
+		%s
+		
+		resource "%s" "%s" {
+			name = "%s"
+			scope {
+				cluster_group {
+					%s
+				}
+			}
+
+          backup_scope = "%s"
+		
+		  spec {
+			schedule {
+			  rate = "30 * * * *"
+			}
+		
+			template {
+			  included_namespaces = [
+				"app-01",
+				"app-02",
+				"app-03",
+				"app-04"
+			  ]
+			  backup_ttl = "86400s"
+			  excluded_resources = [
+				"secrets",
+				"configmaps"
+			  ]
+			  include_cluster_resources    = true
+			  %s
+			  hooks {
+				resource {
+				  name = "sample-config"
+				  pre_hook {
+					exec {
+					  command = ["echo 'hello'"]
+					  container = "workload"
+					  on_error  = "CONTINUE"
+					  timeout   = "10s"
+					}
+				  }
+				  pre_hook {
+					exec {
+					  command = ["echo 'hello'"]
+					  container = "db"
+					  on_error  = "CONTINUE"
+					  timeout   = "30s"
+					}
+				  }
+				  post_hook {
+					exec {
+					  command = ["echo 'goodbye'"]
+					  container = "db"
+					  on_error  = "CONTINUE"
+					  timeout   = "60s"
+					}
+				  }
+				  post_hook {
+					exec {
+					  command = ["echo 'goodbye'"]
+					  container = "workload"
+					  on_error  = "FAIL"
+					  timeout   = "20s"
+					}
+				  }
+				}
+			  }
+			}
+		  }
+
+          depends_on = [%s, %s]
+		}
+		`,
+		builder.DataProtectionRequiredResource,
+		builder.TargetLocationRequiredResource,
+		backupscheduleres.ResourceName,
+		NamespacesBackupScheduleResourceName,
+		NamespacesBackupScheduleName,
+		builder.ClusterGroupInfo,
+		backupscheduleres.NamespacesBackupScope,
+		builder.TargetLocationInfo,
+		dataprotectiontests.EnableDataProtectionResourceFullName,
+		targetlocationtests.TmcManagedResourceFullName)
+}
+
+func (builder *ResourceTFConfigBuilder) GetLabelsCGBackupScheduleConfig() string {
+	return fmt.Sprintf(`
+		%s
+
+		%s
+
+		resource "%s" "%s" {
+		  name = "%s"
+		  scope {
+			cluster_group {
+				%s
+			  }
+		  }
+
+		  backup_scope = "%s"
+
+          spec {
+			schedule {
+			  rate = "0 12 * * *"
+			}
+		
+			template {
+			  default_volumes_to_fs_backup = false
+			  include_cluster_resources = true
+			  backup_ttl = "604800s"
+			  %s
+			  label_selector {
+				match_expression {
+				  key      = "apps.tanzu.vmware.com/tap-ns"
+				  operator = "Exists"
+				}
+				match_expression {
+				  key      = "apps.tanzu.vmware.com/exclude-from-backup"
+				  operator = "DoesNotExist"
+				}
+			  }
+			}
+		  }
+
+          depends_on = [%s, %s]
+		}
+		`,
+		builder.DataProtectionRequiredResource,
+		builder.TargetLocationRequiredResource,
+		backupscheduleres.ResourceName,
+		LabelsBackupScheduleResourceName,
+		LabelsBackupScheduleName,
+		builder.ClusterGroupInfo,
 		backupscheduleres.LabelSelectorBackupScope,
 		builder.TargetLocationInfo,
 		dataprotectiontests.EnableDataProtectionResourceFullName,

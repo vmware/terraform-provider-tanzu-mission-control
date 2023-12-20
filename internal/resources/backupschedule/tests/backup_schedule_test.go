@@ -20,8 +20,9 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
-	backupschedulemodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/backupschedule"
-	backupscheduleres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/backupschedule"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/backupschedule/cluster"
+	backupscheduleclustergroupmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/backupschedule/clustergroup"
+	backupscheduleres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/backupschedule"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
@@ -87,6 +88,33 @@ func TestAcceptanceBackupScheduleResource(t *testing.T) {
 					verifyBackupScheduleDataSource(provider, DataSourceFullName, LabelsBackupScheduleName),
 				),
 			},
+			{
+				Config: tfResourceConfigBuilder.GetFullClusterCGBackupScheduleConfig(),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(FullClusterBackupScheduleResourceFullName, "name", FullClusterBackupScheduleName),
+					verifyBackupScheduleResourceCreation(provider, FullClusterBackupScheduleResourceFullName, FullClusterBackupScheduleName),
+				),
+			},
+			{
+				Config: tfResourceConfigBuilder.GetNamespacesCGBackupScheduleConfig(),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(NamespacesBackupScheduleResourceFullName, "name", NamespacesBackupScheduleName),
+					verifyBackupScheduleResourceCreation(provider, NamespacesBackupScheduleResourceFullName, NamespacesBackupScheduleName),
+				),
+			},
+			{
+				Config: tfResourceConfigBuilder.GetLabelsCGBackupScheduleConfig(),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(LabelsBackupScheduleResourceFullName, "name", LabelsBackupScheduleName),
+					verifyBackupScheduleResourceCreation(provider, LabelsBackupScheduleResourceFullName, LabelsBackupScheduleName),
+				),
+			},
+			{
+				Config: tfDataSourceConfigBuilder.GetDataSourceConfig(),
+				Check: resource.ComposeTestCheckFunc(
+					verifyBackupScheduleDataSource(provider, DataSourceFullName, LabelsBackupScheduleName),
+				),
+			},
 		},
 	},
 	)
@@ -114,21 +142,38 @@ func verifyBackupScheduleResourceCreation(
 			return fmt.Errorf("ID not set, resource %s", resourceName)
 		}
 
-		fn := &backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleFullName{
-			Name:                  backupScheduleName,
-			ManagementClusterName: testScopeHelper.Cluster.ManagementClusterName,
-			ClusterName:           testScopeHelper.Cluster.Name,
-			ProvisionerName:       testScopeHelper.Cluster.ProvisionerName,
-		}
+		if testScopeHelper.Cluster != nil {
+			fn := &backupschedulemodels.VmwareTanzuManageV1alpha1ClusterDataprotectionScheduleFullName{
+				Name:                  backupScheduleName,
+				ManagementClusterName: testScopeHelper.Cluster.ManagementClusterName,
+				ClusterName:           testScopeHelper.Cluster.Name,
+				ProvisionerName:       testScopeHelper.Cluster.ProvisionerName,
+			}
 
-		resp, err := context.TMCConnection.BackupScheduleService.BackupScheduleResourceServiceGet(fn)
+			resp, err := context.TMCConnection.BackupScheduleService.BackupScheduleResourceServiceGet(fn)
 
-		if err != nil {
-			return fmt.Errorf("target location resource not found, resource: %s | err: %s", resourceName, err)
-		}
+			if err != nil {
+				return fmt.Errorf("backup schedule resource not found, resource: %s | err: %s", resourceName, err)
+			}
 
-		if resp == nil {
-			return fmt.Errorf("target location resource is empty, resource: %s", resourceName)
+			if resp == nil {
+				return fmt.Errorf("backup schedule resource is empty, resource: %s", resourceName)
+			}
+		} else {
+			fn := &backupscheduleclustergroupmodels.VmwareTanzuManageV1alpha1ClustergroupDataprotectionScheduleFullName{
+				Name:             backupScheduleName,
+				ClusterGroupName: testScopeHelper.ClusterGroup.Name,
+			}
+
+			resp, err := context.TMCConnection.ClusterGroupBackupScheduleService.VmwareTanzuManageV1alpha1ClustergroupBackupScheduleResourceServiceGet(fn)
+
+			if err != nil {
+				return fmt.Errorf("cluster group backup schedule resource not found, resource: %s | err: %s", resourceName, err)
+			}
+
+			if resp == nil {
+				return fmt.Errorf("cluster group backup schedule resource is empty, resource: %s", resourceName)
+			}
 		}
 
 		return nil
@@ -155,10 +200,10 @@ func verifyBackupScheduleDataSource(
 			return fmt.Errorf("ID not set, data source %s", dataSourceName)
 		}
 
-		firstTargetLocation := fmt.Sprintf("%s.0.%s", backupscheduleres.SchedulesKey, backupscheduleres.NameKey)
+		firstBackupSchedule := fmt.Sprintf("%s.0.%s", backupscheduleres.SchedulesKey, backupscheduleres.NameKey)
 
-		if rs.Primary.Attributes[firstTargetLocation] != backupScheduleName {
-			return fmt.Errorf("target location wasn't found at index 0 (%s)", backupScheduleName)
+		if rs.Primary.Attributes[firstBackupSchedule] != backupScheduleName {
+			return fmt.Errorf("backup schedule wasn't found at index 0 (%s)", backupScheduleName)
 		}
 
 		return nil
