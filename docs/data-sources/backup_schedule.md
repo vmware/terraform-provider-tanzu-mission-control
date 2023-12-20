@@ -1,15 +1,16 @@
 ---
 Title: "Backup Schedule Data Source"
 Description: |-
-    Listing backup schedules by cluster scope
+    Listing backup schedules
 ---
 
 # Backup Schedule Data Source
 
-This data source enables users to list existing backup schedules by cluster scope.
-Listing target locations by cluster scope is supported only for clusters enabled with data protection.
+This data source enables users to list existing backup schedules by cluster or cluster group scope.
+Listing backup schedules by cluster or cluster group scope is supported only for clusters/cluster-groups enabled with data protection.
 
-## Example Usage
+## Cluster Backup Schedule
+### Example Usage
 
 ```terraform
 data "tanzu-mission-control_backup_schedule" "demo" {
@@ -19,6 +20,24 @@ data "tanzu-mission-control_backup_schedule" "demo" {
       management_cluster_name = "MGMT_CLS_NAME"
       provisioner_name        = "PROVISIONER_NAME"
       cluster_name            = "CLS_NAME"
+    }
+  }
+
+  query         = "QUERY"
+  sort_by       = "SORT_BY"
+  include_total = true
+}
+```
+
+## Cluster Group Backup Schedule
+### Example Usage
+
+```terraform
+data "tanzu-mission-control_backup_schedule" "demo" {
+  name                    = "BACKUP_SCHEDULE_NAME"
+  scope {
+    cluster_group {
+      cluster_group_name            = "CG_NAME"
     }
   }
 
@@ -55,6 +74,7 @@ data "tanzu-mission-control_backup_schedule" "demo" {
 Optional:
 
 - `cluster` (Block List, Max: 1) Cluster scope block (see [below for nested schema](#nestedblock--scope--cluster))
+- `cluster_group` (Block List, Max: 1) The schema for cluster group full name (see [below for nested schema](#nestedblock--scope--cluster_group))
 
 <a id="nestedblock--scope--cluster"></a>
 ### Nested Schema for `scope.cluster`
@@ -65,6 +85,12 @@ Required:
 - `management_cluster_name` (String) Management cluster name
 - `provisioner_name` (String) Cluster provisioner name
 
+<a id="nestedblock--scope--cluster_group"></a>
+### Nested Schema for `scope.cluster_group`
+
+Required:
+
+- `cluster_group_name` (String) Name of the cluster group
 
 
 <a id="nestedatt--schedules"></a>
@@ -96,6 +122,7 @@ Read-Only:
 Read-Only:
 
 - `cluster` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--scope--cluster))
+- `cluster_group` (Block List, Max: 1) The schema for cluster group full name (see [below for nested schema](#nestedblock--scope--cluster_group))
 
 <a id="nestedobjatt--schedules--scope--cluster"></a>
 ### Nested Schema for `schedules.scope.cluster`
@@ -106,6 +133,12 @@ Read-Only:
 - `management_cluster_name` (String)
 - `provisioner_name` (String)
 
+<a id="nestedblock--scope--cluster_group"></a>
+### Nested Schema for `scope.cluster_group`
+
+Required:
+
+- `cluster_group_name` (String) Name of the cluster group
 
 
 <a id="nestedobjatt--schedules--spec"></a>
@@ -147,6 +180,11 @@ Read-Only:
 - `storage_location` (String)
 - `sys_excluded_namespaces` (List of String)
 - `volume_snapshot_locations` (List of String)
+- `included_cluster_scoped_resources` (List of String)
+- `excluded_cluster_scoped_resources` (List of String)
+- `included_namespace_scoped_resources` (List of String)
+- `excluded_namespace_scoped_resources` (List of String)
+- `snapshot_move_data` (Boolean)
 
 <a id="nestedobjatt--schedules--spec--template--hooks"></a>
 ### Nested Schema for `schedules.spec.template.volume_snapshot_locations`
