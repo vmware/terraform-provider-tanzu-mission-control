@@ -96,13 +96,10 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 				return true, err
 			}
 
-			mgmtClusterHealthy, err := isManagemetClusterHealthy(clusterResp)
-			if err != nil {
+			clusterHealthy, err := isClusterHealthy(clusterResp)
+			if err != nil || !clusterHealthy {
 				log.Printf("[DEBUG] waiting for cluster(%s) to be in Healthy status", clusterFn.Name)
-				return true, nil
-			} else if !mgmtClusterHealthy {
-				log.Printf("[DEBUG] waiting for cluster(%s) to be in Healthy status", clusterFn.Name)
-				return true, nil
+				return true, err
 			}
 
 			fn := &configModels.VmwareTanzuManageV1alpha1ClusterFullName{
@@ -117,7 +114,7 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 				return true, err
 			}
 
-			if kubeConfigReady(err, resp) {
+			if kubeConfigReady(resp) {
 				if err = d.Set(kubeconfigKey, resp.Kubeconfig); err != nil {
 					log.Printf("Failed to set Kubeconfig for cluster %s, error : %s", clusterFn.Name, err.Error())
 					return false, err
@@ -173,7 +170,7 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func isManagemetClusterHealthy(cluster *clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse) (bool, error) {
+func isClusterHealthy(cluster *clustermodel.VmwareTanzuManageV1alpha1ClusterGetClusterResponse) (bool, error) {
 	if cluster == nil || cluster.Cluster == nil || cluster.Cluster.Status == nil || cluster.Cluster.Status.Health == nil {
 		return false, errors.New("cluster data is invalid or nil")
 	}
@@ -185,8 +182,8 @@ func isManagemetClusterHealthy(cluster *clustermodel.VmwareTanzuManageV1alpha1Cl
 	return false, nil
 }
 
-func kubeConfigReady(err error, resp *configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponse) bool {
-	return err == nil && *resp.Status == configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusREADY
+func kubeConfigReady(resp *configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponse) bool {
+	return *resp.Status == configModels.VmwareTanzuManageV1alpha1ClusterKubeconfigGetKubeconfigResponseStatusREADY
 }
 
 func setResourceData(d *schema.ResourceData, eksCluster *eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster, remoteNodepools []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool) error {

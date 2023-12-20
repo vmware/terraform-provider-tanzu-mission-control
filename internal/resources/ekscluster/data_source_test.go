@@ -107,7 +107,7 @@ func TestIsManagemetClusterHealthy(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			result, err := isManagemetClusterHealthy(test.cluster)
+			result, err := isClusterHealthy(test.cluster)
 			if err != nil {
 				if err.Error() != test.err.Error() {
 					t.Errorf("expected error to match")
