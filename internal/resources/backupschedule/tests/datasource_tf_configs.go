@@ -8,7 +8,7 @@ package backupscheduletests
 import (
 	"fmt"
 
-	backupscheduleres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/backupschedule"
+	backupscheduleres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/backupschedule"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 )
 
@@ -30,6 +30,7 @@ var (
 type DataSourceTFConfigBuilder struct {
 	BackupScheduleRequiredResource string
 	ClusterInfo                    string
+	ClusterGroupInfo               string
 }
 
 func InitDataSourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, resourceConfigBuilder *ResourceTFConfigBuilder, bMode DataSourceBuildMode) *DataSourceTFConfigBuilder {
@@ -42,6 +43,7 @@ func InitDataSourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources
 	tfConfigBuilder := &DataSourceTFConfigBuilder{
 		BackupScheduleRequiredResource: backupScheduleRequiredResource,
 		ClusterInfo:                    fmt.Sprintf("%s = \"%s\"", backupscheduleres.ClusterNameKey, scopeHelper.Cluster.Name),
+		ClusterGroupInfo:               fmt.Sprintf("%s = \"%s\"", backupscheduleres.ClusterGroupNameKey, scopeHelper.ClusterGroup.Name),
 	}
 
 	return tfConfigBuilder
@@ -67,5 +69,28 @@ func (builder *DataSourceTFConfigBuilder) GetDataSourceConfig() string {
 		DataSourceName,
 		LabelsBackupScheduleName,
 		builder.ClusterInfo,
+		LabelsBackupScheduleResourceFullName)
+}
+
+func (builder *DataSourceTFConfigBuilder) GetCGDataSourceConfig() string {
+	return fmt.Sprintf(`
+		%s
+
+		data "%s" "%s" {
+          name = "%s"
+		  scope {
+			cluster_group {
+				%s
+			}
+		  }
+
+          depends_on = [%s]
+		}
+		`,
+		builder.BackupScheduleRequiredResource,
+		backupscheduleres.ResourceName,
+		DataSourceName,
+		LabelsBackupScheduleName,
+		builder.ClusterGroupInfo,
 		LabelsBackupScheduleResourceFullName)
 }
