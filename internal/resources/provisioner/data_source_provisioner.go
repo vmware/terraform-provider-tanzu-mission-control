@@ -55,18 +55,34 @@ func dataSourceProvisionerRead(ctx context.Context, d *schema.ResourceData, m in
 		return diag.FromErr(errors.Wrapf(err, "Couldn't read Tanzu Mission Control provisioner configurations."))
 	}
 
-	resp, err := config.TMCConnection.ProvisionerResourceService.ProvisionerResourceServiceList(model.FullName)
-	if err != nil {
-		if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
-			_ = schema.RemoveFromState(d, m)
-			return
+	if model.FullName.Name == "" {
+		resp, err := config.TMCConnection.ProvisionerResourceService.ProvisionerResourceServiceList(model.FullName)
+		if err != nil {
+			if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
+				_ = schema.RemoveFromState(d, m)
+				return
+			}
 		}
-	}
 
-	for i := range resp.Provisioners {
-		d.SetId(resp.Provisioners[i].Meta.UID)
+		for i := range resp.Provisioners {
+			d.SetId(resp.Provisioners[i].Meta.UID)
 
-		if err := d.Set(common.MetaKey, common.FlattenMeta(resp.Provisioners[i].Meta)); err != nil {
+			if err := d.Set(common.MetaKey, common.FlattenMeta(resp.Provisioners[i].Meta)); err != nil {
+				return diag.FromErr(err)
+			}
+		}
+	} else {
+		resp, err := config.TMCConnection.ProvisionerResourceService.ProvisionerResourceServiceGet(model.FullName)
+		if err != nil {
+			if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
+				_ = schema.RemoveFromState(d, m)
+				return
+			}
+		}
+
+		d.SetId(resp.Provisioner.Meta.UID)
+
+		if err := d.Set(common.MetaKey, common.FlattenMeta(resp.Provisioner.Meta)); err != nil {
 			return diag.FromErr(err)
 		}
 	}
