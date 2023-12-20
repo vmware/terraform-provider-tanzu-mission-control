@@ -96,6 +96,22 @@ var searchScopeSchema = &schema.Schema{
 	Required:    true,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			ClusterGroupScopeKey: {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Cluster group scope block",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						ClusterGroupNameKey: {
+							Type:        schema.TypeString,
+							Description: "Cluster group name",
+							Required:    true,
+							ForceNew:    true,
+						},
+					},
+				},
+			},
 			ClusterScopeKey: {
 				Type:        schema.TypeList,
 				Optional:    true,

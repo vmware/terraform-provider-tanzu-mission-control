@@ -20,6 +20,7 @@ const (
 	AttachedValue            = "attached"
 	ClusterKey               = "cluster"
 	ClusterGroupKey          = "cluster_group"
+	ClusterGroupNameKey      = "cluster_group_name"
 )
 
 // Scopes.

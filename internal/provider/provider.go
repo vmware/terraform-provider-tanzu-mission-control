@@ -10,8 +10,8 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/backupschedule"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/backupschedule"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/integration"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/nodepools"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clusterclass"

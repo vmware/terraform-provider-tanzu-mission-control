@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
-	backupschedulemodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/backupschedule"
+	backupschedulemodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/backupschedule/cluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
@@ -31,9 +31,14 @@ const (
 	NameKey                  = "name"
 	ClusterNameKey           = "cluster_name"
 	SpecKey                  = "spec"
+	SelectorKey              = "selector"
 	ProvisionerNameKey       = "provisioner_name"
 	ManagementClusterNameKey = "management_cluster_name"
 	BackupScopeKey           = "backup_scope"
+
+	// Selector Directive Keys.
+	NamesKey         = "names"
+	ExcludedNamesKey = "excluded_names"
 
 	// Spec Directive Keys.
 	PausedKey   = "paused"
@@ -44,23 +49,28 @@ const (
 	RateKey = "rate"
 
 	// Template Directive Keys.
-	BackupTTLKey                = "backup_ttl"
-	SystemExcludedNamespacesKey = "sys_excluded_namespaces"
-	ExcludedNamespacesKey       = "excluded_namespaces"
-	IncludedNamespacesKey       = "included_namespaces"
-	ExcludedResourcesKey        = "excluded_resources"
-	IncludedResourcesKey        = "included_resources"
-	IncludeClusterResourcesKey  = "include_cluster_resources"
-	DefaultVolumesToResticKey   = "default_volumes_to_restic"
-	SnapshotVolumesKey          = "snapshot_volumes"
-	CsiSnapshotTimeoutKey       = "csi_snapshot_timeout"
-	DefaultVolumesToFsBackupKey = "default_volumes_to_fs_backup"
-	StorageLocationKey          = "storage_location"
-	VolumeSnapshotLocationsKey  = "volume_snapshot_locations"
-	OrderedResourcesKey         = "ordered_resources"
-	HooksKey                    = "hooks"
-	LabelSelectorKey            = "label_selector"
-	OrLabelSelectorKey          = "or_label_selector"
+	BackupTTLKey                        = "backup_ttl"
+	SystemExcludedNamespacesKey         = "sys_excluded_namespaces"
+	ExcludedNamespacesKey               = "excluded_namespaces"
+	IncludedNamespacesKey               = "included_namespaces"
+	ExcludedResourcesKey                = "excluded_resources"
+	IncludedResourcesKey                = "included_resources"
+	IncludeClusterResourcesKey          = "include_cluster_resources"
+	DefaultVolumesToResticKey           = "default_volumes_to_restic"
+	SnapshotVolumesKey                  = "snapshot_volumes"
+	CsiSnapshotTimeoutKey               = "csi_snapshot_timeout"
+	IncludedClusterScopedResourcesKey   = "included_cluster_scoped_resources"
+	ExcludedClusterScopedResourcesKey   = "excluded_cluster_scoped_resources"
+	SnapshotMoveDataKey                 = "snapshot_move_data"
+	IncludedNamespaceScopedResourcesKey = "included_namespace_scoped_resources"
+	ExcludedNamespaceScopedResourcesKey = "excluded_namespace_scoped_resources"
+	DefaultVolumesToFsBackupKey         = "default_volumes_to_fs_backup"
+	StorageLocationKey                  = "storage_location"
+	VolumeSnapshotLocationsKey          = "volume_snapshot_locations"
+	OrderedResourcesKey                 = "ordered_resources"
+	HooksKey                            = "hooks"
+	LabelSelectorKey                    = "label_selector"
+	OrLabelSelectorKey                  = "or_label_selector"
 
 	// Hooks Directive Keys.
 	ResourceKey = "resource"
@@ -104,6 +114,22 @@ var scopeSchema = &schema.Schema{
 	Optional:    false,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			ClusterGroupScopeKey: {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Cluster group scope block",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						ClusterGroupNameKey: {
+							Type:        schema.TypeString,
+							Description: "Cluster group name",
+							Required:    true,
+							ForceNew:    true,
+						},
+					},
+				},
+			},
 			ClusterScopeKey: {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -127,6 +153,7 @@ var backupScheduleResourceSchema = map[string]*schema.Schema{
 	BackupScopeKey: backupScopeSchema,
 	SpecKey:        specSchema,
 	common.MetaKey: common.Meta,
+	SelectorKey:    selectorSchema,
 }
 
 var nameSchema = &schema.Schema{
@@ -207,6 +234,49 @@ var templateSchema = &schema.Schema{
 	Optional:    true,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			IncludedClusterScopedResourcesKey: {
+				Type: schema.TypeList,
+				Description: "List of cluster-scoped resource type names to include in the backup.\n" +
+					"If set to \"*\", all cluster-scoped resource types are included.\n " +
+					" The default value is empty, which means only related cluster-scoped resources are included.",
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			ExcludedClusterScopedResourcesKey: {
+				Type: schema.TypeList,
+				Description: "List of cluster-scoped resource type names to exclude from the backup.\n" +
+					"If set to \"*\", all cluster-scoped resource types are excluded.",
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			IncludedNamespaceScopedResourcesKey: {
+				Type: schema.TypeList,
+				Description: "List of of namespace-scoped resource type names to include in the backup.\n" +
+					"The default value is \"*\".",
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			ExcludedNamespaceScopedResourcesKey: {
+				Type: schema.TypeList,
+				Description: "List of of namespace-scoped resource type names to exclude from the backup.\n" +
+					"If set to \"*\", all namespace-scoped resource types are excluded.",
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			SnapshotMoveDataKey: {
+				Type:        schema.TypeBool,
+				Description: "Specifies whether snapshot data should be moved to the target location.(Default:False)",
+				Optional:    true,
+				Default:     false,
+			},
 			CsiSnapshotTimeoutKey: {
 				Description: "Specifies the time used to wait for CSI VolumeSnapshot status turns to ReadyToUse during creation, before returning error as timeout.\nThe default value is 10 minute.\nFormat is the time number and time sign, example: \"50s\" (50 seconds)",
 				Type:        schema.TypeString,
@@ -268,7 +338,6 @@ var templateSchema = &schema.Schema{
 				Type:        schema.TypeBool,
 				Description: "A flag which specifies whether cluster-scoped resources should be included for consideration in the backup.\nIf set to true, all cluster-scoped resources will be backed up. If set to false, all cluster-scoped resources will be excluded from the backup.\nIf unset, all cluster-scoped resources are included if and only if all namespaces are included and there are no excluded namespaces.\nOtherwise, only cluster-scoped resources associated with namespace-scoped resources included in the backup spec are backed up.\nFor example, if a PersistentVolumeClaim is included in the backup, its associated PersistentVolume (which is cluster-scoped) would also be backed up.\n(Default: False)",
 				Optional:    true,
-				Default:     false,
 			},
 			OrderedResourcesKey: {
 				Type:        schema.TypeMap,
@@ -451,3 +520,37 @@ var pHookSchema = &schema.Schema{
 		},
 	},
 }
+
+var selectorSchema = &schema.Schema{
+	Type:        schema.TypeList,
+	Description: "Selector of the cluster group backup schedule",
+	Optional:    true,
+	ForceNew:    true,
+	Elem: &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			NamesKey: {
+				Type:        schema.TypeList,
+				Description: "Specifies name of cluster to be selected.",
+				Optional:    true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			ExcludedNamesKey: {
+				Type:        schema.TypeList,
+				Description: "Specifies the name of excluded clusters.",
+				Optional:    true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			LabelSelectorKey: {
+				Type:        schema.TypeList,
+				Description: "The label selector to selectively adding individual clusters to the cluster group backup schedule.\nIf not specified, all clusters are included.",
+				MaxItems:    1,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: labelSelectorResource,
+				},
+			}},
+	}}
