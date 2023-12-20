@@ -41,7 +41,27 @@ type VmwareTanzuManageV1alpha1ClusterDataprotectionBackupSpec struct {
 	// Otherwise, only cluster-scoped resources associated with namespace-scoped resources.
 	// included in the backup spec are backed up. For example, if a PersistentVolumeClaim is included in the backup,
 	// its associated PersistentVolume (which is cluster-scoped) would also be backed up.
-	IncludeClusterResources bool `json:"includeClusterResources"`
+	IncludeClusterResources bool `json:"includeClusterResources,omitempty"`
+
+	// A slice of cluster-scoped resource type names to include in the backup.
+	// If set to "*", all cluster-scoped resource types are included.
+	// The default value is empty, which means only related cluster-scoped resources are included.
+	IncludedClusterScopedResources []string `json:"includedClusterScopedResources"`
+
+	// A slice of namespace-scoped resource type names to include in the backup.
+	// The default value is "*".
+	IncludedNamespaceScopedResources []string `json:"includedNamespaceScopedResources"`
+
+	// A slice of cluster-scoped resource type names to exclude from the backup.
+	// If set to "*", all cluster-scoped resource types are excluded.
+	ExcludedClusterScopedResources []string `json:"excludedClusterScopedResources"`
+
+	// A slice of namespace-scoped resource type names to exclude from the backup.
+	// If set to "*", all namespace-scoped resource types are excluded.
+	ExcludedNamespaceScopedResources []string `json:"excludedNamespaceScopedResources"`
+
+	// Specifies whether snapshot data should be moved to the target location.
+	SnapshotMoveData bool `json:"snapshotMoveData,omitempty"`
 
 	// The namespace to be included for backup from. If empty, all namespaces are included.
 	IncludedNamespaces []string `json:"includedNamespaces"`
