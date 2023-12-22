@@ -42,6 +42,12 @@ func TestAcceptanceForProvisionerResource(t *testing.T) {
 					checkResourceAttributes(provider, provisionerResourceName, provisionerName),
 				),
 			},
+			{
+				Config: updateTestProvisionerWithResourceConfigValue(provisionerName),
+				Check: resource.ComposeTestCheckFunc(
+					checkUpdateResourceAttributes(provider, provisionerResourceName, provisionerName),
+				),
+			},
 		},
 	})
 }
@@ -56,6 +62,16 @@ func checkResourceAttributes(provider *schema.Provider, resourceName, prvName st
 	return resource.ComposeTestCheckFunc(check...)
 }
 
+func checkUpdateResourceAttributes(provider *schema.Provider, resourceName, prvName string) resource.TestCheckFunc {
+	var check = []resource.TestCheckFunc{
+		verifyProvisionerResourceCreation(provider, resourceName, prvName),
+	}
+
+	check = append(check, metaUpdateResourceAttributeCheck(resourceName)...)
+
+	return resource.ComposeTestCheckFunc(check...)
+}
+
 func getTestProvisionerWithResourceConfigValue(prvName string) string {
 	return fmt.Sprintf(`
 	resource "%s" "%s" {
@@ -64,6 +80,23 @@ func getTestProvisionerWithResourceConfigValue(prvName string) string {
 		%s
 	}
 	`, ResourceName, resourceVar, prvName, eksManagementCluster, testhelper.MetaTemplate)
+}
+
+func updateTestProvisionerWithResourceConfigValue(prvName string) string {
+	return fmt.Sprintf(`
+	resource "%s" "%s" {
+		name = "%s"
+		management_cluster = "%s"
+		meta {
+		description = "resource with updated description"
+		labels = {
+			"key1" : "value1"
+			"key2" : "value2"
+			"key3" : "value3"
+		}
+	  }
+	}
+	`, ResourceName, resourceVar, prvName, eksManagementCluster)
 }
 
 func verifyProvisionerResourceCreation(
@@ -121,6 +154,17 @@ func metaResourceAttributeCheck(resourceName string) []resource.TestCheckFunc {
 		resource.TestCheckResourceAttr(resourceName, "meta.0.description", "resource with description"),
 		resource.TestCheckResourceAttr(resourceName, "meta.0.labels.key1", "value1"),
 		resource.TestCheckResourceAttr(resourceName, "meta.0.labels.key2", "value2"),
+		resource.TestCheckResourceAttrSet(resourceName, "meta.0.uid"),
+	}
+}
+
+func metaUpdateResourceAttributeCheck(resourceName string) []resource.TestCheckFunc {
+	return []resource.TestCheckFunc{
+		resource.TestCheckResourceAttr(resourceName, "meta.#", "1"),
+		resource.TestCheckResourceAttr(resourceName, "meta.0.description", "resource with updated description"),
+		resource.TestCheckResourceAttr(resourceName, "meta.0.labels.key1", "value1"),
+		resource.TestCheckResourceAttr(resourceName, "meta.0.labels.key2", "value2"),
+		resource.TestCheckResourceAttr(resourceName, "meta.0.labels.key3", "value3"),
 		resource.TestCheckResourceAttrSet(resourceName, "meta.0.uid"),
 	}
 }
