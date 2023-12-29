@@ -21,7 +21,7 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
-	provisioner "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/provisioner"
+	provisionermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/provisioner"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
@@ -30,6 +30,32 @@ func TestAcceptanceForProvisionerResource(t *testing.T) {
 
 	provisionerResourceName := fmt.Sprintf("%s.%s", ResourceName, resourceVar)
 	provisionerName := acctest.RandomWithPrefix("tf-prv-test")
+
+	_, enableProvisionerEnvTest := os.LookupEnv("ENABLE_PROVISIONER_ENV_TEST")
+
+	if !enableProvisionerEnvTest {
+		endpoint := "play.abc.def.ghi.com"
+
+		os.Setenv("TF_ACC", "true")
+		os.Setenv(authctx.ServerEndpointEnvVar, endpoint)
+		os.Setenv("VMW_CLOUD_API_TOKEN", "dummy")
+		os.Setenv("VMW_CLOUD_ENDPOINT", "console.cloud.vmware.com")
+
+		setupHTTPMocks(t)
+		setUpProvisionerEndPointMocks(t, endpoint, provisionerName)
+	} else {
+		requiredVars := []string{
+			"VMW_CLOUD_ENDPOINT",
+			"TMC_ENDPOINT",
+			"VMW_CLOUD_API_TOKEN",
+		}
+
+		for _, name := range requiredVars {
+			if _, found := os.LookupEnv(name); !found {
+				t.Errorf("required environment variable '%s' missing", name)
+			}
+		}
+	}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          testhelper.TestPreCheck(t),
@@ -43,6 +69,13 @@ func TestAcceptanceForProvisionerResource(t *testing.T) {
 				),
 			},
 			{
+				PreConfig: func() {
+					if !enableProvisionerEnvTest {
+						t.Log("Setting up the updated GET mock responder...")
+						setupHTTPMocks(t)
+						setUpHTTPMockUpdate(t, provisionerName)
+					}
+				},
 				Config: updateTestProvisionerWithResourceConfigValue(provisionerName),
 				Check: resource.ComposeTestCheckFunc(
 					checkUpdateResourceAttributes(provider, provisionerResourceName, provisionerName),
@@ -118,20 +151,20 @@ func verifyProvisionerResourceCreation(
 			return fmt.Errorf("ID not set, resource: %s", resourceName)
 		}
 
-		config := authctx.TanzuContext{
+		config := &authctx.TanzuContext{
 			ServerEndpoint:   os.Getenv(authctx.ServerEndpointEnvVar),
 			Token:            os.Getenv(authctx.VMWCloudAPITokenEnvVar),
 			VMWCloudEndPoint: os.Getenv(authctx.VMWCloudEndpointEnvVar),
 			TLSConfig:        &proxy.TLSConfig{},
 		}
 
-		err := config.Setup()
+		err := getSetupConfig(config)
 		if err != nil {
 			return errors.Wrap(err, "unable to set the context")
 		}
 
-		fn := &provisioner.VmwareTanzuManageV1alpha1ManagementclusterProvisionerFullName{
-			ManagementClusterName: "eks",
+		fn := &provisionermodel.VmwareTanzuManageV1alpha1ManagementclusterProvisionerFullName{
+			ManagementClusterName: eksManagementCluster,
 			Name:                  provisionerName,
 		}
 
@@ -146,6 +179,14 @@ func verifyProvisionerResourceCreation(
 
 		return nil
 	}
+}
+
+func getSetupConfig(config *authctx.TanzuContext) error {
+	if _, found := os.LookupEnv("ENABLE_PROVISIONER_ENV_TEST"); !found {
+		return config.SetupWithDefaultTransportForTesting()
+	}
+
+	return config.Setup()
 }
 
 func metaResourceAttributeCheck(resourceName string) []resource.TestCheckFunc {
