@@ -12,15 +12,15 @@ Read provisioner in a management cluster using this Terraform module.
 - Only provisioner read feature is enabled for Tanzu Kubernetes Grid Service and Tanzu Kubernetes Grid vSphere management clusters.
 - For a Tanzu Kubernetes cluster running in vSphere, you add a provisioner by creating
   a namespace in the management cluster, which you can do using kubectl.
-  For more information, see [Create Namespaces in the Management Cluster] in the VMware Tanzu Kubernetes Grid Product Documentation.
+  For more information, see [Create Namespaces in the Management Cluster][create-namespaces-in-the-management-cluster] in the VMware Tanzu Kubernetes Grid Product Documentation.
 - For a Tanzu Kubernetes cluster running in vSphere with Tanzu, you add a provisioner by creating
   a vSphere namespace in the Supervisor Cluster, which you can do in your vSphere environment.
-  For more information, see [Configuring and Managing vSphere Namespaces] in the vSphere with
+  For more information, see Configuring and Managing [vSphere 7.x][vsphere-7.x] and  [vSphere 8.x][vsphere-8.x] Namespaces in the vSphere with
   Tanzu Configuration and Management documentation.
 
-[Create Namespaces in the Management Cluster] : https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/1.5/vmware-tanzu-kubernetes-grid-15/GUID-cluster-lifecycle-multiple-management-clusters.html#namespaces
-[Configuring and Managing vSphere 7.x Namespaces] : https://docs.vmware.com/en/VMware-vSphere/7.0/vmware-vsphere-with-tanzu/GUID-1544C9FE-0B23-434E-B823-C59EFC2F7309.html
-[Configuring and Managing vSphere 8.x Namespaces] : https://docs.vmware.com/en/VMware-vSphere/8.0/vsphere-with-tanzu-services-workloads/GUID-1544C9FE-0B23-434E-B823-C59EFC2F7309.html
+[create-namespaces-in-the-management-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/1.5/vmware-tanzu-kubernetes-grid-15/GUID-cluster-lifecycle-multiple-management-clusters.html
+[vsphere-7.x]: https://docs.vmware.com/en/VMware-vSphere/7.0/vmware-vsphere-with-tanzu/GUID-1544C9FE-0B23-434E-B823-C59EFC2F7309.html
+[vsphere-8.x]: https://docs.vmware.com/en/VMware-vSphere/8.0/vsphere-with-tanzu-services-workloads/GUID-1544C9FE-0B23-434E-B823-C59EFC2F7309.html
 
 ### Example Usage
 
