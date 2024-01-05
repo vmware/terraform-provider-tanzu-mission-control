@@ -144,6 +144,9 @@ func setResourceData(d *schema.ResourceData, eksCluster *eksmodel.VmwareTanzuMan
 	// see the explanation of this in the func doc of nodepoolPosMap
 	npPosMap := nodepoolPosMap(tfNodepools)
 
+	// get nodepool mapping of names with their details
+	npDataMap := nodepoolDetailsMap(tfNodepools)
+
 	nodepools := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition, len(tfNodepools))
 
 	for _, np := range remoteNodepools {
@@ -157,6 +160,8 @@ func setResourceData(d *schema.ResourceData, eksCluster *eksmodel.VmwareTanzuMan
 
 		if pos, ok := npPosMap[np.FullName.Name]; ok {
 			nodepools[pos] = npDef
+			// Add tf file nodepool tags as part of nodepool tags so that it will not show difference
+			nodepools[pos].Spec.Tags = npDataMap[np.FullName.Name].Spec.Tags
 		} else {
 			nodepools = append(nodepools, npDef)
 		}
@@ -173,7 +178,6 @@ func setResourceData(d *schema.ResourceData, eksCluster *eksmodel.VmwareTanzuMan
 	if err := d.Set(specKey, spec); err != nil {
 		return errors.Wrapf(err, "Failed to set the spec for cluster %s", eksCluster.FullName.Name)
 	}
-
 	return nil
 }
 
@@ -187,6 +191,16 @@ func nodepoolPosMap(nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolD
 	ret := map[string]int{}
 	for i, np := range nps {
 		ret[np.Info.Name] = i
+	}
+
+	return ret
+}
+
+// Returns mapping of nodepool names to their corresponding details in the array.
+func nodepoolDetailsMap(nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) map[string]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition {
+	ret := map[string]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{}
+	for _, np := range nps {
+		ret[np.Info.Name] = np
 	}
 
 	return ret

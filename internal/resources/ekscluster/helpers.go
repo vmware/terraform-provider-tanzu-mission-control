@@ -193,3 +193,17 @@ func setEquality(s1, s2 []string) bool {
 
 	return true
 }
+
+func copyClusterTagsToNodepools(nodepoolTags map[string]string, eksTags map[string]string) map[string]string {
+	npTags := make(map[string]string)
+	if len(nodepoolTags) > 0 {
+		npTags = nodepoolTags
+	}
+	for tmcTag, tmcVal := range eksTags {
+		if _, ok := npTags[tmcTag]; !ok {
+			npTags[tmcTag] = tmcVal
+		}
+	}
+
+	return npTags
+}

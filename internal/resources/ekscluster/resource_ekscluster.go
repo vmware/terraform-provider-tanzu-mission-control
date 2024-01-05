@@ -586,7 +586,10 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 
 	clusterFn := constructFullname(d)
 	clusterSpec, nps := constructEksClusterSpec(d)
-
+	// Copy tags from cluster to nodepool
+	for _, npDefData := range nps {
+		npDefData.Spec.Tags = copyClusterTagsToNodepools(npDefData.Spec.Tags, clusterSpec.Config.Tags)
+	}
 	clusterReq := &eksmodel.VmwareTanzuManageV1alpha1EksclusterCreateUpdateEksClusterRequest{
 		EksCluster: &eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster{
 			FullName: clusterFn,
@@ -676,6 +679,10 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 
 	clusterSpec, nodepools := constructEksClusterSpec(d)
 
+	// Copy tags from cluster to nodepool
+	for _, npDefData := range nodepools {
+		npDefData.Spec.Tags = copyClusterTagsToNodepools(npDefData.Spec.Tags, clusterSpec.Config.Tags)
+	}
 	// EKS cluster update API on TMC side ignores nodepools passed to it.
 	// The nodepools have to be updated via separate nodepool API, hence we
 	// deal with them separately.
@@ -726,7 +733,6 @@ func resourceClusterImporter(ctx context.Context, d *schema.ResourceData, m inte
 	if err = d.Set(NameKey, resp.EksCluster.FullName.Name); err != nil {
 		return nil, errors.Wrapf(err, "Failed to set name for the cluster %s", resp.EksCluster.FullName.Name)
 	}
-
 	err = setResourceData(d, resp.EksCluster, npresp.Nodepools)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Failed to set resource data during import for %s", resp.EksCluster.FullName.Name)
