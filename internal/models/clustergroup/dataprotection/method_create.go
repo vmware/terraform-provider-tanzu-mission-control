@@ -21,21 +21,24 @@ type VmwareTanzuManageV1alpha1ClustergroupDataprotectionCreateDataProtectionRequ
 	DataProtection *VmwareTanzuManageV1alpha1ClustergroupDataprotectionDataProtection `json:"dataProtection,omitempty"`
 }
 
-// MarshalBinary interface implementation
+// MarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1ClustergroupDataprotectionCreateDataProtectionRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
+
 	return swag.WriteJSON(m)
 }
 
-// UnmarshalBinary interface implementation
+// UnmarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1ClustergroupDataprotectionCreateDataProtectionRequest) UnmarshalBinary(b []byte) error {
 	var res VmwareTanzuManageV1alpha1ClustergroupDataprotectionCreateDataProtectionRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
+
 	*m = res
+
 	return nil
 }
 
@@ -48,20 +51,23 @@ type VmwareTanzuManageV1alpha1ClustergroupDataprotectionCreateDataProtectionResp
 	DataProtection *VmwareTanzuManageV1alpha1ClustergroupDataprotectionDataProtection `json:"dataProtection,omitempty"`
 }
 
-// MarshalBinary interface implementation
+// MarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1ClustergroupDataprotectionCreateDataProtectionResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
+
 	return swag.WriteJSON(m)
 }
 
-// UnmarshalBinary interface implementation
+// UnmarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1ClustergroupDataprotectionCreateDataProtectionResponse) UnmarshalBinary(b []byte) error {
 	var res VmwareTanzuManageV1alpha1ClustergroupDataprotectionCreateDataProtectionResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
+
 	*m = res
+
 	return nil
 }
