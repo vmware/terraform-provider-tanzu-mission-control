@@ -25,20 +25,23 @@ type VmwareTanzuManageV1alpha1ClustergroupDataprotectionFullName struct {
 	OrgID string `json:"orgId,omitempty"`
 }
 
-// MarshalBinary interface implementation
+// MarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1ClustergroupDataprotectionFullName) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
+
 	return swag.WriteJSON(m)
 }
 
-// UnmarshalBinary interface implementation
+// UnmarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1ClustergroupDataprotectionFullName) UnmarshalBinary(b []byte) error {
 	var res VmwareTanzuManageV1alpha1ClustergroupDataprotectionFullName
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
+
 	*m = res
+
 	return nil
 }

@@ -36,23 +36,23 @@ func (m VmwareTanzuManageV1alpha1CommonBatchPhase) Pointer() *VmwareTanzuManageV
 
 const (
 
-	// VmwareTanzuManageV1alpha1CommonBatchPhasePHASEUNSPECIFIED captures enum value "PHASE_UNSPECIFIED"
+	// VmwareTanzuManageV1alpha1CommonBatchPhasePHASEUNSPECIFIED captures enum value "PHASE_UNSPECIFIED".
 	VmwareTanzuManageV1alpha1CommonBatchPhasePHASEUNSPECIFIED VmwareTanzuManageV1alpha1CommonBatchPhase = "PHASE_UNSPECIFIED"
 
-	// VmwareTanzuManageV1alpha1CommonBatchPhasePENDING captures enum value "PENDING"
+	// VmwareTanzuManageV1alpha1CommonBatchPhasePENDING captures enum value "PENDING".
 	VmwareTanzuManageV1alpha1CommonBatchPhasePENDING VmwareTanzuManageV1alpha1CommonBatchPhase = "PENDING"
 
-	// VmwareTanzuManageV1alpha1CommonBatchPhaseAPPLIED captures enum value "APPLIED"
+	// VmwareTanzuManageV1alpha1CommonBatchPhaseAPPLIED captures enum value "APPLIED".
 	VmwareTanzuManageV1alpha1CommonBatchPhaseAPPLIED VmwareTanzuManageV1alpha1CommonBatchPhase = "APPLIED"
 
-	// VmwareTanzuManageV1alpha1CommonBatchPhaseERROR captures enum value "ERROR"
+	// VmwareTanzuManageV1alpha1CommonBatchPhaseERROR captures enum value "ERROR".
 	VmwareTanzuManageV1alpha1CommonBatchPhaseERROR VmwareTanzuManageV1alpha1CommonBatchPhase = "ERROR"
 
-	// VmwareTanzuManageV1alpha1CommonBatchPhaseDELETING captures enum value "DELETING"
+	// VmwareTanzuManageV1alpha1CommonBatchPhaseDELETING captures enum value "DELETING".
 	VmwareTanzuManageV1alpha1CommonBatchPhaseDELETING VmwareTanzuManageV1alpha1CommonBatchPhase = "DELETING"
 )
 
-// for schema
+// for schema.
 var vmwareTanzuManageV1alpha1CommonBatchPhaseEnum []interface{}
 
 func init() {
@@ -60,6 +60,7 @@ func init() {
 	if err := json.Unmarshal([]byte(`["PHASE_UNSPECIFIED","PENDING","APPLIED","ERROR","DELETING"]`), &res); err != nil {
 		panic(err)
 	}
+
 	for _, v := range res {
 		vmwareTanzuManageV1alpha1CommonBatchPhaseEnum = append(vmwareTanzuManageV1alpha1CommonBatchPhaseEnum, v)
 	}
