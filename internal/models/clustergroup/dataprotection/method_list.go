@@ -24,20 +24,23 @@ type VmwareTanzuManageV1alpha1ClustergroupDataprotectionListDataProtectionsRespo
 	TotalCount string `json:"totalCount,omitempty"`
 }
 
-// MarshalBinary interface implementation
+// MarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1ClustergroupDataprotectionListDataProtectionsResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
+
 	return swag.WriteJSON(m)
 }
 
-// UnmarshalBinary interface implementation
+// UnmarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1ClustergroupDataprotectionListDataProtectionsResponse) UnmarshalBinary(b []byte) error {
 	var res VmwareTanzuManageV1alpha1ClustergroupDataprotectionListDataProtectionsResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
+
 	*m = res
+
 	return nil
 }

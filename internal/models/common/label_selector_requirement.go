@@ -35,20 +35,23 @@ type K8sIoApimachineryPkgApisMetaV1LabelSelectorRequirement struct {
 	Values []string `json:"values"`
 }
 
-// MarshalBinary interface implementation
+// MarshalBinary interface implementation.
 func (m *K8sIoApimachineryPkgApisMetaV1LabelSelectorRequirement) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
+
 	return swag.WriteJSON(m)
 }
 
-// UnmarshalBinary interface implementation
+// UnmarshalBinary interface implementation.
 func (m *K8sIoApimachineryPkgApisMetaV1LabelSelectorRequirement) UnmarshalBinary(b []byte) error {
 	var res K8sIoApimachineryPkgApisMetaV1LabelSelectorRequirement
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
+
 	*m = res
+
 	return nil
 }
