@@ -39,20 +39,23 @@ type VmwareTanzuManageV1alpha1CommonBatchDetails struct {
 	Skipped int32 `json:"skipped,omitempty"`
 }
 
-// MarshalBinary interface implementation
+// MarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1CommonBatchDetails) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
+
 	return swag.WriteJSON(m)
 }
 
-// UnmarshalBinary interface implementation
+// UnmarshalBinary interface implementation.
 func (m *VmwareTanzuManageV1alpha1CommonBatchDetails) UnmarshalBinary(b []byte) error {
 	var res VmwareTanzuManageV1alpha1CommonBatchDetails
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
+
 	*m = res
+
 	return nil
 }
