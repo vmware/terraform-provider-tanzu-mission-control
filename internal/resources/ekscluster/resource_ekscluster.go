@@ -590,6 +590,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	for _, npDefData := range nps {
 		npDefData.Spec.Tags = copyClusterTagsToNodepools(npDefData.Spec.Tags, clusterSpec.Config.Tags)
 	}
+
 	clusterReq := &eksmodel.VmwareTanzuManageV1alpha1EksclusterCreateUpdateEksClusterRequest{
 		EksCluster: &eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster{
 			FullName: clusterFn,
@@ -733,6 +734,7 @@ func resourceClusterImporter(ctx context.Context, d *schema.ResourceData, m inte
 	if err = d.Set(NameKey, resp.EksCluster.FullName.Name); err != nil {
 		return nil, errors.Wrapf(err, "Failed to set name for the cluster %s", resp.EksCluster.FullName.Name)
 	}
+
 	err = setResourceData(d, resp.EksCluster, npresp.Nodepools)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Failed to set resource data during import for %s", resp.EksCluster.FullName.Name)

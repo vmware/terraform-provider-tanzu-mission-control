@@ -178,6 +178,7 @@ func setResourceData(d *schema.ResourceData, eksCluster *eksmodel.VmwareTanzuMan
 	if err := d.Set(specKey, spec); err != nil {
 		return errors.Wrapf(err, "Failed to set the spec for cluster %s", eksCluster.FullName.Name)
 	}
+
 	return nil
 }
 

@@ -350,6 +350,7 @@ func flattenSpec(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec)
 	if len(item.SubnetIds) > 0 {
 		data[subnetIdsKey] = item.SubnetIds
 	}
+
 	data[tagsKey] = item.Tags
 
 	if len(item.Taints) > 0 {

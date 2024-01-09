@@ -199,6 +199,7 @@ func copyClusterTagsToNodepools(nodepoolTags map[string]string, eksTags map[stri
 	if len(nodepoolTags) > 0 {
 		npTags = nodepoolTags
 	}
+
 	for tmcTag, tmcVal := range eksTags {
 		if _, ok := npTags[tmcTag]; !ok {
 			npTags[tmcTag] = tmcVal
