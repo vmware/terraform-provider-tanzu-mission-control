@@ -11,8 +11,8 @@ import (
 
 	clusterres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 	backupscheduleres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/backupschedule"
-	dataprotectiontests "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/dataprotection/tests"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
+	dataprotectiontests "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection/tests"
 	targetlocationres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/targetlocation"
 	targetlocationtests "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/targetlocation/tests"
 )

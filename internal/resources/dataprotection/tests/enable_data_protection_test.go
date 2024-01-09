@@ -21,6 +21,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 	dataprotectionmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/dataprotection"
+	dataprotectioncgmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/clustergroup/dataprotection"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
@@ -57,6 +58,12 @@ func TestAcceptanceEnableDataProtectionResource(t *testing.T) {
 					verifyEnableDataProtectionResourceCreation(provider, EnableDataProtectionResourceFullName),
 				),
 			},
+			{
+				Config: tfResourceConfigBuilder.GetEnableClusterGroupDataProtectionConfig(),
+				Check: resource.ComposeTestCheckFunc(
+					verifyEnableClusterGroupLevelDataProtectionResourceCreation(provider, EnableClusterGroupLevelDataProtectionResourceFullName),
+				),
+			},
 		},
 	},
 	)
@@ -90,6 +97,43 @@ func verifyEnableDataProtectionResourceCreation(
 		}
 
 		resp, err := context.TMCConnection.DataProtectionService.DataProtectionResourceServiceList(fn)
+
+		if err != nil {
+			return fmt.Errorf("data protection enablement not found, resource: %s | err: %s", resourceName, err)
+		}
+
+		if resp == nil || len(resp.DataProtections) == 0 {
+			return fmt.Errorf("data protection enablement resource is empty, resource: %s", resourceName)
+		}
+
+		return nil
+	}
+}
+
+func verifyEnableClusterGroupLevelDataProtectionResourceCreation(
+	provider *schema.Provider,
+	resourceName string,
+) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if provider == nil {
+			return fmt.Errorf("provider not initialised")
+		}
+
+		rs, ok := s.RootModule().Resources[resourceName]
+
+		if !ok {
+			return fmt.Errorf("could not found resource %s", resourceName)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("ID not set, resource %s", resourceName)
+		}
+
+		fn := &dataprotectioncgmodels.VmwareTanzuManageV1alpha1ClustergroupDataprotectionFullName{
+			ClusterGroupName: testScopeHelper.ClusterGroup.Name,
+		}
+
+		resp, err := context.TMCConnection.ClusterGroupDataProtectionService.DataProtectionResourceServiceList(fn)
 
 		if err != nil {
 			return fmt.Errorf("data protection enablement not found, resource: %s | err: %s", resourceName, err)
