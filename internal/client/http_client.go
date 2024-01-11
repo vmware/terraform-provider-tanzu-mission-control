@@ -53,6 +53,7 @@ import (
 	helmchartsorgclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/helmcharts"
 	iamorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/iam_policy"
 	policyorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/policy"
+	provisionerclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/provisioner"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 	tanzukubernetesclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzukubernetescluster"
 	tanzupackageclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackage"
@@ -146,6 +147,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		TanzuKubernetesClusterResourceService:         tanzukubernetesclusterclient.New(httpClient),
 		ClusterGroupDataProtectionService:             dataprotectionclustergroupclient.New(httpClient),
 		ClusterGroupBackupScheduleService:             clustergroupbackupscheduleclient.New(httpClient),
+		ProvisionerResourceService:                    provisionerclient.New(httpClient),
 	}
 }
 
@@ -205,4 +207,5 @@ type TanzuMissionControl struct {
 	TanzuKubernetesClusterResourceService         tanzukubernetesclusterclient.ClientService
 	ClusterGroupDataProtectionService             dataprotectionclustergroupclient.ClientService
 	ClusterGroupBackupScheduleService             clustergroupbackupscheduleclient.ClientService
+	ProvisionerResourceService                    provisionerclient.ClientService
 }

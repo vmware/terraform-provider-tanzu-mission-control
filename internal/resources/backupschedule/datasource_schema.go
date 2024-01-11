@@ -26,22 +26,19 @@ var (
 	nameDSSchema = &schema.Schema{
 		Type:        schema.TypeString,
 		Description: "The name of the backup schedule",
-		Required:    true,
-		ForceNew:    true,
+		Optional:    true,
 	}
 
 	managementClusterNameDSSchema = &schema.Schema{
 		Type:        schema.TypeString,
 		Description: "Management cluster name",
-		Required:    true,
-		ForceNew:    true,
+		Optional:    true,
 	}
 
 	provisionerNameDSSchema = &schema.Schema{
 		Type:        schema.TypeString,
 		Description: "Cluster provisioner name",
-		Required:    true,
-		ForceNew:    true,
+		Optional:    true,
 	}
 
 	sortBySchema = &schema.Schema{

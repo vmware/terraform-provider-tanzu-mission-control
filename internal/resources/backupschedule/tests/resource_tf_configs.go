@@ -11,7 +11,6 @@ import (
 
 	backupscheduleres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/backupschedule"
 	clusterres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
-
 	cgres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 	dataprotectiontests "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection/tests"

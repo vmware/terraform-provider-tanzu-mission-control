@@ -89,6 +89,7 @@ run:
     - helmfeature
     - helmrelease
     - managementcluster
+    - provisioner
 
 linters-settings:
   funlen:

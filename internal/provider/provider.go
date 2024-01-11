@@ -43,6 +43,7 @@ import (
 	quotapolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/quota/resource"
 	securitypolicy "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security"
 	securitypolicyresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/security/resource"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/provisioner"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/sourcesecret"
 	utkgresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzukubernetescluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackageinstall"
@@ -85,6 +86,7 @@ func Provider() *schema.Provider {
 			targetlocation.ResourceName:      targetlocation.ResourceTargetLocation(),
 			managementcluster.ResourceName:   managementcluster.ResourceManagementClusterRegistration(),
 			utkgresource.ResourceName:        utkgresource.ResourceTanzuKubernetesCluster(),
+			provisioner.ResourceName:         provisioner.ResourceProvisioner(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:             cluster.DataSourceTMCCluster(),
@@ -110,6 +112,7 @@ func Provider() *schema.Provider {
 			targetlocation.ResourceName:      targetlocation.DataSourceTargetLocations(),
 			managementcluster.ResourceName:   managementcluster.DataSourceManagementClusterRegistration(),
 			clusterclass.ResourceName:        clusterclass.DataSourceClusterClass(),
+			provisioner.ResourceName:         provisioner.DataSourceProvisioner(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
