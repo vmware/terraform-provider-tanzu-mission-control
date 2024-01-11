@@ -15,8 +15,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/backupschedule"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
-	backupscheduleres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/backupschedule"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 	dataprotectionres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection"
 	targetlocationres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/targetlocation"
@@ -35,12 +36,13 @@ func initTestProvider(t *testing.T) *schema.Provider {
 		Schema: authctx.ProviderAuthSchema(),
 		ResourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:           cluster.ResourceTMCCluster(),
+			clustergroup.ResourceName:      clustergroup.ResourceClusterGroup(),
 			targetlocationres.ResourceName: targetlocationres.ResourceTargetLocation(),
 			dataprotectionres.ResourceName: dataprotectionres.ResourceEnableDataProtection(),
-			backupscheduleres.ResourceName: backupscheduleres.ResourceBackupSchedule(),
+			backupschedule.ResourceName:    backupschedule.ResourceBackupSchedule(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			backupscheduleres.ResourceName: backupscheduleres.DataSourceBackupSchedule(),
+			backupschedule.ResourceName: backupschedule.DataSourceBackupSchedule(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}

@@ -27,6 +27,7 @@ import (
 	sourcesecretclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/cluster/sourcesecret"
 	clusterclassclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clusterclass"
 	clustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup"
+	clustergroupbackupscheduleclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/backupschedule"
 	continuousdeliveryclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/continuousdelivery"
 	dataprotectionclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/dataprotection"
 	gitrepositoryclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/gitrepository"
@@ -144,8 +145,9 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ManagementClusterRegistrationResourceService:  managementclusterregistrationclient.New(httpClient),
 		ClusterClassResourceService:                   clusterclassclient.New(httpClient),
 		TanzuKubernetesClusterResourceService:         tanzukubernetesclusterclient.New(httpClient),
-		ProvisionerResourceService:                    provisionerclient.New(httpClient),
 		ClusterGroupDataProtectionService:             dataprotectionclustergroupclient.New(httpClient),
+		ClusterGroupBackupScheduleService:             clustergroupbackupscheduleclient.New(httpClient),
+		ProvisionerResourceService:                    provisionerclient.New(httpClient),
 	}
 }
 
@@ -203,6 +205,7 @@ type TanzuMissionControl struct {
 	ManagementClusterRegistrationResourceService  managementclusterregistrationclient.ClientService
 	ClusterClassResourceService                   clusterclassclient.ClientService
 	TanzuKubernetesClusterResourceService         tanzukubernetesclusterclient.ClientService
-	ProvisionerResourceService                    provisionerclient.ClientService
 	ClusterGroupDataProtectionService             dataprotectionclustergroupclient.ClientService
+	ClusterGroupBackupScheduleService             clustergroupbackupscheduleclient.ClientService
+	ProvisionerResourceService                    provisionerclient.ClientService
 }

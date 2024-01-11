@@ -1,11 +1,15 @@
 resource "tanzu-mission-control_backup_schedule" "sample-full" {
   name = "namespaces-hourly"
   scope {
-    cluster {
-      management_cluster_name = "MGMT_CLS_NAME"
-      provisioner_name        = "PROVISIONER_NAME"
-      cluster_name            = "CLS_NAME"
+    cluster_group {
+      cluster_group_name = "CG_NAME"
     }
+  }
+  selector {
+    names = [
+      "cluster1",
+      "cluster2"
+    ]
   }
 
   backup_scope = "SET_NAMESPACES"
