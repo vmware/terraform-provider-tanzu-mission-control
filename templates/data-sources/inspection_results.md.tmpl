@@ -1,0 +1,22 @@
+---
+Title: "Inspection Results Data Source"
+Description: |-
+    Get inspection results
+---
+
+# Inspection Results Data Source
+
+This data source enables users to get a specific cluster inspection results.
+
+## Example Usage
+
+{{ tffile "examples/data-sources/inspections/datasource_inspection_results.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Status Field ##
+
+Status field is a key-value pair of type string-string and it contains the following keys:
+* phase - The phase which the inspection is in.
+* phase_info - Information about the phase.
+* report - JSON encoded string of the report data in the inspection.

@@ -65,7 +65,7 @@ func (converter *TFSchemaModelConverter[T]) modelHandleBlockMap(modelJSON *Block
 			}
 		}
 
-		for key, value := range definedKeysMapValue {
+		for key, value := range *definedKeysMapValue {
 			converter.buildModelField(modelJSON, rootSchemaDict[key], value, arrIndexer)
 		}
 	}

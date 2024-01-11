@@ -52,7 +52,7 @@ const (
 
 // Copy Creates a copy of a Map object.
 // excludeKeys argument can be used to exclude certain keys to be copied.
-func (curMap *Map) Copy(excludedKeys []string) Map {
+func (curMap *Map) Copy(excludedKeys []string) *Map {
 	nMap := make(Map)
 
 	for k, v := range *curMap {
@@ -74,15 +74,42 @@ func (curMap *Map) Copy(excludedKeys []string) Map {
 		}
 	}
 
-	return nMap
+	return &nMap
+}
+
+// Copy Creates a copy of a BlockToStruct object.
+// excludeKeys argument can be used to exclude certain keys to be copied.
+func (currBlock *BlockToStruct) Copy(excludedKeys []string) *BlockToStruct {
+	nBlock := make(BlockToStruct)
+
+	for k, v := range *currBlock {
+		if len(excludedKeys) > 0 {
+			isExcluded := false
+
+			for _, excludedKey := range excludedKeys {
+				if excludedKey == k {
+					isExcluded = true
+					break
+				}
+			}
+
+			if !isExcluded {
+				nBlock[k] = v
+			}
+		} else {
+			nBlock[k] = v
+		}
+	}
+
+	return &nBlock
 }
 
 // UnpackSchema Unpacks a schema to a higher level schema, useful for data sources which list an individual Swagger API Model.
-func (b *BlockToStruct) UnpackSchema(modelPathSeparator string, mapValue interface{}, prefix string) interface{} {
+func (currBlock *BlockToStruct) UnpackSchema(modelPathSeparator string, mapValue interface{}, prefix string) interface{} {
 	var elem interface{}
 
 	if mapValue == nil {
-		mapValue = b
+		mapValue = currBlock
 	}
 
 	switch mapValue := mapValue.(type) {
@@ -91,32 +118,32 @@ func (b *BlockToStruct) UnpackSchema(modelPathSeparator string, mapValue interfa
 			elem = &BlockToStruct{}
 
 			for key, value := range *mapValue.(*BlockToStruct) {
-				(*elem.(*BlockToStruct))[key] = b.UnpackSchema(modelPathSeparator, value, prefix)
+				(*elem.(*BlockToStruct))[key] = currBlock.UnpackSchema(modelPathSeparator, value, prefix)
 			}
 		} else {
 			elem = &Map{}
 
 			for key, value := range *mapValue.(*Map) {
-				(*elem.(*Map))[key] = b.UnpackSchema(modelPathSeparator, value, prefix)
+				(*elem.(*Map))[key] = currBlock.UnpackSchema(modelPathSeparator, value, prefix)
 			}
 		}
 	case *BlockToStructSlice:
 		elem = &BlockToStructSlice{}
 
 		for _, elemMap := range *mapValue {
-			elemValue := b.UnpackSchema(modelPathSeparator, elemMap, prefix)
+			elemValue := currBlock.UnpackSchema(modelPathSeparator, elemMap, prefix)
 			*elem.(*BlockToStructSlice) = append(*elem.(*BlockToStructSlice), elemValue.(*BlockToStruct))
 		}
 	case *BlockSliceToStructSlice:
 		elem = &BlockSliceToStructSlice{}
 
 		for _, elemMap := range *mapValue {
-			elemValue := b.UnpackSchema(modelPathSeparator, elemMap, prefix)
+			elemValue := currBlock.UnpackSchema(modelPathSeparator, elemMap, prefix)
 			*elem.(*BlockSliceToStructSlice) = append(*elem.(*BlockSliceToStructSlice), elemValue.(*BlockToStruct))
 		}
 	case *ListToStruct:
 		elem = &ListToStruct{}
-		elemValue := b.UnpackSchema(modelPathSeparator, (*mapValue)[0], prefix)
+		elemValue := currBlock.UnpackSchema(modelPathSeparator, (*mapValue)[0], prefix)
 		*elem.(*ListToStruct) = append(*elem.(*ListToStruct), elemValue.(string))
 	case *EvaluatedField:
 		elem = &EvaluatedField{
