@@ -64,9 +64,9 @@ func dataSourceProvisionerRead(ctx context.Context, d *schema.ResourceData, m in
 			}
 		}
 
-		for i := range resp.Provisioners {
-			d.SetId(resp.Provisioners[i].Meta.UID)
+		d.SetId(resp.Provisioners[0].Meta.UID)
 
+		for i := range resp.Provisioners {
 			if err := d.Set(common.MetaKey, common.FlattenMeta(resp.Provisioners[i].Meta)); err != nil {
 				return diag.FromErr(err)
 			}
