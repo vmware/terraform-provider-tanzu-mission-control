@@ -21,6 +21,7 @@ const (
 	ClusterKey               = "cluster"
 	ClusterGroupKey          = "cluster_group"
 	ClusterGroupNameKey      = "cluster_group_name"
+	BatchUIDAnnotationKey    = "tmc.cloud.vmware.com/source-uid"
 )
 
 // Scopes.

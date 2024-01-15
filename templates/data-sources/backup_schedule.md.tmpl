@@ -1,16 +1,22 @@
 ---
 Title: "Backup Schedule Data Source"
 Description: |-
-    Listing backup schedules by cluster scope
+    Listing backup schedules
 ---
 
 # Backup Schedule Data Source
 
-This data source enables users to list existing backup schedules by cluster scope.
-Listing target locations by cluster scope is supported only for clusters enabled with data protection.
+This data source enables users to list existing backup schedules by cluster or cluster group scope.
+Listing backup schedules by cluster or cluster group scope is supported only for clusters/cluster-groups enabled with data protection.
 
-## Example Usage
+## Cluster Backup Schedule
+### Example Usage
 
 {{ tffile "examples/data-sources/backupschedule/data_source_backup_schedule.tf" }}
+
+## Cluster Group Backup Schedule
+### Example Usage
+
+{{ tffile "examples/data-sources/backupschedule/data_source_cluster_group_backup_schedule.tf" }}
 
 {{ .SchemaMarkdown | trimspace }}
