@@ -1,12 +1,15 @@
 ---
 Title: "Data Protection of a Tanzu Kubernetes Cluster"
 Description: |-
-    An example of using Data Protection Feature for a Tanzu Kubernetes Cluster
+    An example of using Data Protection Feature for a Tanzu Kubernetes Cluster/Cluster Group
 ---
 # Enable Data Protection
 
 The `tanzu-mission-control_enable_data_protection` resource enables users to activate and set up data protection for a Tanzu Kubernetes Cluster.
 Once enabled, users can create instant backups or schedule backups for later.
+
+**NOTE :** To resolve cluster and cluster group data protection conflicts use the below command
+``terraform refresh``
 
 For more information regarding data protection, see [Data Protection][data-protection].
 
@@ -26,7 +29,10 @@ For more information regarding target location, see [Target Location][target-loc
 
 # Backup Schedule
 
-The `tanzu-mission-control_backup_schedule` resource enables users to create and configure scheduled backups in a cluster.
+The `tanzu-mission-control_backup_schedule` resource enables users to create and configure scheduled backups in a cluster/cluster-group.
+
+NOTE : To resolve cluster and cluster group backup schedule conflicts use the below command
+``terraform refresh``
 
 Backups can be applied in 3 levels:
 
