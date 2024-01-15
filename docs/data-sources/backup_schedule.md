@@ -14,7 +14,7 @@ Listing backup schedules by cluster or cluster group scope is supported only for
 
 ```terraform
 data "tanzu-mission-control_backup_schedule" "demo" {
-  name                    = "BACKUP_SCHEDULE_NAME"
+  name = "BACKUP_SCHEDULE_NAME"
   scope {
     cluster {
       management_cluster_name = "MGMT_CLS_NAME"
@@ -34,10 +34,10 @@ data "tanzu-mission-control_backup_schedule" "demo" {
 
 ```terraform
 data "tanzu-mission-control_backup_schedule" "demo" {
-  name                    = "BACKUP_SCHEDULE_NAME"
+  name = "BACKUP_SCHEDULE_NAME"
   scope {
     cluster_group {
-      cluster_group_name            = "CG_NAME"
+      cluster_group_name = "CG_NAME"
     }
   }
 
@@ -52,13 +52,13 @@ data "tanzu-mission-control_backup_schedule" "demo" {
 
 ### Required
 
-- `name` (String) The name of the backup schedule
 - `scope` (Block List, Min: 1, Max: 1) Search scope block (see [below for nested schema](#nestedblock--scope))
 
 ### Optional
 
 - `include_total_count` (Boolean) Whether to include total count of backups.
 (Default: True)
+- `name` (String) The name of the backup schedule
 - `query` (String) Define a query for listing backups
 - `sort_by` (String) Sort backups by field.
 
@@ -74,7 +74,7 @@ data "tanzu-mission-control_backup_schedule" "demo" {
 Optional:
 
 - `cluster` (Block List, Max: 1) Cluster scope block (see [below for nested schema](#nestedblock--scope--cluster))
-- `cluster_group` (Block List, Max: 1) The schema for cluster group full name (see [below for nested schema](#nestedblock--scope--cluster_group))
+- `cluster_group` (Block List, Max: 1) Cluster group scope block (see [below for nested schema](#nestedblock--scope--cluster_group))
 
 <a id="nestedblock--scope--cluster"></a>
 ### Nested Schema for `scope.cluster`
@@ -82,15 +82,20 @@ Optional:
 Required:
 
 - `cluster_name` (String) Cluster name
+
+Optional:
+
 - `management_cluster_name` (String) Management cluster name
 - `provisioner_name` (String) Cluster provisioner name
+
 
 <a id="nestedblock--scope--cluster_group"></a>
 ### Nested Schema for `scope.cluster_group`
 
 Required:
 
-- `cluster_group_name` (String) Name of the cluster group
+- `cluster_group_name` (String) Cluster group name
+
 
 
 <a id="nestedatt--schedules"></a>
@@ -102,6 +107,7 @@ Read-Only:
 - `meta` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--meta))
 - `name` (String)
 - `scope` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--scope))
+- `selector` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--selector))
 - `spec` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--spec))
 
 <a id="nestedobjatt--schedules--meta"></a>
@@ -122,7 +128,7 @@ Read-Only:
 Read-Only:
 
 - `cluster` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--scope--cluster))
-- `cluster_group` (Block List, Max: 1) The schema for cluster group full name (see [below for nested schema](#nestedblock--scope--cluster_group))
+- `cluster_group` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--scope--cluster_group))
 
 <a id="nestedobjatt--schedules--scope--cluster"></a>
 ### Nested Schema for `schedules.scope.cluster`
@@ -133,12 +139,43 @@ Read-Only:
 - `management_cluster_name` (String)
 - `provisioner_name` (String)
 
-<a id="nestedblock--scope--cluster_group"></a>
-### Nested Schema for `scope.cluster_group`
 
-Required:
+<a id="nestedobjatt--schedules--scope--cluster_group"></a>
+### Nested Schema for `schedules.scope.cluster_group`
 
-- `cluster_group_name` (String) Name of the cluster group
+Read-Only:
+
+- `cluster_group_name` (String)
+
+
+
+<a id="nestedobjatt--schedules--selector"></a>
+### Nested Schema for `schedules.selector`
+
+Read-Only:
+
+- `excluded_names` (List of String)
+- `label_selector` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--selector--label_selector))
+- `names` (List of String)
+
+<a id="nestedobjatt--schedules--selector--label_selector"></a>
+### Nested Schema for `schedules.selector.label_selector`
+
+Read-Only:
+
+- `match_expression` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--selector--label_selector--match_expression))
+- `match_labels` (Map of String)
+
+<a id="nestedobjatt--schedules--selector--label_selector--match_expression"></a>
+### Nested Schema for `schedules.selector.label_selector.match_labels`
+
+Read-Only:
+
+- `key` (String)
+- `operator` (String)
+- `values` (List of String)
+
+
 
 
 <a id="nestedobjatt--schedules--spec"></a>
@@ -167,24 +204,24 @@ Read-Only:
 - `csi_snapshot_timeout` (String)
 - `default_volumes_to_fs_backup` (Boolean)
 - `default_volumes_to_restic` (Boolean)
+- `excluded_cluster_scoped_resources` (List of String)
+- `excluded_namespace_scoped_resources` (List of String)
 - `excluded_namespaces` (List of String)
 - `excluded_resources` (List of String)
 - `hooks` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--spec--template--hooks))
 - `include_cluster_resources` (Boolean)
+- `included_cluster_scoped_resources` (List of String)
+- `included_namespace_scoped_resources` (List of String)
 - `included_namespaces` (List of String)
 - `included_resources` (List of String)
 - `label_selector` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--spec--template--label_selector))
 - `or_label_selector` (List of Object) (see [below for nested schema](#nestedobjatt--schedules--spec--template--or_label_selector))
 - `ordered_resources` (Map of String)
+- `snapshot_move_data` (Boolean)
 - `snapshot_volumes` (Boolean)
 - `storage_location` (String)
 - `sys_excluded_namespaces` (List of String)
 - `volume_snapshot_locations` (List of String)
-- `included_cluster_scoped_resources` (List of String)
-- `excluded_cluster_scoped_resources` (List of String)
-- `included_namespace_scoped_resources` (List of String)
-- `excluded_namespace_scoped_resources` (List of String)
-- `snapshot_move_data` (Boolean)
 
 <a id="nestedobjatt--schedules--spec--template--hooks"></a>
 ### Nested Schema for `schedules.spec.template.volume_snapshot_locations`

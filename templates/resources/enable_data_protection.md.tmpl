@@ -1,7 +1,7 @@
 ---
 Title: "Data Protection Resource"
 Description: |-
-   Enabling data protection on a cluster.
+   Enabling data protection
 ---
 
 # Cluster Data Protection Resource
@@ -20,6 +20,14 @@ For more information regarding data protection, see [Data Protection][data-prote
 ## Cluster Group Scope Example Usage
 
 {{ tffile "examples/resources/dataprotection/resource_enable_data_protection_cluster_group.tf" }}
+
+
+**NOTE :** To resolve cluster and cluster group data protection conflicts use the below command
+``terraform refresh``
+
+For instance, in case cluster group data protection is created on already existing data protection at cluster level.
+Use above command and remove cluster level data protection resource from the terraform file.
+Similarly, in case of disable data protection, use above command and remove associated backup schedule from terraform file.
 
 ## Import Cluster Scope Data Protection
 The resource ID for importing an existing data protection should be comprised of a full cluster name separated by '/'.

@@ -20,6 +20,8 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	dataprotectionmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/dataprotection"
 	dataprotectioncgmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/clustergroup/dataprotection"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
+	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/dataprotection/scope"
 )
 
@@ -64,6 +66,18 @@ func resourceEnableDataProtectionRead(ctx context.Context, data *schema.Resource
 	config := m.(authctx.TanzuContext)
 
 	err := populateDataFromServer(ctx, config, scopedFullnameData, data)
+
+	if scopedFullnameData.Scope == scope.ClusterScope {
+		metaData := data.Get(common.MetaKey).([]interface{})[0].(map[string]interface{})
+		annotations := metaData[common.AnnotationsKey].(map[string]interface{})
+
+		if _, ok := annotations[commonscope.BatchUIDAnnotationKey]; ok {
+			_ = schema.RemoveFromState(data, m)
+
+			return diags
+		}
+	}
+
 	if err != nil {
 		if clienterrors.IsNotFoundError(err) {
 			if !helper.IsContextCallerSet(ctx) {

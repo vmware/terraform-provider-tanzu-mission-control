@@ -1,12 +1,12 @@
 ---
 Title: "Backup Schedule Resource"
 Description: |-
-   Creating a backup schedule for cluster.
+   Creating a backup schedule.
 ---
 
 # Backup Schedule Resource
 
-This resource enables users to create and configure scheduled backups in a cluster.
+This resource enables users to create and configure scheduled backups in a cluster or cluster group level.
 Backups can be applied in 3 levels:
 
 * Entire Cluster
@@ -16,6 +16,12 @@ Backups can be applied in 3 levels:
 For more information regarding scheduled backups, see [Scheduled Backups][backup-schedule].
 
 [backup-schedule]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-89926F80-050A-4F1C-9D04-D56D5F453995.html?hWord=N4IghgNiBcIEZgMYGsCuAHABAZ0QCwFMATVCAkAXyA
+
+**NOTE :** To resolve cluster and cluster group backup schedule conflicts use the below command
+``terraform refresh``
+
+For instance, in case cluster group/cluster data protection is disabled then use above command
+and remove cluster group/cluster backup schedule resource from terraform file.
 
 # Entire Cluster Weekly Backup Schedule
 
@@ -35,6 +41,26 @@ For more information regarding scheduled backups, see [Scheduled Backups][backup
 ## Example Usage
 
 {{ tffile "examples/resources/backupschedule/resource_backup_schedule_labels.tf" }}
+
+
+# Entire Cluster Group Weekly Backup Schedule
+
+## Example Usage
+
+{{ tffile "examples/resources/backupschedule/resource_backup_schedule_cg_full_cluster.tf" }}
+
+
+# Selected Namespaces Hourly Cluster Group Backup Schedule
+
+## Example Usage
+
+{{ tffile "examples/resources/backupschedule/resource_backup_schedule_cg_namespaces.tf" }}
+
+# Resources Selection By Label Selector Cluster Group Backup Schedule
+
+## Example Usage
+
+{{ tffile "examples/resources/backupschedule/resource_backup_schedule_cg_labels.tf" }}
 
 ## Import Backup Schedule
 The resource ID for importing an existing backup schedule should be comprised of a full cluster name and a backup schedule name separated by '/'.

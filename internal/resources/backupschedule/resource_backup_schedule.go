@@ -139,19 +139,19 @@ func resourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData, 
 
 		resp, err := readResourceWait(ctx, &config, backupScheduleFn)
 
+		// check if managed at cluster group level then remove from state
+		if resp != nil && resp.Schedule != nil && resp.Schedule.Meta != nil {
+			if _, ok := resp.Schedule.Meta.Annotations[commonscope.BatchUIDAnnotationKey]; ok {
+				_ = schema.RemoveFromState(data, m)
+				return diags
+			}
+		}
+
 		if err != nil {
 			if clienterrors.IsNotFoundError(err) {
-				if !helper.IsContextCallerSet(ctx) {
-					*data = schema.ResourceData{}
-
-					return diags
-				} else if helper.IsDeleteState(ctx) {
-					// d.SetId("") is automatically called assuming delete returns no errors, but
-					// it is added here for explicitness.
-					_ = schema.RemoveFromState(data, m)
-
-					return diags
-				}
+				// resource not found in backend then delete the state
+				_ = schema.RemoveFromState(data, m)
+				return diags
 			}
 
 			return diag.FromErr(errors.Wrapf(err, "Couldn't read backup schedule.\nManagement Cluster Name: %s, Provisioner Name: %s, Cluster Name: %s, Schedule Name: %s",
