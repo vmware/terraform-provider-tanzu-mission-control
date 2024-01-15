@@ -38,6 +38,7 @@ import (
 	policyclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/policy"
 	sourcesecretclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/sourcesecret"
 	credentialclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/credential"
+	custompolicytemplateclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/custompolicytemplate"
 	eksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster"
 	eksnodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster/nodepool"
 	inspectionsclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/inspections"
@@ -146,6 +147,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ClusterClassResourceService:                   clusterclassclient.New(httpClient),
 		TanzuKubernetesClusterResourceService:         tanzukubernetesclusterclient.New(httpClient),
 		ProvisionerResourceService:                    provisionerclient.New(httpClient),
+		CustomPolicyTemplateResourceService:           custompolicytemplateclient.New(httpClient),
 	}
 }
 
@@ -205,4 +207,5 @@ type TanzuMissionControl struct {
 	TanzuKubernetesClusterResourceService         tanzukubernetesclusterclient.ClientService
 	ProvisionerResourceService                    provisionerclient.ClientService
 	InspectionsResourceService                    inspectionsclient.ClientService
+	CustomPolicyTemplateResourceService           custompolicytemplateclient.ClientService
 }
