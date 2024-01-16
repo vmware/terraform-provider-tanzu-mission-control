@@ -106,17 +106,19 @@ func checkUpdateResourceAttributes(provider *schema.Provider, resourceName, prvN
 }
 
 func getTestProvisionerWithResourceConfigValue(prvName string) string {
-	return fmt.Sprintf(`
+	prov_resource := fmt.Sprintf(`
 	resource "%s" "%s" {
 		name = "%s"
 		management_cluster = "%s"
 		%s
 	}
 	`, ResourceName, resourceVar, prvName, eksManagementCluster, testhelper.MetaTemplate)
+	fmt.Println("resource defn is: ", prov_resource)
+	return prov_resource
 }
 
 func updateTestProvisionerWithResourceConfigValue(prvName string) string {
-	return fmt.Sprintf(`
+	prov_update_rsrc := fmt.Sprintf(`
 	resource "%s" "%s" {
 		name = "%s"
 		management_cluster = "%s"
@@ -130,6 +132,8 @@ func updateTestProvisionerWithResourceConfigValue(prvName string) string {
 	  }
 	}
 	`, ResourceName, resourceVar, prvName, eksManagementCluster)
+	fmt.Println("update resource defn is: ", prov_update_rsrc)
+	return prov_update_rsrc
 }
 
 func verifyProvisionerResourceCreation(

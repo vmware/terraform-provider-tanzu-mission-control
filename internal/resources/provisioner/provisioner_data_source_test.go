@@ -43,7 +43,7 @@ func TestAcceptanceForProvisionerDataSource(t *testing.T) {
 }
 
 func getTestProvisionerWithDataSourceConfigValue(prvName string) string {
-	return fmt.Sprintf(`
+	prov_rsrc := fmt.Sprintf(`
 	resource "%s" "%s" {
 		name = "%s"
 		management_cluster = "%s"
@@ -55,6 +55,8 @@ func getTestProvisionerWithDataSourceConfigValue(prvName string) string {
 		management_cluster = tanzu-mission-control_provisioner.provisioner_resource.management_cluster
 	}
 	`, ResourceName, resourceVar, prvName, eksManagementCluster, testhelper.MetaTemplate, ResourceName, dataSourceVar)
+	fmt.Println("resource defn is: ", prov_rsrc)
+	return prov_rsrc
 }
 
 func checkDataSourceAttributes(dataSourceName, resourceName string) resource.TestCheckFunc {
