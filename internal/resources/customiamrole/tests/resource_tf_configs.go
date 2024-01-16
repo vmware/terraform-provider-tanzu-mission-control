@@ -56,19 +56,21 @@ func (builder *ResourceTFConfigBuilder) GetCustomFullIAMRoleConfig() string {
 			  }
 			}
 			
-			resources = ["ORGANIZATION", "CLUSTER_GROUP", "CLUSTER"]
+			allowed_scopes = ["ORGANIZATION", "CLUSTER_GROUP", "CLUSTER"]
 			tanzu_permissions = ["account.credential.iam.get"] 
 
-			rule {
-			  resources      = ["deployments"] 
-			  verbs          = ["get", "list"] 
-			  api_groups     = ["*"] 
-			}
-		
-			rule {
-			  verbs      = ["get", "list"]
-			  api_groups = ["*"]   
-			  url_paths  = ["/healthz"]
+			kubernetes_permissions {
+			 rule {
+			   resources      = ["deployments"] 
+			   verbs          = ["get", "list"] 
+			   api_groups     = ["*"] 
+			 }
+		     
+			 rule {
+			   verbs      = ["get", "list"]
+			   api_groups = ["*"]   
+			   url_paths  = ["/healthz"]
+			 }
 			}
 		  }
 		}
@@ -85,12 +87,14 @@ func (builder *ResourceTFConfigBuilder) GetCustomSlimIAMRoleConfig() string {
 		  name = "%s"
 		
 		  spec {			
-			resources = ["ORGANIZATION", "CLUSTER_GROUP", "CLUSTER"]
+			allowed_scopes = ["ORGANIZATION", "CLUSTER_GROUP", "CLUSTER"]
 
-			rule {
-			  resources      = ["deployments"] 
-			  verbs          = ["get", "list"] 
-			  api_groups     = ["*"] 
+			kubernetes_permissions {
+			  rule {
+			    resources      = ["deployments"] 
+			    verbs          = ["get", "list"] 
+			    api_groups     = ["*"] 
+			  }
 			}
 		  }
 		}

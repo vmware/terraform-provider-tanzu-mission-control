@@ -18,8 +18,8 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clusterclass"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/credential"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/custompolicytemplate"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/customiamrole"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/custompolicytemplate"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/ekscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/gitrepository"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmcharts"
@@ -91,7 +91,7 @@ func Provider() *schema.Provider {
 			utkgresource.ResourceName:         utkgresource.ResourceTanzuKubernetesCluster(),
 			provisioner.ResourceName:          provisioner.ResourceProvisioner(),
 			custompolicytemplate.ResourceName: custompolicytemplate.ResourceCustomPolicyTemplate(),
-			customiamrole.ResourceName:       customiamrole.ResourceCustomIAMRole(),
+			customiamrole.ResourceName:        customiamrole.ResourceCustomIAMRole(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:                      cluster.DataSourceTMCCluster(),

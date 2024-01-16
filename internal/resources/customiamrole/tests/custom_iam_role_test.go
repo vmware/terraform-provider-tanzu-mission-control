@@ -96,7 +96,7 @@ func verifyTanzuKubernetesClusterResource(
 			Name: customRoleName,
 		}
 
-		resp, err := context.TMCConnection.CustomIAMRoleResourceService.CustomIARoleResourceServiceGet(fn)
+		resp, err := context.TMCConnection.CustomIAMRoleResourceService.CustomIAMRoleResourceServiceGet(fn)
 
 		if err != nil {
 			return errors.Errorf("Custom IAM Role resource not found, resource: %s | err: %s", resourceName, err)
