@@ -50,6 +50,9 @@ type VmwareTanzuManageV1alpha1AksclusterClusterConfig struct {
 	// The metadata to apply to the cluster to assist with categorization and organization.
 	Tags map[string]string `json:"tags,omitempty"`
 
+	// The managed identity to apply to the cluster.
+	IdentityConfig *VmwareTanzuManageV1alpha1AksclusterManagedIdentityConfig `json:"identityConfig,omitempty"`
+
 	// Kubernetes version of the cluster.
 	Version string `json:"version,omitempty"`
 }

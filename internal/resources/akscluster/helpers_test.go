@@ -159,6 +159,12 @@ func aTestCluster(w ...clusterWither) *models.VmwareTanzuManageV1alpha1AksCluste
 				AutoUpgradeConfig: &models.VmwareTanzuManageV1alpha1AksclusterAutoUpgradeConfig{
 					Channel: models.VmwareTanzuManageV1alpha1AksclusterChannelSTABLE.Pointer(),
 				},
+				IdentityConfig: &models.VmwareTanzuManageV1alpha1AksclusterManagedIdentityConfig{
+					Type: models.VmwareTanzuManageV1alpha1AksclusterManagedIdentityTypeUSERASSIGNED.Pointer(),
+					UserAssignedIdentityType: &models.VmwareTanzuManageV1alpha1AksclusterUserAssignedIdentityTypeConfig{
+						ManagedResourceID: "resource-id-for-a-user-assigned-managed-identity",
+					},
+				},
 			},
 			ProxyName:  "my-proxy",
 			AgentName:  "my-agent-name",
@@ -371,6 +377,12 @@ func aTestClusterDataMap(w ...mapWither) map[string]any {
 				}},
 				"auto_upgrade_config": []any{map[string]any{
 					"upgrade_channel": "STABLE",
+				}},
+				"identity_config": []any{map[string]any{
+					"type": "IDENTITY_TYPE_USER_ASSIGNED",
+					"user_assigned": []any{map[string]any{
+						"resource_id": "resource-id-for-a-user-assigned-managed-identity",
+					}},
 				}},
 			}},
 			"nodepool": []any{
