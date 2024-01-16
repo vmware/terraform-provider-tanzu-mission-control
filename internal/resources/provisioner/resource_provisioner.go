@@ -135,6 +135,7 @@ func resourceProvisionerRead(ctx context.Context, d *schema.ResourceData, m inte
 			_ = schema.RemoveFromState(d, m)
 			return
 		}
+		return
 	}
 
 	d.SetId(resp.Provisioner.Meta.UID)

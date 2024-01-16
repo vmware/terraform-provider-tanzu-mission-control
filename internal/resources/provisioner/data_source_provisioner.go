@@ -62,6 +62,7 @@ func dataSourceProvisionerRead(ctx context.Context, d *schema.ResourceData, m in
 				_ = schema.RemoveFromState(d, m)
 				return
 			}
+			return
 		}
 
 		for i := range resp.Provisioners {
@@ -78,6 +79,7 @@ func dataSourceProvisionerRead(ctx context.Context, d *schema.ResourceData, m in
 				_ = schema.RemoveFromState(d, m)
 				return
 			}
+			return
 		}
 
 		d.SetId(resp.Provisioner.Meta.UID)
