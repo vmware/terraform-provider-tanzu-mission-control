@@ -1,5 +1,5 @@
-//go:build provisioner
-// +build provisioner
+//go:build provisionerds
+// +build provisionerds
 
 /*
 Copyright © 2023 VMware, Inc. All Rights Reserved.

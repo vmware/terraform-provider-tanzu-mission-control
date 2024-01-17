@@ -8,6 +8,7 @@ package provisioner
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -129,6 +130,7 @@ func resourceProvisionerRead(ctx context.Context, d *schema.ResourceData, m inte
 		return diag.FromErr(errors.Wrapf(err, "Couldn't read Tanzu Mission Control provisioner configurations."))
 	}
 
+	time.Sleep(1 * time.Minute)
 	resp, err := config.TMCConnection.ProvisionerResourceService.ProvisionerResourceServiceGet(model.FullName)
 	if err != nil {
 		if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
