@@ -14,6 +14,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/custompolicytemplate"
 	policykindcustom "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
 )
 
@@ -21,9 +22,10 @@ func initTestProvider(t *testing.T) *schema.Provider {
 	testAccProvider := &schema.Provider{
 		Schema: authctx.ProviderAuthSchema(),
 		ResourcesMap: map[string]*schema.Resource{
-			policykindcustom.ResourceName: ResourceCustomPolicy(),
-			cluster.ResourceName:          cluster.ResourceTMCCluster(),
-			clustergroup.ResourceName:     clustergroup.ResourceClusterGroup(),
+			policykindcustom.ResourceName:     ResourceCustomPolicy(),
+			cluster.ResourceName:              cluster.ResourceTMCCluster(),
+			clustergroup.ResourceName:         clustergroup.ResourceClusterGroup(),
+			custompolicytemplate.ResourceName: custompolicytemplate.ResourceCustomPolicyTemplate(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}

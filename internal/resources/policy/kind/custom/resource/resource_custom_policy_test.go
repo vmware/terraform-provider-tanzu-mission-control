@@ -26,6 +26,7 @@ import (
 	policyclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/cluster"
 	policyclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/clustergroup"
 	policyorganizationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/organization"
+	custompolicytemplateres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/custompolicytemplate"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	policykindCustom "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom"
 	policyoperations "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/operations"
@@ -61,6 +62,7 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 
 func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 	testConfig := testGetDefaultAcceptanceConfig(t)
+	customPolicyTemplateResource := fmt.Sprintf("%s.%s", custompolicytemplateres.ResourceName, "test_custom_policy_template")
 
 	t.Log("start custom policy resource acceptance tests!")
 
@@ -267,7 +269,62 @@ func TestAcceptanceForCustomPolicyResource(t *testing.T) {
 	)
 
 	t.Log("Custom policy resource acceptance test complete for tmc-require-labels recipe!")
+
+	// Test case for custom policy template assignment resource
+	resource.Test(t, resource.TestCase{
+		PreCheck:          testhelper.TestPreCheck(t),
+		ProviderFactories: testhelper.GetTestProviderFactories(testConfig.Provider),
+		CheckDestroy:      nil,
+		Steps: []resource.TestStep{
+			{
+				Config: testConfig.getTestCustomPolicyTemplateConfigValue(),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(customPolicyTemplateResource, "name", "tf-custom-template-test"),
+				),
+			},
+			{
+				PreConfig: func() {
+					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" {
+						t.Skip("KUBECONFIG env var is not set for cluster scoped custom policy acceptance test")
+					}
+				},
+				ResourceName:      customPolicyTemplateResource,
+				ImportState:       true,
+				ImportStateVerify: true,
+				Config:            testConfig.getTestCustomPolicyConfigValue(scope.ClusterScope, policykindCustom.TMCCustomRecipe),
+				Check:             testConfig.checkCustomPolicyResourceAttributes(scope.ClusterScope),
+			},
+			{
+				Config:            testConfig.getTestCustomPolicyConfigValue(scope.ClusterGroupScope, policykindCustom.TMCCustomRecipe),
+				ResourceName:      customPolicyTemplateResource,
+				ImportState:       true,
+				ImportStateVerify: true,
+				Check: resource.ComposeTestCheckFunc(
+					testConfig.checkCustomPolicyResourceAttributes(scope.ClusterGroupScope),
+				),
+			},
+			{
+				PreConfig: func() {
+					if testConfig.ScopeHelperResources.OrgID == "" {
+						t.Skip("ORG_ID env var is not set for organization scoped custom policy acceptance test")
+					}
+				},
+				ResourceName:      customPolicyTemplateResource,
+				ImportState:       true,
+				ImportStateVerify: true,
+				Config:            testConfig.getTestCustomPolicyConfigValue(scope.OrganizationScope, policykindCustom.TMCCustomRecipe),
+				Check:             testConfig.checkCustomPolicyResourceAttributes(scope.OrganizationScope),
+			},
+		},
+	},
+	)
+
+	t.Log("Custom policy resource acceptance test complete for custom recipe!")
 	t.Log("all custom policy resource acceptance tests complete!")
+}
+
+func (testConfig *testAcceptanceConfig) getTestCustomPolicyConfigValue(scope scope.Scope, recipe policykindCustom.Recipe) string {
+	return fmt.Sprintf("%s\n%s", testConfig.getTestCustomPolicyTemplateConfigValue(), testConfig.getTestCustomPolicyResourceBasicConfigValue(scope, recipe))
 }
 
 func (testConfig *testAcceptanceConfig) getTestCustomPolicyResourceBasicConfigValue(scope scope.Scope, recipe policykindCustom.Recipe) string {
@@ -303,6 +360,85 @@ func (testConfig *testAcceptanceConfig) getTestCustomPolicyResourceBasicConfigVa
 	 }
 	}
 	`, helperBlock, testConfig.CustomPolicyResource, testConfig.CustomPolicyResourceVar, testConfig.CustomPolicyName, scopeBlock, inputBlock)
+}
+
+func (testConfig *testAcceptanceConfig) getTestCustomPolicyTemplateConfigValue() string {
+	customTemplate := `
+resource "tanzu-mission-control_custom_policy_template" "test_custom_policy_template" {
+  name = "tf-custom-template-test"
+
+  spec {
+    object_type   = "ConstraintTemplate"
+    template_type = "OPAGatekeeper"
+
+    data_inventory {
+      kind    = "ConfigMap"
+      group   = "admissionregistration.k8s.io"
+      version = "v1"
+    }
+
+    data_inventory {
+      kind    = "Deployment"
+      group   = "extensions"
+      version = "v1"
+    }
+
+    template_manifest = <<YAML
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: tf-custom-template-test
+  annotations:
+    description: Requires Pods to have readiness and/or liveness probes.
+spec:
+  crd:
+    spec:
+      names:
+        kind: tf-custom-template-test
+      validation:
+        openAPIV3Schema:
+          properties:
+            probes:
+              type: array
+              items:
+                type: string
+            probeTypes:
+              type: array
+              items:
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srequiredprobes
+        probe_type_set = probe_types {
+          probe_types := {type | type := input.parameters.probeTypes[_]}
+        }
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          probe := input.parameters.probes[_]
+          probe_is_missing(container, probe)
+          msg := get_violation_message(container, input.review, probe)
+        }
+        probe_is_missing(ctr, probe) = true {
+          not ctr[probe]
+        }
+        probe_is_missing(ctr, probe) = true {
+          probe_field_empty(ctr, probe)
+        }
+        probe_field_empty(ctr, probe) = true {
+          probe_fields := {field | ctr[probe][field]}
+          diff_fields := probe_type_set - probe_fields
+          count(diff_fields) == count(probe_type_set)
+        }
+        get_violation_message(container, review, probe) = msg {
+          msg := sprintf("Container <%v> in your <%v> <%v> has no <%v>", [container.name, review.kind.kind, review.object.metadata.name, probe])
+        }
+YAML
+  }
+}
+`
+
+	return customTemplate
 }
 
 // getTestCustomPolicyResourceInput builds the input block for custom policy resource based a recipe.
@@ -426,6 +562,33 @@ func (testConfig *testAcceptanceConfig) getTestCustomPolicyResourceInput(recipe 
           ]
           kinds = [
             "Event",
+          ]
+        }
+      }
+    }
+`
+	case policykindCustom.TMCCustomRecipe:
+		inputBlock = `
+	input {
+      custom {
+        template_name = "tf-custom-template-test"
+        audit         = false
+
+        target_kubernetes_resources {
+          api_groups = [
+            "apps",
+          ]
+          kinds = [
+            "Deployment"
+          ]
+        }
+
+        target_kubernetes_resources {
+          api_groups = [
+            "apps",
+          ]
+          kinds = [
+            "StatefulSet",
           ]
         }
       }
