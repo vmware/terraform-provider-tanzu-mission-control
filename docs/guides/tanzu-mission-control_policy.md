@@ -275,3 +275,8 @@ resource "tanzu-mission-control_custom_policy" "cluster_group_scoped_tmc-block-r
 }
 ```
 
+## Custom Template and Custom Policy
+
+Template provides a declarative definition of a policy, which can be used to apply custom constraints on managed kubernetes resources.
+Custom policy consumes these declared custom templates to enforce specific policies. One must create the custom template before consuming it the custom policy.
+Please refer to custom policy template and custom policy terraform scripts within examples.
