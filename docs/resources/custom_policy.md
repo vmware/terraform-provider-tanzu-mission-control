@@ -18,6 +18,7 @@ In the Tanzu Mission Control custom policy resource, there are six system define
 - **tmc-external-ips**
 - **tmc-https-ingress**
 - **tmc-require-labels**
+- **Any custom template defined in TMC**
 
 ## Policy Scope and Inheritance
 
@@ -407,6 +408,79 @@ resource "tanzu-mission-control_custom_policy" "cluster_scoped_tmc-require-label
 }
 ```
 
+## Cluster scoped Custom Policy
+
+### Example Usage
+
+```terraform
+resource "tanzu-mission-control_custom_policy" "custom" {
+  name = "test-custom-template-tf"
+
+  scope {
+    cluster {
+      management_cluster_name = "attached"
+      provisioner_name        = "attached"
+      name                    = "tf-create-test"
+    }
+  }
+
+
+  spec {
+    input {
+      custom {
+        template_name = "replica-count-range-enforcement"
+        audit         = false
+
+        parameters = jsonencode({
+          ranges = [
+            {
+              minReplicas = 3
+              maxReplicas = 7
+            }
+          ]
+        })
+
+
+
+        target_kubernetes_resources {
+          api_groups = [
+            "apps",
+          ]
+          kinds = [
+            "Deployment"
+          ]
+        }
+
+        target_kubernetes_resources {
+          api_groups = [
+            "apps",
+          ]
+          kinds = [
+            "StatefulSet",
+          ]
+        }
+      }
+    }
+
+    namespace_selector {
+      match_expressions {
+        key      = "<label-selector-requirement-key-1>"
+        operator = "<label-selector-requirement-operator>"
+        values = [
+          "<label-selector-requirement-value-1>",
+          "<label-selector-requirement-value-2>"
+        ]
+      }
+      match_expressions {
+        key      = "<label-selector-requirement-key-2>"
+        operator = "<label-selector-requirement-operator>"
+        values   = []
+      }
+    }
+  }
+}
+```
+
 ## Cluster group scoped TMC-block-nodeport-service Custom Policy
 
 ### Example Usage
@@ -735,6 +809,77 @@ resource "tanzu-mission-control_custom_policy" "cluster_group_scoped_tmc-require
       match_expressions {
         key      = "not-a-component"
         operator = "DoesNotExist"
+        values   = []
+      }
+    }
+  }
+}
+```
+
+## Cluster group scoped Custom Policy
+
+### Example Usage
+
+```terraform
+resource "tanzu-mission-control_custom_policy" "custom" {
+  name = "test-custom-template-tf"
+
+  scope {
+    cluster_group {
+      cluster_group = "tf-create-test"
+    }
+  }
+
+
+  spec {
+    input {
+      custom {
+        template_name = "replica-count-range-enforcement"
+        audit         = false
+
+        parameters = jsonencode({
+          ranges = [
+            {
+              minReplicas = 3
+              maxReplicas = 7
+            }
+          ]
+        })
+
+
+
+        target_kubernetes_resources {
+          api_groups = [
+            "apps",
+          ]
+          kinds = [
+            "Deployment"
+          ]
+        }
+
+        target_kubernetes_resources {
+          api_groups = [
+            "apps",
+          ]
+          kinds = [
+            "StatefulSet",
+          ]
+        }
+      }
+    }
+
+    namespace_selector {
+      match_expressions {
+        key      = "<label-selector-requirement-key-1>"
+        operator = "<label-selector-requirement-operator>"
+        values = [
+          "<label-selector-requirement-value-1>",
+          "<label-selector-requirement-value-2>"
+        ]
+      }
+      match_expressions {
+        key      = "<label-selector-requirement-key-2>"
+        operator = "<label-selector-requirement-operator>"
         values   = []
       }
     }
@@ -1077,6 +1222,75 @@ resource "tanzu-mission-control_custom_policy" "organization_scoped_tmc-require-
 }
 ```
 
+## Organization scoped Custom Policy
+
+### Example Usage
+
+```terraform
+resource "tanzu-mission-control_custom_policy" "custom" {
+  name = "test-custom-template-tf"
+
+  scope {
+    organization {
+      organization = "dummy-id"
+    }
+  }
+
+  spec {
+    input {
+      custom {
+        template_name = "replica-count-range-enforcement"
+        audit         = false
+
+        parameters = jsonencode({
+          ranges = [
+            {
+              minReplicas = 3
+              maxReplicas = 7
+            }
+          ]
+        })
+
+
+        target_kubernetes_resources {
+          api_groups = [
+            "apps",
+          ]
+          kinds = [
+            "Deployment"
+          ]
+        }
+
+        target_kubernetes_resources {
+          api_groups = [
+            "apps",
+          ]
+          kinds = [
+            "StatefulSet",
+          ]
+        }
+      }
+    }
+
+    namespace_selector {
+      match_expressions {
+        key      = "<label-selector-requirement-key-1>"
+        operator = "<label-selector-requirement-operator>"
+        values = [
+          "<label-selector-requirement-value-1>",
+          "<label-selector-requirement-value-2>"
+        ]
+      }
+      match_expressions {
+        key      = "<label-selector-requirement-key-2>"
+        operator = "<label-selector-requirement-operator>"
+        values   = []
+      }
+    }
+  }
+}
+```
+
 <!-- schema generated by tfplugindocs -->
 ## Schema
 
@@ -1147,7 +1361,7 @@ Required:
 
 Required:
 
-- `input` (Block List, Min: 1, Max: 1) Input for the custom policy, having one of the valid recipes: tmc_block_nodeport_service, tmc_block_resources, tmc_block_rolebinding_subjects, tmc_external_ips, tmc_https_ingress or tmc_require_labels. (see [below for nested schema](#nestedblock--spec--input))
+- `input` (Block List, Min: 1, Max: 1) Input for the custom policy, having one of the valid recipes: [tmc_block_nodeport_service tmc_block_resources tmc_block_rolebinding_subjects tmc_external_ips tmc_https_ingress tmc_require_labels custom]. (see [below for nested schema](#nestedblock--spec--input))
 
 Optional:
 
@@ -1158,12 +1372,36 @@ Optional:
 
 Optional:
 
+- `custom` (Block List, Max: 1) The input schema for custom policy tmc_external_ips recipe version v1 (see [below for nested schema](#nestedblock--spec--input--custom))
 - `tmc_block_nodeport_service` (Block List, Max: 1) The input schema for custom policy tmc_block_nodeport_service recipe version v1 (see [below for nested schema](#nestedblock--spec--input--tmc_block_nodeport_service))
 - `tmc_block_resources` (Block List, Max: 1) The input schema for custom policy tmc_block_resources recipe version v1 (see [below for nested schema](#nestedblock--spec--input--tmc_block_resources))
 - `tmc_block_rolebinding_subjects` (Block List, Max: 1) The input schema for custom policy tmc_block_rolebinding_subjects recipe version v1 (see [below for nested schema](#nestedblock--spec--input--tmc_block_rolebinding_subjects))
 - `tmc_external_ips` (Block List, Max: 1) The input schema for custom policy tmc_external_ips recipe version v1 (see [below for nested schema](#nestedblock--spec--input--tmc_external_ips))
 - `tmc_https_ingress` (Block List, Max: 1) The input schema for custom policy tmc_https_ingress recipe version v1 (see [below for nested schema](#nestedblock--spec--input--tmc_https_ingress))
 - `tmc_require_labels` (Block List, Max: 1) The input schema for custom policy tmc_require_labels recipe version v1 (see [below for nested schema](#nestedblock--spec--input--tmc_require_labels))
+
+<a id="nestedblock--spec--input--custom"></a>
+### Nested Schema for `spec.input.custom`
+
+Required:
+
+- `target_kubernetes_resources` (Block List, Min: 1) A list of kubernetes api resources on which the policy will be enforced, identified using apiGroups and kinds. (see [below for nested schema](#nestedblock--spec--input--custom--target_kubernetes_resources))
+- `template_name` (String) Name of custom template.
+
+Optional:
+
+- `audit` (Boolean) Audit (dry-run).
+- `parameters` (String) JSON encoded template parameters.
+
+<a id="nestedblock--spec--input--custom--target_kubernetes_resources"></a>
+### Nested Schema for `spec.input.custom.target_kubernetes_resources`
+
+Required:
+
+- `api_groups` (List of String) APIGroup is a group containing the resource type.
+- `kinds` (List of String) Kind is the name of the object schema (resource type).
+
+
 
 <a id="nestedblock--spec--input--tmc_block_nodeport_service"></a>
 ### Nested Schema for `spec.input.tmc_block_nodeport_service`

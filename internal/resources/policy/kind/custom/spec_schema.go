@@ -92,6 +92,12 @@ func ConstructSpec(d *schema.ResourceData) (spec *policymodel.VmwareTanzuManageV
 		if inputRecipeData.inputTMCRequireLabels != nil {
 			spec.Input = *inputRecipeData.inputTMCRequireLabels
 		}
+	case TMCCustomRecipe:
+		spec.Recipe = inputRecipeData.recipeTMCCustom
+
+		if inputRecipeData.inputTMCCustom != nil {
+			spec.Input = *inputRecipeData.inputTMCCustom
+		}
 	case UnknownRecipe:
 		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(RecipesAllowed[:], `, `))
 	}
@@ -203,6 +209,20 @@ func FlattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		}
 	case string(UnknownRecipe):
 		fmt.Printf("[ERROR]: No valid input recipe block found: minimum one valid input recipe block is required among: %v. Please check the schema.", strings.Join(RecipesAllowed[:], `, `))
+	default:
+		var tmcCustomRecipeInput policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustom
+
+		err = tmcCustomRecipeInput.UnmarshalBinary(byteSlice)
+
+		if err != nil {
+			return data
+		}
+
+		inputRecipeData = &inputRecipe{
+			recipe:          TMCCustomRecipe,
+			recipeTMCCustom: spec.Recipe,
+			inputTMCCustom:  &tmcCustomRecipeInput,
+		}
 	}
 
 	flattenSpecData[policy.InputKey] = flattenInput(inputRecipeData)
