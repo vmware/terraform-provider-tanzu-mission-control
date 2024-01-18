@@ -38,6 +38,7 @@ import (
 	policyclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/policy"
 	sourcesecretclustergroupclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/clustergroup/sourcesecret"
 	credentialclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/credential"
+	customiamroleclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/customiamrole"
 	custompolicytemplateclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/custompolicytemplate"
 	eksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster"
 	eksnodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster/nodepool"
@@ -53,6 +54,7 @@ import (
 	helmchartsorgclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/helmcharts"
 	iamorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/iam_policy"
 	policyorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/policy"
+	permissiontemplateclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/permissiontemplate"
 	provisionerclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/provisioner"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 	recipeclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/recipe"
@@ -150,6 +152,8 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		ProvisionerResourceService:                    provisionerclient.New(httpClient),
 		CustomPolicyTemplateResourceService:           custompolicytemplateclient.New(httpClient),
 		RecipeResourceService:                         recipeclient.New(httpClient),
+		CustomIAMRoleResourceService:                  customiamroleclient.New(httpClient),
+		PermissionTemplateService:                     permissiontemplateclient.New(httpClient),
 	}
 }
 
@@ -211,4 +215,6 @@ type TanzuMissionControl struct {
 	InspectionsResourceService                    inspectionsclient.ClientService
 	CustomPolicyTemplateResourceService           custompolicytemplateclient.ClientService
 	RecipeResourceService                         recipeclient.ClientService
+	CustomIAMRoleResourceService                  customiamroleclient.ClientService
+	PermissionTemplateService                     permissiontemplateclient.ClientService
 }
