@@ -8,6 +8,7 @@ package provisioner
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -23,6 +24,11 @@ import (
 type (
 	contextMethodKey struct{}
 )
+
+// Adding a wait time of  10sec after the create/update operation as the operation takes some time to complete and
+// there is no status field to rely on to check the completion of create/update operation.
+// NOTE: If the error still persists then the timeout have to tuned in accordingly.
+const waitTime = 10 * time.Second
 
 func ResourceProvisioner() *schema.Resource {
 	return &schema.Resource{
@@ -80,6 +86,9 @@ func resourceProvisionerCreate(ctx context.Context, d *schema.ResourceData, m in
 
 	d.SetId(provisionerResponse.Provisioner.Meta.UID)
 
+	log.Printf("Wait for %d seconds after the create the operation before fetching the state", waitTime)
+	time.Sleep(waitTime)
+
 	return append(diags, resourceProvisionerRead(context.WithValue(ctx, contextMethodKey{}, helper.CreateState), d, m)...)
 }
 
@@ -117,6 +126,9 @@ func resourceProvisionerInPlaceUpdate(ctx context.Context, d *schema.ResourceDat
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to update Tanzu Mission Control provisioner entry, name : %s", model.FullName.Name))
 	}
+
+	log.Printf("Wait for %d seconds after the update the operation before fetching the state", waitTime)
+	time.Sleep(waitTime)
 
 	return resourceProvisionerRead(ctx, d, m)
 }
