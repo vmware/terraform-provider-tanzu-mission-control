@@ -86,6 +86,17 @@ var clusterSchema = map[string]*schema.Schema{
 			return true
 		},
 	},
+	waitForKubeconfig: {
+		Type:        schema.TypeBool,
+		Description: "Wait until pinniped extension is ready to provide kubeconfig",
+		Default:     false,
+		Optional:    true,
+	},
+	kubeconfigKey: {
+		Type:        schema.TypeString,
+		Description: "Kubeconfig for connecting to newly created cluster base64 encoded. This will only be returned if you have elected to wait for kubeconfig.",
+		Computed:    true,
+	},
 }
 
 var clusterSpecSchema = &schema.Schema{
@@ -957,4 +968,13 @@ func flattenEniConfig(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfi
 	data[securityGroupsKey] = item.SecurityGroupIds
 
 	return data
+}
+
+func isWaitForKubeconfig(data *schema.ResourceData) bool {
+	v := data.Get(waitForKubeconfig)
+	if v != nil {
+		return v.(bool)
+	}
+
+	return false
 }

@@ -48,10 +48,12 @@ data "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
 - `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--meta))
 - `ready_wait_timeout` (String) Wait timeout duration until cluster resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero
 - `spec` (Block List, Max: 1) Spec for the cluster (see [below for nested schema](#nestedblock--spec))
+- `wait_for_kubeconfig` (Boolean) Wait until pinniped extension is ready to provide kubeconfig
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `kubeconfig` (String) Kubeconfig for connecting to newly created cluster base64 encoded. This will only be returned if you have elected to wait for kubeconfig.
 - `status` (Map of String) Status of the cluster
 
 <a id="nestedblock--meta"></a>
