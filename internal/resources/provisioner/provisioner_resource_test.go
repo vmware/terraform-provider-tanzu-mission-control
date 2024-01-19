@@ -83,6 +83,7 @@ func TestAcceptanceForProvisionerResource(t *testing.T) {
 			},
 		},
 	})
+	t.Log("provisioner resource acceptance test complete!")
 }
 
 func checkResourceAttributes(provider *schema.Provider, resourceName, prvName string) resource.TestCheckFunc {

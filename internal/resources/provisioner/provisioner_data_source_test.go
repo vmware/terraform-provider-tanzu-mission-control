@@ -40,6 +40,7 @@ func TestAcceptanceForProvisionerDataSource(t *testing.T) {
 			},
 		},
 	})
+	t.Log("provisioner datasource acceptance test complete!")
 }
 
 func getTestProvisionerWithDataSourceConfigValue(prvName string) string {
