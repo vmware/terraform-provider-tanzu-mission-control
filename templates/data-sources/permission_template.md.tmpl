@@ -1,0 +1,25 @@
+---
+Title: "Permission Template Data Source"
+Description: |-
+    Retrieves an AWS CloudFormation permission template for creating credentials.
+---
+
+# Permission Template Data Source
+
+This data source enables users get an AWS CloudFormation template for creating the necessary assets in AWS when creating TMC credentials.
+
+**NOTE**: Currently, only the 'AWS_EC2' and 'AWS_EKS' capabilities are supported in conjunction with the 'DATA_PROTECTION' and 'MANAGED_K8S_PROVIDER' providers.
+
+# Data Protection Permission Template
+
+## Example Usage
+
+{{ tffile "examples/data-sources/permissiontemplate/example_usage_data_protection.tf" }}
+
+# EKS Permission Template
+
+## Example Usage
+
+{{ tffile "examples/data-sources/permissiontemplate/example_usage_eks.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}

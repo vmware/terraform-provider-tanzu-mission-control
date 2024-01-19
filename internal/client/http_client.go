@@ -54,6 +54,7 @@ import (
 	helmchartsorgclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/helmcharts"
 	iamorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/iam_policy"
 	policyorganizationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/organization/policy"
+	permissiontemplateclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/permissiontemplate"
 	provisionerclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/provisioner"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 	recipeclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/recipe"
@@ -152,6 +153,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		CustomPolicyTemplateResourceService:           custompolicytemplateclient.New(httpClient),
 		RecipeResourceService:                         recipeclient.New(httpClient),
 		CustomIAMRoleResourceService:                  customiamroleclient.New(httpClient),
+		PermissionTemplateService:                     permissiontemplateclient.New(httpClient),
 	}
 }
 
@@ -214,4 +216,5 @@ type TanzuMissionControl struct {
 	CustomPolicyTemplateResourceService           custompolicytemplateclient.ClientService
 	RecipeResourceService                         recipeclient.ClientService
 	CustomIAMRoleResourceService                  customiamroleclient.ClientService
+	PermissionTemplateService                     permissiontemplateclient.ClientService
 }
