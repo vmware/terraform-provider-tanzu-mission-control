@@ -1,5 +1,5 @@
-//go:build clusterclass
-// +build clusterclass
+//go:build clusterclass || tanzukubernetescluster
+// +build clusterclass tanzukubernetescluster
 
 /*
 Copyright © 2023 VMware, Inc. All Rights Reserved.
