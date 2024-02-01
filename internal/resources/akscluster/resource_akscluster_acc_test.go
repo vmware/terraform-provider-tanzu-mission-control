@@ -402,6 +402,9 @@ func testAKSCluster(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) st
         enable_disk_csi_driver = false
         enable_file_csi_driver = false
       }
+      identity_config {
+        type = "IDENTITY_TYPE_SYSTEM_ASSIGNED"
+      }
     }
     nodepool {
       name = "systemnp"
@@ -433,6 +436,9 @@ func testAKSClusterEnableCSI(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFul
         enable_disk_csi_driver = true
         enable_file_csi_driver = true
       } 
+      identity_config {
+        type = "IDENTITY_TYPE_SYSTEM_ASSIGNED"
+      }
     }
     nodepool {
       name = "systemnp"
@@ -464,6 +470,9 @@ func testAKSClusterAddUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1Aksclus
         enable_disk_csi_driver = true
         enable_file_csi_driver = true
       } 
+      identity_config {
+        type = "IDENTITY_TYPE_SYSTEM_ASSIGNED"
+      }
     }
     nodepool {
       name = "systemnp"
@@ -507,6 +516,9 @@ func mockCluster(w ...clusterWither) *aksmodel.VmwareTanzuManageV1alpha1AksClust
 				StorageConfig: &aksmodel.VmwareTanzuManageV1alpha1AksclusterStorageConfig{
 					EnableDiskCsiDriver: false,
 					EnableFileCsiDriver: false,
+				},
+				IdentityConfig: &aksmodel.VmwareTanzuManageV1alpha1AksclusterManagedIdentityConfig{
+					Type: aksmodel.VmwareTanzuManageV1alpha1AksclusterManagedIdentityTypeSYSTEMASSIGNED.Pointer(),
 				},
 				Version: "1.26.6",
 			},
