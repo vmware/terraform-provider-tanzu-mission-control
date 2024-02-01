@@ -18,6 +18,7 @@ const testDefaultCreateEksClusterScript = `
 			config {
 				kubernetes_version 	= "{{.KubernetesVersion}}"
 				role_arn 			= "arn:aws:iam::{{.AWSAccountNumber}}:role/control-plane.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
+				tags           = { "testclustertag" : "testclustertagvalue", "testingtag": "testingtagvalue", "testsametag":"testsametagval"}
 				kubernetes_network_config {
 					service_cidr = "10.100.0.0/16" // Forces new
 				}
@@ -35,13 +36,13 @@ const testDefaultCreateEksClusterScript = `
 					  "0.0.0.0/0",
 					]
 					security_groups = [ // Forces new
-					  "sg-0b77767aa25e20fec",
+					  "sg-0a6768722e9716768",
 					]
 					subnet_ids = [ // Forces new
-					  "subnet-0c285da60b373a4cc",
-					  "subnet-0be854d94fa197cb7",
-					  "subnet-04975d535cf761785",
-					  "subnet-0d50aa17c694457c9",
+					  	"subnet-0a184f6302af32a86",
+						"subnet-0ed95d5c212ac62a1",
+						"subnet-0526ecaecde5b1bf7",
+						"subnet-06897e1063cc0cf4e",
 					]
 				}
 			}
@@ -54,22 +55,29 @@ const testDefaultCreateEksClusterScript = `
 				spec {
 					// Refer to nodepool's schema
 					role_arn       = "arn:aws:iam::{{.AWSAccountNumber}}:role/worker.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
-					ami_type       = "AL2_x86_64" // Forces New
+					ami_type       = "CUSTOM" // Forces New
 					capacity_type  = "ON_DEMAND"
-					root_disk_size = 20 // Default: 20GiB, forces New
-					tags           = { "testnptag" : "testnptagvalue" }
+					ami_info { 
+						ami_id = "ami-2qu8409oisdfj0qw"
+                        override_bootstrap_cmd = "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami"
+					}
+					remote_access {
+                        ssh_key = "anshulc"
+						security_groups = ["sg-0a6768722e9716768"]
+					}
+					root_disk_size = 40 // Default: 20GiB, forces New
+					tags           = { "testnptag" : "testnptagvalue", "testingtag": "testingnptagvalue"}
 					node_labels    = { "testnplabelkey" : "testnplabelvalue" }
 					subnet_ids = [ // Required, forces new
-						"subnet-0c285da60b373a4cc",
-						"subnet-0be854d94fa197cb7",
-						"subnet-04975d535cf761785",
-						"subnet-0d50aa17c694457c9",
+						"subnet-0a184f6302af32a86",
+						"subnet-0ed95d5c212ac62a1",
+						"subnet-0526ecaecde5b1bf7",
+						"subnet-06897e1063cc0cf4e",
 					]
-					
 					scaling_config  {
-						desired_size = 2
-						max_size     = 2
-						min_size     = 2
+						desired_size = 4
+						max_size     = 8
+						min_size     = 1
 					}
 					update_config {
 						max_unavailable_nodes = "2"
@@ -89,13 +97,17 @@ const testDefaultCreateEksClusterScript = `
 				spec  {
 					// Refer to nodepool's schema
 					role_arn    = "arn:aws:iam::{{.AWSAccountNumber}}:role/worker.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
-					tags        = { "testnptag" : "testnptagvalue" }
+					tags        = { "testnptag" : "testnptagvalue", "testingtag": "testingnptagvalue"}
 					node_labels = { "testnplabelkey" : "testnplabelvalue" }
+					launch_template {
+						name = "PLACE_HOLDER"
+						version = "PLACE_HOLDER"
+					}
 					subnet_ids = [ // Required, forces new
-						"subnet-0c285da60b373a4cc",
-						"subnet-0be854d94fa197cb7",
-						"subnet-04975d535cf761785",
-						"subnet-0d50aa17c694457c9",
+						"subnet-0a184f6302af32a86",
+						"subnet-0ed95d5c212ac62a1",
+						"subnet-0526ecaecde5b1bf7",
+						"subnet-06897e1063cc0cf4e",
 					]
 					scaling_config  {
 						desired_size = 4

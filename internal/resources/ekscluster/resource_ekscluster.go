@@ -495,7 +495,7 @@ func constructAddonsConfig(data []interface{}) *eksmodel.VmwareTanzuManageV1alph
 	addonsConfig := &eksmodel.VmwareTanzuManageV1alpha1EksclusterAddonsConfig{}
 
 	if len(data) == 0 || data[0] == nil {
-		return addonsConfig
+		return nil
 	}
 
 	addonsConfigData, _ := data[0].(map[string]interface{})
