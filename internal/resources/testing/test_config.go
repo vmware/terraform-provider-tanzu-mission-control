@@ -18,7 +18,7 @@ const testDefaultCreateEksClusterScript = `
 			config {
 				kubernetes_version 	= "{{.KubernetesVersion}}"
 				role_arn 			= "arn:aws:iam::{{.AWSAccountNumber}}:role/control-plane.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
-				tags           = { "testclustertag" : "testclustertagvalue", "testingtag": "testingtagvalue", "testsametag":"testsametagval"}
+				tags           = { "testtag" : "testval", "newtesttag": "newtestval"}
 				kubernetes_network_config {
 					service_cidr = "10.100.0.0/16" // Forces new
 				}
@@ -66,7 +66,7 @@ const testDefaultCreateEksClusterScript = `
 						security_groups = ["sg-0a6768722e9716768"]
 					}
 					root_disk_size = 40 // Default: 20GiB, forces New
-					tags           = { "testnptag" : "testnptagvalue", "testingtag": "testingnptagvalue"}
+					tags           = { "testnptag" : "testnptagvalue", "newtesttag": "testingtagvalue"}
 					node_labels    = { "testnplabelkey" : "testnplabelvalue" }
 					subnet_ids = [ // Required, forces new
 						"subnet-0a184f6302af32a86",
@@ -97,7 +97,7 @@ const testDefaultCreateEksClusterScript = `
 				spec  {
 					// Refer to nodepool's schema
 					role_arn    = "arn:aws:iam::{{.AWSAccountNumber}}:role/worker.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
-					tags        = { "testnptag" : "testnptagvalue", "testingtag": "testingnptagvalue"}
+					tags        = { "testnptag" : "testnptagvalue", "newtesttag": "testingtagvalue"}
 					node_labels = { "testnplabelkey" : "testnplabelvalue" }
 					launch_template {
 						name = "PLACE_HOLDER"

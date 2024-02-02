@@ -588,7 +588,12 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	clusterSpec, nps := constructEksClusterSpec(d)
 	// Copy tags from cluster to nodepool
 	for _, npDefData := range nps {
-		npDefData.Spec.Tags = copyClusterTagsToNodepools(npDefData.Spec.Tags, clusterSpec.Config.Tags)
+		var err error
+		npDefData.Spec.Tags, err = copyClusterTagsToNodepools(npDefData.Spec.Tags, clusterSpec.Config.Tags)
+
+		if err != nil {
+			return diag.FromErr(errors.Wrap(err, "Nodepool tags should not be same as cluster tags"))
+		}
 	}
 
 	clusterReq := &eksmodel.VmwareTanzuManageV1alpha1EksclusterCreateUpdateEksClusterRequest{
@@ -682,7 +687,10 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 
 	// Copy tags from cluster to nodepool
 	for _, npDefData := range nodepools {
-		npDefData.Spec.Tags = copyClusterTagsToNodepools(npDefData.Spec.Tags, clusterSpec.Config.Tags)
+		npDefData.Spec.Tags, err = copyClusterTagsToNodepools(npDefData.Spec.Tags, clusterSpec.Config.Tags)
+		if err != nil {
+			return diag.FromErr(errors.Wrap(err, "Nodepool tags should not be same as cluster tags"))
+		}
 	}
 	// EKS cluster update API on TMC side ignores nodepools passed to it.
 	// The nodepools have to be updated via separate nodepool API, hence we
