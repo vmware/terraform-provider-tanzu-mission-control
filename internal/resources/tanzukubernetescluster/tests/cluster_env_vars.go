@@ -30,7 +30,7 @@ const (
 
 	// TKGS Env Vars.
 	TKGSManagementClusterNameEnv ClusterEnvVar = "TKGS_MANAGEMENT_CLUSTER_NAME"
-	TKGSProvisionerNameEnv       ClusterEnvVar = "TKGS_PROVISIONER_NAME"
+	TKGSProvisionerNameEnv       ClusterEnvVar = "TKGS_2X_PROVISIONER_NAME"
 	TKGSClusterVersionEnv        ClusterEnvVar = "TKGS_CLUSTER_VERSION"
 	TKGSClusterClassEnv          ClusterEnvVar = "TKGS_CLUSTER_CLASS"
 	TKGSClusterVariablesEnv      ClusterEnvVar = "TKGS_CLUSTER_VARIABLES"
