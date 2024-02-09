@@ -36,13 +36,10 @@ const testDefaultCreateEksClusterScript = `
 					  "0.0.0.0/0",
 					]
 					security_groups = [ // Forces new
-					  "sg-0a6768722e9716768",
+					  "sg-09247a89b01962bd9",
 					]
 					subnet_ids = [ // Forces new
-					  	"subnet-0a184f6302af32a86",
-						"subnet-0ed95d5c212ac62a1",
-						"subnet-0526ecaecde5b1bf7",
-						"subnet-06897e1063cc0cf4e",
+					  	"subnet-0e3bcd8e3c06a4bf0", "subnet-06427cefa730aeae7", "subnet-07c17b758e92356f6", "subnet-0a081ddc6ff1070d0"
 					]
 				}
 			}
@@ -55,24 +52,13 @@ const testDefaultCreateEksClusterScript = `
 				spec {
 					// Refer to nodepool's schema
 					role_arn       = "arn:aws:iam::{{.AWSAccountNumber}}:role/worker.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
-					ami_type       = "CUSTOM" // Forces New
+					ami_type       = "AL2_x86_64" // Forces New
 					capacity_type  = "ON_DEMAND"
-					ami_info { 
-						ami_id = "ami-2qu8409oisdfj0qw"
-                        override_bootstrap_cmd = "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami"
-					}
-					remote_access {
-                        ssh_key = "anshulc"
-						security_groups = ["sg-0a6768722e9716768"]
-					}
 					root_disk_size = 40 // Default: 20GiB, forces New
 					tags           = { "testnptag" : "testnptagvalue", "newtesttag": "testingtagvalue"}
 					node_labels    = { "testnplabelkey" : "testnplabelvalue" }
 					subnet_ids = [ // Required, forces new
-						"subnet-0a184f6302af32a86",
-						"subnet-0ed95d5c212ac62a1",
-						"subnet-0526ecaecde5b1bf7",
-						"subnet-06897e1063cc0cf4e",
+						"subnet-0e3bcd8e3c06a4bf0", "subnet-06427cefa730aeae7", "subnet-07c17b758e92356f6", "subnet-0a081ddc6ff1070d0"
 					]
 					scaling_config  {
 						desired_size = 4
@@ -99,15 +85,8 @@ const testDefaultCreateEksClusterScript = `
 					role_arn    = "arn:aws:iam::{{.AWSAccountNumber}}:role/worker.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
 					tags        = { "testnptag" : "testnptagvalue", "newtesttag": "testingtagvalue"}
 					node_labels = { "testnplabelkey" : "testnplabelvalue" }
-					launch_template {
-						name = "PLACE_HOLDER"
-						version = "PLACE_HOLDER"
-					}
 					subnet_ids = [ // Required, forces new
-						"subnet-0a184f6302af32a86",
-						"subnet-0ed95d5c212ac62a1",
-						"subnet-0526ecaecde5b1bf7",
-						"subnet-06897e1063cc0cf4e",
+						"subnet-0e3bcd8e3c06a4bf0", "subnet-06427cefa730aeae7", "subnet-07c17b758e92356f6", "subnet-0a081ddc6ff1070d0"
 					]
 					scaling_config  {
 						desired_size = 4
