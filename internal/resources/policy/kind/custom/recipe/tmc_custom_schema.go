@@ -14,6 +14,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
+	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	openapiv3 "github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper/openapi_v3_schema_validator"
 	policyrecipecustommodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom"
@@ -117,7 +118,11 @@ func ValidateCustomRecipe(config authctx.TanzuContext, customRecipe map[string]i
 	recipeData, err := config.TMCConnection.RecipeResourceService.RecipeResourceServiceGet(recipeModel)
 
 	if err != nil {
-		errMessages = append(errMessages, err.Error())
+		// NOTE: If error is 404 not found then do not fail the planning. This fix ensures that if user tries to create the new custom template
+		// and assign the same template to the custom policy in a single terraform apply operation will be able to proceed, instead of failing in the planning phase.
+		if !clienterrors.IsNotFoundError(err) {
+			errMessages = append(errMessages, err.Error())
+		}
 	} else {
 		errs := ValidateRecipeParameters(recipeData.Recipe.Spec.InputSchema, customRecipe[ParametersKey].(string))
 

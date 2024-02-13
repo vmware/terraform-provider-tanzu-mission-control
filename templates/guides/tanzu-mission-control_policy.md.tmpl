@@ -37,12 +37,18 @@ In the following example, there are multiple dependencies shown.
 
 {{ tffile "examples/usecases/access_policy_usecase.tf" }}
 
-## Custom Policy on a CLuster Group
+## Custom Policy on a Cluster Group
 
 {{ tffile "examples/usecases/custom_policy_usecase.tf" }}
 
 ## Custom Template and Custom Policy
 
 Template provides a declarative definition of a policy, which can be used to apply custom constraints on managed kubernetes resources.
-Custom policy consumes these declared custom templates to enforce specific policies. One must create the custom template before consuming it the custom policy.
+Custom policy consumes these declared custom templates to enforce specific policies. One must create the [custom template][custom-policy-template] before consuming it in the custom policy.
 Please refer to custom policy template and custom policy terraform scripts within examples.
+
+[custom-policy-template]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-F147492B-04FD-4CFD-8D1F-66E36D40D49C.html
+
+## Refer the following example for creating custom policy template and assign it to custom policy
+
+{{ tffile "examples/usecases/custom_policy_with_custom_template_usecase.tf" }}
