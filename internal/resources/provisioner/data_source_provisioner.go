@@ -67,7 +67,7 @@ func dataSourceProvisionerRead(ctx context.Context, d *schema.ResourceData, m in
 	var resp *provisioner.VmwareTanzuManageV1alpha1ManagementclusterProvisionerListprovisionersResponse
 
 	model, err := tfModelDataConverter.ConvertTFSchemaToAPIModel(d, []string{provisionerKey, nameKey, managementClusterNameKey})
-	if err != nil || model == nil {
+	if err != nil || model == nil || model.Provisioners == nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't read Tanzu Mission Control provisioner configurations."))
 	}
 
