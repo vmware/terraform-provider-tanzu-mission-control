@@ -14,4 +14,5 @@ const (
 	orgIDKey                 = "org_id"
 	managementClusterNameKey = "management_cluster"
 	eksManagementCluster     = "eks"
+	provisionerKey           = "provisioners"
 )
