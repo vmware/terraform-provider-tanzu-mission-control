@@ -115,7 +115,7 @@ func waitClusterReady(ctx context.Context, config *authctx.TanzuContext, cluster
 	}
 
 	for !isStopStatus {
-		time.Sleep(5 * time.Second)
+		time.Sleep(30 * time.Second)
 
 		err := ctx.Err()
 
