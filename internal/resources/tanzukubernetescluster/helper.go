@@ -27,6 +27,9 @@ import (
 
 type ClusterClassModifierFunc func(tfVariable interface{}, modelVariable interface{}) interface{}
 
+// Adding 30sec wait time status query especially for cluster/nodepool
+const waitTime = 30 * time.Second
+
 // readResourceWait helps read operations where wait is needed for the Tanzu Kubernetes Cluster and its assets to be in a stop status.
 // This function determines whether a timeout is needed and whether to fail the request if a deadline has exceeded.
 func readResourceWait(ctx context.Context, config *authctx.TanzuContext, clusterFn *tanzukubernetesclustermodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterFullName, existingNodePools []*tkcnodepoolmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepool, timeoutPolicy map[string]interface{}) (resp *tanzukubernetesclustermodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterData, err error) {
@@ -115,7 +118,7 @@ func waitClusterReady(ctx context.Context, config *authctx.TanzuContext, cluster
 	}
 
 	for !isStopStatus {
-		time.Sleep(5 * time.Second)
+		time.Sleep(waitTime)
 
 		err := ctx.Err()
 
@@ -193,7 +196,7 @@ func waitNodePoolsReady(ctx context.Context, config *authctx.TanzuContext, clust
 		}
 
 		if !nodePoolsReady {
-			time.Sleep(5 * time.Second)
+			time.Sleep(waitTime)
 
 			err := ctx.Err()
 
@@ -247,7 +250,7 @@ func waitKubeConfigReady(ctx context.Context, config *authctx.TanzuContext, clus
 	isStopStatus := false
 
 	for !isStopStatus {
-		time.Sleep(5 * time.Second)
+		time.Sleep(waitTime)
 
 		err := ctx.Err()
 
