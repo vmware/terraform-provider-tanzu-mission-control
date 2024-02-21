@@ -24,7 +24,7 @@ var tfDataModelMap = &tfModelConverterHelper.BlockToStruct{
 		{
 			managementClusterNameKey: tfModelConverterHelper.BuildDefaultModelPath(provisionerArrayField, "fullName", "managementClusterName"),
 			nameKey:                  tfModelConverterHelper.BuildDefaultModelPath(provisionerArrayField, "fullName", "name"),
-			common.MetaKey:           common.GetMetaConverterMap(tfModelConverterHelper.DefaultModelPathSeparator),
+			common.MetaKey:           common.GetMetaConverterMap(tfModelConverterHelper.DefaultModelPathSeparator, provisionerArrayField),
 		},
 	},
 }

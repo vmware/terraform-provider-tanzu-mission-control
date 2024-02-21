@@ -171,17 +171,17 @@ func GetTypeIntMapData(data map[string]interface{}) map[string]int {
 }
 
 // GetMetaConverterMap returns mapping for converter.
-func GetMetaConverterMap(modelPathSeparator string) *converter.BlockToStruct {
+func GetMetaConverterMap(modelPathSeparator string, modelPath ...string) *converter.BlockToStruct {
 	var MetaConverterMap = &converter.BlockToStruct{
 		AnnotationsKey: &converter.Map{
-			converter.AllMapKeysFieldMarker: converter.BuildModelPath(modelPathSeparator, "meta", "annotations", converter.AllMapKeysFieldMarker),
+			converter.AllMapKeysFieldMarker: converter.BuildModelPath(modelPathSeparator, append(modelPath, "meta", "annotations", converter.AllMapKeysFieldMarker)...),
 		},
 		LabelsKey: &converter.Map{
-			converter.AllMapKeysFieldMarker: converter.BuildModelPath(modelPathSeparator, "meta", "labels", converter.AllMapKeysFieldMarker),
+			converter.AllMapKeysFieldMarker: converter.BuildModelPath(modelPathSeparator, append(modelPath, "meta", "labels", converter.AllMapKeysFieldMarker)...),
 		},
-		DescriptionKey:     converter.BuildModelPath(modelPathSeparator, "meta", "description"),
-		resourceVersionKey: converter.BuildModelPath(modelPathSeparator, "meta", "resourceVersion"),
-		uidKey:             converter.BuildModelPath(modelPathSeparator, "meta", "uid"),
+		DescriptionKey:     converter.BuildModelPath(modelPathSeparator, append(modelPath, "meta", "description")...),
+		resourceVersionKey: converter.BuildModelPath(modelPathSeparator, append(modelPath, "meta", "resourceVersion")...),
+		uidKey:             converter.BuildModelPath(modelPathSeparator, append(modelPath, "meta", "uid")...),
 	}
 
 	return MetaConverterMap

@@ -67,8 +67,7 @@ func checkDataSourceAttributes(dataSourceName, resourceName string) resource.Tes
 		resource.TestCheckResourceAttrSet(dataSourceName, "id"),
 	}
 
-	// TODO: Add the meta check after TMC-54016 fix.
-	// check = append(check, metaDataSourceAttributeCheck(dataSourceName, resourceName)...)
+	check = append(check, metaDataSourceAttributeCheck(dataSourceName, resourceName)...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }
@@ -84,12 +83,11 @@ func verifyProvisionerDataSource(name string) resource.TestCheckFunc {
 	}
 }
 
-// TODO: Add the meta check after TMC-54016 fix.
-// func metaDataSourceAttributeCheck(dataSourceName, resourceName string) []resource.TestCheckFunc {
-//	return []resource.TestCheckFunc{
-//		resource.TestCheckResourceAttrPair(dataSourceName, "meta.0.description", resourceName, "meta.0.description"),
-//		resource.TestCheckResourceAttrPair(dataSourceName, "meta.0.labels.key1", resourceName, "meta.0.labels.key1"),
-//		resource.TestCheckResourceAttrPair(dataSourceName, "meta.0.labels.key2", resourceName, "meta.0.labels.key2"),
-//		resource.TestCheckResourceAttrSet(dataSourceName, "meta.0.uid"),
-//	}
-//}
+func metaDataSourceAttributeCheck(dataSourceName, resourceName string) []resource.TestCheckFunc {
+	return []resource.TestCheckFunc{
+		resource.TestCheckResourceAttrPair(dataSourceName, "provisioners.0.meta.0.description", resourceName, "meta.0.description"),
+		resource.TestCheckResourceAttrPair(dataSourceName, "provisioners.0.meta.0.labels.key1", resourceName, "meta.0.labels.key1"),
+		resource.TestCheckResourceAttrPair(dataSourceName, "provisioners.0.meta.0.labels.key2", resourceName, "meta.0.labels.key2"),
+		resource.TestCheckResourceAttrSet(dataSourceName, "provisioners.0.meta.0.uid"),
+	}
+}
