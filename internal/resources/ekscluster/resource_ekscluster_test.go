@@ -422,6 +422,8 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 				RoleArn: controlPlaneRoleARN,
 				Tags: map[string]string{
 					"tmc.cloud.vmware.com/tmc-managed": "true",
+					"testtag":                          "testval",
+					"newtesttag":                       "newtestval",
 				},
 				KubernetesNetworkConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterKubernetesNetworkConfig{
 					ServiceCidr: "10.100.0.0/16",
@@ -467,7 +469,9 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 					CapacityType: "ON_DEMAND",
 					RootDiskSize: 40,
 					Tags: map[string]string{
-						"testnptag": "testnptagvalue",
+						"testnptag":  "testnptagvalue",
+						"newtesttag": "testingtagvalue",
+						"testtag":    "testval",
 					},
 					NodeLabels: map[string]string{
 						"testnplabelkey": "testnplabelvalue",
@@ -508,7 +512,9 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 				Spec: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec{
 					RoleArn: workerRoleArn,
 					Tags: map[string]string{
-						"testnptag": "testnptagvalue",
+						"testnptag":  "testnptagvalue",
+						"newtesttag": "testingtagvalue",
+						"testtag":    "testval",
 					},
 					NodeLabels: map[string]string{
 						"testnplabelkey": "testnplabelvalue",

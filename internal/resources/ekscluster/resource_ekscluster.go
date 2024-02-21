@@ -506,7 +506,7 @@ func constructAddonsConfig(data []interface{}) *eksmodel.VmwareTanzuManageV1alph
 	addonsConfig := &eksmodel.VmwareTanzuManageV1alpha1EksclusterAddonsConfig{}
 
 	if len(data) == 0 || data[0] == nil {
-		return addonsConfig
+		return nil
 	}
 
 	addonsConfigData, _ := data[0].(map[string]interface{})
@@ -597,6 +597,15 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 
 	clusterFn := constructFullname(d)
 	clusterSpec, nps := constructEksClusterSpec(d)
+	// Copy tags from cluster to nodepool
+	for _, npDefData := range nps {
+		var err error
+		npDefData.Spec.Tags, err = copyClusterTagsToNodepools(npDefData.Spec.Tags, clusterSpec.Config.Tags)
+
+		if err != nil {
+			return diag.FromErr(errors.Wrap(err, "Nodepool tags should not be same as cluster tags"))
+		}
+	}
 
 	clusterReq := &eksmodel.VmwareTanzuManageV1alpha1EksclusterCreateUpdateEksClusterRequest{
 		EksCluster: &eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster{
@@ -687,6 +696,13 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 
 	clusterSpec, nodepools := constructEksClusterSpec(d)
 
+	// Copy tags from cluster to nodepool
+	for _, npDefData := range nodepools {
+		npDefData.Spec.Tags, err = copyClusterTagsToNodepools(npDefData.Spec.Tags, clusterSpec.Config.Tags)
+		if err != nil {
+			return diag.FromErr(errors.Wrap(err, "Nodepool tags should not be same as cluster tags"))
+		}
+	}
 	// EKS cluster update API on TMC side ignores nodepools passed to it.
 	// The nodepools have to be updated via separate nodepool API, hence we
 	// deal with them separately.

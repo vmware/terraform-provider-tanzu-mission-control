@@ -7,6 +7,8 @@ package ekscluster
 import (
 	"reflect"
 
+	"github.com/pkg/errors"
+
 	eksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/ekscluster"
 )
 
@@ -192,4 +194,24 @@ func setEquality(s1, s2 []string) bool {
 	}
 
 	return true
+}
+
+func copyClusterTagsToNodepools(nodepoolTags map[string]string, eksTags map[string]string) (map[string]string, error) {
+	npTags := make(map[string]string)
+
+	var err error
+
+	if len(nodepoolTags) > 0 {
+		npTags = nodepoolTags
+	}
+
+	for tmcTag, tmcVal := range eksTags {
+		if val, ok := npTags[tmcTag]; !ok {
+			npTags[tmcTag] = tmcVal
+		} else if val == tmcVal {
+			err = errors.Errorf("key:%v, val:%v", tmcTag, val)
+		}
+	}
+
+	return npTags, err
 }
