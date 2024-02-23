@@ -37,6 +37,9 @@ import (
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
+// Version of Kubernetes to deploy during acceptance tests.
+var aksKubernetesVersion = "1.27.9"
+
 func validateSetup(t *testing.T) {
 	// Check if the required environment variables are set
 	for _, name := range []string{"AKS_CREDENTIAL_NAME", "AKS_SUBSCRIPTION_ID"} {
@@ -393,7 +396,7 @@ func testAKSCluster(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) st
   spec {
     config {
       location = "eastus"
-      kubernetes_version = "1.26.6"
+      kubernetes_version = "%s"
       network_config {
 		network_plugin = "azure"
         dns_prefix = "dns-tf-test"
@@ -415,7 +418,7 @@ func testAKSCluster(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) st
       }
     }
   }
-}`, fn.Name, fn.CredentialName, fn.SubscriptionID, fn.Name)
+}`, fn.Name, fn.CredentialName, fn.SubscriptionID, fn.Name, aksKubernetesVersion)
 }
 
 func testAKSClusterEnableCSI(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) string {
@@ -427,7 +430,7 @@ func testAKSClusterEnableCSI(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFul
   spec {
     config {
       location = "eastus"
-      kubernetes_version = "1.26.6"
+      kubernetes_version = "%s"
       network_config {
 		network_plugin = "azure"
         dns_prefix = "dns-tf-test"
@@ -449,7 +452,7 @@ func testAKSClusterEnableCSI(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFul
       }
     }
   }
-}`, fn.Name, fn.CredentialName, fn.SubscriptionID, fn.Name)
+}`, fn.Name, fn.CredentialName, fn.SubscriptionID, fn.Name, aksKubernetesVersion)
 }
 
 func testAKSClusterAddUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) string {
@@ -461,7 +464,7 @@ func testAKSClusterAddUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1Aksclus
   spec {
     config {
       location = "eastus"
-      kubernetes_version = "1.26.6"
+      kubernetes_version = "%s"
       network_config {
 		network_plugin = "azure"
         dns_prefix = "dns-tf-test"
@@ -491,7 +494,7 @@ func testAKSClusterAddUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1Aksclus
       }
     }
   }
-}`, fn.Name, fn.CredentialName, fn.SubscriptionID, fn.Name)
+}`, fn.Name, fn.CredentialName, fn.SubscriptionID, fn.Name, aksKubernetesVersion)
 }
 
 func testAKSClusterRemoveUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) string {
@@ -520,7 +523,7 @@ func mockCluster(w ...clusterWither) *aksmodel.VmwareTanzuManageV1alpha1AksClust
 				IdentityConfig: &aksmodel.VmwareTanzuManageV1alpha1AksclusterManagedIdentityConfig{
 					Type: aksmodel.VmwareTanzuManageV1alpha1AksclusterManagedIdentityTypeSYSTEMASSIGNED.Pointer(),
 				},
-				Version: "1.26.6",
+				Version: aksKubernetesVersion,
 			},
 		},
 		Status: &aksmodel.VmwareTanzuManageV1alpha1AksclusterStatus{
