@@ -58,8 +58,8 @@ func TestAcceptanceUTKGResource(t *testing.T) {
 	var (
 		provider                = initTestProvider(t)
 		tfResourceConfigBuilder = InitResourceTFConfigBuilder()
-		tkgmEnvironmentVars     = environmentVars[TKGMClusterType]
-		tkgsEnvironmentVars     = environmentVars[TKGSClusterType]
+		// tkgmEnvironmentVars     = environmentVars[TKGMClusterType]
+		tkgsEnvironmentVars = environmentVars[TKGSClusterType]
 	)
 
 	resource.Test(t, resource.TestCase{
@@ -67,24 +67,32 @@ func TestAcceptanceUTKGResource(t *testing.T) {
 		ProviderFactories: testhelper.GetTestProviderFactories(provider),
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
+			// {
+			// 	Config: tfResourceConfigBuilder.GetTKGMClusterConfig(tkgmEnvironmentVars, 1, "default", tkgmEnvironmentVars[TKGMClusterVersionEnv]),
+			// 	Check: resource.ComposeTestCheckFunc(
+			// 		resource.TestCheckResourceAttr(TKGMClusterResourceFullName, "name", TKGMClusterName),
+			// 		verifyTanzuKubernetesClusterResourceCreation(provider, TKGMClusterResourceFullName, tkgmEnvironmentVars[TKGMManagementClusterNameEnv],
+			// 			tkgmEnvironmentVars[TKGMProvisionerNameEnv], TKGMClusterName),
+			// 	),
+			// },
+			// {
+			// 	Config: tfResourceConfigBuilder.GetTKGMClusterConfig(tkgmEnvironmentVars, 2, "default", tkgmEnvironmentVars[TKGMClusterVersionEnv]),
+			// 	Check: resource.ComposeTestCheckFunc(
+			// 		resource.TestCheckResourceAttr(TKGMClusterResourceFullName, "name", TKGMClusterName),
+			// 		verifyTanzuKubernetesClusterResourceCreation(provider, TKGMClusterResourceFullName, tkgmEnvironmentVars[TKGMManagementClusterNameEnv],
+			// 			tkgmEnvironmentVars[TKGMProvisionerNameEnv], TKGMClusterName),
+			// 	),
+			// },
+			// {
+			// 	Config: tfResourceConfigBuilder.GetTKGMClusterConfig(tkgmEnvironmentVars, 1, tkgmEnvironmentVars[TKGMClusterUpdateGroupEnv], tkgmEnvironmentVars[TKGMClusterUpgradeVersionEnv]),
+			// 	Check: resource.ComposeTestCheckFunc(
+			// 		resource.TestCheckResourceAttr(TKGMClusterResourceFullName, "name", TKGMClusterName),
+			// 		verifyTanzuKubernetesClusterResourceCreation(provider, TKGMClusterResourceFullName, tkgmEnvironmentVars[TKGMManagementClusterNameEnv],
+			// 			tkgmEnvironmentVars[TKGMProvisionerNameEnv], TKGMClusterName),
+			// 	),
+			// },
 			{
-				Config: tfResourceConfigBuilder.GetTKGMClusterConfig(tkgmEnvironmentVars, 1),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(TKGMClusterResourceFullName, "name", TKGMClusterName),
-					verifyTanzuKubernetesClusterResourceCreation(provider, TKGMClusterResourceFullName, tkgmEnvironmentVars[TKGMManagementClusterNameEnv],
-						tkgmEnvironmentVars[TKGMProvisionerNameEnv], TKGMClusterName),
-				),
-			},
-			{
-				Config: tfResourceConfigBuilder.GetTKGMClusterConfig(tkgmEnvironmentVars, 2),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(TKGMClusterResourceFullName, "name", TKGMClusterName),
-					verifyTanzuKubernetesClusterResourceCreation(provider, TKGMClusterResourceFullName, tkgmEnvironmentVars[TKGMManagementClusterNameEnv],
-						tkgmEnvironmentVars[TKGMProvisionerNameEnv], TKGMClusterName),
-				),
-			},
-			{
-				Config: tfResourceConfigBuilder.GetTKGSClusterConfig(tkgsEnvironmentVars, 1),
+				Config: tfResourceConfigBuilder.GetTKGSClusterConfig(tkgsEnvironmentVars, 1, "default", tkgsEnvironmentVars[TKGSClusterVersionEnv]),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(TKGSClusterResourceFullName, "name", TKGSClusterName),
 					verifyTanzuKubernetesClusterResourceCreation(provider, TKGSClusterResourceFullName, tkgsEnvironmentVars[TKGSManagementClusterNameEnv],
@@ -92,7 +100,23 @@ func TestAcceptanceUTKGResource(t *testing.T) {
 				),
 			},
 			{
-				Config: tfResourceConfigBuilder.GetTKGSClusterConfig(tkgsEnvironmentVars, 2),
+				Config: tfResourceConfigBuilder.GetTKGSClusterConfig(tkgsEnvironmentVars, 1, tkgsEnvironmentVars[TKGSClusterUpdateGroupEnv], tkgsEnvironmentVars[TKGSClusterUpgradeVersionEnv]),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(TKGSClusterResourceFullName, "name", TKGSClusterName),
+					verifyTanzuKubernetesClusterResourceCreation(provider, TKGSClusterResourceFullName, tkgsEnvironmentVars[TKGSManagementClusterNameEnv],
+						tkgsEnvironmentVars[TKGSProvisionerNameEnv], TKGSClusterName),
+				),
+			},
+			{
+				Config: tfResourceConfigBuilder.GetTKGSClusterConfig(tkgsEnvironmentVars, 2, tkgsEnvironmentVars[TKGSClusterUpdateGroupEnv], tkgsEnvironmentVars[TKGSClusterUpgradeVersionEnv]),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(TKGSClusterResourceFullName, "name", TKGSClusterName),
+					verifyTanzuKubernetesClusterResourceCreation(provider, TKGSClusterResourceFullName, tkgsEnvironmentVars[TKGSManagementClusterNameEnv],
+						tkgsEnvironmentVars[TKGSProvisionerNameEnv], TKGSClusterName),
+				),
+			},
+			{
+				Config: tfResourceConfigBuilder.GetTKGSClusterConfig(tkgsEnvironmentVars, 1, "default", tkgsEnvironmentVars[TKGSClusterUpgradeVersionEnv]),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(TKGSClusterResourceFullName, "name", TKGSClusterName),
 					verifyTanzuKubernetesClusterResourceCreation(provider, TKGSClusterResourceFullName, tkgsEnvironmentVars[TKGSManagementClusterNameEnv],

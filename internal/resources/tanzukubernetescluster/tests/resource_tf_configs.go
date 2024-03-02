@@ -38,7 +38,7 @@ func InitResourceTFConfigBuilder() *ResourceTFConfigBuilder {
 	
 			spec {
 			  worker_class = "%s"
-			  replicas     = 1
+			  replicas     = %d
 			  overrides    = jsonencode(%s)
 	
 			  meta {
@@ -59,7 +59,7 @@ func InitResourceTFConfigBuilder() *ResourceTFConfigBuilder {
 	return tfConfigBuilder
 }
 
-func (builder *ResourceTFConfigBuilder) GetTKGMClusterConfig(tkgmEnvVars map[ClusterEnvVar]string, nodePoolsNum int) string {
+func (builder *ResourceTFConfigBuilder) GetTKGMClusterConfig(tkgmEnvVars map[ClusterEnvVar]string, nodePoolsNum int, clusterGroup, clusterVersion string) string {
 	nodePools := builder.BuildNodePools(tkgmEnvVars[TKGMWorkerClassEnv], tkgmEnvVars[TKGMNodePoolOverridesEnv],
 		tkgmEnvVars[TKGMOSImageNameEnv], tkgmEnvVars[TKGMOSImageVersionEnv], tkgmEnvVars[TKGMOSImageArchEnv],
 		nodePoolsNum)
@@ -71,6 +71,8 @@ func (builder *ResourceTFConfigBuilder) GetTKGMClusterConfig(tkgmEnvVars map[Clu
 		  provisioner_name        = "%s"
 		
 		  spec {	
+			cluster_group_name = "%s"
+
 			topology {
 			  version           = "%s"
 			  cluster_class     = "%s"
@@ -129,7 +131,8 @@ func (builder *ResourceTFConfigBuilder) GetTKGMClusterConfig(tkgmEnvVars map[Clu
 		TKGMClusterName,
 		tkgmEnvVars[TKGMManagementClusterNameEnv],
 		tkgmEnvVars[TKGMProvisionerNameEnv],
-		tkgmEnvVars[TKGMClusterVersionEnv],
+		clusterGroup,
+		clusterVersion,
 		tkgmEnvVars[TKGMClusterClassEnv],
 		tkgmEnvVars[TKGMClusterVariablesEnv],
 		tkgmEnvVars[TKGMOSImageNameEnv],
@@ -139,7 +142,7 @@ func (builder *ResourceTFConfigBuilder) GetTKGMClusterConfig(tkgmEnvVars map[Clu
 	)
 }
 
-func (builder *ResourceTFConfigBuilder) GetTKGSClusterConfig(tkgsEnvVars map[ClusterEnvVar]string, nodePoolsNum int) string {
+func (builder *ResourceTFConfigBuilder) GetTKGSClusterConfig(tkgsEnvVars map[ClusterEnvVar]string, nodePoolsNum int, clusterGroup, clusterVersion string) string {
 	nodePools := builder.BuildNodePools(tkgsEnvVars[TKGSWorkerClassEnv], tkgsEnvVars[TKGSNodePoolOverridesEnv],
 		tkgsEnvVars[TKGSOSImageNameEnv], tkgsEnvVars[TKGSOSImageVersionEnv], tkgsEnvVars[TKGSOSImageArchEnv],
 		nodePoolsNum)
@@ -151,6 +154,8 @@ func (builder *ResourceTFConfigBuilder) GetTKGSClusterConfig(tkgsEnvVars map[Clu
 		  provisioner_name        = "%s"
 		
 		  spec {	
+			cluster_group_name = "%s"
+
 			topology {
 			  version           = "%s"
 			  cluster_class     = "%s"
@@ -194,7 +199,8 @@ func (builder *ResourceTFConfigBuilder) GetTKGSClusterConfig(tkgsEnvVars map[Clu
 		TKGSClusterName,
 		tkgsEnvVars[TKGSManagementClusterNameEnv],
 		tkgsEnvVars[TKGSProvisionerNameEnv],
-		tkgsEnvVars[TKGSClusterVersionEnv],
+		clusterGroup,
+		clusterVersion,
 		tkgsEnvVars[TKGSClusterClassEnv],
 		tkgsEnvVars[TKGSClusterVariablesEnv],
 		tkgsEnvVars[TKGSOSImageNameEnv],
@@ -209,7 +215,8 @@ func (builder *ResourceTFConfigBuilder) BuildNodePools(workerClass string, overr
 	nodePools := ""
 
 	for i := 0; i < nodePoolsNum; i++ {
-		np := fmt.Sprintf(builder.NodePoolDefinition, i, workerClass, overrides, osImageName, osImageVersion, osImageArch)
+		replica := nodePoolsNum
+		np := fmt.Sprintf(builder.NodePoolDefinition, i, workerClass, replica, overrides, osImageName, osImageVersion, osImageArch)
 		nodePools = fmt.Sprintf("%s\n%s", nodePools, np)
 	}
 

@@ -9,6 +9,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -115,7 +116,9 @@ func waitClusterReady(ctx context.Context, config *authctx.TanzuContext, cluster
 	}
 
 	for !isStopStatus {
-		time.Sleep(5 * time.Second)
+		log.Printf("[INFO] waitClusterReady------waiting 30 seconds---------")
+
+		time.Sleep(30 * time.Second)
 
 		err := ctx.Err()
 
@@ -193,7 +196,9 @@ func waitNodePoolsReady(ctx context.Context, config *authctx.TanzuContext, clust
 		}
 
 		if !nodePoolsReady {
-			time.Sleep(5 * time.Second)
+			log.Printf("[INFO] waitNodePoolsReady------waiting 30 seconds---------")
+
+			time.Sleep(30 * time.Second)
 
 			err := ctx.Err()
 

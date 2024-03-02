@@ -20,6 +20,8 @@ const (
 	TKGMManagementClusterNameEnv ClusterEnvVar = "TKGM_MANAGEMENT_CLUSTER_NAME"
 	TKGMProvisionerNameEnv       ClusterEnvVar = "TKGM_PROVISIONER_NAME"
 	TKGMClusterVersionEnv        ClusterEnvVar = "TKGM_CLUSTER_VERSION"
+	TKGMClusterUpgradeVersionEnv ClusterEnvVar = "TKGM_CLUSTER_UPGRADE_VERSION"
+	TKGMClusterUpdateGroupEnv    ClusterEnvVar = "TKGM_CLUSTER_UPDATE_GROUP"
 	TKGMClusterClassEnv          ClusterEnvVar = "TKGM_CLUSTER_CLASS"
 	TKGMClusterVariablesEnv      ClusterEnvVar = "TKGM_CLUSTER_VARIABLES"
 	TKGMOSImageNameEnv           ClusterEnvVar = "TKGM_OS_IMAGE_NAME"
@@ -32,6 +34,8 @@ const (
 	TKGSManagementClusterNameEnv ClusterEnvVar = "TKGS_MANAGEMENT_CLUSTER_NAME"
 	TKGSProvisionerNameEnv       ClusterEnvVar = "TKGS_PROVISIONER_NAME"
 	TKGSClusterVersionEnv        ClusterEnvVar = "TKGS_CLUSTER_VERSION"
+	TKGSClusterUpgradeVersionEnv ClusterEnvVar = "TKGS_CLUSTER_UPGRADE_VERSION"
+	TKGSClusterUpdateGroupEnv    ClusterEnvVar = "TKGS_CLUSTER_UPDATE_GROUP"
 	TKGSClusterClassEnv          ClusterEnvVar = "TKGS_CLUSTER_CLASS"
 	TKGSClusterVariablesEnv      ClusterEnvVar = "TKGS_CLUSTER_VARIABLES"
 	TKGSOSImageNameEnv           ClusterEnvVar = "TKGS_OS_IMAGE_NAME"
@@ -58,6 +62,8 @@ var (
 				TKGMManagementClusterNameEnv: true,
 				TKGMProvisionerNameEnv:       true,
 				TKGMClusterVersionEnv:        true,
+				TKGMClusterUpgradeVersionEnv: true,
+				TKGMClusterUpdateGroupEnv:    true,
 				TKGMClusterClassEnv:          true,
 				TKGMClusterVariablesEnv:      true,
 				TKGMOSImageNameEnv:           true,
@@ -74,6 +80,8 @@ var (
 				TKGSManagementClusterNameEnv: true,
 				TKGSProvisionerNameEnv:       true,
 				TKGSClusterVersionEnv:        true,
+				TKGSClusterUpgradeVersionEnv: true,
+				TKGSClusterUpdateGroupEnv:    true,
 				TKGSClusterClassEnv:          true,
 				TKGSClusterVariablesEnv:      true,
 				TKGSOSImageNameEnv:           true,
