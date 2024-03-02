@@ -202,7 +202,7 @@ func TestGetDefaultEksAcceptanceConfig() *TestAcceptanceConfig {
 		AWSAccountNumber:         "919197287370",
 		Region:                   "us-west-2",
 		ClusterGroupName:         "default",
-		KubernetesVersion:        "1.23",
+		KubernetesVersion:        "1.26",
 		CredentialName:           "PLACE_HOLDER",
 		CloudFormationTemplateID: "PLACE_HOLDER",
 	}

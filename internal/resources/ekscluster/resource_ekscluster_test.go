@@ -312,9 +312,10 @@ func TestAcceptanceForMkpClusterResource(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      testhelper.EksClusterResourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            testhelper.EksClusterResourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{waitForKubeconfig},
 			},
 		},
 	})
@@ -418,7 +419,7 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 	return eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec{
 			ClusterGroupName: "default",
 			Config: &eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig{
-				Version: "1.23",
+				Version: "1.26",
 				RoleArn: controlPlaneRoleARN,
 				Tags: map[string]string{
 					"tmc.cloud.vmware.com/tmc-managed": "true",
@@ -441,14 +442,9 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 					PublicAccessCidrs: []string{
 						"0.0.0.0/0",
 					},
-					SecurityGroups: []string{
-						"sg-0a6768722e9716768",
-					},
+					SecurityGroups: []string{"sg-0b77767aa25e20fec"},
 					SubnetIds: []string{
-						"subnet-0a184f6302af32a86",
-						"subnet-0ed95d5c212ac62a1",
-						"subnet-0526ecaecde5b1bf7",
-						"subnet-06897e1063cc0cf4e",
+						"subnet-0c285da60b373a4cc", "subnet-0be854d94fa197cb7", "subnet-04975d535cf761785", "subnet-0d50aa17c694457c9",
 					},
 				},
 			},
@@ -460,12 +456,9 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 					Description: "tf nodepool description",
 				},
 				Spec: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec{
-					RoleArn: workerRoleArn,
-					AmiType: "CUSTOM",
-					AmiInfo: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAmiInfo{
-						AmiID:                "ami-2qu8409oisdfj0qw",
-						OverrideBootstrapCmd: "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
-					},
+					RoleArn:      workerRoleArn,
+					AmiType:      "AL2_x86_64",
+					AmiInfo:      &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAmiInfo{},
 					CapacityType: "ON_DEMAND",
 					RootDiskSize: 40,
 					Tags: map[string]string{
@@ -477,16 +470,7 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 						"testnplabelkey": "testnplabelvalue",
 					},
 					SubnetIds: []string{
-						"subnet-0a184f6302af32a86",
-						"subnet-0ed95d5c212ac62a1",
-						"subnet-0526ecaecde5b1bf7",
-						"subnet-06897e1063cc0cf4e",
-					},
-					RemoteAccess: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolRemoteAccess{
-						SSHKey: "anshulc",
-						SecurityGroups: []string{
-							"sg-0a6768722e9716768",
-						},
+						"subnet-0c285da60b373a4cc", "subnet-0be854d94fa197cb7", "subnet-04975d535cf761785", "subnet-0d50aa17c694457c9",
 					},
 					ScalingConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolScalingConfig{
 						DesiredSize: 4,
@@ -501,6 +485,7 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 						"m3.large",
 					},
 					Taints:         make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaint, 0),
+					RemoteAccess:   &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolRemoteAccess{},
 					LaunchTemplate: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolLaunchTemplate{},
 				},
 			},
@@ -520,15 +505,9 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 						"testnplabelkey": "testnplabelvalue",
 					},
 					SubnetIds: []string{
-						"subnet-0a184f6302af32a86",
-						"subnet-0ed95d5c212ac62a1",
-						"subnet-0526ecaecde5b1bf7",
-						"subnet-06897e1063cc0cf4e",
+						"subnet-0c285da60b373a4cc", "subnet-0be854d94fa197cb7", "subnet-04975d535cf761785", "subnet-0d50aa17c694457c9",
 					},
-					LaunchTemplate: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolLaunchTemplate{
-						Name:    "PLACE_HOLDER",
-						Version: "PLACE_HOLDER",
-					},
+					LaunchTemplate: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolLaunchTemplate{},
 					ScalingConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolScalingConfig{
 						DesiredSize: 4,
 						MaxSize:     8,
