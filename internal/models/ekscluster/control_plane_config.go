@@ -34,6 +34,9 @@ type VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig struct {
 
 	// EKS addons configuration.
 	AddonsConfig *VmwareTanzuManageV1alpha1EksclusterAddonsConfig `json:"addonsConfig,omitempty"`
+
+	// Authentication mode for the cluster.
+	AuthenticationMode VmwareTanzuManageV1alpha1EksclusterAuthenticationMode `json:"authenticationMode,omitempty"`
 }
 
 // MarshalBinary interface implementation.

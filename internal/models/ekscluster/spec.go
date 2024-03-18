@@ -34,6 +34,9 @@ type VmwareTanzuManageV1alpha1EksclusterSpec struct {
 
 	// Arn of the cluster.
 	Arn string `json:"arn,omitempty"`
+
+	// Authentication entries for AWS
+	IAMAccessEntries []VmwareTanzuManageV1alpha1EksclusterAccessEntry `json:"iamAccessEntries,omitempty"` 
 }
 
 // MarshalBinary interface implementation
