@@ -49,6 +49,7 @@ func (m *VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec) UnmarshalBinary(b 
 //
 //   - SECRET_TYPE_UNSPECIFIED: SECRET_TYPE_UNSPECIFIED, Unspecified secret type (default).
 //   - SECRET_TYPE_DOCKERCONFIGJSON: SECRET_TYPE_DOCKERCONFIGJSON, Kubernetes secrets type : kubernetes.io/dockerconfigjson.
+//   - SECRET_TYPE_OPAQUE: SECRET_TYPE_OPAQUE, Kubernetes opaque secret type : https://kubernetes.io/docs/concepts/configuration/secret/#opaque-secrets
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.cluster.namespace.secret.SecretType
 type VmwareTanzuManageV1alpha1ClusterNamespaceSecretType string
@@ -61,6 +62,9 @@ const (
 
 	// VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEDOCKERCONFIGJSON captures enum value "SECRET_TYPE_DOCKERCONFIGJSON".
 	VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEDOCKERCONFIGJSON VmwareTanzuManageV1alpha1ClusterNamespaceSecretType = "SECRET_TYPE_DOCKERCONFIGJSON"
+	// VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEOPAQUE captures enum value "SECRET_TYPE_OPAQUE".
+	//nolint:gosec
+	VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEOPAQUE VmwareTanzuManageV1alpha1ClusterNamespaceSecretType = "SECRET_TYPE_OPAQUE"
 )
 
 // for schema.
@@ -68,7 +72,7 @@ var vmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeEnum []interface{}
 
 func init() {
 	var res []VmwareTanzuManageV1alpha1ClusterNamespaceSecretType
-	if err := json.Unmarshal([]byte(`["SECRET_TYPE_UNSPECIFIED","SECRET_TYPE_DOCKERCONFIGJSON"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["SECRET_TYPE_UNSPECIFIED","SECRET_TYPE_DOCKERCONFIGJSON","SECRET_TYPE_OPAQUE"]`), &res); err != nil {
 		panic(err)
 	}
 

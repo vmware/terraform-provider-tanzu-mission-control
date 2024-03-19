@@ -116,6 +116,7 @@ Read-Only:
 Read-Only:
 
 - `docker_config_json` (List of Object) (see [below for nested schema](#nestedobjatt--spec--docker_config_json))
+- `opaque` (Map of String)
 
 <a id="nestedobjatt--spec--docker_config_json"></a>
 ### Nested Schema for `spec.docker_config_json`
@@ -217,6 +218,7 @@ Read-Only:
 Read-Only:
 
 - `docker_config_json` (List of Object) (see [below for nested schema](#nestedobjatt--spec--docker_config_json))
+- `opaque` (Map of String)
 
 <a id="nestedobjatt--spec--docker_config_json"></a>
 ### Nested Schema for `spec.docker_config_json`

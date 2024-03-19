@@ -55,15 +55,14 @@ func TestAcceptanceForSecretResource(t *testing.T) {
 	testConfig := testGetDefaultAcceptanceConfig(t)
 
 	// If the flag to execute kubernetes secret tests is not found, run this as a mock test by setting up an http intercept for each endpoint.
-	if _, found := os.LookupEnv("ENABLE_SECRET_ENV_TEST"); !found {
+	_, found := os.LookupEnv("ENABLE_SECRET_ENV_TEST")
+	if !found {
 		os.Setenv("TF_ACC", "true")
 		os.Setenv("TMC_ENDPOINT", "dummy.tmc.mock.vmware.com")
 		os.Setenv("VMW_CLOUD_API_TOKEN", "dummy")
 		os.Setenv("VMW_CLOUD_ENDPOINT", "console.cloud.vmware.com")
 
 		log.Println("Setting up the mock endpoints...")
-
-		testConfig.setupHTTPMocks(t)
 	} else {
 		// Environment variables with non default values required for a successful call to MKP
 		requiredVars := []string{
@@ -89,11 +88,39 @@ func TestAcceptanceForSecretResource(t *testing.T) {
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
-				Config: testConfig.getTestResourceBasicConfigValue(commonscope.ClusterGroupScope),
+				PreConfig: func() {
+					if !found {
+						testConfig.setupHTTPMocks(t, DockerSecretType)
+					}
+				},
+				Config: testConfig.getTestResourceBasicConfigValue(commonscope.ClusterGroupScope, WithSecretType(DockerSecretType)),
 				Check:  testConfig.checkResourceAttributes(commonscope.ClusterGroupScope),
 			},
 			{
-				Config: testConfig.getTestResourceBasicConfigValue(commonscope.ClusterScope),
+				PreConfig: func() {
+					if !found {
+						testConfig.setupHTTPMocks(t, DockerSecretType)
+					}
+				},
+				Config: testConfig.getTestResourceBasicConfigValue(commonscope.ClusterScope, WithSecretType(DockerSecretType)),
+				Check:  testConfig.checkResourceAttributes(commonscope.ClusterScope),
+			},
+			{
+				PreConfig: func() {
+					if !found {
+						testConfig.setupHTTPMocks(t, OpaqueSecretType)
+					}
+				},
+				Config: testConfig.getTestResourceBasicConfigValue(commonscope.ClusterGroupScope, WithSecretType(OpaqueSecretType)),
+				Check:  testConfig.checkResourceAttributes(commonscope.ClusterGroupScope),
+			},
+			{
+				PreConfig: func() {
+					if !found {
+						testConfig.setupHTTPMocks(t, OpaqueSecretType)
+					}
+				},
+				Config: testConfig.getTestResourceBasicConfigValue(commonscope.ClusterScope, WithSecretType(OpaqueSecretType)),
 				Check:  testConfig.checkResourceAttributes(commonscope.ClusterScope),
 			},
 		},
@@ -259,6 +286,7 @@ type (
 		username         string
 		password         string
 		imageRegistryURL string
+		secretType       string
 	}
 
 	OperationOption func(*OperationConfig)
@@ -282,25 +310,44 @@ func WithURL(val string) OperationOption {
 	}
 }
 
+func WithSecretType(val string) OperationOption {
+	return func(config *OperationConfig) {
+		config.secretType = val
+	}
+}
+
 // getTestSecretResourceSpec builds the input block for cluster secret resource based a recipe.
 func (testConfig *testAcceptanceConfig) getTestSecretResourceSpec(opts ...OperationOption) string {
 	cfg := &OperationConfig{
 		username:         "someusername",
 		password:         "somepassword",
 		imageRegistryURL: "someregistryurl",
+		secretType:       DockerSecretType,
 	}
 
 	for _, o := range opts {
 		o(cfg)
 	}
 
-	secretSpec := fmt.Sprintf(`  spec {
-	docker_config_json {
-		username = "%s"
-		password = "%s"
-		image_registry_url = "%s"
+	var secretSpec string
+
+	switch cfg.secretType {
+	case DockerSecretType:
+		secretSpec = fmt.Sprintf(`  spec {
+			docker_config_json {
+				username = "%s"
+				password = "%s"
+				image_registry_url = "%s"
+			}
+		}`, cfg.username, cfg.password, cfg.imageRegistryURL)
+	case OpaqueSecretType:
+		secretSpec = fmt.Sprintf(`  spec {
+			opaque = {
+				username = "%s"
+				password = "%s"
+			}
+		}`, cfg.username, cfg.password)
 	}
-  }`, cfg.username, cfg.password, cfg.imageRegistryURL)
 
 	return secretSpec
 }
