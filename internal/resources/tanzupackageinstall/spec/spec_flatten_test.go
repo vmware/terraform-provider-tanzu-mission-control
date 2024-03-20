@@ -59,6 +59,10 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 						"namespace": "cert-manager",
 						"some":      "91",
 					},
+					PathToInlineValuesKey: map[string]interface{}{
+						"namespace": "cert-manager",
+						"some":      91,
+					},
 				},
 			},
 		},

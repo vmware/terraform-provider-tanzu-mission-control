@@ -45,7 +45,9 @@ resource "tanzu-mission-control_package_install" "create_package_install" {
       }
     }
 
-    inline_values = { "test" : "test" }
+    path_to_inline_values = "<inline-values-file-path>"
+
+    inline_values = { "test" : "test" } # Deprecated
   }
 }
 ```

@@ -26,11 +26,25 @@ var (
 					Description: "Role binding scope for service account which will be used by Package Install.",
 					Computed:    true,
 				},
+				PathToInlineValuesKey: {
+					Type:        schema.TypeString,
+					Description: "File to read inline values from (in yaml format). User needs to specify the file path for inline values.",
+					Optional:    true,
+					DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+						newInlineValues, err := helper.ReadYamlFile(new)
+						if err != nil {
+							return false
+						}
+
+						return old == newInlineValues
+					},
+				},
 				InlineValuesKey: {
 					Type:        schema.TypeMap,
 					Description: "Inline values to configure the Package Install.",
 					Optional:    true,
 					Sensitive:   true,
+					Deprecated:  "This field is deprecated. For providing the inline values, use the new field: path_to_inline_values",
 				},
 			},
 		},
@@ -80,6 +94,8 @@ func HasSpecChanged(d *schema.ResourceData) bool {
 	case d.HasChange(helper.GetFirstElementOf(SpecKey, PackageRefKey, VersionSelectionKey, ConstraintsKey)):
 		fallthrough
 	case d.HasChange(helper.GetFirstElementOf(SpecKey, RoleBindingScopeKey)):
+		fallthrough
+	case d.HasChange(helper.GetFirstElementOf(SpecKey, PathToInlineValuesKey)):
 		fallthrough
 	case d.HasChange(helper.GetFirstElementOf(SpecKey, InlineValuesKey)):
 		updateRequired = true

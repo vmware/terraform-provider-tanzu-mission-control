@@ -10,21 +10,23 @@ import (
 
 	valid "github.com/asaskevich/govalidator"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/pkg/errors"
 
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	packageinstallmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzupackageinstall"
-	common "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
-func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec) {
+func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec, err error) {
 	value, ok := d.GetOk(SpecKey)
 	if !ok {
-		return spec
+		return spec, nil
 	}
 
 	data, _ := value.([]interface{})
 
 	if len(data) == 0 || data[0] == nil {
-		return spec
+		return spec, nil
 	}
 
 	specData := data[0].(map[string]interface{})
@@ -65,6 +67,7 @@ func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *packageinstallm
 
 	spec.RoleBindingScope = packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScopeCLUSTER.Pointer()
 
+	// To be deprecated in a future release.
 	if v, ok := specData[InlineValuesKey]; ok {
 		if v1, ok := v.(map[string]interface{}); ok {
 			for key, value := range v1 {
@@ -95,7 +98,20 @@ func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *packageinstallm
 		}
 	}
 
-	return spec
+	if inlineValuesFile, ok := specData[PathToInlineValuesKey]; ok {
+		if (inlineValuesFile.(string)) != "" {
+			if !(helper.FileExists(inlineValuesFile.(string))) {
+				return spec, errors.Errorf("File %s does not exists.", inlineValuesFile.(string))
+			}
+
+			spec.InlineValues, err = helper.ReadYamlFile(inlineValuesFile.(string))
+			if err != nil {
+				return spec, err
+			}
+		}
+	}
+
+	return spec, nil
 }
 
 func FlattenSpecForClusterScope(spec *packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec) (data []interface{}) {
@@ -119,12 +135,15 @@ func FlattenSpecForClusterScope(spec *packageinstallmodel.VmwareTanzuManageV1alp
 	pkgRefSpec[PackageMetadataNameKey] = pkgMetadataName
 	pkgRefSpec[VersionSelectionKey] = versionSelectionSpec
 
+	// To be deprecated in a future release.
 	if v1, ok := spec.InlineValues.(map[string]interface{}); ok {
 		inline := common.GetTypeStringMapData(v1)
 		flattenSpecData[InlineValuesKey] = inline
 	} else {
 		flattenSpecData[InlineValuesKey] = spec.InlineValues
 	}
+
+	flattenSpecData[PathToInlineValuesKey] = spec.InlineValues
 
 	flattenSpecData[RoleBindingScopeKey] = string(*spec.RoleBindingScope)
 
