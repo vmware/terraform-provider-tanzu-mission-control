@@ -8,6 +8,7 @@ package policyrecipenetworkmodel
 
 import (
 	"github.com/go-openapi/swag"
+
 	policyrecipenetworkcommonmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/network/common"
 )
 
