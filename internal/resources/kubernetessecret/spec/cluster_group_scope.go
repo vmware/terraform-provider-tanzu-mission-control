@@ -29,10 +29,10 @@ func ConstructSpecForClusterGroupScope(d *schema.ResourceData) (spec *secertclus
 	return spec
 }
 
-func FlattenSpecForClusterGroupScope(spec *secertclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretSpec, password string) (data []interface{}) {
+func FlattenSpecForClusterGroupScope(spec *secertclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretSpec, password string, opaqueData map[string]interface{}) (data []interface{}) {
 	if spec == nil || spec.AtomicSpec == nil {
 		return data
 	}
 
-	return FlattenSpecForClusterScope(spec.AtomicSpec, password)
+	return FlattenSpecForClusterScope(spec.AtomicSpec, password, opaqueData)
 }

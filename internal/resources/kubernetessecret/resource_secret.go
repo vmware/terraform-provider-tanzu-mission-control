@@ -41,6 +41,7 @@ func ResourceSecret() *schema.Resource {
 		Schema:        getResourceSchema(),
 		CustomizeDiff: customdiff.All(
 			schema.CustomizeDiffFunc(commonscope.ValidateScope(scope.ScopesAllowed[:])),
+			spec.ValidateInput,
 		),
 	}
 }
@@ -279,7 +280,10 @@ func resourceSecretInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m 
 		return diag.Errorf("updating %v is not possible", spec.ImageRegistryURLKey)
 	}
 
-	if updateCheckForMeta(d, secretDataFromServer.meta) || updateCheckForSpec(d, secretDataFromServer.atomicSpec, scopedFullnameData.Scope) {
+	updateRequiredForSepc := updateCheckForSpec(d, secretDataFromServer.atomicSpec, scopedFullnameData.Scope)
+	updateRequiredForMeta := updateCheckForMeta(d, secretDataFromServer.meta)
+
+	if updateRequiredForSepc || updateRequiredForMeta {
 		switch scopedFullnameData.Scope {
 		case commonscope.ClusterScope:
 			if scopedFullnameData.FullnameCluster != nil {
@@ -330,14 +334,21 @@ func resourceSecretInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m 
 
 func updateCheckForSpec(d *schema.ResourceData, atomicSpec *clustersecretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec, scope commonscope.Scope) bool {
 	if !(spec.HasSpecChanged(d)) {
-		username := d.Get(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.UsernameKey))
-		password := d.Get(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.PasswordKey))
-		url := d.Get(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.ImageRegistryURLKey))
+		if atomicSpec.SecretType == clustersecretmodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceSecretType(clustersecretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEDOCKERCONFIGJSON) {
+			username := d.Get(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.UsernameKey))
+			password := d.Get(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.PasswordKey))
+			url := d.Get(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.ImageRegistryURLKey))
 
-		secretSpecData, _ := spec.GetEncodedSpecData(url.(string), username.(string), password.(string))
+			secretSpecData, _ := spec.GetEncodedSpecData(url.(string), username.(string), password.(string))
 
-		atomicSpec.Data = map[string]strfmt.Base64{
-			spec.DockerconfigKey: secretSpecData,
+			atomicSpec.Data = map[string]strfmt.Base64{
+				spec.DockerconfigKey: secretSpecData,
+			}
+		}
+
+		if atomicSpec.SecretType == clustersecretmodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceSecretType(clustersecretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEOPAQUE) {
+			kv := d.Get(helper.GetFirstElementOf(spec.SpecKey, spec.OpaqueKey))
+			atomicSpec.Data = spec.GetEncodedOpaqueData(kv.(map[string]string))
 		}
 
 		return false

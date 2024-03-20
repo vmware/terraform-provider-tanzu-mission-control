@@ -29,7 +29,7 @@ func TestFlattenClusterScopeSpec(t *testing.T) {
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with all values under spec",
+			description: "registry secret test",
 			input: &secretclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec{
 				SecretType: secretclustermodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceSecretType(secretclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEDOCKERCONFIGJSON),
 				Data: map[string]strfmt.Base64{
@@ -48,12 +48,30 @@ func TestFlattenClusterScopeSpec(t *testing.T) {
 				},
 			},
 		},
+		{
+			description: "opaque secret test",
+			input: &secretclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec{
+				SecretType: secretclustermodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceSecretType(secretclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEOPAQUE),
+				Data: map[string]strfmt.Base64{
+					"username": []byte(`myuser`),
+					"password": []byte(`somelongpassword`),
+				},
+			},
+			expected: []interface{}{
+				map[string]interface{}{
+					OpaqueKey: map[string]interface{}{
+						"username": "myuser",
+						"password": "somelongpassword",
+					},
+				},
+			},
+		},
 	}
 
 	for _, each := range cases {
 		test := each
 		t.Run(test.description, func(t *testing.T) {
-			actual := FlattenSpecForClusterScope(test.input, "somepassword")
+			actual := FlattenSpecForClusterScope(test.input, "somepassword", map[string]interface{}{"username": "myuser", "password": "somelongpassword"})
 			require.Equal(t, test.expected, actual)
 		})
 	}
@@ -73,7 +91,7 @@ func TestFlattenClusterGroupScopeSpec(t *testing.T) {
 			expected:    nil,
 		},
 		{
-			description: "normal scenario with all values under spec",
+			description: "normal scenario for registry secret with all values under spec",
 			input: &secretclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretSpec{
 				AtomicSpec: &secretclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec{
 					SecretType: secretclustermodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceSecretType(secretclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEDOCKERCONFIGJSON),
@@ -94,12 +112,32 @@ func TestFlattenClusterGroupScopeSpec(t *testing.T) {
 				},
 			},
 		},
+		{
+			description: "normal scenario for opaque secret with all values under spec",
+			input: &secretclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretSpec{
+				AtomicSpec: &secretclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec{
+					SecretType: secretclustermodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceSecretType(secretclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEOPAQUE),
+					Data: map[string]strfmt.Base64{
+						"username": []byte(`myuser`),
+						"password": []byte(`somelongpassword`),
+					},
+				},
+			},
+			expected: []interface{}{
+				map[string]interface{}{
+					OpaqueKey: map[string]interface{}{
+						"username": "myuser",
+						"password": "somelongpassword",
+					},
+				},
+			},
+		},
 	}
 
 	for _, each := range cases {
 		test := each
 		t.Run(test.description, func(t *testing.T) {
-			actual := FlattenSpecForClusterGroupScope(test.input, "somepassword")
+			actual := FlattenSpecForClusterGroupScope(test.input, "somepassword", map[string]interface{}{"username": "myuser", "password": "somelongpassword"})
 			require.Equal(t, test.expected, actual)
 		})
 	}

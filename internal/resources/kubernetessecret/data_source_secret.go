@@ -80,8 +80,14 @@ func dataSourceSecretRead(ctx context.Context, d *schema.ResourceData, m interfa
 
 	var password string
 
-	if _, ok := d.GetOk(spec.SpecKey); ok {
+	var opaqueData map[string]interface{}
+
+	if _, ok := d.GetOk(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.PasswordKey)); ok {
 		password, _ = (d.Get(helper.GetFirstElementOf(spec.SpecKey, spec.DockerConfigjsonKey, spec.PasswordKey))).(string)
+	}
+
+	if opData, ok := d.GetOk(helper.GetFirstElementOf(spec.SpecKey, spec.OpaqueKey)); ok && opData != nil {
+		opaqueData = opData.(map[string]interface{})
 	}
 
 	if d.Get(ExportKey).(bool) {
@@ -121,13 +127,13 @@ func dataSourceSecretRead(ctx context.Context, d *schema.ResourceData, m interfa
 
 	switch scopedFullnameData.Scope {
 	case commonscope.ClusterScope:
-		flattenedSpec = spec.FlattenSpecForClusterScope(secretDataFromServer.atomicSpec, password)
+		flattenedSpec = spec.FlattenSpecForClusterScope(secretDataFromServer.atomicSpec, password, opaqueData)
 		flattenedStatus = status.FlattenStatusForClusterScope(secretDataFromServer.clusterScopeStatus)
 	case commonscope.ClusterGroupScope:
 		clusterGroupScopeSpec := &secretclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretSpec{
 			AtomicSpec: secretDataFromServer.atomicSpec,
 		}
-		flattenedSpec = spec.FlattenSpecForClusterGroupScope(clusterGroupScopeSpec, password)
+		flattenedSpec = spec.FlattenSpecForClusterGroupScope(clusterGroupScopeSpec, password, opaqueData)
 		flattenedStatus = status.FlattenStatusForClusterGroupScope(secretDataFromServer.clusterGroupScopeStatus)
 	}
 
