@@ -11,6 +11,7 @@ package managementclustermodel
 
 import (
 	"fmt"
+
 	"github.com/go-openapi/swag"
 )
 
