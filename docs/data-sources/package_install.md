@@ -97,8 +97,9 @@ Read-Only:
 
 Read-Only:
 
-- `inline_values` (Map of String)
+- `inline_values` (Map of String) Deprecated
 - `package_ref` (List of Object) (see [below for nested schema](#nestedobjatt--spec--package_ref))
+- `path_to_inline_values` (String) File to read inline values from (in yaml format). User needs to specify the file path for inline values
 - `role_binding_scope` (String)
 
 <a id="nestedobjatt--spec--package_ref"></a>
