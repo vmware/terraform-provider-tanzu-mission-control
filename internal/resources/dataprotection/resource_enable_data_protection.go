@@ -67,14 +67,19 @@ func resourceEnableDataProtectionRead(ctx context.Context, data *schema.Resource
 
 	err := populateDataFromServer(ctx, config, scopedFullnameData, data)
 
+	// remove the existing cluster level resource from state if it is now
+	// managed at the cluster group level.
 	if scopedFullnameData.Scope == scope.ClusterScope {
-		metaData := data.Get(common.MetaKey).([]interface{})[0].(map[string]interface{})
-		annotations := metaData[common.AnnotationsKey].(map[string]interface{})
+		value, ok := data.GetOk(common.MetaKey)
+		if ok && len(value.([]interface{})) > 0 {
+			metaData := value.([]interface{})[0].(map[string]interface{})
+			annotations := metaData[common.AnnotationsKey].(map[string]interface{})
 
-		if _, ok := annotations[commonscope.BatchUIDAnnotationKey]; ok {
-			_ = schema.RemoveFromState(data, m)
+			if _, ok := annotations[commonscope.BatchUIDAnnotationKey]; ok {
+				_ = schema.RemoveFromState(data, m)
 
-			return diags
+				return diags
+			}
 		}
 	}
 
