@@ -100,7 +100,8 @@ Required:
 
 Optional:
 
-- `inline_values` (Map of String, Sensitive) Inline values to configure the Package Install.
+- `inline_values` (Map of String, Sensitive, Deprecated) Inline values to configure the Package Install.
+- `path_to_inline_values` (String) File to read inline values from (in yaml format). User needs to specify the file path for inline values.
 
 Read-Only:
 
