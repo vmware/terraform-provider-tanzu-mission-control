@@ -7,10 +7,12 @@ package dataprotection
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -65,7 +67,32 @@ func resourceEnableDataProtectionRead(ctx context.Context, data *schema.Resource
 
 	config := m.(authctx.TanzuContext)
 
+	tflog.Warn(context.Background(), "here1")
+	log.Print("[WARN] herea1")
 	err := populateDataFromServer(ctx, config, scopedFullnameData, data)
+	if err != nil {
+		tflog.Warn(context.Background(), "here1.5")
+		log.Print("[WARN] herea1.5")
+		tflog.Error(context.Background(), err.Error())
+		log.Printf("[WARN] %s", err.Error())
+		if clienterrors.IsNotFoundError(err) {
+			if !helper.IsContextCallerSet(ctx) {
+				*data = schema.ResourceData{}
+
+				return diags
+			} else if helper.IsDeleteState(ctx) {
+				// d.SetId("") is automatically called assuming delete returns no errors, but
+				// it is added here for explicitness.
+				_ = schema.RemoveFromState(data, m)
+				return diags
+			}
+		}
+		tflog.Warn(context.Background(), "here1.6")
+		log.Print("[WARN] herea1.6")
+		return diag.FromErr(err)
+	}
+	tflog.Warn(context.Background(), "here2")
+	log.Print("[WARN] herea2")
 
 	// remove the existing cluster level resource from state if it is now
 	// managed at the cluster group level.
@@ -76,22 +103,6 @@ func resourceEnableDataProtectionRead(ctx context.Context, data *schema.Resource
 			annotations := metaData[common.AnnotationsKey].(map[string]interface{})
 
 			if _, ok := annotations[commonscope.BatchUIDAnnotationKey]; ok {
-				_ = schema.RemoveFromState(data, m)
-
-				return diags
-			}
-		}
-	}
-
-	if err != nil {
-		if clienterrors.IsNotFoundError(err) {
-			if !helper.IsContextCallerSet(ctx) {
-				*data = schema.ResourceData{}
-
-				return diags
-			} else if helper.IsDeleteState(ctx) {
-				// d.SetId("") is automatically called assuming delete returns no errors, but
-				// it is added here for explicitness.
 				_ = schema.RemoveFromState(data, m)
 
 				return diags
