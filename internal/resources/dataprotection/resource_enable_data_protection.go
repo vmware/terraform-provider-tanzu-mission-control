@@ -66,6 +66,23 @@ func resourceEnableDataProtectionRead(ctx context.Context, data *schema.Resource
 	config := m.(authctx.TanzuContext)
 
 	err := populateDataFromServer(ctx, config, scopedFullnameData, data)
+	if err != nil {
+		if clienterrors.IsNotFoundError(err) {
+			if !helper.IsContextCallerSet(ctx) {
+				*data = schema.ResourceData{}
+
+				return diags
+			} else if helper.IsDeleteState(ctx) {
+				// d.SetId("") is automatically called assuming delete returns no errors, but
+				// it is added here for explicitness.
+				_ = schema.RemoveFromState(data, m)
+
+				return diags
+			}
+		}
+
+		return diag.FromErr(err)
+	}
 
 	// remove the existing cluster level resource from state if it is now
 	// managed at the cluster group level.
@@ -76,22 +93,6 @@ func resourceEnableDataProtectionRead(ctx context.Context, data *schema.Resource
 			annotations := metaData[common.AnnotationsKey].(map[string]interface{})
 
 			if _, ok := annotations[commonscope.BatchUIDAnnotationKey]; ok {
-				_ = schema.RemoveFromState(data, m)
-
-				return diags
-			}
-		}
-	}
-
-	if err != nil {
-		if clienterrors.IsNotFoundError(err) {
-			if !helper.IsContextCallerSet(ctx) {
-				*data = schema.ResourceData{}
-
-				return diags
-			} else if helper.IsDeleteState(ctx) {
-				// d.SetId("") is automatically called assuming delete returns no errors, but
-				// it is added here for explicitness.
 				_ = schema.RemoveFromState(data, m)
 
 				return diags
@@ -228,6 +229,11 @@ func populateDataFromServer(ctx context.Context, config authctx.TanzuContext, sc
 
 				resp, err := config.TMCConnection.DataProtectionService.DataProtectionResourceServiceList(scopedFullnameData.FullnameCluster)
 				if err != nil || resp == nil {
+					if clienterrors.IsUnauthorizedError(err) {
+						authctx.RefreshUserAuthContext(&config, clienterrors.IsUnauthorizedError, err)
+						continue
+					}
+
 					return errors.Wrap(err, "list data protections")
 				}
 
