@@ -14,6 +14,7 @@ import (
 
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
+	k8sYaml "sigs.k8s.io/yaml"
 )
 
 // ReadYamlFile reads a yaml file from a given path.
@@ -43,6 +44,48 @@ func ReadYamlFile(filePath string) (string, error) {
 	}
 
 	return buf.String(), nil
+}
+
+// ReadYamlFileAsJSON reads a yaml file from a given path.
+func ReadYamlFileAsJSON(filePath string) (string, error) {
+	bufString, err := ReadYamlFile(filePath)
+	if err != nil {
+		return "", err
+	}
+
+	jsonBytes, err := k8sYaml.YAMLToJSON([]byte(bufString))
+	if err != nil {
+		return "", err
+	}
+
+	return string(jsonBytes), nil
+}
+
+// WriteYamlFile writes a yaml file to a given path.
+func WriteYamlFile(filePath string, data interface{}) error {
+	outputFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
+	if err != nil {
+		return errors.WithMessage(err, fmt.Sprintf("Error opening or creating the %s file.", filePath))
+	}
+
+	defer func(outputFile *os.File) {
+		err := outputFile.Close()
+		if err != nil {
+			log.Println("[ERROR] could not close file object.")
+		}
+	}(outputFile)
+
+	yamlData, err := yaml.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	_, err = outputFile.Write(yamlData)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // FileExists checks if a file exists in a given path.

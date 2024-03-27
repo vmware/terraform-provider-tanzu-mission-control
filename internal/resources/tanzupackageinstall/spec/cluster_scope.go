@@ -6,6 +6,7 @@ SPDX-License-Identifier: MPL-2.0
 package spec
 
 import (
+	"encoding/json"
 	"strconv"
 
 	valid "github.com/asaskevich/govalidator"
@@ -104,19 +105,26 @@ func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *packageinstallm
 				return spec, errors.Errorf("File %s does not exists.", inlineValuesFile.(string))
 			}
 
-			spec.InlineValues, err = helper.ReadYamlFile(inlineValuesFile.(string))
+			yamlData, err := helper.ReadYamlFileAsJSON(inlineValuesFile.(string))
 			if err != nil {
-				return spec, err
+				return spec, errors.Wrapf(err, "Error while reading file %s as JSON string.", inlineValuesFile.(string))
 			}
+
+			var jsonData map[string]interface{}
+			if err = json.Unmarshal([]byte(yamlData), &jsonData); err != nil {
+				return spec, errors.Wrapf(err, "failed to unmarshal YAML data from file %s", inlineValuesFile.(string))
+			}
+
+			spec.InlineValues = jsonData
 		}
 	}
 
 	return spec, nil
 }
 
-func FlattenSpecForClusterScope(spec *packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec) (data []interface{}) {
+func FlattenSpecForClusterScope(spec *packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec, pathToInlineValues string) (data []interface{}, err error) {
 	if spec == nil {
-		return data
+		return data, nil
 	}
 
 	flattenSpecData := make(map[string]interface{})
@@ -136,18 +144,25 @@ func FlattenSpecForClusterScope(spec *packageinstallmodel.VmwareTanzuManageV1alp
 	pkgRefSpec[VersionSelectionKey] = versionSelectionSpec
 
 	// To be deprecated in a future release.
-	if v1, ok := spec.InlineValues.(map[string]interface{}); ok {
+	if v1, ok := spec.InlineValues.(map[string]interface{}); ok && pathToInlineValues == "" {
 		inline := common.GetTypeStringMapData(v1)
 		flattenSpecData[InlineValuesKey] = inline
-	} else {
+	} else if pathToInlineValues == "" {
 		flattenSpecData[InlineValuesKey] = spec.InlineValues
 	}
 
-	flattenSpecData[PathToInlineValuesKey] = spec.InlineValues
+	if v1, ok := spec.InlineValues.(interface{}); ok && pathToInlineValues != "" {
+		err = helper.WriteYamlFile(pathToInlineValues, v1)
+		if err != nil {
+			return data, err
+		}
+
+		flattenSpecData[PathToInlineValuesKey] = pathToInlineValues
+	}
 
 	flattenSpecData[RoleBindingScopeKey] = string(*spec.RoleBindingScope)
 
 	flattenSpecData[PackageRefKey] = []interface{}{pkgRefSpec}
 
-	return []interface{}{flattenSpecData}
+	return []interface{}{flattenSpecData}, nil
 }

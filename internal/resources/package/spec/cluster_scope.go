@@ -32,9 +32,18 @@ func FlattenSpecForClusterScope(spec *packageclustermodel.VmwareTanzuManageV1alp
 	flattenSpecData[CapacityRequirementsDescriptionKey] = spec.CapacityRequirementsDescription
 	releaseNotesValue := strings.Split(spec.ReleaseNotes, seperatorStr)
 
-	releaseNotes[metadataNameKey] = releaseNotesValue[0]
-	releaseNotes[versionKey] = releaseNotesValue[1]
-	releaseNotes[urlKey] = releaseNotesValue[2]
+	if len(releaseNotesValue) >= 1 {
+		releaseNotes[metadataNameKey] = releaseNotesValue[0]
+	}
+
+	if len(releaseNotesValue) >= 2 {
+		releaseNotes[versionKey] = releaseNotesValue[1]
+	}
+
+	if len(releaseNotesValue) >= 3 {
+		releaseNotes[urlKey] = releaseNotesValue[2]
+	}
+
 	flattenSpecData[ReleaseNotesKey] = []interface{}{releaseNotes}
 	flattenSpecData[RepositoryNameKey] = spec.RepositoryName
 

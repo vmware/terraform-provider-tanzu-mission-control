@@ -104,7 +104,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 				FullName: &tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageFullName{
 					ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 					ManagementClusterName: "attached",
-					ProvisionerName:       "attacched",
+					ProvisionerName:       "attached",
 					OrgID:                 OrgID,
 				},
 				Status: &tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageStatus{
@@ -124,7 +124,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			FullName: &pakageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageFullName{
 				ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 				ManagementClusterName: "attached",
-				ProvisionerName:       "attacched",
+				ProvisionerName:       "attached",
 				OrgID:                 OrgID,
 				Name:                  testConfig.PkgName,
 				NamespaceName:         globalRepoNamespace,
@@ -145,7 +145,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 				Licenses: []string{
 					"some1",
 				},
-				ReleaseNotes:   "someReleaseNotes",
+				ReleaseNotes:   "cert-manager 1.1.0 https://github.com/jetstack/cert-manager/1.1.0",
 				ReleasedAt:     strfmt.DateTime{},
 				RepositoryName: "testRepo",
 				ValuesSchema: &pakageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageValuesSchema{
