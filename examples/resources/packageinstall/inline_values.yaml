@@ -1,0 +1,4 @@
+test: test
+test_nested_key:
+  test_nested_key1: test_nested_value1
+  test_nested_key2: test_nested_value2

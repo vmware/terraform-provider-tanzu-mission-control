@@ -40,6 +40,7 @@ func ResourcePackageInstall() *schema.Resource {
 		Schema:        getResourceSchema(),
 		CustomizeDiff: customdiff.All(
 			schema.CustomizeDiffFunc(commonscope.ValidateScope([]string{commonscope.ClusterKey})),
+			schema.CustomizeDiffFunc(spec.ValidateInlineValues()),
 		),
 	}
 }
@@ -195,7 +196,7 @@ func resourcePackageInstallInPlaceUpdate(ctx context.Context, d *schema.Resource
 	specCheck, err := updateCheckForSpec(d, installSpec)
 	if err != nil {
 		log.Println("[ERROR] Unable to check spec has been updated.")
-		diag.FromErr(err)
+		return diag.FromErr(err)
 	}
 
 	if specCheck {

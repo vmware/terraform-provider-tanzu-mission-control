@@ -6,8 +6,11 @@ SPDX-License-Identifier: MPL-2.0
 package spec
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"context"
+	"fmt"
+	"strings"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 )
 
@@ -31,12 +34,17 @@ var (
 					Description: "File to read inline values from (in yaml format). User needs to specify the file path for inline values.",
 					Optional:    true,
 					DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-						newInlineValues, err := helper.ReadYamlFile(new)
+						yamlDataOld, err := helper.ReadYamlFileAsJSON(old)
 						if err != nil {
 							return false
 						}
 
-						return old == newInlineValues
+						yamlDataNew, err := helper.ReadYamlFileAsJSON(new)
+						if err != nil {
+							return false
+						}
+
+						return yamlDataOld == yamlDataNew
 					},
 				},
 				InlineValuesKey: {
@@ -102,4 +110,42 @@ func HasSpecChanged(d *schema.ResourceData) bool {
 	}
 
 	return updateRequired
+}
+
+type ValidateInlineValuesType func(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error
+
+func ValidateInlineValues() ValidateInlineValuesType {
+	return func(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
+		value, ok := diff.GetOk(SpecKey)
+		if !ok {
+			return fmt.Errorf("spec: %v is not valid: minimum one valid spec block is required", value)
+		}
+
+		data, _ := value.([]interface{})
+
+		if len(data) == 0 || data[0] == nil {
+			return fmt.Errorf("spec data: %v is not valid: minimum one valid spec block is required", data)
+		}
+
+		specData := data[0].(map[string]interface{})
+		inlineConfigFound := make([]string, 0)
+
+		if pathToInlineValuesData, ok := specData[PathToInlineValuesKey]; ok {
+			if pathToInlineValue, ok := pathToInlineValuesData.([]interface{}); ok && len(pathToInlineValue) != 0 {
+				inlineConfigFound = append(inlineConfigFound, PathToInlineValuesKey)
+			}
+		}
+
+		if clusterGroupData, ok := specData[InlineValuesKey]; ok {
+			if clusterGroupValue, ok := clusterGroupData.([]interface{}); ok && len(clusterGroupValue) != 0 {
+				inlineConfigFound = append(inlineConfigFound, InlineValuesKey)
+			}
+		}
+
+		if len(inlineConfigFound) > 1 {
+			return fmt.Errorf("found inline configs: %v are not valid: maximum one valid inline config attribute is allowed", strings.Join(inlineConfigFound, `, `))
+		}
+
+		return nil
+	}
 }

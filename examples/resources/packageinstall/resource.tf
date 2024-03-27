@@ -21,7 +21,7 @@ resource "tanzu-mission-control_package_install" "create_package_install" {
       }
     }
 
-    path_to_inline_values = "<inline-values-file-path>"
+    path_to_inline_values = "./inline_values.yaml" #<inline-values-file-path>
 
     inline_values = { "test" : "test" } # Deprecated
   }
