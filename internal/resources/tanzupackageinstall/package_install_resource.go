@@ -210,7 +210,7 @@ func resourcePackageInstallInPlaceUpdate(ctx context.Context, d *schema.Resource
 
 	if !updateAvailable {
 		log.Printf("[INFO] package install update is not required")
-		return
+		return diags
 	}
 
 	pkgInstallReq := &pkginstallclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallInstallRequest{
