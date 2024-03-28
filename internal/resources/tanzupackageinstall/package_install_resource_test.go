@@ -140,6 +140,7 @@ func TestAcceptanceForPackageInstallResource(t *testing.T) {
 	t.Log("package install resource acceptance test complete")
 }
 
+// nolint: unparam
 func (testConfig *testAcceptanceConfig) getTestPackageInstallResourceBasicConfigValue(scope commonscope.Scope, constraints string, inlineValuesFromFile bool) string {
 	helperBlock, _ := testConfig.ScopeHelperResources.GetTestResourceHelperAndScope(scope, packageinstallscope.ScopesAllowed[:])
 
@@ -238,6 +239,7 @@ func (testConfig *testAcceptanceConfig) getTestPackageInstallResourceBasicConfig
 		testConfig.Namespace, constraints, inlineValuesForPackageInstall)
 }
 
+// nolint: unparam
 // checkPackageInstallResourceAttributes checks for package install creation along with meta attributes.
 func (testConfig *testAcceptanceConfig) checkPackageInstallResourceAttributes(scopeType commonscope.Scope) resource.TestCheckFunc {
 	var check = []resource.TestCheckFunc{

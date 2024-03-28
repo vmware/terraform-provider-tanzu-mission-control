@@ -19,27 +19,21 @@ import (
 
 // nolint: gosec
 const (
-	pkgRepoResource      = packagerepository.ResourceName
-	pkgRepoResourceVar   = "test_pkg_repository"
-	pkgRepoDataSourceVar = "test_data_source_pkg_repository"
-	pkgRepoNamePrefix    = "tf-pkg-repository-test"
+	pkgRepoResource    = packagerepository.ResourceName
+	pkgRepoResourceVar = "test_pkg_repository"
+	pkgRepoNamePrefix  = "tf-pkg-repository-test"
 
-	pkgInstallResource      = ResourceName
-	pkgInstallResourceVar   = "test_pkg_install"
-	pkgInstallDataSourceVar = "test_data_source_pkg_install"
-	pkgInstallNamePrefix    = "tf-pkg-install-test"
-	namespaceNamePrefix     = "test-pkg-install-ns"
+	pkgInstallResource    = ResourceName
+	pkgInstallResourceVar = "test_pkg_install"
+	pkgInstallNamePrefix  = "tf-pkg-install-test"
+	namespaceNamePrefix   = "test-pkg-install-ns"
 
 	constraints = "3.0.0-rc.1"
 
-	PkgResource         = ResourceName
-	pkgDataSourceVar    = "test_data_source_pkg"
 	pkgName1            = "2.0.0"
 	pkgName2            = "3.0.0-rc.1"
 	pkgMetadataName     = "pkg.test.carvel.dev"
 	globalRepoNamespace = "tanzu-package-repo-global"
-
-	imageURL = "projects.registry.vmware.com/tmc/build-integrations/package/repository/e2e-test-unauth-repo@sha256:87a5f7e0c44523fbc35a9432c657bebce246138bbd0f16d57f5615933ceef632"
 )
 
 type testAcceptanceConfig struct {

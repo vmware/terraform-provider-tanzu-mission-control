@@ -151,8 +151,8 @@ func FlattenSpecForClusterScope(spec *packageinstallmodel.VmwareTanzuManageV1alp
 		flattenSpecData[InlineValuesKey] = spec.InlineValues
 	}
 
-	if v1, ok := spec.InlineValues.(interface{}); ok && pathToInlineValues != "" {
-		err = helper.WriteYamlFile(pathToInlineValues, v1)
+	if spec.InlineValues != nil && pathToInlineValues != "" {
+		err = helper.WriteYamlFile(pathToInlineValues, spec.InlineValues)
 		if err != nil {
 			return data, err
 		}
