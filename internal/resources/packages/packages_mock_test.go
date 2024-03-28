@@ -147,7 +147,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 					Licenses: []string{
 						"some1",
 					},
-					ReleaseNotes:   "someReleaseNotes",
+					ReleaseNotes:   "cert-manager 1.1.0 https://github.com/jetstack/cert-manager/1.1.0",
 					ReleasedAt:     strfmt.DateTime{},
 					RepositoryName: "testRepo",
 					ValuesSchema: &pakageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageValuesSchema{

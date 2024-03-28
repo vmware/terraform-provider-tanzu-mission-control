@@ -13,12 +13,15 @@ import (
 	"os"
 	"testing"
 
+	"github.com/go-openapi/strfmt"
 	"github.com/go-test/deep"
 	"github.com/jarcoal/httpmock"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
+	pakageclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/package/cluster"
 	statusmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/status"
+	tanzupakageclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzupackage"
 	packageinstallmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzupackageinstall"
 )
 
@@ -27,6 +30,7 @@ const (
 	clAPIVersionAndGroup = "v1alpha1/clusters"
 	apiSubGroup          = "namespaces"
 	apiKind              = "tanzupackage/installs"
+	apiKindMetadata      = "tanzupackage/metadatas"
 )
 
 // nolint: unparam
@@ -178,6 +182,82 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 	}
 	referenceArray := make([]*objectmetamodel.VmwareTanzuCoreV1alpha1ObjectReference, 0)
 	referenceArray = append(referenceArray, &reference)
+
+	getTanzuPkgMetadataResponse := func(pkgName string) *pakageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataGetPackageResponse {
+		return &pakageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataGetPackageResponse{
+			Package: &pakageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackagePackage{
+				FullName: &pakageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageFullName{
+					ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
+					ManagementClusterName: "attached",
+					ProvisionerName:       "attached",
+					OrgID:                 OrgID,
+					Name:                  pkgName,
+					NamespaceName:         globalRepoNamespace,
+					MetadataName:          pkgMetadataName,
+				},
+				Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
+					ParentReferences: referenceArray,
+					Description:      "resource with description",
+					Labels: map[string]string{
+						"key1": "value1",
+						"key2": "value2",
+					},
+					UID:             "package1",
+					ResourceVersion: "v1",
+				},
+				Spec: &pakageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageSpec{
+					CapacityRequirementsDescription: "someCapacityRequirementsDescription",
+					Licenses: []string{
+						"some1",
+					},
+					ReleaseNotes:   "cert-manager 1.1.0 https://github.com/jetstack/cert-manager/1.1.0",
+					ReleasedAt:     strfmt.DateTime{},
+					RepositoryName: "testRepo",
+					ValuesSchema: &pakageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageValuesSchema{
+						Template: &pakageclustermodel.K8sIoApimachineryPkgRuntimeRawExtension{
+							Raw: []byte("somevalue"),
+						},
+					},
+				},
+			},
+		}
+	}
+
+	getTanzuPkgMetadataEndpoint1 := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, apiSubGroup, globalRepoNamespace, apiKindMetadata, pkgMetadataName, "packages", testConfig.PkgName1)).String()
+	getTanzuPkgMetadataEndpoint2 := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, apiSubGroup, globalRepoNamespace, apiKindMetadata, pkgMetadataName, "packages", testConfig.PkgName2)).String()
+
+	httpmock.RegisterResponder("GET", getTanzuPkgMetadataEndpoint1,
+		bodyInspectingResponder(t, nil, 200, getTanzuPkgMetadataResponse(testConfig.PkgName1)))
+	httpmock.RegisterResponder("GET", getTanzuPkgMetadataEndpoint2,
+		bodyInspectingResponder(t, nil, 200, getTanzuPkgMetadataResponse(testConfig.PkgName2)))
+
+	// cluster level package resource.
+
+	getTanzuPackageResponse := &tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageListTanzuPackagesResponse{
+		TanzuPackages: []*tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageTanzuPackage{
+			{
+				FullName: &tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageFullName{
+					ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
+					ManagementClusterName: "attached",
+					ProvisionerName:       "attached",
+					OrgID:                 OrgID,
+				},
+				Status: &tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageStatus{
+					Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
+						"Ready": {
+							Reason: "made successfully",
+						},
+					},
+					PackageRepositoryGlobalNamespace: globalRepoNamespace,
+				},
+			},
+		},
+	}
+
+	getTanzuPackageEndpoint := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, "tanzupackage")).String()
+
+	httpmock.RegisterResponder("GET", getTanzuPackageEndpoint,
+		bodyInspectingResponder(t, nil, 200, getTanzuPackageResponse))
 
 	// cluster level package install resource.
 	postRequest, postResponse, getResponse := testConfig.getClRequestResponse(OrgID, referenceArray)

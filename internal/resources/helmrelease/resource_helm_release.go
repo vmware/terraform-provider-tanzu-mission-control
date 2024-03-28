@@ -258,8 +258,8 @@ func resourceHelmReleaseInPlaceUpdate(ctx context.Context, d *schema.ResourceDat
 
 	specCheck, err := updateCheckForSpec(d, helmReleaseDataFromServer.atomicSpec, scopedFullnameData.Scope)
 	if err != nil {
-		log.Println("[ERROR] Unable to check spec has been updtated.")
-		diag.FromErr(err)
+		log.Println("[ERROR] Unable to check spec has been updated.")
+		return diag.FromErr(err)
 	}
 
 	if specCheck {

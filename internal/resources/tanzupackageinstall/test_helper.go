@@ -19,18 +19,21 @@ import (
 
 // nolint: gosec
 const (
-	pkgRepoResource      = packagerepository.ResourceName
-	pkgRepoResourceVar   = "test_pkg_repository"
-	pkgRepoDataSourceVar = "test_data_source_pkg_repository"
-	pkgRepoNamePrefix    = "tf-pkg-repository-test"
+	pkgRepoResource    = packagerepository.ResourceName
+	pkgRepoResourceVar = "test_pkg_repository"
+	pkgRepoNamePrefix  = "tf-pkg-repository-test"
 
-	pkgInstallResource      = ResourceName
-	pkgInstallResourceVar   = "test_pkg_install"
-	pkgInstallDataSourceVar = "test_data_source_pkg_install"
-	pkgInstallNamePrefix    = "tf-pkg-install-test"
-	namespaceNamePrefix     = "test-pkg-install-ns"
+	pkgInstallResource    = ResourceName
+	pkgInstallResourceVar = "test_pkg_install"
+	pkgInstallNamePrefix  = "tf-pkg-install-test"
+	namespaceNamePrefix   = "test-pkg-install-ns"
 
 	constraints = "3.0.0-rc.1"
+
+	pkgName1            = "2.0.0"
+	pkgName2            = "3.0.0-rc.1"
+	pkgMetadataName     = "pkg.test.carvel.dev"
+	globalRepoNamespace = "tanzu-package-repo-global"
 )
 
 type testAcceptanceConfig struct {
@@ -40,6 +43,8 @@ type testAcceptanceConfig struct {
 	PkgInstallResourceName string
 	PkgInstallName         string
 	PkgRepoName            string
+	PkgName1               string
+	PkgName2               string
 	ScopeHelperResources   *commonscope.ScopeHelperResources
 	Namespace              string
 }

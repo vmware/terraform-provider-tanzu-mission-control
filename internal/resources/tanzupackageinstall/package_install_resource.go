@@ -40,6 +40,7 @@ func ResourcePackageInstall() *schema.Resource {
 		Schema:        getResourceSchema(),
 		CustomizeDiff: customdiff.All(
 			schema.CustomizeDiffFunc(commonscope.ValidateScope([]string{commonscope.ClusterKey})),
+			schema.CustomizeDiffFunc(spec.ValidateInlineValues()),
 		),
 	}
 }
@@ -105,11 +106,16 @@ func resourcePackageInstallCreate(ctx context.Context, d *schema.ResourceData, m
 		return diag.Errorf("Unable to create Tanzu Mission Control package install entry; Scope full name is empty")
 	}
 
+	specVal, err := spec.ConstructSpecForClusterScope(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	packageInstallReq := &pkginstallclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallInstallRequest{
 		Install: &pkginstallclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallInstall{
 			FullName: scopedFullnameData.FullnameCluster,
 			Meta:     common.ConstructMeta(d),
-			Spec:     spec.ConstructSpecForClusterScope(d),
+			Spec:     specVal,
 		},
 	}
 
@@ -187,8 +193,14 @@ func resourcePackageInstallInPlaceUpdate(ctx context.Context, d *schema.Resource
 		updateAvailable = true
 	}
 
-	if updateCheckForSpec(d, installSpec) {
-		err := CheckForUpdatedPackage(config, scopedFullnameData, installSpec)
+	specCheck, err := updateCheckForSpec(d, installSpec)
+	if err != nil {
+		log.Println("[ERROR] Unable to check spec has been updated.")
+		return diag.FromErr(err)
+	}
+
+	if specCheck {
+		err = CheckForUpdatedPackage(config, scopedFullnameData, installSpec)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -197,7 +209,8 @@ func resourcePackageInstallInPlaceUpdate(ctx context.Context, d *schema.Resource
 	}
 
 	if !updateAvailable {
-		return
+		log.Printf("[INFO] package install update is not required")
+		return diags
 	}
 
 	pkgInstallReq := &pkginstallclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallInstallRequest{
@@ -283,21 +296,24 @@ func updateCheckForMeta(d *schema.ResourceData, meta *objectmetamodel.VmwareTanz
 	return true
 }
 
-func updateCheckForSpec(d *schema.ResourceData, installSpec *pkginstallclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec) bool {
+func updateCheckForSpec(d *schema.ResourceData, installSpec *pkginstallclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec) (bool, error) {
 	if !spec.HasSpecChanged(d) {
-		return false
+		return false, nil
 	}
 
-	updatedInstallSpec := spec.ConstructSpecForClusterScope(d)
+	specVal, err := spec.ConstructSpecForClusterScope(d)
+	if err != nil {
+		return false, err
+	}
 
-	installSpec.PackageRef.PackageMetadataName = updatedInstallSpec.PackageRef.PackageMetadataName
-	installSpec.PackageRef.VersionSelection.Constraints = updatedInstallSpec.PackageRef.VersionSelection.Constraints
-	installSpec.RoleBindingScope = updatedInstallSpec.RoleBindingScope
-	installSpec.InlineValues = updatedInstallSpec.InlineValues
+	installSpec.PackageRef.PackageMetadataName = specVal.PackageRef.PackageMetadataName
+	installSpec.PackageRef.VersionSelection.Constraints = specVal.PackageRef.VersionSelection.Constraints
+	installSpec.RoleBindingScope = specVal.RoleBindingScope
+	installSpec.InlineValues = specVal.InlineValues
 
 	log.Printf("[INFO] updating package install spec")
 
-	return true
+	return true, nil
 }
 
 func GetGlobalNamespace(config authctx.TanzuContext, searchscope *tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageSearchScope) (string, error) {
