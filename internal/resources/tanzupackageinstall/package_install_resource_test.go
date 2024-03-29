@@ -106,21 +106,26 @@ func TestAcceptanceForPackageInstallResource(t *testing.T) {
 			},
 			{
 				PreConfig: func() {
-					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" && found {
-						t.Skip("KUBECONFIG env var is not set for cluster scoped package install acceptance test")
-					}
-				},
-				Config: testConfig.getTestPackageInstallResourceBasicConfigValue(commonscope.ClusterScope, "2.0.0", true),
-				Check:  testConfig.checkPackageInstallResourceAttributes(commonscope.ClusterScope),
-			},
-			{
-				PreConfig: func() {
 					if !found {
 						t.Log("Setting up the updated GET mock responder...")
 						testConfig.setupHTTPMocksUpdate(t)
 					}
 				},
 				Config: testConfig.getTestPackageInstallResourceBasicConfigValue(commonscope.ClusterScope, constraints, false),
+				Check:  testConfig.checkPackageInstallResourceAttributes(commonscope.ClusterScope),
+			},
+			{
+				PreConfig: func() {
+					if !found {
+						t.Log("Reset GET mock responder...")
+						testConfig.setupHTTPMocks(t)
+					}
+
+					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" && found {
+						t.Skip("KUBECONFIG env var is not set for cluster scoped package install acceptance test")
+					}
+				},
+				Config: testConfig.getTestPackageInstallResourceBasicConfigValue(commonscope.ClusterScope, "2.0.0", true),
 				Check:  testConfig.checkPackageInstallResourceAttributes(commonscope.ClusterScope),
 			},
 			{

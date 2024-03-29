@@ -65,10 +65,12 @@ func FlattenSpecForClusterScope(spec *packageclustermodel.VmwareTanzuManageV1alp
 
 	var rawSchemaData = make(map[string]interface{})
 
-	rawSchemaData[examplesKey] = []interface{}{
-		map[string]interface{}{
-			namespaceKey: out.Examples[0].Namespace,
-		},
+	if len(out.Examples) > 0 {
+		rawSchemaData[examplesKey] = []interface{}{
+			map[string]interface{}{
+				namespaceKey: out.Examples[0].Namespace,
+			},
+		}
 	}
 
 	rawSchemaData[propertiesKey] = []interface{}{
