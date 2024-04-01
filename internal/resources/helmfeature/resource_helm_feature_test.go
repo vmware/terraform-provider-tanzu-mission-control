@@ -32,7 +32,7 @@ import (
 func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 	return &testAcceptanceConfig{
 		Provider:                initTestProvider(t),
-		ScopeHelperResources:    commonscope.NewScopeHelperResources(),
+		ScopeHelperResources:    commonscope.NewScopeHelperResources(commonscope.WithRandomClusterGroupNameForCluster()), // Don't use the default cluster group
 		HelmFeatureResource:     helmfeatureResource,
 		HelmFeatureResourceVar:  helmfeatureResourceVar,
 		HelmReleaseName:         acctest.RandomWithPrefix(helmReleaseNamePrefix),

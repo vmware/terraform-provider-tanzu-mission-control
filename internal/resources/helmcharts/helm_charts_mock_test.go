@@ -28,6 +28,7 @@ const (
 	apiKind              = "charts"
 )
 
+// nolint: unused
 func bodyInspectingResponder(t *testing.T, expectedContent interface{}, successResponse int, successResponseBody interface{}) httpmock.Responder {
 	return func(r *http.Request) (*http.Response, error) {
 		successFunc := func() (*http.Response, error) {
@@ -77,6 +78,7 @@ func bodyInspectingResponder(t *testing.T, expectedContent interface{}, successR
 	}
 }
 
+// nolint: unused
 func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 	httpmock.Activate()
 	t.Cleanup(httpmock.Deactivate)

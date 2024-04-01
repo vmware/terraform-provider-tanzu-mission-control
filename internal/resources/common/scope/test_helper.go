@@ -65,16 +65,28 @@ type Workspace struct {
 	Name         string
 }
 
-type ScopeHelperResources struct {
-	Meta         string
-	Cluster      *Cluster
-	ClusterGroup *ClusterGroup
-	Workspace    *Workspace
-	OrgID        string
+type (
+	ScopeHelperResources struct {
+		Meta         string
+		Cluster      *Cluster
+		ClusterGroup *ClusterGroup
+		Workspace    *Workspace
+		OrgID        string
+	}
+
+	ScopeHelperResourcesOption func(*ScopeHelperResources)
+)
+
+func WithRandomClusterGroupNameForCluster() ScopeHelperResourcesOption {
+	return func(shr *ScopeHelperResources) {
+		randomClusterGroupName := acctest.RandomWithPrefix(clusterGroupNamePrefix)
+		shr.Cluster.ClusterGroupName = randomClusterGroupName
+		shr.ClusterGroup.Name = randomClusterGroupName
+	}
 }
 
-func NewScopeHelperResources() *ScopeHelperResources {
-	return &ScopeHelperResources{
+func NewScopeHelperResources(opts ...ScopeHelperResourcesOption) *ScopeHelperResources {
+	shr := &ScopeHelperResources{
 		Meta: testhelper.MetaTemplate,
 		Cluster: &Cluster{
 			Resource:              clusterResource,
@@ -100,6 +112,12 @@ func NewScopeHelperResources() *ScopeHelperResources {
 		},
 		OrgID: os.Getenv("ORG_ID"),
 	}
+
+	for _, o := range opts {
+		o(shr)
+	}
+
+	return shr
 }
 
 func (shr *ScopeHelperResources) getTestResourceWorkspaceConfigValue() string {
@@ -122,6 +140,13 @@ func (shr *ScopeHelperResources) GetTestResourceHelperAndScope(scopeType Scope, 
 	switch scopeType {
 	case ClusterScope:
 		helperBlock = shr.getTestResourceClusterConfigValue()
+
+		// For cases in which WithRandomClusterGroupNameForCluster option is used.
+		if shr.Cluster.ClusterGroupName == shr.ClusterGroup.Name && shr.Cluster.ClusterGroupName != clusterGroupNameForCluster {
+			preRequisiteForHelperBlock := shr.getTestResourceClusterGroupConfigValue()
+			helperBlock = preRequisiteForHelperBlock + helperBlock
+		}
+
 		scopeBlock = fmt.Sprintf(`
 	scope {
 	  cluster {

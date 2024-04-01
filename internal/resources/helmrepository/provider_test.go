@@ -17,6 +17,7 @@ import (
 	helm "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/helmfeature"
 )
 
+// nolint: unused
 func initTestProvider(t *testing.T) *schema.Provider {
 	testProvider := &schema.Provider{
 		Schema: authctx.ProviderAuthSchema(),

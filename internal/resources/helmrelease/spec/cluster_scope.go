@@ -31,11 +31,11 @@ func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *releaseclusterm
 
 	if inlineConfigValueFile, ok := specData[InlineConfigKey]; ok {
 		if (inlineConfigValueFile.(string)) != "" {
-			if !(fileExists(inlineConfigValueFile.(string))) {
+			if !(helper.FileExists(inlineConfigValueFile.(string))) {
 				return spec, errors.Errorf("File %s does not exists.", inlineConfigValueFile.(string))
 			}
 
-			spec.InlineConfiguration, err = readYamlFile(inlineConfigValueFile.(string))
+			spec.InlineConfiguration, err = helper.ReadYamlFile(inlineConfigValueFile.(string))
 			if err != nil {
 				return spec, err
 			}

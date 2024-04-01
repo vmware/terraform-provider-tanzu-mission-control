@@ -16,12 +16,13 @@ import (
 	commonscope "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common/scope"
 )
 
-// nolint: gosec
+// nolint: gosec, unused
 const (
 	repoResource      = ResourceName
 	repoDataSourceVar = "test_data_source_repo"
 )
 
+// nolint: unused
 type testAcceptanceConfig struct {
 	Provider             *schema.Provider
 	RepoResource         string
@@ -32,6 +33,7 @@ type testAcceptanceConfig struct {
 	ScopeHelperResources *commonscope.ScopeHelperResources
 }
 
+// nolint: unused
 func getConfigureContextFunc() func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	if _, found := os.LookupEnv("ENABLE_HELMREPO_ENV_TEST"); !found {
 		return authctx.ProviderConfigureContextWithDefaultTransportForTesting

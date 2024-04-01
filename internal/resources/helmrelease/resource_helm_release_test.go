@@ -37,7 +37,7 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 		HelmReleaseResourceVar:  helmReleaseResourceVar,
 		HelmReleaseResourceName: fmt.Sprintf("%s.%s", helmReleaseResource, helmReleaseResourceVar),
 		HelmReleaseName:         acctest.RandomWithPrefix(helmReleaseNamePrefix),
-		ScopeHelperResources:    commonscope.NewScopeHelperResources(),
+		ScopeHelperResources:    commonscope.NewScopeHelperResources(commonscope.WithRandomClusterGroupNameForCluster()), // Don't use the default cluster group
 		Namespace:               "tanzu-helm-resources",
 		HelmFeatureResource:     helmfeatureResource,
 		HelmFeatureResourceVar:  helmfeatureResourceVar,
