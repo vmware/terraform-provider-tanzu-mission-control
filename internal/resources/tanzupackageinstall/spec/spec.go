@@ -50,7 +50,7 @@ var (
 				},
 				InlineValuesKey: {
 					Type:        schema.TypeMap,
-					Description: "Inline values to configure the Package Install.",
+					Description: "Deprecated, Use `path_to_inline_values` instead. Inline values to configure the Package Install.",
 					Optional:    true,
 					Sensitive:   true,
 					Deprecated:  "This field is deprecated. For providing the inline values, use the new field: path_to_inline_values",
