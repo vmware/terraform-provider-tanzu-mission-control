@@ -409,11 +409,11 @@ func checkHelmFeature(config authctx.TanzuContext, scopedFullnameData *scope.Sco
 		}
 
 		if len(resp.Helms) == 0 {
-			return errors.Errorf("Tanzu mission control helm feature is disable on cluster group, name: %s", scopedFullnameData.FullnameCluster.ClusterName)
+			return errors.Errorf("Tanzu mission control helm feature is disable on cluster group, name: %s", scopedFullnameData.FullnameClusterGroup.ClusterGroupName)
 		}
 
 		if resp.Helms[0].Status.Phase == nil {
-			return errors.Errorf("Tanzu mission control helm feature is disable on cluster group, name: %s", scopedFullnameData.FullnameCluster.ClusterName)
+			return errors.Errorf("Tanzu mission control helm feature is disable on cluster group, name: %s", scopedFullnameData.FullnameClusterGroup.ClusterGroupName)
 		}
 	}
 
