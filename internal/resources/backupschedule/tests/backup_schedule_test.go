@@ -91,28 +91,28 @@ func TestAcceptanceBackupScheduleResource(t *testing.T) {
 			{
 				Config: tfResourceConfigBuilder.GetFullClusterCGBackupScheduleConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(FullClusterBackupScheduleResourceFullName, "name", FullClusterBackupScheduleName),
-					verifyBackupScheduleResourceCreation(provider, FullClusterBackupScheduleResourceFullName, FullClusterBackupScheduleName),
+					resource.TestCheckResourceAttr(FullClusterCGBackupScheduleResourceFullName, "name", FullClusterCGBackupScheduleName),
+					verifyCGBackupScheduleResourceCreation(provider, FullClusterCGBackupScheduleResourceFullName, FullClusterCGBackupScheduleName),
 				),
 			},
 			{
 				Config: tfResourceConfigBuilder.GetNamespacesCGBackupScheduleConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(NamespacesBackupScheduleResourceFullName, "name", NamespacesBackupScheduleName),
-					verifyBackupScheduleResourceCreation(provider, NamespacesBackupScheduleResourceFullName, NamespacesBackupScheduleName),
+					resource.TestCheckResourceAttr(NamespacesCGBackupScheduleResourceFullName, "name", NamespacesCGBackupScheduleName),
+					verifyCGBackupScheduleResourceCreation(provider, NamespacesCGBackupScheduleResourceFullName, NamespacesCGBackupScheduleName),
 				),
 			},
 			{
 				Config: tfResourceConfigBuilder.GetLabelsCGBackupScheduleConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(LabelsBackupScheduleResourceFullName, "name", LabelsBackupScheduleName),
-					verifyBackupScheduleResourceCreation(provider, LabelsBackupScheduleResourceFullName, LabelsBackupScheduleName),
+					resource.TestCheckResourceAttr(LabelsCGBackupScheduleResourceFullName, "name", LabelsCGBackupScheduleName),
+					verifyCGBackupScheduleResourceCreation(provider, LabelsCGBackupScheduleResourceFullName, LabelsCGBackupScheduleName),
 				),
 			},
 			{
-				Config: tfDataSourceConfigBuilder.GetDataSourceConfig(),
+				Config: tfDataSourceConfigBuilder.GetCGDataSourceConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					verifyBackupScheduleDataSource(provider, DataSourceFullName, LabelsBackupScheduleName),
+					verifyBackupScheduleDataSource(provider, DataSourceCGFullName, LabelsCGBackupScheduleName),
 				),
 			},
 		},
@@ -159,21 +159,45 @@ func verifyBackupScheduleResourceCreation(
 			if resp == nil {
 				return fmt.Errorf("backup schedule resource is empty, resource: %s", resourceName)
 			}
-		} else {
-			fn := &backupscheduleclustergroupmodels.VmwareTanzuManageV1alpha1ClustergroupDataprotectionScheduleFullName{
-				Name:             backupScheduleName,
-				ClusterGroupName: testScopeHelper.ClusterGroup.Name,
-			}
+		}
 
-			resp, err := context.TMCConnection.ClusterGroupBackupScheduleService.VmwareTanzuManageV1alpha1ClustergroupBackupScheduleResourceServiceGet(fn)
+		return nil
+	}
+}
 
-			if err != nil {
-				return fmt.Errorf("cluster group backup schedule resource not found, resource: %s | err: %s", resourceName, err)
-			}
+func verifyCGBackupScheduleResourceCreation(
+	provider *schema.Provider,
+	resourceName string,
+	backupScheduleName string,
+) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if provider == nil {
+			return fmt.Errorf("provider not initialised")
+		}
 
-			if resp == nil {
-				return fmt.Errorf("cluster group backup schedule resource is empty, resource: %s", resourceName)
-			}
+		rs, ok := s.RootModule().Resources[resourceName]
+
+		if !ok {
+			return fmt.Errorf("could not found resource %s", resourceName)
+		}
+
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("ID not set, resource %s", resourceName)
+		}
+
+		fn := &backupscheduleclustergroupmodels.VmwareTanzuManageV1alpha1ClustergroupDataprotectionScheduleFullName{
+			Name:             backupScheduleName,
+			ClusterGroupName: testScopeHelper.ClusterGroup.Name,
+		}
+
+		resp, err := context.TMCConnection.ClusterGroupBackupScheduleService.VmwareTanzuManageV1alpha1ClustergroupBackupScheduleResourceServiceGet(fn)
+
+		if err != nil {
+			return fmt.Errorf("cluster group backup schedule resource not found, resource: %s | err: %s", resourceName, err)
+		}
+
+		if resp == nil {
+			return fmt.Errorf("cluster group backup schedule resource is empty, resource: %s", resourceName)
 		}
 
 		return nil

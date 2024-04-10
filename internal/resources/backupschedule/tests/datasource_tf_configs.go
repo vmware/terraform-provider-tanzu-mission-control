@@ -20,30 +20,35 @@ const (
 )
 
 const (
-	DataSourceName = "test_cluster_scope"
+	DataSourceName   = "test_cluster_scope"
+	DataSourceCGName = "test_cluster_group_scope"
 )
 
 var (
-	DataSourceFullName = fmt.Sprintf("data.%s.%s", backupscheduleres.ResourceName, DataSourceName)
+	DataSourceFullName   = fmt.Sprintf("data.%s.%s", backupscheduleres.ResourceName, DataSourceName)
+	DataSourceCGFullName = fmt.Sprintf("data.%s.%s", backupscheduleres.ResourceName, DataSourceCGName)
 )
 
 type DataSourceTFConfigBuilder struct {
-	BackupScheduleRequiredResource string
-	ClusterInfo                    string
-	ClusterGroupInfo               string
+	BackupScheduleRequiredResource   string
+	CGBackupScheduleRequiredResource string
+	ClusterInfo                      string
+	ClusterGroupInfo                 string
 }
 
 func InitDataSourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, resourceConfigBuilder *ResourceTFConfigBuilder, bMode DataSourceBuildMode) *DataSourceTFConfigBuilder {
-	var backupScheduleRequiredResource string
+	var backupScheduleRequiredResource, cgBackupScheduleRequiredResource string
 
 	if bMode != DsNoParentRs {
 		backupScheduleRequiredResource = resourceConfigBuilder.GetLabelsBackupScheduleConfig()
+		cgBackupScheduleRequiredResource = resourceConfigBuilder.GetLabelsCGBackupScheduleConfig()
 	}
 
 	tfConfigBuilder := &DataSourceTFConfigBuilder{
-		BackupScheduleRequiredResource: backupScheduleRequiredResource,
-		ClusterInfo:                    fmt.Sprintf("%s = \"%s\"", backupscheduleres.ClusterNameKey, scopeHelper.Cluster.Name),
-		ClusterGroupInfo:               fmt.Sprintf("%s = \"%s\"", backupscheduleres.ClusterGroupNameKey, scopeHelper.ClusterGroup.Name),
+		BackupScheduleRequiredResource:   backupScheduleRequiredResource,
+		CGBackupScheduleRequiredResource: cgBackupScheduleRequiredResource,
+		ClusterInfo:                      fmt.Sprintf("%s = \"%s\"", backupscheduleres.ClusterNameKey, scopeHelper.Cluster.Name),
+		ClusterGroupInfo:                 fmt.Sprintf("%s = \"%s\"", backupscheduleres.ClusterGroupNameKey, scopeHelper.ClusterGroup.Name),
 	}
 
 	return tfConfigBuilder
@@ -87,10 +92,10 @@ func (builder *DataSourceTFConfigBuilder) GetCGDataSourceConfig() string {
           depends_on = [%s]
 		}
 		`,
-		builder.BackupScheduleRequiredResource,
+		builder.CGBackupScheduleRequiredResource,
 		backupscheduleres.ResourceName,
-		DataSourceName,
-		LabelsBackupScheduleName,
+		DataSourceCGName,
+		LabelsCGBackupScheduleName,
 		builder.ClusterGroupInfo,
-		LabelsBackupScheduleResourceFullName)
+		LabelsCGBackupScheduleResourceFullName)
 }
