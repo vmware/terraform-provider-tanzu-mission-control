@@ -65,6 +65,7 @@ import (
 	pkginstallclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackageinstall"
 	pkgrepositoryclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository"
 	pkgrepoavailabilityclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tanzupackagerepository/packagerepositoryavailability"
+	tapeulaclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/tap/eula"
 	targetlocationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/targetlocation"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/transport"
 	workspaceclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/workspace"
@@ -158,6 +159,7 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		PermissionTemplateService:                     permissiontemplateclient.New(httpClient),
 		ClusterGroupDataProtectionService:             dataprotectionclustergroupclient.New(httpClient),
 		ClusterGroupBackupScheduleService:             clustergroupbackupscheduleclient.New(httpClient),
+		EulaResourceService:                           tapeulaclient.New(httpClient),
 	}
 }
 
@@ -223,4 +225,5 @@ type TanzuMissionControl struct {
 	PermissionTemplateService                     permissiontemplateclient.ClientService
 	ClusterGroupDataProtectionService             dataprotectionclustergroupclient.ClientService
 	ClusterGroupBackupScheduleService             clustergroupbackupscheduleclient.ClientService
+	EulaResourceService                           tapeulaclient.ClientService
 }
