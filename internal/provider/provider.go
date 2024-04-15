@@ -52,6 +52,7 @@ import (
 	utkgresource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzukubernetescluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackageinstall"
 	packagerepository "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackagerepository"
+	tapeula "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tap/eula"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/targetlocation"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/workspace"
 )
@@ -93,6 +94,7 @@ func Provider() *schema.Provider {
 			provisioner.ResourceName:          provisioner.ResourceProvisioner(),
 			custompolicytemplate.ResourceName: custompolicytemplate.ResourceCustomPolicyTemplate(),
 			customiamrole.ResourceName:        customiamrole.ResourceCustomIAMRole(),
+			tapeula.ResourceName:              tapeula.ResourceEULA(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			cluster.ResourceName:                      cluster.DataSourceTMCCluster(),
@@ -122,6 +124,7 @@ func Provider() *schema.Provider {
 			inspections.ResourceNameInspections:       inspections.DataSourceInspections(),
 			inspections.ResourceNameInspectionResults: inspections.DataSourceInspectionResults(),
 			permissiontemplate.ResourceName:           permissiontemplate.DataSourcePermissionTemplate(),
+			tapeula.ResourceName:                      tapeula.DataSourceEULA(),
 		},
 		ConfigureContextFunc: authctx.ProviderConfigureContext,
 	}
