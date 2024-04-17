@@ -105,7 +105,18 @@ func (c *Client) invokeAction(httpMethodType string, url string, request Request
 func (c *Client) Delete(url string) error {
 	requestURL := fmt.Sprintf("%s/%s", c.Host, strings.TrimPrefix(url, "/"))
 
-	resp, err := c.delete(requestURL, c.Headers)
+	headers := c.Headers.Clone()
+
+	md, err := c.RefreshAuthCtx()
+	if err != nil {
+		return errors.Wrap(err, "error while setting auth headers")
+	}
+
+	for key, value := range md {
+		headers.Set(key, value)
+	}
+
+	resp, err := c.delete(requestURL, headers)
 	if err != nil {
 		return errors.Wrap(err, "delete")
 	}
@@ -126,7 +137,18 @@ func (c *Client) Delete(url string) error {
 func (c *Client) Get(url string, response Response) error {
 	requestURL := fmt.Sprintf("%s/%s", c.Host, strings.TrimPrefix(url, "/"))
 
-	resp, err := c.get(requestURL, c.Headers)
+	headers := c.Headers.Clone()
+
+	md, err := c.RefreshAuthCtx()
+	if err != nil {
+		return errors.Wrap(err, "error while setting auth headers")
+	}
+
+	for key, value := range md {
+		headers.Set(key, value)
+	}
+
+	resp, err := c.get(requestURL, headers)
 	if err != nil {
 		return errors.Wrap(err, "get request")
 	}
