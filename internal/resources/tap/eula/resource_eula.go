@@ -32,14 +32,14 @@ func ResourceEULA() *schema.Resource {
 }
 
 func getResourceSchema() map[string]*schema.Schema {
-	return getSecretSchema(false)
+	return getTAPEULASchema(false)
 }
 
 func getDataSourceSchema() map[string]*schema.Schema {
-	return getSecretSchema(true)
+	return getTAPEULASchema(true)
 }
 
-func getSecretSchema(isDataSource bool) map[string]*schema.Schema {
+func getTAPEULASchema(isDataSource bool) map[string]*schema.Schema {
 	var eulaSchema = map[string]*schema.Schema{
 		TAPVersionKey: {
 			Type:        schema.TypeString,
@@ -54,7 +54,7 @@ func getSecretSchema(isDataSource bool) map[string]*schema.Schema {
 		OrgIDKey: {
 			Type:        schema.TypeString,
 			Description: "ID of Organization.",
-			Required:    true,
+			Optional:    true,
 			ValidateFunc: validation.All(
 				validation.StringIsNotEmpty,
 				validation.StringIsNotWhiteSpace,
