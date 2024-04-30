@@ -91,8 +91,15 @@ func retrieveEULADataFromServer(config authctx.TanzuContext, eula *tapeulamodel.
 		return eulaDataFromServer, err
 	}
 
-	if err := d.Set(OrgIDKey, resp.Eula.OrgID); err != nil {
-		return eulaDataFromServer, err
+	orgID, ok := d.Get(OrgIDKey).(string)
+	if !ok {
+		return eulaDataFromServer, errors.New("Unable to read organization id for EULA")
+	}
+
+	if orgID != "" {
+		if err := d.Set(OrgIDKey, resp.Eula.OrgID); err != nil {
+			return eulaDataFromServer, err
+		}
 	}
 
 	return eulaDataFromServer, nil
