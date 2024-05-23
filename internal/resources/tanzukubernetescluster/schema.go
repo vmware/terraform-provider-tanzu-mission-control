@@ -201,6 +201,7 @@ var TopologySchema = &schema.Schema{
 			CoreAddonKey: {
 				Type:        schema.TypeList,
 				Description: "(Repeatable Block) The core addons.",
+				Computed:    true,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -357,6 +358,7 @@ var OSImageSchema = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "OS image block",
 	MaxItems:    1,
+	Computed:    true,
 	Optional:    true,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
