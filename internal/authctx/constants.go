@@ -7,6 +7,7 @@ package authctx
 
 const (
 	endpoint           = "endpoint"
+	projectId          = "project_id"
 	vmwCloudEndpoint   = "vmw_cloud_endpoint"
 	vmwCloudAPIToken   = "vmw_cloud_api_token"
 	defaultCSPEndpoint = "console.cloud.vmware.com"
