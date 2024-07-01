@@ -14,7 +14,7 @@ import (
 
 const (
 	ServerEndpointEnvVar = "TMC_ENDPOINT"
-	ProjectIdEnvVar      = "PROJECT_ID"
+	ProjectIDEnvVar      = "PROJECT_ID"
 
 	// TMC SaaS env variables.
 	VMWCloudEndpointEnvVar = "VMW_CLOUD_ENDPOINT"
@@ -38,7 +38,7 @@ const (
 type TanzuContext struct {
 	SelfManaged      bool
 	ServerEndpoint   string
-	ProjectId        string
+	ProjectID        string
 	SMUsername       string
 	Token            string // selfmanaged password is stored here
 	VMWCloudEndPoint string // selfmanaged odic issuer is stored here
@@ -77,8 +77,8 @@ func setup(cfg *TanzuContext) (err error) {
 	cfg.TMCConnection.WithHost(cfg.ServerEndpoint)
 	cfg.TMCConnection.Headers.Set("Host", cfg.ServerEndpoint)
 
-	if cfg.ProjectId != "" {
-		cfg.TMCConnection.Headers.Set("X-Project-Id", cfg.ProjectId)
+	if cfg.ProjectID != "" {
+		cfg.TMCConnection.Headers.Set("X-Project-Id", cfg.ProjectID)
 	}
 
 	if cfg.IsSelfManaged() {
