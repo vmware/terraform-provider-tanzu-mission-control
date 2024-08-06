@@ -7,7 +7,6 @@ package transport
 
 import (
 	"bytes"
-	"crypto/x509"
 	"io"
 	"net"
 	"net/http"
@@ -40,12 +39,6 @@ func NewClient(config *proxy.TLSConfig) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	if tlsConfig.RootCAs == nil {
-		tlsConfig.RootCAs = x509.NewCertPool()
-	}
-
-	tlsConfig.RootCAs.AppendCertsFromPEM([]byte(tmcRootCA))
 
 	transport := &http.Transport{
 		DialContext: (&net.Dialer{
