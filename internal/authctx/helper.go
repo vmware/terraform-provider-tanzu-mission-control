@@ -27,7 +27,7 @@ func ProviderAuthSchema() map[string]*schema.Schema {
 		},
 		projectID: {
 			Type:        schema.TypeString,
-			Required:    true,
+			Optional:    true,
 			DefaultFunc: schema.EnvDefaultFunc(ProjectIDEnvVar, ""),
 		},
 		vmwCloudEndpoint: {
