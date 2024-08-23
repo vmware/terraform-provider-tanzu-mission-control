@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
+Copyright © 2024 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
@@ -49,6 +49,11 @@ var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
 							NameKey:    tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", nodePoolsArrayField, "spec", "osImage", "name"),
 							OSArchKey:  tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", nodePoolsArrayField, "spec", "osImage", "arch"),
 							VersionKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", nodePoolsArrayField, "spec", "osImage", "version"),
+						},
+						AutoscalingKey: &tfModelConverterHelper.BlockToStruct{
+							AutoscalingEnabledKey:  tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", nodePoolsArrayField, "spec", "autoScaling", "enabled"),
+							AutoscalingMinCountKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", nodePoolsArrayField, "spec", "autoScaling", "minCount"),
+							AutoscalingMaxCountKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", nodePoolsArrayField, "spec", "autoScaling", "maxCount"),
 						},
 						OverridesKey: &tfModelConverterHelper.EvaluatedField{
 							Field:    tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", nodePoolsArrayField, "spec", tfModelConverterHelper.BuildArrayField("overrides")),

@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
+Copyright © 2024 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
 */
 
@@ -15,6 +15,9 @@ import (
 //
 // swagger:model vmware.tanzu.manage.v1alpha1.managementcluster.provisioner.tanzukubernetescluster.nodepool.Spec
 type VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepoolSpec struct {
+
+	// Auto scaling config.
+	AutoScaling *VmwareTanzuManageV1alpha1ManagementclusterProvisionerTanzukubernetesclusterNodepoolAutoScalingConfig `json:"autoScaling,omitempty"`
 
 	// The name of the machine deployment class used to create the nodepool.
 	Class string `json:"class,omitempty"`

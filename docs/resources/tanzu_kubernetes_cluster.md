@@ -447,6 +447,7 @@ Required:
 
 Optional:
 
+- `auto_scaling` (Block List, Max: 1) Autoscaling block (see [below for nested schema](#nestedblock--spec--topology--nodepool--spec--auto_scaling))
 - `failure_domain` (String) The failure domain the machines will be created in.
 - `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--spec--topology--nodepool--spec--meta))
 - `os_image` (Block List, Max: 1) OS image block (see [below for nested schema](#nestedblock--spec--topology--nodepool--spec--os_image))
@@ -469,6 +470,16 @@ Required:
 - `arch` (String) The architecture of the OS image.
 - `name` (String) The name of the OS image.
 - `version` (String) The version of the OS image.
+
+
+<a id="nestedblock--spec--topology--nodepool--spec--auto_scaling"></a>
+### Nested Schema for `spec.topology.nodepool.spec.auto_scaling`
+
+Required:
+
+- `enabled` (Boolean) Autoscaling config.
+- `min_count` (Number) The minimum number of nodes for autoscaling.
+- `max_count` (Number) The maximum number of nodes for autoscaling.
 
 
 
