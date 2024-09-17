@@ -8,7 +8,7 @@ variable "client_auth_key" {}
 variable "ca_cert" {}
 
 variable "vmw_cloud_endpoint" {
-  default = "console.cloud.vmware.com"
+  default = "console.tanzu.broadcom.com"
 }
 
 variable "insecure_allow_unverified_ssl" {
