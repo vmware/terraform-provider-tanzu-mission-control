@@ -3,8 +3,8 @@ provider "tanzu-mission-control" {
   vmw_cloud_api_token = var.vmw_cloud_api_token # optionally use VMW_CLOUD_API_TOKEN env var
 
   # if you are using dev or different csp endpoint, change the default value below
-  # for production environments the vmw_cloud_endpoint is console.cloud.vmware.com
-  # vmw_cloud_endpoint = "console.cloud.vmware.com" or optionally use VMW_CLOUD_ENDPOINT env var
+  # for production environments the vmw_cloud_endpoint is console.tanzu.broadcom.com
+  # vmw_cloud_endpoint = "console.tanzu.broadcom.com" or optionally use VMW_CLOUD_ENDPOINT env var
 
   # the following values shall be only populated when the provider needs to be used behind a proxy.
   # these values will only work if the user provides HTTP_PROXY or HTTPS_PROXY env var

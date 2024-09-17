@@ -10,7 +10,7 @@ const (
 	projectID          = "project_id"
 	vmwCloudEndpoint   = "vmw_cloud_endpoint"
 	vmwCloudAPIToken   = "vmw_cloud_api_token"
-	defaultCSPEndpoint = "console.cloud.vmware.com"
+	defaultCSPEndpoint = "console.tanzu.broadcom.com"
 	selfManaged        = "self_managed"
 	oidcIssuer         = "oidc_issuer"
 	smUsername         = "username"

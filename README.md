@@ -111,7 +111,7 @@ Example:
 
 ```shell
 $ export TMC_ENDPOINT = my-org.tmc.cloud.vmware.com
-$ export VMW_CLOUD_ENDPOINT = console.cloud.vmware.com
+$ export VMW_CLOUD_ENDPOINT = console.tanzu.broadcom.com
 ```
 
 Environment variables specific to particular resources:

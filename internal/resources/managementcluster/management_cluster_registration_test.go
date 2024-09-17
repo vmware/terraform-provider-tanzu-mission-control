@@ -47,7 +47,7 @@ func TestAcceptanceForManagementClusterRegistrationResource(t *testing.T) {
 
 		os.Setenv(authctx.ServerEndpointEnvVar, endpoint)
 		os.Setenv("VMW_CLOUD_API_TOKEN", "dummy")
-		os.Setenv("VMW_CLOUD_ENDPOINT", "console.cloud.vmware.com")
+		os.Setenv("VMW_CLOUD_ENDPOINT", "console.tanzu.broadcom.com")
 
 		setupHTTPMocks(t)
 		setUpOrgPolicyEndPointMocks(t, endpoint, tkgsSimpleName, clustermodel.NewVmwareTanzuManageV1alpha1CommonClusterKubernetesProviderType("VMWARE_TANZU_KUBERNETES_GRID_SERVICE"))
