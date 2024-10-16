@@ -39,7 +39,7 @@ func TestAcceptanceForProvisionerResource(t *testing.T) {
 		os.Setenv("TF_ACC", "true")
 		os.Setenv(authctx.ServerEndpointEnvVar, endpoint)
 		os.Setenv("VMW_CLOUD_API_TOKEN", "dummy")
-		os.Setenv("VMW_CLOUD_ENDPOINT", "console.cloud.vmware.com")
+		os.Setenv("VMW_CLOUD_ENDPOINT", "console.tanzu.broadcom.com")
 
 		setupHTTPMocks(t)
 		setUpProvisionerEndPointMocks(t, endpoint, provisionerName)
