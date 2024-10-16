@@ -30,7 +30,7 @@ resource "tanzu-mission-control_mutation_policy" "org_label_mutation_policy" {
         {
           key      = "component"
           operator = "NotIn"
-          values = [
+          values   = [
             "api-server",
             "agent-gateway"
           ]
