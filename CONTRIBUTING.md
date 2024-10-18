@@ -77,4 +77,4 @@ and commits.
 When opening a new issue, try to roughly follow the commit message format conventions above.
 
 ---
-Signs
+Signss
