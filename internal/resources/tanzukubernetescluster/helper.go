@@ -461,6 +461,7 @@ func removeModelVariable(clusterClassSchema interface{}, modelVariable interface
 			}
 		} else {
 			modelVarAdditionalProperties, additionalPropertiesExist := clusterClassSchema.(map[string]interface{})[string(openapiv3.AdditionalPropertiesKey)]
+			preserve, preserveExists := clusterClassSchema.(map[string]interface{})[string(openapiv3.PreserveUnknownFieldKey)]
 			if additionalPropertiesExist {
 				_, propertiesExist := modelVarAdditionalProperties.(map[string]interface{})[string(openapiv3.PropertiesKey)]
 
@@ -471,6 +472,8 @@ func removeModelVariable(clusterClassSchema interface{}, modelVariable interface
 						modelVariable.(map[string]interface{})[k] = removeModelVariable(modelVarAdditionalProperties, v)
 					}
 				}
+			} else if !preserveExists || !preserve.(bool) {
+				modelVariable = make(map[string]interface{})
 			}
 		}
 	}
