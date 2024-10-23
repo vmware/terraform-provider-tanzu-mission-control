@@ -9,7 +9,7 @@ env:
   BUILD_TAGS: 'akscluster cluster clustergroup credential ekscluster gitrepository iampolicy kustomization namespace custompolicy imagepolicy networkpolicy quotapolicy securitypolicy sourcesecret workspace tanzupackage tanzupackages packagerepository packageinstall clustersecret integration mutationpolicy backupschedule targetlocation dataprotection tanzukubernetescluster clusterclass managementcluster provisioner inspections custompolicytemplate customiamrole permissiontemplate'
 
 jobs:
-  goreleaser:
+  prepare_release:
     runs-on: ubuntu-latest
     steps:
       -
@@ -41,11 +41,19 @@ jobs:
         run: |
           go test -v ./... -tags $BUILD_TAGS
 
-      - id: create_draft_release
-        name: Create Draft Release
-        uses: softprops/action-gh-release@v1
+      -
+        name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v2
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
         with:
-          draft: true
-          body: Draft release
+          version: latest
+          args: release --rm-dist --release-header .goreleaser.tmpl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
