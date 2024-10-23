@@ -22,6 +22,7 @@ const (
 	PropertiesKey           OpenAPIV3Key = "properties"
 	TypeKey                 OpenAPIV3Key = "type"
 	AdditionalPropertiesKey OpenAPIV3Key = "additionalProperties"
+	PreserveUnknownFieldKey OpenAPIV3Key = "x-kubernetes-preserve-unknown-fields"
 	ItemsKey                OpenAPIV3Key = "items"
 	PatternKey              OpenAPIV3Key = "pattern"
 	MinLengthKey            OpenAPIV3Key = "minLength"
