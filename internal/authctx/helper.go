@@ -25,6 +25,11 @@ func ProviderAuthSchema() map[string]*schema.Schema {
 			Required:    true,
 			DefaultFunc: schema.EnvDefaultFunc(ServerEndpointEnvVar, ""),
 		},
+		projectID: {
+			Type:        schema.TypeString,
+			Optional:    true,
+			DefaultFunc: schema.EnvDefaultFunc(ProjectIDEnvVar, ""),
+		},
 		vmwCloudEndpoint: {
 			Type:        schema.TypeString,
 			Required:    true,
@@ -131,6 +136,7 @@ func ProviderConfigureContext(_ context.Context, d *schema.ResourceData) (interf
 	_, smAuth := d.GetOk(selfManaged)
 
 	config.ServerEndpoint, _ = d.Get(endpoint).(string)
+	config.ProjectID, _ = d.Get(projectID).(string)
 	config.VMWCloudEndPoint, _ = d.Get(vmwCloudEndpoint).(string)
 	config.Token, _ = d.Get(vmwCloudAPIToken).(string)
 

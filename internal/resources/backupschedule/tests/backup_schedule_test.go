@@ -20,7 +20,7 @@ import (
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/backupschedule/cluster"
+	backupschedulemodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/backupschedule/cluster"
 	backupscheduleclustergroupmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/backupschedule/clustergroup"
 	backupscheduleres "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/backupschedule"
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"

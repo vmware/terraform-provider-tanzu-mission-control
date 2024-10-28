@@ -205,7 +205,6 @@ func setResourceData(d *schema.ResourceData, eksCluster *eksmodel.VmwareTanzuMan
 
 	// see the explanation of this in the func doc of nodepoolPosMap
 	npPosMap := nodepoolPosMap(tfNodepools)
-
 	nodepools := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition, len(tfNodepools))
 
 	for _, np := range remoteNodepools {
@@ -216,6 +215,7 @@ func setResourceData(d *schema.ResourceData, eksCluster *eksmodel.VmwareTanzuMan
 			},
 			Spec: np.Spec,
 		}
+		npDef.Spec.Tags = filterOutClusterTags(np.Spec.Tags, eksCluster.Spec.Config.Tags)
 
 		if pos, ok := npPosMap[np.FullName.Name]; ok {
 			nodepools[pos] = npDef
@@ -252,4 +252,19 @@ func nodepoolPosMap(nps []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolD
 	}
 
 	return ret
+}
+
+// filterOutClusterTags is used to remove cluster tags from nodepool while checking diff.
+func filterOutClusterTags(npTags, clusterTags map[string]string) map[string]string {
+	npWithoutClusterTags := make(map[string]string)
+
+	for k, v := range npTags {
+		if val, ok := clusterTags[k]; !ok {
+			npWithoutClusterTags[k] = v
+		} else if v != val {
+			npWithoutClusterTags[k] = v
+		}
+	}
+
+	return npWithoutClusterTags
 }

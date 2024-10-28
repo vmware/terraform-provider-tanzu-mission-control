@@ -36,6 +36,8 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 		PkgInstallResourceName: fmt.Sprintf("%s.%s", pkgInstallResource, pkgInstallResourceVar),
 		PkgInstallName:         acctest.RandomWithPrefix(pkgInstallNamePrefix),
 		PkgRepoName:            acctest.RandomWithPrefix(pkgRepoNamePrefix),
+		PkgName1:               pkgName1,
+		PkgName2:               pkgName2,
 		ScopeHelperResources:   commonscope.NewScopeHelperResources(),
 		Namespace:              acctest.RandomWithPrefix(namespaceNamePrefix),
 	}
@@ -58,7 +60,7 @@ func TestAcceptanceForPackageInstallResource(t *testing.T) {
 		os.Setenv("TF_ACC", "true")
 		os.Setenv("TMC_ENDPOINT", "dummy.tmc.mock.vmware.com")
 		os.Setenv("VMW_CLOUD_API_TOKEN", "dummy")
-		os.Setenv("VMW_CLOUD_ENDPOINT", "console.cloud.vmware.com")
+		os.Setenv("VMW_CLOUD_ENDPOINT", "console.tanzu.broadcom.com")
 
 		log.Println("Setting up the mock endpoints...")
 
@@ -99,7 +101,7 @@ func TestAcceptanceForPackageInstallResource(t *testing.T) {
 						t.Skip("KUBECONFIG env var is not set for cluster scoped package install acceptance test")
 					}
 				},
-				Config: testConfig.getTestPackageInstallResourceBasicConfigValue(commonscope.ClusterScope, "2.0.0"),
+				Config: testConfig.getTestPackageInstallResourceBasicConfigValue(commonscope.ClusterScope, "2.0.0", false),
 				Check:  testConfig.checkPackageInstallResourceAttributes(commonscope.ClusterScope),
 			},
 			{
@@ -109,7 +111,31 @@ func TestAcceptanceForPackageInstallResource(t *testing.T) {
 						testConfig.setupHTTPMocksUpdate(t)
 					}
 				},
-				Config: testConfig.getTestPackageInstallResourceBasicConfigValue(commonscope.ClusterScope, constraints),
+				Config: testConfig.getTestPackageInstallResourceBasicConfigValue(commonscope.ClusterScope, constraints, false),
+				Check:  testConfig.checkPackageInstallResourceAttributes(commonscope.ClusterScope),
+			},
+			{
+				PreConfig: func() {
+					if !found {
+						t.Log("Reset GET mock responder...")
+						testConfig.setupHTTPMocks(t)
+					}
+
+					if testConfig.ScopeHelperResources.Cluster.KubeConfigPath == "" && found {
+						t.Skip("KUBECONFIG env var is not set for cluster scoped package install acceptance test")
+					}
+				},
+				Config: testConfig.getTestPackageInstallResourceBasicConfigValue(commonscope.ClusterScope, "2.0.0", true),
+				Check:  testConfig.checkPackageInstallResourceAttributes(commonscope.ClusterScope),
+			},
+			{
+				PreConfig: func() {
+					if !found {
+						t.Log("Setting up the updated GET mock responder...")
+						testConfig.setupHTTPMocksUpdate(t)
+					}
+				},
+				Config: testConfig.getTestPackageInstallResourceBasicConfigValue(commonscope.ClusterScope, constraints, true),
 				Check:  testConfig.checkPackageInstallResourceAttributes(commonscope.ClusterScope),
 			},
 		},
@@ -119,8 +145,14 @@ func TestAcceptanceForPackageInstallResource(t *testing.T) {
 	t.Log("package install resource acceptance test complete")
 }
 
-func (testConfig *testAcceptanceConfig) getTestPackageInstallResourceBasicConfigValue(scope commonscope.Scope, constraints string) string {
+// nolint: unparam
+func (testConfig *testAcceptanceConfig) getTestPackageInstallResourceBasicConfigValue(scope commonscope.Scope, constraints string, inlineValuesFromFile bool) string {
 	helperBlock, _ := testConfig.ScopeHelperResources.GetTestResourceHelperAndScope(scope, packageinstallscope.ScopesAllowed[:])
+
+	inlineValuesForPackageInstall := "inline_values = { \"bar\" : \"foo\" }"
+	if inlineValuesFromFile {
+		inlineValuesForPackageInstall = "path_to_inline_values = \"test.yaml\""
+	}
 
 	if _, found := os.LookupEnv("ENABLE_PKGINS_ENV_TEST"); !found {
 		return fmt.Sprintf(`
@@ -143,10 +175,10 @@ func (testConfig *testAcceptanceConfig) getTestPackageInstallResourceBasicConfig
 					}
 				}
 
-				inline_values = { "bar" : "foo" }
+				%s
 			}
 		}
-	`, testConfig.PkgInstallResource, testConfig.PkgInstallResourceVar, testConfig.PkgInstallName, testConfig.Namespace, testConfig.ScopeHelperResources.Cluster.Name, constraints)
+	`, testConfig.PkgInstallResource, testConfig.PkgInstallResourceVar, testConfig.PkgInstallName, testConfig.Namespace, testConfig.ScopeHelperResources.Cluster.Name, constraints, inlineValuesForPackageInstall)
 	}
 
 	return fmt.Sprintf(`
@@ -202,16 +234,17 @@ func (testConfig *testAcceptanceConfig) getTestPackageInstallResourceBasicConfig
 				}
 			}
 			
-			inline_values = { "bar" : "foo" }
+			%s
 		}
 	
 		depends_on = [time_sleep.wait_for_2m]
 	}
 	`, helperBlock, pkgRepoResource, pkgRepoResourceVar, testConfig.PkgRepoName,
 		testConfig.PkgInstallResource, testConfig.PkgInstallResourceVar, testConfig.PkgInstallName,
-		testConfig.Namespace, constraints)
+		testConfig.Namespace, constraints, inlineValuesForPackageInstall)
 }
 
+// nolint: unparam
 // checkPackageInstallResourceAttributes checks for package install creation along with meta attributes.
 func (testConfig *testAcceptanceConfig) checkPackageInstallResourceAttributes(scopeType commonscope.Scope) resource.TestCheckFunc {
 	var check = []resource.TestCheckFunc{

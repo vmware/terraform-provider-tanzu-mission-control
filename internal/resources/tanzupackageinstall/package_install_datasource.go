@@ -7,6 +7,7 @@ package tanzupackageinstall
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -16,6 +17,7 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	clienterrors "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/errors"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackageinstall/scope"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackageinstall/spec"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/tanzupackageinstall/status"
@@ -80,7 +82,46 @@ func dataPackageInstallRead(ctx context.Context, d *schema.ResourceData, m inter
 		return diag.FromErr(err)
 	}
 
-	if err := d.Set(spec.SpecKey, spec.FlattenSpecForClusterScope(repoSpec)); err != nil {
+	// default path
+	pathToInlineValues := scopedFullnameData.FullnameCluster.ManagementClusterName + "/" +
+		scopedFullnameData.FullnameCluster.ProvisionerName + "/" +
+		scopedFullnameData.FullnameCluster.ClusterName + "/" +
+		scopedFullnameData.FullnameCluster.NamespaceName + "/" +
+		scopedFullnameData.FullnameCluster.Name + ".yaml"
+
+	existingSpec, ok := d.GetOk(policy.SpecKey)
+	if !ok {
+		if ctx.Value(contextMethodKey{}) != DataSourceRead {
+			return diag.FromErr(fmt.Errorf("spec: %v is not valid: minimum one valid spec block is required", existingSpec))
+		}
+	} else {
+		data, _ := existingSpec.([]interface{})
+
+		if len(data) == 0 || data[0] == nil {
+			return diag.FromErr(fmt.Errorf("spec data: %v is not valid: minimum one valid spec data block is required", existingSpec))
+		}
+
+		specData := data[0].(map[string]interface{})
+
+		v, ok := specData[spec.PathToInlineValuesKey]
+		if ok {
+			v1, ok := v.(string)
+			if !ok {
+				return diag.FromErr(fmt.Errorf("type of path_to_inline_values data: %v is not valid", v1))
+			}
+
+			pathToInlineValues = v1
+		} else {
+			pathToInlineValues = ""
+		}
+	}
+
+	specValue, err := spec.FlattenSpecForClusterScope(repoSpec, pathToInlineValues)
+	if err != nil {
+		return diag.FromErr(errors.Wrapf(err, "Unable to write inline values to the file: %s", pathToInlineValues))
+	}
+
+	if err := d.Set(spec.SpecKey, specValue); err != nil {
 		return diag.FromErr(err)
 	}
 

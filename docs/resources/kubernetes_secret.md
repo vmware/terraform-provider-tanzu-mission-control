@@ -36,7 +36,8 @@ Only one scope per resource is allowed.
 
 ```terraform
 # Create Tanzu Mission Control kubernetes secret with attached set as default value.
-resource "tanzu-mission-control_kubernetes_secret" "create_secret" {
+# Example for creating the dockerconfigjson secret
+resource "tanzu-mission-control_kubernetes_secret" "create_dockerconfigjson_secret" {
   name           = "tf-secret"                # Required
   namespace_name = "tf-secret-namespace-name" # Required 
 
@@ -60,6 +61,34 @@ resource "tanzu-mission-control_kubernetes_secret" "create_secret" {
       username           = "testusername"         # Required
       password           = "testpassword"         # Required
       image_registry_url = "testimageregistryurl" # Required
+    }
+  }
+}
+
+# Example for creating the opaque secret
+resource "tanzu-mission-control_kubernetes_secret" "create_opaque_secret" {
+  name           = "tf-secret"                # Required
+  namespace_name = "tf-secret-namespace-name" # Required 
+
+  scope {
+    cluster {
+      name                    = "testcluster" # Required
+      provisioner_name        = "attached"    # Default: attached
+      management_cluster_name = "attached"    # Default: attached
+    }
+  }
+
+  export = false # Default: false
+
+  meta {
+    description = "Create namespace through terraform"
+    labels      = { "key" : "value" }
+  }
+
+  spec {
+    opaque = {
+      "key1" : "value1"
+      "key2" : "value2"
     }
   }
 }
@@ -119,9 +148,10 @@ Required:
 <a id="nestedblock--spec"></a>
 ### Nested Schema for `spec`
 
-Required:
+Optional:
 
-- `docker_config_json` (Block List, Min: 1) SecretType definition - SECRET_TYPE_DOCKERCONFIGJSON, Kubernetes secrets type. (see [below for nested schema](#nestedblock--spec--docker_config_json))
+- `docker_config_json` (Block List) SecretType definition - SECRET_TYPE_DOCKERCONFIGJSON, Kubernetes secrets type. (see [below for nested schema](#nestedblock--spec--docker_config_json))
+- `opaque` (Map of String, Sensitive) SecretType definition - SECRET_TYPE_OPAQUE, Kubernetes secrets type.
 
 <a id="nestedblock--spec--docker_config_json"></a>
 ### Nested Schema for `spec.docker_config_json`
@@ -155,7 +185,8 @@ Read-Only:
 
 ```terraform
 # Create Tanzu Mission Control kubernetes secret with attached set as default value.
-resource "tanzu-mission-control_kubernetes_secret" "create_secret" {
+# Example for creating the dockerconfigjson secret
+resource "tanzu-mission-control_kubernetes_secret" "create_dockerconfigjson_secret" {
   name           = "tf-secret"                # Required
   namespace_name = "tf-secret-namespace-name" # Required 
 
@@ -177,6 +208,32 @@ resource "tanzu-mission-control_kubernetes_secret" "create_secret" {
       username           = "testusername"         # Required
       password           = "testpassword"         # Required
       image_registry_url = "testimageregistryurl" # Required
+    }
+  }
+}
+
+# Example for creating the opaque secret
+resource "tanzu-mission-control_kubernetes_secret" "create_opaque_secret" {
+  name           = "tf-secret"                # Required
+  namespace_name = "tf-secret-namespace-name" # Required 
+
+  scope {
+    cluster_group {
+      name = "default" # Required
+    }
+  }
+
+  export = false # Default: false
+
+  meta {
+    description = "Create namespace through terraform"
+    labels      = { "key" : "value" }
+  }
+
+  spec {
+    opaque = {
+      "key1" : "value1"
+      "key2" : "value2"
     }
   }
 }
@@ -236,9 +293,10 @@ Required:
 <a id="nestedblock--spec"></a>
 ### Nested Schema for `spec`
 
-Required:
+Optional:
 
-- `docker_config_json` (Block List, Min: 1) SecretType definition - SECRET_TYPE_DOCKERCONFIGJSON, Kubernetes secrets type. (see [below for nested schema](#nestedblock--spec--docker_config_json))
+- `docker_config_json` (Block List) SecretType definition - SECRET_TYPE_DOCKERCONFIGJSON, Kubernetes secrets type. (see [below for nested schema](#nestedblock--spec--docker_config_json))
+- `opaque` (Map of String, Sensitive) SecretType definition - SECRET_TYPE_OPAQUE, Kubernetes secrets type.
 
 <a id="nestedblock--spec--docker_config_json"></a>
 ### Nested Schema for `spec.docker_config_json`

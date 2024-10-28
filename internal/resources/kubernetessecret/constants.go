@@ -15,6 +15,8 @@ const (
 	SecretExportPhaseKey = "secret_export_phase"
 	statusKey            = "status"
 	Ready                = "Ready"
+	DockerSecretType     = "docker"
+	OpaqueSecretType     = "opaque"
 
 	ResourceName = "tanzu-mission-control_kubernetes_secret"
 )

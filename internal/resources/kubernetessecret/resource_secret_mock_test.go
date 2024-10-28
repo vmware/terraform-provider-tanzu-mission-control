@@ -33,12 +33,25 @@ const (
 	cgAPIVersionAndGroup = "v1alpha1/clustergroups"
 )
 
-func getMockSpec() secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec {
-	return secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec{
-		SecretType: secretmodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceSecretType(secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEDOCKERCONFIGJSON),
-		Data: map[string]strfmt.Base64{
-			".dockerconfigjson": []byte(`{"auths":{"someregistryurl":{"auth":"","password":"","username":"someusername"}}}`),
-		},
+func getMockSpec(secretType string) secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec {
+	switch secretType {
+	case DockerSecretType:
+		return secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec{
+			SecretType: secretmodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceSecretType(secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEDOCKERCONFIGJSON),
+			Data: map[string]strfmt.Base64{
+				".dockerconfigjson": []byte(`{"auths":{"someregistryurl":{"auth":"","password":"","username":"someusername"}}}`),
+			},
+		}
+	case OpaqueSecretType:
+		return secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec{
+			SecretType: secretmodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceSecretType(secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEOPAQUE),
+			Data: map[string]strfmt.Base64{
+				"username": []byte(`someusername`),
+				"password": []byte(`somepassword`),
+			},
+		}
+	default:
+		return secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec{}
 	}
 }
 
@@ -102,7 +115,7 @@ func changeStateResponder(registerFunc func(), successResponse int, successRespo
 }
 
 // Function to set up HTTP mocks for the kubernetes secret requests anticipated by this test, when not being run against a real TMC stack.
-func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
+func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T, secretType string) {
 	httpmock.Activate()
 	t.Cleanup(httpmock.Deactivate)
 
@@ -111,7 +124,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 	OrgID := os.Getenv("ORG_ID")
 
 	// cluster level cluster secret resource.
-	secretSpec := getMockSpec()
+	secretSpec := getMockSpec(secretType)
 	postRequestModel := &secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecret{
 		FullName: &secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretFullName{
 			Name:                  testConfig.SecretName,
@@ -219,6 +232,9 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 		},
 		http.StatusOK,
 		nil))
+
+	httpmock.RegisterResponder("GET", getSecretExportEndpoint,
+		httpmock.NewStringResponder(404, "Not found"))
 
 	httpmock.RegisterResponder("DELETE", deleteExportEndpoint, changeStateResponder(
 		// Set up the get to return 404 after the Secret has been 'deleted'
@@ -334,6 +350,9 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 		},
 		http.StatusOK,
 		nil))
+
+	httpmock.RegisterResponder("GET", getSecretExportCGEndpoint,
+		httpmock.NewStringResponder(404, "Not found"))
 
 	httpmock.RegisterResponder("DELETE", deleteExportCGEndpoint, changeStateResponder(
 		// Set up the get to return 404 after the Secret has been 'deleted'

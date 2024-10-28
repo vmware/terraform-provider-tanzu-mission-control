@@ -1,3 +1,6 @@
+//go:build helmcharts
+// +build helmcharts
+
 /*
 Copyright © 2023 VMware, Inc. All Rights Reserved.
 SPDX-License-Identifier: MPL-2.0
@@ -36,7 +39,7 @@ func TestAcceptanceForHelmChratsDataSource(t *testing.T) {
 		os.Setenv("TF_ACC", "true")
 		os.Setenv("TMC_ENDPOINT", "dummy.tmc.mock.vmware.com")
 		os.Setenv("VMW_CLOUD_API_TOKEN", "dummy")
-		os.Setenv("VMW_CLOUD_ENDPOINT", "console.cloud.vmware.com")
+		os.Setenv("VMW_CLOUD_ENDPOINT", "console.tanzu.broadcom.com")
 
 		log.Println("Setting up the mock endpoints...")
 

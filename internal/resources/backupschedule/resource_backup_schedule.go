@@ -463,6 +463,11 @@ func readResourceWait(ctx context.Context, config *authctx.TanzuContext, resourc
 		resp, err = config.TMCConnection.BackupScheduleService.BackupScheduleResourceServiceGet(resourceFullName)
 
 		if err != nil || resp == nil || resp.Schedule == nil {
+			if clienterrors.IsUnauthorizedError(err) {
+				authctx.RefreshUserAuthContext(config, clienterrors.IsUnauthorizedError, err)
+				continue
+			}
+
 			return nil, err
 		}
 
@@ -502,6 +507,11 @@ func readCGResourceWait(ctx context.Context, config *authctx.TanzuContext,
 			resourceFullName)
 
 		if err != nil || resp == nil || resp.Schedule == nil {
+			if clienterrors.IsUnauthorizedError(err) {
+				authctx.RefreshUserAuthContext(config, clienterrors.IsUnauthorizedError, err)
+				continue
+			}
+
 			return nil, err
 		}
 

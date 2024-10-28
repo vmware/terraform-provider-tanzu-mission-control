@@ -18,6 +18,7 @@ const testDefaultCreateEksClusterScript = `
 			config {
 				kubernetes_version 	= "{{.KubernetesVersion}}"
 				role_arn 			= "arn:aws:iam::{{.AWSAccountNumber}}:role/control-plane.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
+				tags           = { "testtag" : "testval", "newtesttag": "newtestval"}
 				kubernetes_network_config {
 					service_cidr = "10.100.0.0/16" // Forces new
 				}
@@ -38,10 +39,7 @@ const testDefaultCreateEksClusterScript = `
 					  "sg-0b77767aa25e20fec",
 					]
 					subnet_ids = [ // Forces new
-					  "subnet-0c285da60b373a4cc",
-					  "subnet-0be854d94fa197cb7",
-					  "subnet-04975d535cf761785",
-					  "subnet-0d50aa17c694457c9",
+					  	"subnet-0c285da60b373a4cc", "subnet-0be854d94fa197cb7", "subnet-04975d535cf761785", "subnet-0d50aa17c694457c9"
 					]
 				}
 			}
@@ -56,20 +54,16 @@ const testDefaultCreateEksClusterScript = `
 					role_arn       = "arn:aws:iam::{{.AWSAccountNumber}}:role/worker.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
 					ami_type       = "AL2_x86_64" // Forces New
 					capacity_type  = "ON_DEMAND"
-					root_disk_size = 20 // Default: 20GiB, forces New
-					tags           = { "testnptag" : "testnptagvalue" }
+					root_disk_size = 40 // Default: 20GiB, forces New
+					tags           = { "testnptag" : "testnptagvalue", "newtesttag": "testingtagvalue"}
 					node_labels    = { "testnplabelkey" : "testnplabelvalue" }
 					subnet_ids = [ // Required, forces new
-						"subnet-0c285da60b373a4cc",
-						"subnet-0be854d94fa197cb7",
-						"subnet-04975d535cf761785",
-						"subnet-0d50aa17c694457c9",
+						"subnet-0c285da60b373a4cc", "subnet-0be854d94fa197cb7", "subnet-04975d535cf761785", "subnet-0d50aa17c694457c9"
 					]
-					
 					scaling_config  {
-						desired_size = 2
-						max_size     = 2
-						min_size     = 2
+						desired_size = 4
+						max_size     = 8
+						min_size     = 1
 					}
 					update_config {
 						max_unavailable_nodes = "2"
@@ -89,13 +83,10 @@ const testDefaultCreateEksClusterScript = `
 				spec  {
 					// Refer to nodepool's schema
 					role_arn    = "arn:aws:iam::{{.AWSAccountNumber}}:role/worker.{{.CloudFormationTemplateID}}.eks.tmc.cloud.vmware.com"
-					tags        = { "testnptag" : "testnptagvalue" }
+					tags        = { "testnptag" : "testnptagvalue", "newtesttag": "testingtagvalue"}
 					node_labels = { "testnplabelkey" : "testnplabelvalue" }
 					subnet_ids = [ // Required, forces new
-						"subnet-0c285da60b373a4cc",
-						"subnet-0be854d94fa197cb7",
-						"subnet-04975d535cf761785",
-						"subnet-0d50aa17c694457c9",
+						"subnet-0c285da60b373a4cc", "subnet-0be854d94fa197cb7", "subnet-04975d535cf761785", "subnet-0d50aa17c694457c9"
 					]
 					scaling_config  {
 						desired_size = 4

@@ -266,6 +266,11 @@ func readResourceWait(ctx context.Context, config *authctx.TanzuContext, resourc
 		resp, err = config.TMCConnection.TargetLocationService.TargetLocationResourceServiceGet(resourceFullName)
 
 		if err != nil || resp == nil || resp.BackupLocation == nil {
+			if clienterrors.IsUnauthorizedError(err) {
+				authctx.RefreshUserAuthContext(config, clienterrors.IsUnauthorizedError, err)
+				continue
+			}
+
 			return nil, err
 		}
 

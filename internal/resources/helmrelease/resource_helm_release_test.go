@@ -37,7 +37,7 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 		HelmReleaseResourceVar:  helmReleaseResourceVar,
 		HelmReleaseResourceName: fmt.Sprintf("%s.%s", helmReleaseResource, helmReleaseResourceVar),
 		HelmReleaseName:         acctest.RandomWithPrefix(helmReleaseNamePrefix),
-		ScopeHelperResources:    commonscope.NewScopeHelperResources(),
+		ScopeHelperResources:    commonscope.NewScopeHelperResources(commonscope.WithRandomClusterGroupNameForCluster()), // Don't use the default cluster group
 		Namespace:               "tanzu-helm-resources",
 		HelmFeatureResource:     helmfeatureResource,
 		HelmFeatureResourceVar:  helmfeatureResourceVar,
@@ -61,7 +61,7 @@ func TestAcceptanceForHelmReleaseResource(t *testing.T) {
 		os.Setenv("TF_ACC", "true")
 		os.Setenv("TMC_ENDPOINT", "dummy.tmc.mock.vmware.com")
 		os.Setenv("VMW_CLOUD_API_TOKEN", "dummy")
-		os.Setenv("VMW_CLOUD_ENDPOINT", "console.cloud.vmware.com")
+		os.Setenv("VMW_CLOUD_ENDPOINT", "console.tanzu.broadcom.com")
 		os.Setenv("ORG_ID", "bc27608b-4809-4cac-9e04-778803963da2")
 
 		log.Println("Setting up the mock endpoints...")
