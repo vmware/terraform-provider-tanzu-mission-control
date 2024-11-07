@@ -1,17 +1,35 @@
-# https://github.com/golangci/golangci-lint#config-file
+# © Broadcom. All Rights Reserved.
+# The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: MPL-2.0
+
+# For more information about the golangci-lint configuration file, refer to:
+# https://golangci-lint.run/usage/configuration/
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - dogsled
+        - funlen
+        - gocognit
+    - path: internal/authctx
+      linters:
+        - gosec
+        - nestif
+    - path: flatten_test.go
+      linters:
+        - dupl
 
 linters:
-  # please, do not use `enable-all`: it's deprecated and will be removed soon.
-  # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
   disable-all: true
   enable:
     - asciicheck
     - bodyclose
+    - copyloopvar
     - depguard
     - dogsled
     - dupl
     - errcheck
-    - exportloopref
     - funlen
     - goconst
     - gocognit
@@ -38,81 +56,47 @@ linters:
     - whitespace
     - wsl
 
-#   don't enable:
-#   - deadcode
-#   - exhaustive
-#   - gochecknoglobals
-#   - godox
-#   - gomnd
-#   - goerr113
-#   - gofumpt
-#   - interfacer
-#   - lll
-#   - maligned
-#   - nlreturn
-#   - noctx
-#   - nolintlint
-#   - rowserrcheck
-#   - scopelint
-#   - structcheck
-#   - testpackage
-#   - revive
-#   - varcheck
-
 run:
-  # include test files or not, default is true
-  tests: true
   deadline: 5m
   build-tags:
     - akscluster
     - cluster
     - clustergroup
+    - clustersecret
     - credential
+    - custompolicy
     - ekscluster
     - gitrepository
+    - helmfeature
+    - helmrelease
     - iampolicy
-    - kustomization
-    - namespace
-    - custompolicy
     - imagepolicy
+    - kustomization
+    - managementcluster
+    - mutationpolicy
+    - namespace
     - networkpolicy
+    - packageinstall
+    - packagerepository
+    - provisioner
     - quotapolicy
     - securitypolicy
     - sourcesecret
-    - workspace
-    - packageinstall
-    - packagerepository
-    - tanzupackages
     - tanzupackage
-    - clustersecret
-    - mutationpolicy
-    - helmfeature
-    - helmrelease
-    - managementcluster
-    - provisioner
+    - tanzupackages
+    - workspace
+
+output:
+  formats:
+    - format: colored-line-number
 
 linters-settings:
   funlen:
     lines: 150
     statements: 100
-  nestif:
-    min-complexity: 14
   gocognit:
     min-complexity: 60
   goimports:
     local-prefixes: github.com/vmware/terraform-provider-tanzu-mission-control
-
-issues:
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - dogsled
-        - funlen
-        - gocognit
-    - path: internal/authctx
-      linters:
-        - gosec
-        - nestif
-    - path: flatten_test.go
-      linters:
-        - dupl
+  nestif:
+    min-complexity: 14
