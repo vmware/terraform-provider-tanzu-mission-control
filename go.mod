@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/go-openapi/strfmt v0.19.3
 	github.com/go-openapi/swag v0.22.3
-	github.com/go-test/deep v1.0.3
+	github.com/go-test/deep v1.1.1
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.16.0
 	github.com/pkg/errors v0.9.1
