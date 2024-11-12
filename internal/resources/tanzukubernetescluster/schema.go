@@ -108,7 +108,7 @@ var provisionerNameSchema = &schema.Schema{
 var specSchema = &schema.Schema{
 	Type:        schema.TypeList,
 	Description: "Spec of tanzu kubernetes cluster.",
-	Required:    true,
+	Optional:    true,
 	MaxItems:    1,
 	Elem: &schema.Resource{
 		Schema: map[string]*schema.Schema{
