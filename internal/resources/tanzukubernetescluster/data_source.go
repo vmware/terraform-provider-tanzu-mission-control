@@ -27,7 +27,7 @@ func DataSourceTanzuKubernetesCluster() *schema.Resource {
 	}
 }
 
-func dataSourceTanzuKubernetesClusterRead(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
+func dataSourceTanzuKubernetesClusterRead(_ context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	var (
 		resp *tanzukubernetesclustermodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterData
 	)
