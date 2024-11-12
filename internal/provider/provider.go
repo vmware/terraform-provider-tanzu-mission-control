@@ -95,6 +95,7 @@ func Provider() *schema.Provider {
 			customiamrole.ResourceName:        customiamrole.ResourceCustomIAMRole(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
+			utkgresource.ResourceName:                 utkgresource.DataSourceTanzuKubernetesCluster(),
 			cluster.ResourceName:                      cluster.DataSourceTMCCluster(),
 			ekscluster.ResourceName:                   ekscluster.DataSourceTMCEKSCluster(),
 			akscluster.ResourceName:                   akscluster.DataSourceTMCAKSCluster(),
