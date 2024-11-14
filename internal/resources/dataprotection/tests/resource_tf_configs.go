@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package dataprotectiontests
 
@@ -53,8 +52,8 @@ func InitResourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, 
 	provisionerName := fmt.Sprintf("%s.%s", scopeHelper.Cluster.ResourceName, clusterres.ProvisionerNameKey)
 	clusterInfo := fmt.Sprintf(`
 		%s = %s
-		%s = %s        
-		%s = %s  
+		%s = %s
+		%s = %s
 		`,
 		dataprotectionscope.ClusterNameKey, clusterName,
 		dataprotectionscope.ManagementClusterNameKey, mgmtClusterName,

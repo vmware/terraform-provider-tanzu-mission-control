@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 //nolint:dupl //ignore 7-151 lines are duplicate of `internal/resources/policy/kind/network/recipe/custom_egress_schema.go:7-151`
 package recipe

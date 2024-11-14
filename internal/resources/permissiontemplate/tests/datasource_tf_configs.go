@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package permissiontemplatetests
 
@@ -17,7 +16,7 @@ const (
 )
 
 func GetDataProtectionPermissionTemplateConfig() string {
-	return fmt.Sprintf(`	
+	return fmt.Sprintf(`
 		data "%s" "%s" {
 		  credentials_name = "data-protection-tf-test"
 		  tanzu_capability = "DATA_PROTECTION"
@@ -30,7 +29,7 @@ func GetDataProtectionPermissionTemplateConfig() string {
 }
 
 func GetEKSPermissionTemplateConfig() string {
-	return fmt.Sprintf(`	
+	return fmt.Sprintf(`
 		data "%s" "%s" {
 		  credentials_name = "eks-tf-test"
 		  tanzu_capability = "MANAGED_K8S_PROVIDER"

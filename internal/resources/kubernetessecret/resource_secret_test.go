@@ -1,10 +1,9 @@
 //go:build clustersecret
 // +build clustersecret
 
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package kubernetessecret
 
@@ -139,7 +138,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 	 name = "%s"
 
 	 namespace_name = "default"
-	
+
 	 scope {
 		cluster {
 			name = "%s"
@@ -157,13 +156,13 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 	 name = "%s"
 
 	 namespace_name = "default"
-	
+
 	 scope {
 		cluster_group {
 			name = "%s"
 		}
 	 }
-	
+
 	 %s
 	}
 	`, testConfig.SecretResource, testConfig.SecretResourceVar, testConfig.SecretName, testConfig.ScopeHelperResources.ClusterGroup.Name, secretSpec)

@@ -1,10 +1,9 @@
 //go:build packageinstall
 // +build packageinstall
 
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package tanzupackageinstall
 
@@ -189,7 +188,7 @@ func (testConfig *testAcceptanceConfig) getTestPackageInstallResourceBasicConfig
 
 		depends_on = [tanzu-mission-control_cluster.test_cluster]
 	}
-	
+
 
 	resource "%s" "%s" {
 		name = "%s"
@@ -211,21 +210,21 @@ func (testConfig *testAcceptanceConfig) getTestPackageInstallResourceBasicConfig
 
 	resource "time_sleep" "wait_for_2m" {
 		create_duration = "40s"
-	  
+
 		depends_on = [tanzu-mission-control_package_repository.test_pkg_repository]
 	}
 
 	resource "%s" "%s" {
 		name = "%s"
-	
+
 		namespace = "%s"
-	
+
 		scope {
 			cluster {
 				name = tanzu-mission-control_cluster.test_cluster.name
 			}
 		}
-	
+
 		spec {
 			package_ref {
 				package_metadata_name = "pkg.test.carvel.dev"
@@ -233,10 +232,10 @@ func (testConfig *testAcceptanceConfig) getTestPackageInstallResourceBasicConfig
 					constraints = "%s"
 				}
 			}
-			
+
 			%s
 		}
-	
+
 		depends_on = [time_sleep.wait_for_2m]
 	}
 	`, helperBlock, pkgRepoResource, pkgRepoResourceVar, testConfig.PkgRepoName,

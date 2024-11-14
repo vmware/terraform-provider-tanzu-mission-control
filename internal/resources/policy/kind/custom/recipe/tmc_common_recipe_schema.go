@@ -1,7 +1,6 @@
-/*
-Copyright © 2022 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 // Package recipe contains schema and helper functions for different input recipes.
 // Contains recipe schema for tmc-https-ingress, tmc-block-nodeport-service and tmc-block-resources recipe.
