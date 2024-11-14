@@ -1,19 +1,16 @@
-bin/*
-dist/*
-_output/*
-.DS_Store
-.vscode
-.idea/*
-vendor/*
-cover.out
+# Ignore any built binaries.
+terraform-provider-tanzu-mission-control
+terraform-provider-tanzu-mission-control.exe
+
+# Ignore distribution directories.
+dist/
+
+# Ignore editor directories.
 .idea/
-terraform.*
-crash.log
-.terraform/
-terraform-provider-tmc
-terraform.tfplan
-terraform.tfstate
-*.backup
-*.bak
+.vscode/
+
+# Ignore temporaroy editor files.
 *~
-.terraform.tfstate.lock.info
+
+# Ignore macOS desktop services store files.
+**/.DS_Store
