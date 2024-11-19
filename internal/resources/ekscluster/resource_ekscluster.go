@@ -706,15 +706,12 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 	// EKS cluster update API on TMC side ignores nodepools passed to it.
 	// The nodepools have to be updated via separate nodepool API, hence we
 	// deal with them separately.
-	errnp := handleNodepoolDiffs(config, opsRetryTimeout, getResp.EksCluster.FullName, nodepools)
-
 	errcl := handleClusterDiff(config, getResp.EksCluster, common.ConstructMeta(d), clusterSpec)
 	if errcl != nil {
 		return diag.FromErr(errors.Wrapf(errcl, "Unable to update Tanzu Mission Control EKS cluster entry, name : %s", d.Get(NameKey)))
 	}
 
-	// this is moved here so as to not bail on the cluster update
-	// when there is a nodepool update error
+	errnp := handleNodepoolDiffs(config, opsRetryTimeout, getResp.EksCluster.FullName, nodepools)
 	if errnp != nil {
 		return diag.FromErr(errors.Wrapf(errnp, "Unable to update Tanzu Mission Control EKS cluster's nodepools, name : %s", d.Get(NameKey)))
 	}
