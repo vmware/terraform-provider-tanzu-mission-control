@@ -7,6 +7,7 @@ package spec
 
 import (
 	"encoding/json"
+	"math"
 	"strconv"
 
 	valid "github.com/asaskevich/govalidator"
@@ -80,8 +81,12 @@ func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *packageinstallm
 						break
 					}
 
-					finalIntNum := int(number) // Convert uint64 To int
-					v1[key] = finalIntNum
+					if number > math.MaxInt32 {
+						v1[key] = value.(string)
+					} else {
+						finalIntNum := int(number) // Convert uint64 To int
+						v1[key] = finalIntNum
+					}
 				case valid.IsFloat(value.(string)):
 					floatNum, err := strconv.ParseFloat(value.(string), 64)
 					if err != nil {
