@@ -1,10 +1,9 @@
 //go:build networkpolicy
 // +build networkpolicy
 
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package networkpolicyresource
 
@@ -365,15 +364,15 @@ func (testConfig *testAcceptanceConfig) getTestNetworkPolicyResourceBasicConfigV
 
 	return fmt.Sprintf(`
 	%s
-	
+
 	resource "%s" "%s" {
 	 name = "%s"
-	
+
 	 %s
-	
+
 	 spec {
 	   %s
-	
+
 	   namespace_selector {
 	     match_expressions {
 	       key      = "component"

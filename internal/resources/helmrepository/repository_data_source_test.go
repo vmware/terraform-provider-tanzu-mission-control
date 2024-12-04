@@ -1,10 +1,9 @@
 //go:build helmrepository
 // +build helmrepository
 
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package helmrepository
 
@@ -115,7 +114,7 @@ func (testConfig *testAcceptanceConfig) getTestBasicDataSourceConfigValue() stri
 	return fmt.Sprintf(`
 	resource "tanzu-mission-control_cluster_group" "test_cluster_group" {
 		name = "%s"
-	  
+
 		%s
 	}
 
@@ -123,17 +122,17 @@ func (testConfig *testAcceptanceConfig) getTestBasicDataSourceConfigValue() stri
 		management_cluster_name = "%s"
 		provisioner_name        = "%s"
 		name                    = "%s"
-	  
+
 		%s
-	  
+
 		attach_k8s_cluster {
 		  kubeconfig_file = "%s"
 		}
-	   
+
 		spec {
 		  cluster_group = tanzu-mission-control_cluster_group.test_cluster_group.name
 		}
-	  
+
 		ready_wait_timeout      = "3m"
 	}
 

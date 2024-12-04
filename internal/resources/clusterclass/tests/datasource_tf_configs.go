@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package clusterclasstests
 
@@ -20,7 +19,7 @@ var (
 )
 
 func GetClusterClassConfig(clusterClassEnvVars map[ClusterClassEnvVar]string) string {
-	return fmt.Sprintf(`	
+	return fmt.Sprintf(`
 		data "%s" "%s" {
 		  management_cluster_name = "%s"
 		  provisioner_name        = "%s"

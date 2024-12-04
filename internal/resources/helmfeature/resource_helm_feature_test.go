@@ -1,10 +1,9 @@
 //go:build helmfeature
 // +build helmfeature
 
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package helmfeature
 
@@ -124,7 +123,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 		case commonscope.ClusterScope:
 			return fmt.Sprintf(`
 			resource "%s" "%s" {
-			
+
 			 scope {
 				cluster {
 					name = "%s"
@@ -138,7 +137,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 		case commonscope.ClusterGroupScope:
 			return fmt.Sprintf(`
 			resource "%s" "%s" {
-			
+
 			 scope {
 				cluster_group {
 					name = "%s"
@@ -169,7 +168,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 
 		resource "time_sleep" "wait_for_2m" {
 			destroy_duration = "300s"
-		  
+
 			depends_on = [tanzu-mission-control_helm_feature.test_helm_feature]
 		}
 

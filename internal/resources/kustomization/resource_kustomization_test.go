@@ -1,10 +1,9 @@
 //go:build kustomization
 // +build kustomization
 
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package kustomization
 
@@ -180,14 +179,14 @@ func (testConfig *testAcceptanceConfig) getTestKustomizationResourceBasicConfigV
 
 	return fmt.Sprintf(`
 	%s
-	
+
 	resource "%s" "%s" {
 	 name = "%s"
 
 	 namespace_name = "%s"
-	
+
 	 %s
-	
+
 	 spec {
 		url = "https://github.com/tmc-build-integrations/sample-update-configmap"
 		ref {

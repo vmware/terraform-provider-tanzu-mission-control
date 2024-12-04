@@ -1,10 +1,9 @@
 //go:build sourcesecret
 // +build sourcesecret
 
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package sourcesecret
 
@@ -137,7 +136,7 @@ func (testConfig *testAcceptanceConfig) getTestSourceSecretResourceBasicConfigVa
 		clStr := fmt.Sprintf(`
 	resource "%s" "%s" {
 	 name = "%s"
-	
+
 	 scope {
 		cluster {
 			name = "%s"
@@ -145,7 +144,7 @@ func (testConfig *testAcceptanceConfig) getTestSourceSecretResourceBasicConfigVa
 			provisioner_name = "attached"
 		}
 	 }
-	
+
 	 spec {
 	   %s
 	 }
@@ -155,13 +154,13 @@ func (testConfig *testAcceptanceConfig) getTestSourceSecretResourceBasicConfigVa
 		cgStr := fmt.Sprintf(`
 	resource "%s" "%s" {
 	 name = "%s"
-	
+
 	 scope {
 		cluster_group {
 			name = "%s"
 		}
 	 }
-	
+
 	 spec {
 	   %s
 	 }
@@ -180,12 +179,12 @@ func (testConfig *testAcceptanceConfig) getTestSourceSecretResourceBasicConfigVa
 
 	return fmt.Sprintf(`
 	%s
-	
+
 	resource "%s" "%s" {
 	 name = "%s"
-	
+
 	 %s
-	
+
 	 spec {
 	   %s
 	 }

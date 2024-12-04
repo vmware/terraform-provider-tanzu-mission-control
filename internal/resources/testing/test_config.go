@@ -1,7 +1,6 @@
-/*
-Copyright © 2022 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package testing
 
@@ -10,9 +9,9 @@ const testDefaultCreateEksClusterScript = `
 		name	= "{{.Name}}"
 		region	= "{{.Region}}"
 		credential_name = "{{.CredentialName}}"
-		
+
 		{{.Meta}}
-		
+
 		spec {
 			cluster_group = "{{.ClusterGroupName}}"
 			config {
@@ -24,9 +23,9 @@ const testDefaultCreateEksClusterScript = `
 				}
 				logging {
 					api_server         = false
-					audit              = true 
+					audit              = true
 					authenticator      = true
-					controller_manager =  true 
+					controller_manager =  true
 					scheduler          = true
 				}
 				vpc { // Required
@@ -113,13 +112,13 @@ const testDefaultAttachClusterScript = `
 		management_cluster_name = "attached"
 		provisioner_name        = "attached"
 		name                    = "{{.Name}}"
-		
+
 		{{.Meta}}
-		
+
 		spec {
 			cluster_group = "default"
 		}
-		
+
 		ready_wait_timeout = "3m"
 	}
 `
@@ -129,18 +128,18 @@ const testAttachClusterWithKubeConfigScript = `
 		management_cluster_name = "attached"
 		provisioner_name        = "attached"
 		name                    = "{{.Name}}"
-		
+
 		attach_k8s_cluster {
 			kubeconfig_file = "{{.KubeConfigPath}}"
 			description     = "optional description about the kube-config provided"
 		}
-		
+
 		{{.Meta}}
-		
+
 		spec {
 			cluster_group = "default"
 		}
-		
+
 		ready_wait_timeout = "3m"
 	}
 `
@@ -194,13 +193,13 @@ const testDataSourceAttachClusterScript = `
 		management_cluster_name = "attached"
 		provisioner_name        = "attached"
 		name                    = "{{.Name}}"
-		
+
 		{{.Meta}}
-		
+
 		spec {
 			cluster_group = "default"
 		}
-		
+
 		ready_wait_timeout = "3m"
 	}
 
@@ -227,11 +226,11 @@ const testTKGmAWSClusterScript = `
 					network {
 						cluster {
 							pods {
-							  cidr_blocks = "100.96.0.0/11" 
+							  cidr_blocks = "100.96.0.0/11"
 							}
-				
+
 							services {
-							  cidr_blocks = "100.64.0.0/13" 
+							  cidr_blocks = "100.64.0.0/13"
 							}
 							api_server_port = 6443
 						}
@@ -254,7 +253,7 @@ const testTKGmAWSClusterScript = `
 						ssh_key = "jumper_ssh_key-sh-1643378-220418-062857"
 					}
 				}
-		
+
 				distribution {
 					os_arch = "amd"
  					os_name = "photon"
@@ -262,7 +261,7 @@ const testTKGmAWSClusterScript = `
 					region = "us-west-2"
 					version = "v1.21.2+vmware.1-tkg.2"
 				}
-		
+
 				topology {
 					control_plane {
 						availability_zones = [
@@ -297,7 +296,7 @@ const testTKGsClusterScript = `
 		management_cluster_name = "{{.ManagementClusterName}}"
 		provisioner_name        = "{{.ProvisionerName}}"
 		name                    = "{{.Name}}"
-		
+
 		spec {
 			cluster_group = "default"
 			tkg_service_vsphere {
@@ -320,11 +319,11 @@ const testTKGsClusterScript = `
 						]
 					}
 				}
-			
+
 				distribution {
 					version = "{{.Version}}"
 				}
-			
+
 				topology {
 					control_plane {
 						class             = "best-effort-large"
@@ -359,7 +358,7 @@ const testTKGmVsphereClusterScript = `
 		management_cluster_name = "{{.ManagementClusterName}}"
 		provisioner_name        = "{{.ProvisionerName}}"
 		name                    = "{{.Name}}"
-		
+
 		spec {
 			cluster_group = "default"
 			tkg_vsphere {
@@ -380,27 +379,27 @@ const testTKGmVsphereClusterScript = `
 					ssh_key = "default"
 				}
 			}
-			
+
 				distribution {
 					os_arch = "amd64"
 					os_name = "ubuntu"
 					os_version = "20.04"
 					version = "v1.23.10+vmware.1-tkg.1"
 					workspace {
-					  datacenter        = "/dc0" 
-					  datastore         = "/dc0/datastore/local-0" 
-					  workspace_network = "/dc0/network/Avi Internal" 
-					  folder            = "/dc0/vm" 
-					  resource_pool     = "/dc0/host/cluster0/Resources" 
+					  datacenter        = "/dc0"
+					  datastore         = "/dc0/datastore/local-0"
+					  workspace_network = "/dc0/network/Avi Internal"
+					  folder            = "/dc0/vm"
+					  resource_pool     = "/dc0/host/cluster0/Resources"
 					}
 				}
-			
+
 				topology {
 					control_plane {
 						vm_config {
-							cpu       = "2" 
-							disk_size = "20" 
-							memory    = "4096" 
+							cpu       = "2"
+							disk_size = "20"
+							memory    = "4096"
 						}
 					}
 					node_pools {
@@ -408,9 +407,9 @@ const testTKGmVsphereClusterScript = `
 							worker_node_count = "1"
 							tkg_vsphere {
 								vm_config {
-									cpu       = "2" 
-									disk_size = "20" 
-									memory    = "4096" 
+									cpu       = "2"
+									disk_size = "20"
+									memory    = "4096"
 								}
 							}
 						}
