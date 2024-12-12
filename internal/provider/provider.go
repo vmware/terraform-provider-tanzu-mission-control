@@ -11,7 +11,6 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/backupschedule"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster"
-	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/integration"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/cluster/nodepools"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clusterclass"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/clustergroup"
@@ -74,7 +73,6 @@ func Provider() *schema.Provider {
 			quotapolicy.ResourceName:          quotapolicyresource.ResourceQuotaPolicy(),
 			networkpolicy.ResourceName:        networkpolicyresource.ResourceNetworkPolicy(),
 			credential.ResourceName:           credential.ResourceCredential(),
-			integration.ResourceName:          integration.ResourceIntegration(),
 			gitrepository.ResourceName:        gitrepository.ResourceGitRepository(),
 			kustomization.ResourceName:        kustomization.ResourceKustomization(),
 			sourcesecret.ResourceName:         sourcesecret.ResourceSourceSecret(),
@@ -103,7 +101,6 @@ func Provider() *schema.Provider {
 			clustergroup.ResourceName:                 clustergroup.DataSourceClusterGroup(),
 			nodepools.ResourceName:                    nodepools.DataSourceClusterNodePool(),
 			credential.ResourceName:                   credential.DataSourceCredential(),
-			integration.ResourceName:                  integration.DataSourceIntegration(),
 			gitrepository.ResourceName:                gitrepository.DataSourceGitRepository(),
 			sourcesecret.ResourceName:                 sourcesecret.DataSourceSourcesecret(),
 			packagerepository.ResourceName:            packagerepository.DataSourcePackageRepository(),

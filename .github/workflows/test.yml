@@ -9,7 +9,7 @@ on:
       - 'README.md'
 
 env:
-  BUILD_TAGS: 'akscluster cluster clustergroup credential ekscluster gitrepository iampolicy kustomization namespace custompolicy imagepolicy networkpolicy quotapolicy securitypolicy sourcesecret workspace tanzupackage tanzupackages packagerepository packageinstall clustersecret integration mutationpolicy backupschedule targetlocation dataprotection tanzukubernetescluster clusterclass managementcluster provisioner inspections custompolicytemplate customiamrole permissiontemplate'
+  BUILD_TAGS: 'akscluster cluster clustergroup credential ekscluster gitrepository iampolicy kustomization namespace custompolicy imagepolicy networkpolicy quotapolicy securitypolicy sourcesecret workspace tanzupackage tanzupackages packagerepository packageinstall clustersecret mutationpolicy backupschedule targetlocation dataprotection tanzukubernetescluster clusterclass managementcluster provisioner inspections custompolicytemplate customiamrole permissiontemplate'
 
 jobs:
   build:
