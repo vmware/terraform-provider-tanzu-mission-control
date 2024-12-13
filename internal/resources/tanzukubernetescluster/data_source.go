@@ -18,11 +18,17 @@ import (
 )
 
 func DataSourceTanzuKubernetesCluster() *schema.Resource {
+
+	dsSchema := helper.DatasourceSchemaFromResourceSchema(tanzuKubernetesClusterSchema)
+
+	// Set 'Required' schema elements
+	helper.AddRequiredFieldsToSchema(dsSchema, "name", "management_cluster_name", "provisioner_name")
+
 	return &schema.Resource{
 		ReadContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 			return dataSourceTanzuKubernetesClusterRead(helper.GetContextWithCaller(ctx, helper.DataRead), d, m)
 		},
-		Schema: tanzuKubernetesClusterSchema,
+		Schema: dsSchema,
 	}
 }
 
