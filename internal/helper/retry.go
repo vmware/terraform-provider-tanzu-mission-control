@@ -28,6 +28,7 @@ func Retry(f Retryable, interval time.Duration, attempts int) (int, error) {
 		}
 
 		time.Sleep(interval)
+
 		retries++
 	}
 

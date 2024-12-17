@@ -64,7 +64,7 @@ func ResourcePolicyInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m 
 	if !updateAvailable {
 		log.Printf("[INFO] %s policy update is not required", rn)
 
-		return
+		return diags
 	}
 
 	switch scopedFullnameData.Scope {

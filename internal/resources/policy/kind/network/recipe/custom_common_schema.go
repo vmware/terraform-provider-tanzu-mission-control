@@ -295,7 +295,6 @@ func flattenCustomRule(rule *policyrecipenetworkcommonmodel.V1alpha1CommonPolicy
 		var ports []interface{}
 
 		for _, port := range *rule.Ports {
-			port := port
 			ports = append(ports, flattenPort(&port))
 		}
 

@@ -321,8 +321,9 @@ func TestNodepoolSpecEqual(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			spec1 := getNodepoolSpec()
-			spec2 := getNodepoolSpec()
 			test.modifySpec1(spec1)
+
+			spec2 := getNodepoolSpec()
 			test.modifySpec2(spec2)
 
 			require.Equal(t, test.result, nodepoolSpecEqual(spec1, spec2), "return didn't match the expected output")
@@ -693,8 +694,9 @@ func TestClusterSpecEqual(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			spec1, _ := getClusterSpec()
-			spec2, _ := getClusterSpec()
 			test.modifySpec1(spec1)
+
+			spec2, _ := getClusterSpec()
 			test.modifySpec2(spec2)
 
 			require.Equal(t, test.result, clusterSpecEqual(spec1, spec2), "return didn't match the expected output")

@@ -113,6 +113,7 @@ func buildCapabilityProviderDescription(schemaKey string) (description string) {
 		for k, v := range capabilityProviderMap {
 			valueDescription := fmt.Sprintf("When %s is set to '%s' %s must be set to '%s'.", ProviderKey, v, CapabilityKey, k)
 			description = fmt.Sprintf("%s\n%s", description, valueDescription)
+
 			validValues = append(validValues, v)
 		}
 

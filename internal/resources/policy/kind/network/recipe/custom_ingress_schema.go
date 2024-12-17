@@ -129,7 +129,6 @@ func FlattenCustomIngress(customIngress *policyrecipenetworkmodel.V1alpha1Common
 		var rules []interface{}
 
 		for _, rule := range customIngress.Rules {
-			rule := rule
 			rules = append(rules, flattenCustomRule(&rule))
 		}
 

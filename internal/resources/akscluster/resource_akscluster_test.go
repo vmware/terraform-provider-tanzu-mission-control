@@ -841,6 +841,7 @@ func Test_pollUntilReady(t *testing.T) {
 						tt.args.interval, tt.wantError, gotErr)
 				}
 			}
+
 			if tt.validation != nil {
 				tt.validation(t, tt.args)
 			}

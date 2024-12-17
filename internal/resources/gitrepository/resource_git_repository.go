@@ -226,7 +226,7 @@ func resourceGitRepositoryInPlaceUpdate(ctx context.Context, d *schema.ResourceD
 
 	if !updateAvailable {
 		log.Printf("[INFO] git repository update is not required")
-		return
+		return diags
 	}
 
 	switch scopedFullnameData.Scope {

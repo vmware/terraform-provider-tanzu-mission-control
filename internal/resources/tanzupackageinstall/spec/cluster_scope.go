@@ -18,7 +18,10 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
-func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec, err error) {
+// nolint: gocognit
+func ConstructSpecForClusterScope(d *schema.ResourceData) (
+	spec *packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec,
+	err error) {
 	value, ok := d.GetOk(SpecKey)
 	if !ok {
 		return spec, nil

@@ -61,5 +61,6 @@ func TestConcurrentAccessOfInvokeAction(t *testing.T) {
 			require.Error(t, actual)
 		}()
 	}
+
 	waitGroup.Wait()
 }

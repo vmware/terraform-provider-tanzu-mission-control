@@ -239,7 +239,7 @@ func resourcePackageRepositoryInPlaceUpdate(ctx context.Context, d *schema.Resou
 	}
 
 	if !updateCheckForMeta(d, pkgRepoDataFromServer.meta) && !updateCheckForSpec(d, pkgRepoDataFromServer.spec) && !d.HasChange(disabledKey) {
-		return
+		return diags
 	}
 
 	return dataPackageRepositoryRead(ctx, d, m)

@@ -69,7 +69,7 @@ func dataSourcePermissionTemplateRead(ctx context.Context, data *schema.Resource
 		}
 	}
 
-	if response.TemplateValues != nil && len(response.TemplateValues) > 0 {
+	if len(response.TemplateValues) > 0 {
 		// This is necessary because sometimes the template parameters definition and the template values returned from the API do not match.
 		err = removeUndefinedTemplateValues(response)
 

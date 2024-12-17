@@ -129,7 +129,6 @@ func FlattenCustomEgress(customEgress *policyrecipenetworkmodel.V1alpha1CommonPo
 		var rules []interface{}
 
 		for _, rule := range customEgress.Rules {
-			rule := rule
 			rules = append(rules, flattenCustomRule(&rule))
 		}
 

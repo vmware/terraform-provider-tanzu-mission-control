@@ -205,7 +205,7 @@ func waitNodePoolsReady(ctx context.Context, config *authctx.TanzuContext, clust
 						errMsg = fmt.Sprintf("%s\n%s", errMsg, npStatusMsg)
 					}
 
-					err = errors.Wrapf(err, errMsg)
+					err = errors.Wrapf(err, "%s", errMsg)
 				}
 
 				return err
@@ -461,6 +461,7 @@ func removeModelVariable(clusterClassSchema interface{}, modelVariable interface
 		} else {
 			modelVarAdditionalProperties, additionalPropertiesExist := clusterClassSchema.(map[string]interface{})[string(openapiv3.AdditionalPropertiesKey)]
 			preserve, preserveExists := clusterClassSchema.(map[string]interface{})[string(openapiv3.PreserveUnknownFieldKey)]
+
 			if additionalPropertiesExist {
 				_, propertiesExist := modelVarAdditionalProperties.(map[string]interface{})[string(openapiv3.PropertiesKey)]
 
