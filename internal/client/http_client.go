@@ -1,7 +1,6 @@
-/*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package client
 
@@ -45,7 +44,6 @@ import (
 	eksclusterclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster"
 	eksnodepoolclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/ekscluster/nodepool"
 	inspectionsclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/inspections"
-	integrationclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/integration"
 	kubeconfigclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubeconfig"
 	secretclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubernetessecret"
 	secretexportclient "github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/kubernetessecret/secretexport"
@@ -118,7 +116,6 @@ func newHTTPClient(httpClient *transport.Client) *TanzuMissionControl {
 		WorkspacePolicyResourceService:                policyworkspaceclient.New(httpClient),
 		OrganizationPolicyResourceService:             policyorganizationclient.New(httpClient),
 		CredentialResourceService:                     credentialclient.New(httpClient),
-		IntegrationResourceService:                    integrationclient.New(httpClient),
 		ClusterContinuousDeliveryResourceService:      continuousdeliveryclusterclient.New(httpClient),
 		ClusterGitRepositoryResourceService:           gitrepositoryclusterclient.New(httpClient),
 		ClusterKustomizationResourceService:           kustomizationclusterclient.New(httpClient),
@@ -183,7 +180,6 @@ type TanzuMissionControl struct {
 	WorkspacePolicyResourceService                policyworkspaceclient.ClientService
 	OrganizationPolicyResourceService             policyorganizationclient.ClientService
 	CredentialResourceService                     credentialclient.ClientService
-	IntegrationResourceService                    integrationclient.ClientService
 	ClusterContinuousDeliveryResourceService      continuousdeliveryclusterclient.ClientService
 	ClusterGitRepositoryResourceService           gitrepositoryclusterclient.ClientService
 	ClusterKustomizationResourceService           kustomizationclusterclient.ClientService

@@ -1,7 +1,6 @@
-/*
-Copyright 2022 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package ekscluster
 
@@ -445,6 +444,7 @@ func TestFlattenClusterSpec(t *testing.T) {
 		t.Run(test.description, func(t *testing.T) {
 			spec, nps := test.getInput()
 			output := flattenClusterSpec(spec, nps)
+
 			print(test.expected)
 			print(output)
 			require.Equal(t, test.expected, output)

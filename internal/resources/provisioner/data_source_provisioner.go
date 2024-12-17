@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package provisioner
 
@@ -76,19 +75,20 @@ func dataSourceProvisionerRead(ctx context.Context, d *schema.ResourceData, m in
 		if err != nil {
 			if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
 				_ = schema.RemoveFromState(d, m)
-				return
+				return diags
 			}
 
-			return
+			return diags
 		}
 	} else {
 		getResp, err := config.TMCConnection.ProvisionerResourceService.ProvisionerResourceServiceGet(model.Provisioners[0].FullName)
 		if err != nil {
 			if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
 				_ = schema.RemoveFromState(d, m)
-				return
+				return diags
 			}
-			return
+
+			return diags
 		}
 
 		p := &provisioner.VmwareTanzuManageV1alpha1ManagementclusterProvisionerListprovisionersResponse{

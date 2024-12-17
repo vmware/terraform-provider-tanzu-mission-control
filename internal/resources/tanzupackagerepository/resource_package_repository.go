@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package tanzupackagerepository
 
@@ -240,7 +239,7 @@ func resourcePackageRepositoryInPlaceUpdate(ctx context.Context, d *schema.Resou
 	}
 
 	if !updateCheckForMeta(d, pkgRepoDataFromServer.meta) && !updateCheckForSpec(d, pkgRepoDataFromServer.spec) && !d.HasChange(disabledKey) {
-		return
+		return diags
 	}
 
 	return dataPackageRepositoryRead(ctx, d, m)

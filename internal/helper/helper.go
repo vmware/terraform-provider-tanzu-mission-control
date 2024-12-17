@@ -1,7 +1,6 @@
-/*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package helper
 
@@ -82,6 +81,7 @@ func readString(input interface{}, key string) string {
 	return data
 }
 
+// nolint:gosec
 func SetPrimitiveValue(input, model interface{}, key string) {
 	switch m := model.(type) {
 	case *float64:

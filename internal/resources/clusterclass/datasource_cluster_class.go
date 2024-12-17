@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package clusterclass
 
@@ -42,7 +41,7 @@ func dataSourceClusterClassRead(ctx context.Context, data *schema.ResourceData, 
 	switch {
 	case err != nil:
 		return diag.FromErr(errors.Wrap(err, "Couldn't read cluster class"))
-	case resp.ClusterClasses == nil || len(resp.ClusterClasses) == 0:
+	case len(resp.ClusterClasses) == 0:
 		data.SetId("NO_DATA")
 	default:
 		clusterClass := resp.ClusterClasses[0]

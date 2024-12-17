@@ -1,10 +1,9 @@
 //go:build packagerepository
 // +build packagerepository
 
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package tanzupackagerepository
 
@@ -155,7 +154,7 @@ func (testConfig *testAcceptanceConfig) getTestPackageRepositoryResourceBasicCon
 
 		depends_on = [tanzu-mission-control_cluster.test_cluster]
 	}
-	
+
 
 	resource "%s" "%s" {
 		name = "%s"

@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package helmcharts
 
@@ -19,13 +18,6 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	helmchartsmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/helmcharts"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
-)
-
-const (
-	https                = "https:/"
-	clAPIVersionAndGroup = "v1alpha1/organization/fluxcd/helm/repositories"
-	apiSubGroup          = "chartmetadatas"
-	apiKind              = "charts"
 )
 
 // nolint: unused
@@ -120,6 +112,13 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			},
 		},
 	}
+
+	const (
+		https                = "https:/"
+		clAPIVersionAndGroup = "v1alpha1/organization/fluxcd/helm/repositories"
+		apiSubGroup          = "chartmetadatas"
+		apiKind              = "charts"
+	)
 
 	getPkgEndpoint := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, "*", apiSubGroup, testConfig.ChartMetadataName, apiKind)).String()
 

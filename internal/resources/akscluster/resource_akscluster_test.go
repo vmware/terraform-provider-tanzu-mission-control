@@ -1,7 +1,6 @@
-/*
-Copyright 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package akscluster_test
 
@@ -842,6 +841,7 @@ func Test_pollUntilReady(t *testing.T) {
 						tt.args.interval, tt.wantError, gotErr)
 				}
 			}
+
 			if tt.validation != nil {
 				tt.validation(t, tt.args)
 			}

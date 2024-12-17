@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package sourcesecret
 
@@ -263,7 +262,7 @@ func resourceSourcesecretInPlaceUpdate(ctx context.Context, d *schema.ResourceDa
 	}
 
 	if !updateAvailable {
-		return
+		return diags
 	}
 
 	switch scopedFullnameData.Scope {

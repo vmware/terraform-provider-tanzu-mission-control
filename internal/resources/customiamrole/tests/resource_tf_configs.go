@@ -1,7 +1,6 @@
-/*
-Copyright © 2024 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package customiamroletests
 
@@ -33,21 +32,21 @@ func InitResourceTFConfigBuilder() *ResourceTFConfigBuilder {
 }
 
 func (builder *ResourceTFConfigBuilder) GetCustomFullIAMRoleConfig() string {
-	return fmt.Sprintf(`	
+	return fmt.Sprintf(`
 		resource "%s" "%s" {
 		  name = "%s"
-		
+
 		  spec {
 			is_deprecated = false
-		
-			aggregation_rule {        
-			  cluster_role_selector { 
+
+			aggregation_rule {
+			  cluster_role_selector {
 				match_labels = {
 				  key = "value"
 				}
 			  }
-		
-			  cluster_role_selector { 
+
+			  cluster_role_selector {
 				match_expression {
 				  key      = "aa"
 				  operator = "Exists"
@@ -55,20 +54,20 @@ func (builder *ResourceTFConfigBuilder) GetCustomFullIAMRoleConfig() string {
 				}
 			  }
 			}
-			
+
 			allowed_scopes = ["ORGANIZATION", "CLUSTER_GROUP", "CLUSTER"]
-			tanzu_permissions = ["account.credential.iam.get"] 
+			tanzu_permissions = ["account.credential.iam.get"]
 
 			kubernetes_permissions {
 			 rule {
-			   resources      = ["deployments"] 
-			   verbs          = ["get", "list"] 
-			   api_groups     = ["*"] 
+			   resources      = ["deployments"]
+			   verbs          = ["get", "list"]
+			   api_groups     = ["*"]
 			 }
-		     
+
 			 rule {
 			   verbs      = ["get", "list"]
-			   api_groups = ["*"]   
+			   api_groups = ["*"]
 			   url_paths  = ["/healthz"]
 			 }
 			}
@@ -82,18 +81,18 @@ func (builder *ResourceTFConfigBuilder) GetCustomFullIAMRoleConfig() string {
 }
 
 func (builder *ResourceTFConfigBuilder) GetCustomSlimIAMRoleConfig() string {
-	return fmt.Sprintf(`	
+	return fmt.Sprintf(`
 		resource "%s" "%s" {
 		  name = "%s"
-		
-		  spec {			
+
+		  spec {
 			allowed_scopes = ["ORGANIZATION", "CLUSTER_GROUP", "CLUSTER"]
 
 			kubernetes_permissions {
 			  rule {
-			    resources      = ["deployments"] 
-			    verbs          = ["get", "list"] 
-			    api_groups     = ["*"] 
+			    resources      = ["deployments"]
+			    verbs          = ["get", "list"]
+			    api_groups     = ["*"]
 			  }
 			}
 		  }

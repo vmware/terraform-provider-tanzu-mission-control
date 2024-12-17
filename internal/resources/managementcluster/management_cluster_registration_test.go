@@ -1,10 +1,9 @@
 //go:build managementcluster
 // +build managementcluster
 
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package managementcluster
 
@@ -103,11 +102,11 @@ func getTKGsResourceWithoutKubeconfigWithDataSource(name string) string {
 		resource "tanzu-mission-control_management_cluster" "test_tkgs" {
 		  name = "%s"
 		  spec {
-			cluster_group = "default" 
-			kubernetes_provider_type = "VMWARE_TANZU_KUBERNETES_GRID_SERVICE" 
+			cluster_group = "default"
+			kubernetes_provider_type = "VMWARE_TANZU_KUBERNETES_GRID_SERVICE"
 		  }
 		}
-		
+
 		data "tanzu-mission-control_management_cluster" "read_tkgs_management_cluster_registration" {
 			name = tanzu-mission-control_management_cluster.test_tkgs.name
 		}
@@ -119,11 +118,11 @@ func getTKGmResourceWithoutKubeconfigWithDataSource(name string) string {
 		resource "tanzu-mission-control_management_cluster" "test_tkgm" {
 		  name = "%s"
 		  spec {
-			cluster_group = "default" 
-			kubernetes_provider_type = "VMWARE_TANZU_KUBERNETES_GRID" 
+			cluster_group = "default"
+			kubernetes_provider_type = "VMWARE_TANZU_KUBERNETES_GRID"
 		  }
 		}
-		
+
 		data "tanzu-mission-control_management_cluster" "read_tkgm_management_cluster_registration" {
 			name = tanzu-mission-control_management_cluster.test_tkgm.name
 		}
@@ -135,14 +134,14 @@ func getTKGmResourceWithDataSourceWithKubeConfigFilePath(name string, kubeconfig
 		resource "tanzu-mission-control_management_cluster" "test_tkgm" {
 		  name = "%s"
 		  spec {
-			cluster_group = "default" 
+			cluster_group = "default"
 			kubernetes_provider_type = "VMWARE_TANZU_KUBERNETES_GRID"
 		  }
           register_management_cluster {
 			tkgm_kubeconfig_file = "%s"
 		  }
 		}
-		
+
 		data "tanzu-mission-control_management_cluster" "read_tkgm_management_cluster_registration" {
 			name = tanzu-mission-control_management_cluster.test_tkgm.name
 		}

@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package kustomization
 
@@ -87,7 +86,7 @@ func resourceKustomizationRead(ctx context.Context, d *schema.ResourceData, m in
 	if err != nil {
 		if clienterrors.IsNotFoundError(err) {
 			_ = schema.RemoveFromState(d, m)
-			return
+			return diags
 		}
 
 		return diag.FromErr(err)
@@ -347,7 +346,7 @@ func resourceKustomizationInPlaceUpdate(ctx context.Context, d *schema.ResourceD
 
 	if !updateAvailable {
 		log.Printf("[INFO] kustomization update is not required")
-		return
+		return diags
 	}
 
 	switch scopedFullnameData.Scope {

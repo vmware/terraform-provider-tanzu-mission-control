@@ -1,10 +1,9 @@
 //go:build helmrelease
 // +build helmrelease
 
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package helmrelease
 
@@ -146,9 +145,9 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 			return fmt.Sprintf(`
 			resource "%s" "%s" {
 			 name = "%s"
-		
+
 			 namespace_name = "%s"
-			
+
 			 scope {
 				cluster {
 					name = "%s"
@@ -156,7 +155,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 					provisioner_name = "attached"
 				}
 			 }
-			
+
 			 spec {
 				chart_ref {
 					helm_repository{
@@ -174,15 +173,15 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 			return fmt.Sprintf(`
 			resource "%s" "%s" {
 			 name = "%s"
-		
+
 			 namespace_name = "%s"
-			
+
 			 scope {
 				cluster_group {
 					name = "%s"
 				}
 			 }
-			
+
 			 spec {
 				chart_ref {
 					git_repository{
@@ -220,17 +219,17 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 
 	resource "time_sleep" "wait_for_2m" {
 		create_duration = "300s"
-	  
+
 		depends_on = [tanzu-mission-control_helm_feature.test_helm_feature]
 	}
 
 	resource "%s" "%s" {
 		name = "%s"
-	
+
 		namespace_name = "%s"
-	
+
 		%s
-	
+
 		spec {
 			chart_ref {
 				helm_repository{
@@ -241,7 +240,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 				}
 			}
 		}
-	
+
 		depends_on = [time_sleep.wait_for_2m]
 	}
 	`, helperBlock, testConfig.HelmFeatureResource, testConfig.HelmFeatureResourceVar, scopeBlock,
@@ -282,17 +281,17 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 
 	resource "time_sleep" "wait_for_2m" {
 		create_duration = "180s"
-	  
+
 		depends_on = [tanzu-mission-control_helm_feature.test_helm_feature, tanzu-mission-control_git_repository.test_git_repo]
 	}
 
 	resource "%s" "%s" {
 		name = "%s"
-	
+
 		namespace_name = "%s"
-	
+
 		%s
-	
+
 		spec {
 			chart_ref {
 				git_repository{
@@ -302,7 +301,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 				}
 			}
 		}
-	
+
 		depends_on = [time_sleep.wait_for_2m]
 	}
 	`, helperBlock, testConfig.HelmFeatureResource, testConfig.HelmFeatureResourceVar, scopeBlock, gitrepo.ResourceName, gitRepoResourceVar, gitRepoName, scopeBlock,

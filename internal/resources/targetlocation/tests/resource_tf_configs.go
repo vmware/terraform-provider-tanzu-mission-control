@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package targetlocationtests
 
@@ -65,7 +64,7 @@ func InitResourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, 
 		clusterAssignedGroup = fmt.Sprintf(`
 		cluster {
 			%s = %s
-			%s = %s        
+			%s = %s
 			%s = %s
 		}
 		`,
@@ -86,7 +85,7 @@ func InitResourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, 
 	assignedGroupsBlock := fmt.Sprintf(`
 		assigned_groups {
 			%s
-			
+
 			%s
 		}
 		`,
@@ -109,11 +108,11 @@ func (builder *ResourceTFConfigBuilder) GetTMCManagedTargetLocationConfig(tmcMan
 
 		resource "%s" "%s" {
 		  name          = "%s"
-		
-		  spec {                              
+
+		  spec {
 			target_provider = "AWS"
-		
-			credential = {            
+
+			credential = {
 			  name = "%s"
 			}
 
@@ -134,14 +133,14 @@ func (builder *ResourceTFConfigBuilder) GetAWSSelfManagedTargetLocationConfig() 
 	return fmt.Sprintf(`
 		resource "tanzu-mission-control_credential" "aws_self_provisioned" {
 		  name = "aws-self-provisioned-test"
-		
+
 		  meta {
 			description = "Minio storage"
 			labels = {
 			  "key1" : "value1",
 			}
 		  }
-		
+
 		  spec {
 			capability = "DATA_PROTECTION"
 			provider   = "GENERIC_S3"
@@ -160,26 +159,26 @@ func (builder *ResourceTFConfigBuilder) GetAWSSelfManagedTargetLocationConfig() 
 
 		resource "%s" "%s" {
 		  name          = "%s"
-		
-		  spec {                               
-			target_provider = "AWS" 
-		
-			config { 
+
+		  spec {
+			target_provider = "AWS"
+
+			config {
 			  aws {
 				s3_force_path_style = false
 				s3_bucket_url       = "https://minio.vrabbi.cloud"
 				s3_public_url       = "https://minio.vrabbi.cloud"
 			  }
 			}
-		
-			bucket = "test-backups" 
-			region = "us-east-1"            
-			credential = {                    
+
+			bucket = "test-backups"
+			region = "us-east-1"
+			credential = {
 			  name = tanzu-mission-control_credential.aws_self_provisioned.name
 			}
-			
+
 			%s
-		
+
 			ca_cert = <<EOF
 		-----BEGIN CERTIFICATE-----
 		MIIDHzCCAgegAwIBAgIRANzEvNJ7NUMGlLRiJ+yPUVowDQYJKoZIhvcNAQELBQAw
@@ -217,24 +216,24 @@ func (builder *ResourceTFConfigBuilder) GetAzureSelfManagedTargetLocationConfig(
 
 		resource "%s" "%s" {
 		  name          = "%s"
-		
-		  spec {                      
-			target_provider = "AZURE" 
-		
-			config { 
+
+		  spec {
+			target_provider = "AZURE"
+
+			config {
 			  azure {
 				resource_group  = "demo"
 				storage_account = "demo"
 				subscription_id = "123e4567-e89b-12d3-a456-426614174000"
 			  }
 			}
-		
-			bucket = "test-backups" 
-			
-			credential = {          
+
+			bucket = "test-backups"
+
+			credential = {
 			  name = "%s"
 			}
-			
+
 			%s
 		  }
 		}

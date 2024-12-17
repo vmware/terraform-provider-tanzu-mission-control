@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package permissiontemplate
 
@@ -114,6 +113,7 @@ func buildCapabilityProviderDescription(schemaKey string) (description string) {
 		for k, v := range capabilityProviderMap {
 			valueDescription := fmt.Sprintf("When %s is set to '%s' %s must be set to '%s'.", ProviderKey, v, CapabilityKey, k)
 			description = fmt.Sprintf("%s\n%s", description, valueDescription)
+
 			validValues = append(validValues, v)
 		}
 

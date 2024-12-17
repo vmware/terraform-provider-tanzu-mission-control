@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package helmfeature
 
@@ -54,7 +53,7 @@ func dataSourceHelmRead(ctx context.Context, d *schema.ResourceData, m interface
 	if err != nil {
 		if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
 			_ = schema.RemoveFromState(d, m)
-			return
+			return diags
 		}
 
 		return diag.FromErr(err)

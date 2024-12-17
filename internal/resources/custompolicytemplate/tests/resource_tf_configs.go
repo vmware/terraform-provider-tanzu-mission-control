@@ -1,7 +1,6 @@
-/*
-Copyright © 2024 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package custompolicytemplate
 
@@ -93,26 +92,26 @@ YAML
 }
 
 func (builder *ResourceTFConfigBuilder) GetFullCustomPolicyTemplateConfig() string {
-	return fmt.Sprintf(`	
+	return fmt.Sprintf(`
 		resource "%s" "%s" {
 		  name = "%s"
-		
+
 		  spec {
 			object_type   = "ConstraintTemplate"
 			template_type = "OPAGatekeeper"
-		
+
 			data_inventory {
 			  kind    = "ConfigMap"
 			  group   = "admissionregistration.k8s.io"
 			  version = "v1"
 			}
-		
+
 			data_inventory {
 			  kind    = "Deployment"
 			  group   = "extensions"
 			  version = "v1"
 			}
-		
+
 			template_manifest = %s
 		  }
 		}
@@ -125,10 +124,10 @@ func (builder *ResourceTFConfigBuilder) GetFullCustomPolicyTemplateConfig() stri
 }
 
 func (builder *ResourceTFConfigBuilder) GetSlimCustomPolicyTemplateConfig() string {
-	return fmt.Sprintf(`	
+	return fmt.Sprintf(`
 		resource "%s" "%s" {
 		  name = "%s"
-		
+
 		  spec {
 			object_type   = "ConstraintTemplate"
 			template_type = "OPAGatekeeper"

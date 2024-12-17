@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package helmrepository
 
@@ -19,13 +18,6 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/helper"
 	pakageclustermodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/helmrepository"
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
-)
-
-const (
-	https                = "https:/"
-	clAPIVersionAndGroup = "v1alpha1/clusters"
-	apiSubGroup          = "namespaces"
-	apiKind              = "fluxcd/helm/repositories"
 )
 
 // nolint: unused
@@ -124,6 +116,13 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			},
 		},
 	}
+
+	const (
+		https                = "https:/"
+		clAPIVersionAndGroup = "v1alpha1/clusters"
+		apiSubGroup          = "namespaces"
+		apiKind              = "fluxcd/helm/repositories"
+	)
 
 	getPkgEndpoint := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, testConfig.ScopeHelperResources.Cluster.Name, apiSubGroup, testConfig.Namespace, apiKind)).String()
 

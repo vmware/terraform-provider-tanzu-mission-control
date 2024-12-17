@@ -1,12 +1,12 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package spec
 
 import (
 	"encoding/json"
+	"math"
 	"strconv"
 
 	valid "github.com/asaskevich/govalidator"
@@ -18,7 +18,10 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/common"
 )
 
-func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec, err error) {
+// nolint: gocognit
+func ConstructSpecForClusterScope(d *schema.ResourceData) (
+	spec *packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec,
+	err error) {
 	value, ok := d.GetOk(SpecKey)
 	if !ok {
 		return spec, nil
@@ -80,8 +83,12 @@ func ConstructSpecForClusterScope(d *schema.ResourceData) (spec *packageinstallm
 						break
 					}
 
-					finalIntNum := int(number) // Convert uint64 To int
-					v1[key] = finalIntNum
+					if number > math.MaxInt32 {
+						v1[key] = value.(string)
+					} else {
+						finalIntNum := int(number) // Convert uint64 To int
+						v1[key] = finalIntNum
+					}
 				case valid.IsFloat(value.(string)):
 					floatNum, err := strconv.ParseFloat(value.(string), 64)
 					if err != nil {

@@ -1,10 +1,9 @@
 //go:build tanzupackages
 // +build tanzupackages
 
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package tanzupackages
 
@@ -119,7 +118,7 @@ func (testConfig *testAcceptanceConfig) getTestPackagesDataSourceBasicConfigValu
 
 		depends_on = [tanzu-mission-control_cluster.test_cluster]
 	}
-	
+
 
 	resource "tanzu-mission-control_package_repository" "test_pkg_repository" {
 		name = "test-repo"

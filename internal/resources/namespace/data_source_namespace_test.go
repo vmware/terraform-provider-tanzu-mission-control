@@ -1,10 +1,9 @@
 //go:build namespace
 // +build namespace
 
-/*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package namespace
 
@@ -72,14 +71,14 @@ resource "%s" "%s" {
   spec {
     cluster_group = "default"
   }
- 
+
   ready_wait_timeout = "3m"
 }
 
 resource "%s" "%s" {
   name = "%s"
   cluster_name = tanzu-mission-control_cluster.tmc_cluster_test.name
-  
+
   spec {
     workspace_name = "default"
     attach         = false

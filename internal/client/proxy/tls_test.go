@@ -1,7 +1,6 @@
-/*
-Copyright © 2021 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package proxy
 
@@ -48,6 +47,7 @@ J+guVb41E7ckHez4ENTEj2hrqrYifViGvOaSAG3w1d8PW+wIj3jI6vQk7vTO6mbt
 ws3Up/6R4aI0ohB4wjOfUCL6x9L3pyQcDoumDuy8ToyL5Pk=
 -----END CERTIFICATE-----
 `
+	// nolint: gosec
 	clientKey = `
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEA51mGnwWS2HJTzbfGgALTgBz69OMEgPGljrfv58lOU50V+bU2
@@ -282,15 +282,19 @@ func TestGetConnectorTLSConfig(t *testing.T) {
 				require.EqualError(t, actualErr, tc.expectedErr.Error())
 				return
 			}
+
 			require.NoError(t, actualErr)
+
 			if tc.expectedTLSConfig.GetClientCertificate != nil {
 				require.NotNil(t, actualTLSConfig.GetClientCertificate)
 				return
 			}
+
 			if tc.expectedTLSConfig.RootCAs != nil {
 				require.NotNil(t, actualTLSConfig.RootCAs)
 				return
 			}
+
 			require.Equal(t, actualTLSConfig, tc.expectedTLSConfig)
 		})
 	}

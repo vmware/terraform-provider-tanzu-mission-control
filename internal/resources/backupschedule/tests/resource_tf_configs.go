@@ -1,7 +1,6 @@
-/*
-Copyright © 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package backupscheduletests
 
@@ -80,8 +79,8 @@ func InitResourceTFConfigBuilder(scopeHelper *commonscope.ScopeHelperResources, 
 	provisionerName := fmt.Sprintf("%s.%s", scopeHelper.Cluster.ResourceName, clusterres.ProvisionerNameKey)
 	clusterInfo := fmt.Sprintf(`
 		%s = %s
-		%s = %s        
-		%s = %s  
+		%s = %s
+		%s = %s
 		`,
 		backupscheduleres.ClusterNameKey, clusterName,
 		backupscheduleres.ManagementClusterNameKey, mgmtClusterName,
@@ -126,7 +125,7 @@ func (builder *ResourceTFConfigBuilder) GetFullClusterBackupScheduleConfig() str
 			schedule {
 			  rate = "0 12 * * 1"
 			}
-		
+
 			template {
               %s
 			  backup_ttl = "2592000s"
@@ -161,9 +160,9 @@ func (builder *ResourceTFConfigBuilder) GetFullClusterBackupScheduleConfig() str
 func (builder *ResourceTFConfigBuilder) GetNamespacesBackupScheduleConfig() string {
 	return fmt.Sprintf(`
 		%s
-		
+
 		%s
-		
+
 		resource "%s" "%s" {
 			name = "%s"
 			scope {
@@ -173,12 +172,12 @@ func (builder *ResourceTFConfigBuilder) GetNamespacesBackupScheduleConfig() stri
 			}
 
           backup_scope = "%s"
-		
+
 		  spec {
 			schedule {
 			  rate = "30 * * * *"
 			}
-		
+
 			template {
 			  included_namespaces = [
 				"app-01",
@@ -268,7 +267,7 @@ func (builder *ResourceTFConfigBuilder) GetLabelsBackupScheduleConfig() string {
 			schedule {
 			  rate = "0 12 * * *"
 			}
-		
+
 			template {
 			  default_volumes_to_fs_backup = false
 			  include_cluster_resources = true
@@ -322,7 +321,7 @@ func (builder *ResourceTFConfigBuilder) GetFullClusterCGBackupScheduleConfig() s
 			schedule {
 			  rate = "0 12 * * 1"
 			}
-		
+
 			template {
               %s
 			  backup_ttl = "2592000s"
@@ -357,9 +356,9 @@ func (builder *ResourceTFConfigBuilder) GetFullClusterCGBackupScheduleConfig() s
 func (builder *ResourceTFConfigBuilder) GetNamespacesCGBackupScheduleConfig() string {
 	return fmt.Sprintf(`
 		%s
-		
+
 		%s
-		
+
 		resource "%s" "%s" {
 			name = "%s"
 			scope {
@@ -369,12 +368,12 @@ func (builder *ResourceTFConfigBuilder) GetNamespacesCGBackupScheduleConfig() st
 			}
 
           backup_scope = "%s"
-		
+
 		  spec {
 			schedule {
 			  rate = "30 * * * *"
 			}
-		
+
 			template {
 			  included_namespaces = [
 				"app-01",
@@ -464,7 +463,7 @@ func (builder *ResourceTFConfigBuilder) GetLabelsCGBackupScheduleConfig() string
 			schedule {
 			  rate = "0 12 * * *"
 			}
-		
+
 			template {
 			  default_volumes_to_fs_backup = false
 			  include_cluster_resources = true

@@ -1,10 +1,9 @@
 //go:build akscluster
 // +build akscluster
 
-/*
-Copyright 2023 VMware, Inc. All Rights Reserved.
-SPDX-License-Identifier: MPL-2.0
-*/
+// © Broadcom. All Rights Reserved.
+// The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: MPL-2.0
 
 package akscluster_test
 
@@ -438,7 +437,7 @@ func testAKSClusterEnableCSI(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFul
       storage_config {
         enable_disk_csi_driver = true
         enable_file_csi_driver = true
-      } 
+      }
       identity_config {
         type = "IDENTITY_TYPE_SYSTEM_ASSIGNED"
       }
@@ -472,7 +471,7 @@ func testAKSClusterAddUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1Aksclus
       storage_config {
         enable_disk_csi_driver = true
         enable_file_csi_driver = true
-      } 
+      }
       identity_config {
         type = "IDENTITY_TYPE_SYSTEM_ASSIGNED"
       }
