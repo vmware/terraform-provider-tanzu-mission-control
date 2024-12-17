@@ -392,7 +392,7 @@ func validateSchema(_ context.Context, data *schema.ResourceDiff, value interfac
 	if err != nil {
 		return errors.Wrapf(err, "Couldn't find cluster class.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Class Name: %s.",
 			clusterClassFn.ManagementClusterName, clusterClassFn.ProvisionerName, clusterClassFn.Name)
-	} else if resp.ClusterClasses == nil || len(resp.ClusterClasses) == 0 {
+	} else if len(resp.ClusterClasses) == 0 {
 		return errors.Errorf("Couldn't find cluster class.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Class Name: %s.",
 			clusterClassFn.ManagementClusterName, clusterClassFn.ProvisionerName, clusterClassFn.Name)
 	}

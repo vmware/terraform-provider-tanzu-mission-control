@@ -20,13 +20,6 @@ import (
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 )
 
-const (
-	https                = "https:/"
-	clAPIVersionAndGroup = "v1alpha1/organization/fluxcd/helm/repositories"
-	apiSubGroup          = "chartmetadatas"
-	apiKind              = "charts"
-)
-
 // nolint: unused
 func bodyInspectingResponder(t *testing.T, expectedContent interface{}, successResponse int, successResponseBody interface{}) httpmock.Responder {
 	return func(r *http.Request) (*http.Response, error) {
@@ -119,6 +112,13 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			},
 		},
 	}
+
+	const (
+		https                = "https:/"
+		clAPIVersionAndGroup = "v1alpha1/organization/fluxcd/helm/repositories"
+		apiSubGroup          = "chartmetadatas"
+		apiKind              = "charts"
+	)
 
 	getPkgEndpoint := (helper.ConstructRequestURL(https, endpoint, clAPIVersionAndGroup, "*", apiSubGroup, testConfig.ChartMetadataName, apiKind)).String()
 

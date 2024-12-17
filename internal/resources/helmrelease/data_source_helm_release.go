@@ -65,7 +65,7 @@ func dataSourceHelmReleaseRead(ctx context.Context, d *schema.ResourceData, m in
 	if err != nil {
 		if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
 			_ = schema.RemoveFromState(d, m)
-			return
+			return diags
 		}
 
 		return diag.FromErr(err)

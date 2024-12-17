@@ -267,7 +267,7 @@ func resourceHelmReleaseInPlaceUpdate(ctx context.Context, d *schema.ResourceDat
 
 	if !updateAvailable {
 		log.Printf("[INFO] helm release update is not required")
-		return
+		return diags
 	}
 
 	switch scopedFullnameData.Scope {

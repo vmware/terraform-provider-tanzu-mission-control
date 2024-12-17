@@ -223,7 +223,7 @@ func resourceIAMPolicyRead(_ context.Context, d *schema.ResourceData, m interfac
 	// when iam policy resource is empty: no role bindings are existing, this is equivalent to not found condition.
 	if len(policyList) == 0 {
 		_ = schema.RemoveFromState(d, m)
-		return
+		return diags
 	}
 
 	d.SetId(d.State().ID)

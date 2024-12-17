@@ -81,6 +81,7 @@ func readString(input interface{}, key string) string {
 	return data
 }
 
+// nolint:gosec
 func SetPrimitiveValue(input, model interface{}, key string) {
 	switch m := model.(type) {
 	case *float64:

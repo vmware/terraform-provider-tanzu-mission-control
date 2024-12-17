@@ -262,7 +262,7 @@ func resourceSourcesecretInPlaceUpdate(ctx context.Context, d *schema.ResourceDa
 	}
 
 	if !updateAvailable {
-		return
+		return diags
 	}
 
 	switch scopedFullnameData.Scope {

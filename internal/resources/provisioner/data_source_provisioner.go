@@ -75,19 +75,20 @@ func dataSourceProvisionerRead(ctx context.Context, d *schema.ResourceData, m in
 		if err != nil {
 			if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
 				_ = schema.RemoveFromState(d, m)
-				return
+				return diags
 			}
 
-			return
+			return diags
 		}
 	} else {
 		getResp, err := config.TMCConnection.ProvisionerResourceService.ProvisionerResourceServiceGet(model.Provisioners[0].FullName)
 		if err != nil {
 			if clienterrors.IsNotFoundError(err) && !helper.IsDataRead(ctx) {
 				_ = schema.RemoveFromState(d, m)
-				return
+				return diags
 			}
-			return
+
+			return diags
 		}
 
 		p := &provisioner.VmwareTanzuManageV1alpha1ManagementclusterProvisionerListprovisionersResponse{

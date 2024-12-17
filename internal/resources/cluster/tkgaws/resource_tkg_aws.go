@@ -275,6 +275,7 @@ func expandTKGAWSClusterNetwork(data []interface{}) (cluster *tkgawsmodel.Vmware
 
 	if v, ok := lookUpCluster[apiServerPortKey]; ok {
 		apiServerPort := v.(int)
+		// nolint:gosec
 		cluster.APIServerPort = int32(apiServerPort)
 	}
 

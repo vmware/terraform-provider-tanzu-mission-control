@@ -444,6 +444,7 @@ func TestFlattenClusterSpec(t *testing.T) {
 		t.Run(test.description, func(t *testing.T) {
 			spec, nps := test.getInput()
 			output := flattenClusterSpec(spec, nps)
+
 			print(test.expected)
 			print(output)
 			require.Equal(t, test.expected, output)
