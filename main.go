@@ -24,7 +24,7 @@ func main() {
 
 	if debugMode {
 		opts.Debug = debugMode
-		opts.ProviderAddr = "vmware/dev/tanzu-mission-control"
+		opts.ProviderAddr = "vmware/tanzu-mission-control"
 	}
 
 	plugin.Serve(opts)
