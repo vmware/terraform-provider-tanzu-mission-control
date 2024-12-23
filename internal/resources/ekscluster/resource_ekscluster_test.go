@@ -441,9 +441,9 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 					PublicAccessCidrs: []string{
 						"0.0.0.0/0",
 					},
-					SecurityGroups: []string{"sg-0b77767aa25e20fec"},
+					SecurityGroups: []string{"sg-0197c9a8b1378eed5"},
 					SubnetIds: []string{
-						"subnet-0c285da60b373a4cc", "subnet-0be854d94fa197cb7", "subnet-04975d535cf761785", "subnet-0d50aa17c694457c9",
+						"subnet-022e4a6bc8c8ee7a6", "subnet-0277c4ea9fc2fd193", "subnet-0d3d1f9c48286ecdf", "subnet-0ec0a74e995ba4634",
 					},
 				},
 			},
@@ -469,7 +469,7 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 						"testnplabelkey": "testnplabelvalue",
 					},
 					SubnetIds: []string{
-						"subnet-0c285da60b373a4cc", "subnet-0be854d94fa197cb7", "subnet-04975d535cf761785", "subnet-0d50aa17c694457c9",
+						"subnet-022e4a6bc8c8ee7a6", "subnet-0277c4ea9fc2fd193", "subnet-0d3d1f9c48286ecdf", "subnet-0ec0a74e995ba4634",
 					},
 					ScalingConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolScalingConfig{
 						DesiredSize: 4,
@@ -504,7 +504,7 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 						"testnplabelkey": "testnplabelvalue",
 					},
 					SubnetIds: []string{
-						"subnet-0c285da60b373a4cc", "subnet-0be854d94fa197cb7", "subnet-04975d535cf761785", "subnet-0d50aa17c694457c9",
+						"subnet-022e4a6bc8c8ee7a6", "subnet-0277c4ea9fc2fd193", "subnet-0d3d1f9c48286ecdf", "subnet-0ec0a74e995ba4634",
 					},
 					LaunchTemplate: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolLaunchTemplate{},
 					ScalingConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolScalingConfig{
