@@ -35,10 +35,10 @@ const testDefaultCreateEksClusterScript = `
 					  "0.0.0.0/0",
 					]
 					security_groups = [ // Forces new
-					  "sg-0b77767aa25e20fec",
+					  "sg-0197c9a8b1378eed5",
 					]
 					subnet_ids = [ // Forces new
-					  	"subnet-0c285da60b373a4cc", "subnet-0be854d94fa197cb7", "subnet-04975d535cf761785", "subnet-0d50aa17c694457c9"
+					  	"subnet-022e4a6bc8c8ee7a6", "subnet-0277c4ea9fc2fd193", "subnet-0d3d1f9c48286ecdf", "subnet-0ec0a74e995ba4634"
 					]
 				}
 			}
@@ -57,7 +57,7 @@ const testDefaultCreateEksClusterScript = `
 					tags           = { "testnptag" : "testnptagvalue", "newtesttag": "testingtagvalue"}
 					node_labels    = { "testnplabelkey" : "testnplabelvalue" }
 					subnet_ids = [ // Required, forces new
-						"subnet-0c285da60b373a4cc", "subnet-0be854d94fa197cb7", "subnet-04975d535cf761785", "subnet-0d50aa17c694457c9"
+						"subnet-022e4a6bc8c8ee7a6", "subnet-0277c4ea9fc2fd193", "subnet-0d3d1f9c48286ecdf", "subnet-0ec0a74e995ba4634"
 					]
 					scaling_config  {
 						desired_size = 4
@@ -85,7 +85,7 @@ const testDefaultCreateEksClusterScript = `
 					tags        = { "testnptag" : "testnptagvalue", "newtesttag": "testingtagvalue"}
 					node_labels = { "testnplabelkey" : "testnplabelvalue" }
 					subnet_ids = [ // Required, forces new
-						"subnet-0c285da60b373a4cc", "subnet-0be854d94fa197cb7", "subnet-04975d535cf761785", "subnet-0d50aa17c694457c9"
+						"subnet-022e4a6bc8c8ee7a6", "subnet-0277c4ea9fc2fd193", "subnet-0d3d1f9c48286ecdf", "subnet-0ec0a74e995ba4634"
 					]
 					scaling_config  {
 						desired_size = 4
