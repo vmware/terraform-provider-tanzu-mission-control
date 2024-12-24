@@ -354,6 +354,7 @@ func aTestClusterDataMap(w ...mapWither) map[string]any {
 					"pod_cidr":            nil,
 					"service_cidr":        []any{"127.0.0.4"},
 					"dns_prefix":          "net-prefix",
+					"network_dataplane":   "",
 				}},
 				"storage_config": []any{map[string]any{
 					"enable_disk_csi_driver":     true,

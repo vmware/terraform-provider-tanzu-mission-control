@@ -400,6 +400,17 @@ var NetworkConfig = &schema.Resource{
 			ForceNew:    true,
 			Required:    true,
 		},
+		networkDataplaneKey: {
+			Type:        schema.TypeString,
+			Description: "Network dataplane used in the Kubernetes cluster. The valid value is azure and cilium.",
+			ForceNew:    true,
+			Optional:    true,
+			Computed:    true,
+			ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{"",
+				aksmodel.VmwareTanzuManageV1alpha1AksClusterNetworkDataplaneCilium,
+				aksmodel.VmwareTanzuManageV1alpha1AksClusterNetworkDataplaneAzure,
+			}, false)),
+		},
 	},
 }
 

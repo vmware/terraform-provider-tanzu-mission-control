@@ -279,6 +279,10 @@ func constructNetworkConfig(data []any) *models.VmwareTanzuManageV1alpha1Aksclus
 		networkConfig.PodCidrs = helper.SetPrimitiveList[string](v.([]any), podCidrKey)
 	}
 
+	if v, ok := networkConfigData[networkDataplaneKey]; ok {
+		helper.SetPrimitiveValue(v, &networkConfig.NetworkDataplane, networkDataplaneKey)
+	}
+
 	return networkConfig
 }
 
@@ -608,6 +612,7 @@ func toNetworkConfigMap(config *models.VmwareTanzuManageV1alpha1AksclusterNetwor
 	data[dockerBridgeCidrKey] = config.DockerBridgeCidr
 	data[podCidrKey] = toInterfaceArray(config.PodCidrs)
 	data[serviceCidrKey] = toInterfaceArray(config.ServiceCidrs)
+	data[networkDataplaneKey] = config.NetworkDataplane
 
 	return []any{data}
 }
