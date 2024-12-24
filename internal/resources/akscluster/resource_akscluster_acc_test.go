@@ -37,7 +37,7 @@ import (
 )
 
 // Version of Kubernetes to deploy during acceptance tests.
-var aksKubernetesVersion = "1.27.9"
+var aksKubernetesVersion = "1.30.6"
 
 func validateSetup(t *testing.T) {
 	// Check if the required environment variables are set
