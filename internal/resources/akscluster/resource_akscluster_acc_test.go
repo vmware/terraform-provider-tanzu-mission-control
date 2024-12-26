@@ -37,7 +37,7 @@ import (
 )
 
 // Version of Kubernetes to deploy during acceptance tests.
-var aksKubernetesVersion = "1.27.9"
+var aksKubernetesVersion = "1.28.0"
 
 func validateSetup(t *testing.T) {
 	// Check if the required environment variables are set
@@ -414,6 +414,9 @@ func testAKSCluster(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) st
         count = 1
         mode = "SYSTEM"
         vm_size = "Standard_DS2_v2"
+        upgrade_config {
+          max_surge = "10%%"
+        }
       }
     }
   }
@@ -448,6 +451,9 @@ func testAKSClusterEnableCSI(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFul
         count = 1
         mode = "SYSTEM"
         vm_size = "Standard_DS2_v2"
+        upgrade_config {
+          max_surge = "10%%"
+        }
       }
     }
   }
@@ -482,6 +488,9 @@ func testAKSClusterAddUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1Aksclus
         count = 1
         mode = "SYSTEM"
         vm_size = "Standard_DS2_v2"
+        upgrade_config {
+          max_surge = "10%%"
+        }
       }
     }
     nodepool {
@@ -490,6 +499,9 @@ func testAKSClusterAddUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1Aksclus
         count = 1
         mode = "USER"
         vm_size = "Standard_DS2_v2"
+        upgrade_config {
+          max_surge = "10%%"
+        }
       }
     }
   }
@@ -545,7 +557,10 @@ func mockNodepool(w ...nodepoolWither) *aksmodel.VmwareTanzuManageV1alpha1Aksclu
 			Mode:   aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolModeSYSTEM.Pointer(),
 			OsType: aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolOsTypeLINUX.Pointer(),
 			VMSize: "Standard_DS2_v2",
-			Type:   aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolTypeVIRTUALMACHINESCALESETS.Pointer(),
+			UpgradeConfig: &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolUpgradeConfig{
+				MaxSurge: "10%",
+			},
+			Type: aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolTypeVIRTUALMACHINESCALESETS.Pointer(),
 		},
 		Status: &aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolStatus{
 			Phase: aksmodel.VmwareTanzuManageV1alpha1AksclusterNodepoolPhaseREADY.Pointer(),

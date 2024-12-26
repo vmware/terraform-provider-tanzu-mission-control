@@ -53,6 +53,7 @@ const (
 	loadBalancerSkuKey                         = "load_balancer_sku"
 	networkPluginKey                           = "network_plugin"
 	networkPluginModeKey                       = "network_plugin_mode"
+	networkDataplaneKey                        = "network_dataplane"
 	networkPolicyKey                           = "network_policy"
 	dnsServiceIPKey                            = "dns_service_ip"
 	dockerBridgeCidrKey                        = "docker_bridge_cidr"

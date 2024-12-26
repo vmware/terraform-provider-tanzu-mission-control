@@ -17,6 +17,12 @@ const (
 
 	// VmwareTanzuManageV1alpha1AksClusterNetworkPluginModeOverlay captures value "overlay".
 	VmwareTanzuManageV1alpha1AksClusterNetworkPluginModeOverlay = "overlay"
+
+	// VmwareTanzuManageV1alpha1AksClusterNetworkDataplaneCilium captures value "cilium".
+	VmwareTanzuManageV1alpha1AksClusterNetworkDataplaneCilium = "cilium"
+
+	// VmwareTanzuManageV1alpha1AksClusterNetworkDataplaneAzure captures value "azure".
+	VmwareTanzuManageV1alpha1AksClusterNetworkDataplaneAzure = "azure"
 )
 
 // VmwareTanzuManageV1alpha1AksclusterNetworkConfig The network configuration for the AKS cluster.
@@ -52,6 +58,9 @@ type VmwareTanzuManageV1alpha1AksclusterNetworkConfig struct {
 
 	// The CIDR notation IP ranges from which to assign service cluster IPs.
 	ServiceCidrs []string `json:"serviceCidrs"`
+
+	// Network dataplane used in the Kubernetes cluster. The valid value is azure and cilium.
+	NetworkDataplane string `json:"networkDataplane,omitempty"`
 }
 
 // MarshalBinary interface implementation.
