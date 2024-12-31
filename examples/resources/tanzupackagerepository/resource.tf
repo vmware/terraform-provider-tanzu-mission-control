@@ -1,5 +1,5 @@
 # Create Tanzu Mission Control package repository with attached set as default value.
-resource "tanzu-mission-control_package_repository" "create_cluster_pkg_repository" {
+resource "tanzu-mission-control_package_repository" "cluster_pkg_repository" {
   name = "tf-pkg-repository-name" # Required
 
   scope {
