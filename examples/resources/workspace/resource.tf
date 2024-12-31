@@ -1,5 +1,5 @@
 # Create Tanzu Mission Control workspace
-resource "tanzu-mission-control_workspace" "create_workspace" {
+resource "tanzu-mission-control_workspace" "workspace" {
   name = "tf-workspace-test"
 
   meta {

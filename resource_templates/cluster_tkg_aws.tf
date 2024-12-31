@@ -9,7 +9,7 @@ data "tanzu-mission-control_cluster" "ready_only_cluster_view" {
 }
 
 // Create Tanzu Mission Control Tanzu Kubernetes Grid AWS workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
+resource "tanzu-mission-control_cluster" "tkg_aws_cluster" {
   management_cluster_name = "<management-cluster>" // Default: attached
   provisioner_name        = "<prov-name>"          // Default: attached
   name                    = "<cluster-name>"       // Required

@@ -1,5 +1,5 @@
 # Create Tanzu Mission Control namespace with attached set as default value.
-resource "tanzu-mission-control_namespace" "create_namespace" {
+resource "tanzu-mission-control_namespace" "namespace" {
   name                    = "tf-namespace" # Required
   cluster_name            = "testcluster"  # Required
   provisioner_name        = "attached"     # Default: attached
@@ -17,7 +17,7 @@ resource "tanzu-mission-control_namespace" "create_namespace" {
 }
 
 # Create Tanzu Mission Control namespace with attached set as 'true'
-resource "tanzu-mission-control_namespace" "create_namespace_attached" {
+resource "tanzu-mission-control_namespace" "namespace_attached" {
   name                    = "tf-namespace" # Required
   cluster_name            = "testcluster"  # Required
   provisioner_name        = "attached"     # Default: attached

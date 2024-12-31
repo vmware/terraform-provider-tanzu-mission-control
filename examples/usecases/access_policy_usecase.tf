@@ -11,7 +11,7 @@ terraform {
 }
 
 # Create workspace
-resource "tanzu-mission-control_workspace" "create_workspace" {
+resource "tanzu-mission-control_workspace" "workspace" {
   name = "demo-workspace"
 
   meta {
@@ -23,7 +23,7 @@ resource "tanzu-mission-control_workspace" "create_workspace" {
 }
 
 # Create cluster group
-resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
+resource "tanzu-mission-control_cluster_group" "cluster_group" {
   name = "demo-cluster-group"
 }
 
@@ -45,7 +45,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
   }
 
   spec {
-    cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name // Default: default
+    cluster_group = tanzu-mission-control_cluster_group.cluster_group.name // Default: default
   }
 
   ready_wait_timeout = "15m" # Default: waits until 3 min for the cluster to become ready
@@ -53,7 +53,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
 }
 
 # Create namespace with attached set as 'true' (need a running cluster)
-resource "tanzu-mission-control_namespace" "create_namespace" {
+resource "tanzu-mission-control_namespace" "namespace" {
   name                    = "demo-namespace"
   cluster_name            = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name
   management_cluster_name = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.management_cluster_name
@@ -65,7 +65,7 @@ resource "tanzu-mission-control_namespace" "create_namespace" {
   }
 
   spec {
-    workspace_name = tanzu-mission-control_workspace.create_workspace.name // Default: default
+    workspace_name = tanzu-mission-control_workspace.workspace.name // Default: default
     attach         = true
   }
 }
@@ -74,10 +74,10 @@ resource "tanzu-mission-control_namespace" "create_namespace" {
 resource "tanzu-mission-control_iam_policy" "namespace_scoped_iam_policy" {
   scope {
     namespace {
-      management_cluster_name = tanzu-mission-control_namespace.create_namespace.management_cluster_name
-      provisioner_name        = tanzu-mission-control_namespace.create_namespace.provisioner_name
-      cluster_name            = tanzu-mission-control_namespace.create_namespace.cluster_name
-      name                    = tanzu-mission-control_namespace.create_namespace.name
+      management_cluster_name = tanzu-mission-control_namespace.namespace.management_cluster_name
+      provisioner_name        = tanzu-mission-control_namespace.namespace.provisioner_name
+      cluster_name            = tanzu-mission-control_namespace.namespace.cluster_name
+      name                    = tanzu-mission-control_namespace.namespace.name
     }
   }
 

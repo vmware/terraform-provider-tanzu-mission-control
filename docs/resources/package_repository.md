@@ -19,7 +19,7 @@ It's a Kubernetes resource which references Package Repository Bundle.It has inf
 
 ```terraform
 # Create Tanzu Mission Control package repository with attached set as default value.
-resource "tanzu-mission-control_package_repository" "create_cluster_pkg_repository" {
+resource "tanzu-mission-control_package_repository" "cluster_pkg_repository" {
   name = "tf-pkg-repository-name" # Required
 
   scope {

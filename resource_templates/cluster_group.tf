@@ -2,7 +2,7 @@
 // Operations supported : Create, Read, Update and Delete
 
 // Create Tanzu Mission Control cluster group entry
-resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
+resource "tanzu-mission-control_cluster_group" "cluster_group" {
   name = "<cluster-group-name>" // Required
 
   meta { // Optional
@@ -12,7 +12,7 @@ resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
 }
 
 // Create Tanzu Mission Control cluster group entry with minimal information
-resource "tanzu-mission-control_cluster_group" "cluster_group_create_min_info" {
+resource "tanzu-mission-control_cluster_group" "cluster_group_min_info" {
   name = "<cluster-group-name>" // Required
 }
 
