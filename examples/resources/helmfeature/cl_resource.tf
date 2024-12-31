@@ -1,5 +1,5 @@
 # Create Tanzu Mission Control cluster scope helm feature with attached set as default value.
-resource "tanzu-mission-control_helm_feature" "create_cl_helm_feature" {
+resource "tanzu-mission-control_helm_feature" "cl_helm_feature" {
   scope {
     cluster {
       name                    = "testcluster" # Required

@@ -32,8 +32,8 @@ const (
 	// EKS Constants.
 	EksClusterResource    = "tanzu-mission-control_ekscluster"
 	EksClusterGroup       = "tanzu-mission-control_cluster_group"
-	EksClusterResourceVar = "test_create_eks_cluster"
-	EksClusterGroupVar    = "test_create_eks_cluster_group"
+	EksClusterResourceVar = "test_eks_cluster"
+	EksClusterGroupVar    = "test_eks_cluster_group"
 )
 
 var (

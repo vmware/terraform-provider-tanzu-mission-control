@@ -11,7 +11,7 @@ terraform {
 }
 
 # Create cluster group
-resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
+resource "tanzu-mission-control_cluster_group" "cluster_group" {
   name = "demo-cluster-group"
 }
 
@@ -21,7 +21,7 @@ resource "tanzu-mission-control_custom_policy" "cluster_group_scoped_tmc-block-r
 
   scope {
     cluster_group {
-      cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name
+      cluster_group = tanzu-mission-control_cluster_group.cluster_group.name
     }
   }
 
