@@ -29,7 +29,7 @@ Only one scope per resource is allowed.
 
 ```terraform
 # Create Tanzu Mission Control cluster group scope helm feature with attached set as default value.
-resource "tanzu-mission-control_helm_feature" "create_cg_helm_feature" {
+resource "tanzu-mission-control_helm_feature" "cg_helm_feature" {
   scope {
     cluster_group {
       name = "default" # Required
@@ -49,7 +49,7 @@ resource "tanzu-mission-control_helm_feature" "create_cg_helm_feature" {
 
 ```terraform
 # Create Tanzu Mission Control cluster scope helm feature with attached set as default value.
-resource "tanzu-mission-control_helm_feature" "create_cl_helm_feature" {
+resource "tanzu-mission-control_helm_feature" "cl_helm_feature" {
   scope {
     cluster {
       name                    = "testcluster" # Required

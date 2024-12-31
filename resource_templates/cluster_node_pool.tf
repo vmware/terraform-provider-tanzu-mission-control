@@ -10,7 +10,7 @@ data "tanzu-mission-control_cluster_node_pool" "read_node_pool" {
 }
 
 # Create Tanzu Mission Control cluster nodepool entry
-resource "tanzu-mission-control_cluster_node_pool" "create_node_pool" {
+resource "tanzu-mission-control_cluster_node_pool" "node_pool" {
 
   management_cluster_name = "<management-cluster>" // Default: attached
   provisioner_name        = "<prov-name>"          // Default: attached

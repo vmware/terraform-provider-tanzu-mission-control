@@ -184,7 +184,7 @@ func (testConfig *testAcceptanceConfig) getTestPackageInstallResourceBasicConfig
 	%s
 
 	resource "time_sleep" "wait_for_3m" {
-		create_duration = "60s"
+		duration = "60s"
 
 		depends_on = [tanzu-mission-control_cluster.test_cluster]
 	}
@@ -209,7 +209,7 @@ func (testConfig *testAcceptanceConfig) getTestPackageInstallResourceBasicConfig
 	}
 
 	resource "time_sleep" "wait_for_2m" {
-		create_duration = "40s"
+		duration = "40s"
 
 		depends_on = [tanzu-mission-control_package_repository.test_pkg_repository]
 	}

@@ -1,6 +1,6 @@
 # Create Tanzu Mission Control kubernetes secret with attached set as default value.
 # Example for creating the dockerconfigjson secret
-resource "tanzu-mission-control_kubernetes_secret" "create_dockerconfigjson_secret" {
+resource "tanzu-mission-control_kubernetes_secret" "dockerconfigjson_secret" {
   name           = "tf-secret"                # Required
   namespace_name = "tf-secret-namespace-name" # Required 
 
@@ -29,7 +29,7 @@ resource "tanzu-mission-control_kubernetes_secret" "create_dockerconfigjson_secr
 }
 
 # Example for creating the opaque secret
-resource "tanzu-mission-control_kubernetes_secret" "create_opaque_secret" {
+resource "tanzu-mission-control_kubernetes_secret" "opaque_secret" {
   name           = "tf-secret"                # Required
   namespace_name = "tf-secret-namespace-name" # Required 
 

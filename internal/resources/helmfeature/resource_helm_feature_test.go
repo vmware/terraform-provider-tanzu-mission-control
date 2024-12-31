@@ -156,7 +156,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 		%s
 
 		resource "time_sleep" "wait_for_3m" {
-			create_duration = "50s"
+			duration = "50s"
 
 			depends_on = [tanzu-mission-control_cluster.test_cluster]
 		}
@@ -181,7 +181,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 		%s
 
 		resource "time_sleep" "wait_for_3m" {
-			create_duration = "180s"
+			duration = "180s"
 
 			depends_on = [tanzu-mission-control_cluster_group.test_cluster_group]
 		}

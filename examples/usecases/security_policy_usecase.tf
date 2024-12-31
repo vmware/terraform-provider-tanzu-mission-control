@@ -11,7 +11,7 @@ terraform {
 }
 
 # Create cluster group
-resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
+resource "tanzu-mission-control_cluster_group" "cluster_group" {
   name = "demo-cluster-group"
 }
 
@@ -33,7 +33,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
   }
 
   spec {
-    cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name // Default: default
+    cluster_group = tanzu-mission-control_cluster_group.cluster_group.name // Default: default
   }
 
   ready_wait_timeout = "15m" # Default: waits until 3 min for the cluster to become ready
