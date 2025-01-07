@@ -393,25 +393,41 @@ func removeUnspecifiedNodePoolsOverrides(nodePools []interface{}, kubernetesClus
 		tfNodePoolOverrides := tfNodePoolSpec[OverridesKey]
 
 		if tfNodePoolOverrides != nil && tfNodePoolOverrides.(string) != "" {
-			tfOverridesVariablesJSON := make(map[string]interface{})
-			_ = json.Unmarshal([]byte(tfNodePoolOverrides.(string)), &tfOverridesVariablesJSON)
-
-			overridesToKeep := make([]*tkccommonmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterCommonClusterClusterVariable, 0)
-
-			for _, modelOverride := range kubernetesClusterModel.Spec.Topology.NodePools[i].Spec.Overrides {
-				varKey := modelOverride.Name
-
-				if tfOverridesVariableValue, exist := tfOverridesVariablesJSON[varKey]; exist {
-					// This is necessary because some inner values have defaults and are being returned even when not filled
-					modifiedModelVariableValue := modifyModelVariable(tfOverridesVariableValue, modelOverride.Value)
-					modelOverride.Value = modifiedModelVariableValue
-					overridesToKeep = append(overridesToKeep, modelOverride)
-				}
-			}
-
+			overridesToKeep := excludeUnspecifiedOverrides(tfNodePoolOverrides.(string), kubernetesClusterModel.Spec.Topology.NodePools[i].Spec.Overrides)
 			kubernetesClusterModel.Spec.Topology.NodePools[i].Spec.Overrides = overridesToKeep
 		}
 	}
+}
+
+// removeUnspecifiedControlPlaneOverrides removed node pools overrides returning in the API which do not exist in the Cluster Class schema.
+func removeUnspecifiedControlPlaneOverrides(controlPlane interface{}, kubernetesClusterModel *tanzukubernetesclustermodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterTanzuKubernetesCluster) {
+	tfControlPlaneOverrides := controlPlane.(map[string]interface{})[OverridesKey]
+
+	if tfControlPlaneOverrides != nil && tfControlPlaneOverrides.(string) != "" {
+		overridesToKeep := excludeUnspecifiedOverrides(tfControlPlaneOverrides.(string), kubernetesClusterModel.Spec.Topology.ControlPlane.Overrides)
+		kubernetesClusterModel.Spec.Topology.ControlPlane.Overrides = overridesToKeep
+	}
+}
+
+// excludeUnspecifiedOverrides removed overrides returning in the API which do not exist in the Cluster Class schema.
+func excludeUnspecifiedOverrides(overridesResource string, overrides []*tkccommonmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterCommonClusterClusterVariable) []*tkccommonmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterCommonClusterClusterVariable {
+	tfOverridesVariablesJSON := make(map[string]interface{})
+	_ = json.Unmarshal([]byte(overridesResource), &tfOverridesVariablesJSON)
+
+	overridesToKeep := make([]*tkccommonmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterCommonClusterClusterVariable, 0)
+
+	for _, modelOverride := range overrides {
+		varKey := modelOverride.Name
+
+		if tfOverridesVariableValue, exist := tfOverridesVariablesJSON[varKey]; exist {
+			// This is necessary because some inner values have defaults and are being returned even when not filled
+			modifiedModelVariableValue := modifyModelVariable(tfOverridesVariableValue, modelOverride.Value)
+			modelOverride.Value = modifiedModelVariableValue
+			overridesToKeep = append(overridesToKeep, modelOverride)
+		}
+	}
+
+	return overridesToKeep
 }
 
 // modifyModelVariable helps when certain variables do no return from the API or in a case where some values are returning
