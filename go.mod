@@ -82,7 +82,7 @@ require (
 	github.com/zclconf/go-cty v1.10.0 // indirect
 	go.mongodb.org/mongo-driver v1.14.0 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/net v0.23.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/oauth2 v0.24.0
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/term v0.27.0 // indirect
