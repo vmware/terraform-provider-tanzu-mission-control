@@ -137,7 +137,7 @@ func (testConfig *testAcceptanceConfig) getTestBasicDataSourceConfigValue() stri
 	}
 
 	resource "time_sleep" "wait_for_3m" {
-		duration = "10s"
+		create_duration = "10s"
 
 		depends_on = [tanzu-mission-control_cluster.test_cluster]
 	}
@@ -164,7 +164,7 @@ func (testConfig *testAcceptanceConfig) getTestBasicDataSourceConfigValue() stri
 	}
 
 	resource "time_sleep" "wait_for_1m" {
-		duration = "180s"
+		create_duration = "180s"
 
 		depends_on = [tanzu-mission-control_helm_feature.test_helm_feature]
 	}

@@ -205,7 +205,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 	%s
 
 	resource "time_sleep" "wait_for_3m" {
-		duration = "50s"
+		create_duration = "50s"
 
 		depends_on = [tanzu-mission-control_cluster.test_cluster]
 	}
@@ -218,7 +218,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 	}
 
 	resource "time_sleep" "wait_for_2m" {
-		duration = "300s"
+		create_duration = "300s"
 
 		depends_on = [tanzu-mission-control_helm_feature.test_helm_feature]
 	}
@@ -252,7 +252,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 	%s
 
 	resource "time_sleep" "wait_for_1m" {
-		duration = "60s"
+		create_duration = "60s"
 
 		depends_on = [tanzu-mission-control_cluster_group.test_cluster_group]
 	}
@@ -280,7 +280,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 	}
 
 	resource "time_sleep" "wait_for_2m" {
-		duration = "180s"
+		create_duration = "180s"
 
 		depends_on = [tanzu-mission-control_helm_feature.test_helm_feature, tanzu-mission-control_git_repository.test_git_repo]
 	}
