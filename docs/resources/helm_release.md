@@ -33,7 +33,7 @@ The Helm service must already be enabled to be able to install Helm releases on 
 
 ```terraform
 # Create Tanzu Mission Control cluster group scope helm release with attached set as default value.
-resource "tanzu-mission-control_helm_release" "create_cg_helm_release" {
+resource "tanzu-mission-control_helm_release" "cg_helm_release" {
   name = "test-helm-release-name" # Required
 
   namespace_name = "test-namespace-name" # Required
@@ -44,7 +44,7 @@ resource "tanzu-mission-control_helm_release" "create_cg_helm_release" {
     }
   }
 
-  feature_ref = tanzu-mission-control_helm_feature.create_cg_helm_feature.scope[0].cluster_group[0].name
+  feature_ref = tanzu-mission-control_helm_feature.cg_helm_feature.scope[0].cluster_group[0].name
 
   meta {
     description = "Create namespace through terraform"
@@ -75,7 +75,7 @@ resource "tanzu-mission-control_helm_release" "create_cg_helm_release" {
 
 ```terraform
 # Create Tanzu Mission Control cluster scope helm release with attached set as default value.
-resource "tanzu-mission-control_helm_release" "create_cl_helm_release_gitrepo_type" {
+resource "tanzu-mission-control_helm_release" "cl_helm_release_gitrepo_type" {
   name = "test-helm-release-name" # Required
 
   namespace_name = "test-namespace-name" # Required
@@ -88,7 +88,7 @@ resource "tanzu-mission-control_helm_release" "create_cl_helm_release_gitrepo_ty
     }
   }
 
-  feature_ref = tanzu-mission-control_helm_feature.create_cg_helm_feature.scope[0].cluster[0].name
+  feature_ref = tanzu-mission-control_helm_feature.cg_helm_feature.scope[0].cluster[0].name
 
   meta {
     description = "Create namespace through terraform"
@@ -124,7 +124,7 @@ The Helm service must already be enabled to be able to install Helm releases on 
 
 ```terraform
 # Create Tanzu Mission Control cluster scope helm release with attached set as default value.
-resource "tanzu-mission-control_helm_release" "create_cl_helm_release_helm_type" {
+resource "tanzu-mission-control_helm_release" "cl_helm_release_helm_type" {
   name = "test-helm-release-name" # Required
 
   namespace_name = "test-namespace-name" # Required
@@ -137,7 +137,7 @@ resource "tanzu-mission-control_helm_release" "create_cl_helm_release_helm_type"
     }
   }
 
-  feature_ref = tanzu-mission-control_helm_feature.create_cg_helm_feature.scope[0].cluster[0].name
+  feature_ref = tanzu-mission-control_helm_feature.cg_helm_feature.scope[0].cluster[0].name
 
   meta {
     description = "Create namespace through terraform"
