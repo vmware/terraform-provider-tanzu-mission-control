@@ -11,7 +11,7 @@ terraform {
 }
 
 # Create cluster group
-resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
+resource "tanzu-mission-control_cluster_group" "cluster_group" {
   name = "demo-cluster-group"
 }
 
@@ -33,7 +33,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
   }
 
   spec {
-    cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name // Default: default
+    cluster_group = tanzu-mission-control_cluster_group.cluster_group.name // Default: default
   }
 
   ready_wait_timeout = "15m" # Default: waits until 3 min for the cluster to become ready
@@ -41,7 +41,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
 }
 
 # Create Tanzu Mission Control cluster scope helm feature.
-resource "tanzu-mission-control_helm_feature" "create_cl_helm_feature" {
+resource "tanzu-mission-control_helm_feature" "cl_helm_feature" {
   scope {
     cluster {
       name                    = tanzu-mission-control_cluster.attach_cluster_with_kubeconfig.name                    # Required
@@ -57,7 +57,7 @@ resource "tanzu-mission-control_helm_feature" "create_cl_helm_feature" {
 }
 
 # Create Tanzu Mission Control cluster scope helm release.
-resource "tanzu-mission-control_helm_release" "create_cl_helm_release_git_type" {
+resource "tanzu-mission-control_helm_release" "cl_helm_release_git_type" {
   name = "test-helm-release-name" # Required
 
   namespace_name = "test-namespace-name" # Required
@@ -70,7 +70,7 @@ resource "tanzu-mission-control_helm_release" "create_cl_helm_release_git_type" 
     }
   }
 
-  feature_ref = tanzu-mission-control_helm_feature.create_cg_helm_feature.scope[0].cluster[0].name
+  feature_ref = tanzu-mission-control_helm_feature.cg_helm_feature.scope[0].cluster[0].name
 
   meta {
     description = "Create namespace through terraform"

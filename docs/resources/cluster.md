@@ -211,7 +211,7 @@ You must also have the appropriate permissions:
 
 ```terraform
 # Create Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
+resource "tanzu-mission-control_cluster" "tkgs_workload" {
   management_cluster_name = "tkgs-terraform"
   provisioner_name        = "test-gc-e2e-demo-ns"
   name                    = "tkgs-workload"
@@ -315,7 +315,7 @@ You must also have the appropriate permissions:
 
 ```terraform
 # Create a Tanzu Kubernetes Grid Vsphere workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkg_vsphere_cluster" {
+resource "tanzu-mission-control_cluster" "tkg_vsphere_cluster" {
   management_cluster_name = "tkgm-terraform"
   provisioner_name        = "default"
   name                    = "tkgm-workload"
@@ -430,7 +430,7 @@ You must also have the appropriate permissions:
 
 ```terraform
 # Create a Tanzu Mission Control Tanzu Kubernetes Grid AWS workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkg_aws_cluster" {
+resource "tanzu-mission-control_cluster" "tkg_aws_cluster" {
   management_cluster_name = "tkgm-aws-terraform" // Default: attached
   provisioner_name        = "default"            // Default: attached
   name                    = "tkgm-aws-workload"  // Required
