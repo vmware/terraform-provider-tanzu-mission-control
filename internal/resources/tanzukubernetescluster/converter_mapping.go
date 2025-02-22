@@ -78,6 +78,10 @@ var tfModelResourceMap = &tfModelConverterHelper.BlockToStruct{
 					common.LabelsKey:      tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", "controlPlane", "metadata", "labels"),
 					common.AnnotationsKey: tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", "controlPlane", "metadata", "annotations"),
 				},
+				OverridesKey: &tfModelConverterHelper.EvaluatedField{
+					Field:    tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", "controlPlane", tfModelConverterHelper.BuildArrayField("overrides")),
+					EvalFunc: tfModelConverterHelper.EvaluationFunc(evaluateClusterVariables),
+				},
 			},
 			ClusterVariablesKey: &tfModelConverterHelper.EvaluatedField{
 				Field:    tfModelConverterHelper.BuildDefaultModelPath("spec", "topology", tfModelConverterHelper.BuildArrayField("variables")),

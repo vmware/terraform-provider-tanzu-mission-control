@@ -37,6 +37,7 @@ const (
 	TKGSOSImageVersionEnv        ClusterEnvVar = "TKGS_OS_IMAGE_VERSION"
 	TKGSOSImageArchEnv           ClusterEnvVar = "TKGS_OS_IMAGE_ARCH"
 	TKGSWorkerClassEnv           ClusterEnvVar = "TKGS_WORKER_CLASS"
+	TKGSControlPlaneOverridesEnv ClusterEnvVar = "TKGS_CONTROL_PLANE_OVERRIDES"
 	TKGSNodePoolOverridesEnv     ClusterEnvVar = "TKGS_NODE_POOL_OVERRIDES"
 )
 
@@ -81,7 +82,8 @@ var (
 				TKGSWorkerClassEnv:           true,
 			},
 			OptionalEnvVar: {
-				TKGSNodePoolOverridesEnv: true,
+				TKGSControlPlaneOverridesEnv: true,
+				TKGSNodePoolOverridesEnv:     true,
 			},
 		},
 	}

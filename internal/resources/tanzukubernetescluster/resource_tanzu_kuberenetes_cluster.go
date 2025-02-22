@@ -147,9 +147,11 @@ func resourceTanzuKubernetesClusterRead(ctx context.Context, data *schema.Resour
 		specData := data.Get(SpecKey).([]interface{})[0].(map[string]interface{})
 		topologyData := specData[TopologyKey].([]interface{})[0].(map[string]interface{})
 		clusterVariablesData := topologyData[ClusterVariablesKey].(string)
+		controlPlaneData := topologyData[ControlPlaneKey].([]interface{})[0]
 		nodePoolsData := topologyData[NodePoolKey].([]interface{})
 
 		removeUnspecifiedClusterVariables(clusterVariablesData, kubernetesClusterModel)
+		removeUnspecifiedControlPlaneOverrides(controlPlaneData, kubernetesClusterModel)
 		removeUnspecifiedNodePoolsOverrides(nodePoolsData, kubernetesClusterModel)
 
 		err = tfModelResourceConverter.FillTFSchema(kubernetesClusterModel, data)

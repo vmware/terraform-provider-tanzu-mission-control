@@ -21,12 +21,13 @@ const (
 	ResourceName = "tanzu-mission-control_tanzu_kubernetes_cluster"
 
 	// Common Keys.
-	NameKey     = "name"
-	SpecKey     = "spec"
-	VersionKey  = "version"
-	ReplicasKey = "replicas"
-	OSImageKey  = "os_image"
-	OSArchKey   = "arch"
+	NameKey      = "name"
+	SpecKey      = "spec"
+	VersionKey   = "version"
+	ReplicasKey  = "replicas"
+	OSImageKey   = "os_image"
+	OSArchKey    = "arch"
+	OverridesKey = "overrides"
 
 	// Root Keys.
 	ManagementClusterNameKey = "management_cluster_name"
@@ -57,7 +58,6 @@ const (
 	// Node Pool Directive Keys.
 	WorkerClassKey   = "worker_class"
 	FailureDomainKey = "failure_domain"
-	OverridesKey     = "overrides"
 
 	// Network Directive Keys.
 	PodCIDRBlocksKey     = "pod_cidr_blocks"
@@ -266,6 +266,14 @@ var ControlPlaneSchema = &schema.Schema{
 			ReplicasKey:    ReplicasSchema,
 			OSImageKey:     OSImageSchema,
 			common.MetaKey: common.Meta,
+			OverridesKey: {
+				Type:                  schema.TypeString,
+				Description:           "Overrides can be used to override cluster level variables.",
+				Optional:              true,
+				ValidateDiagFunc:      validateJSONString,
+				DiffSuppressOnRefresh: true,
+				DiffSuppressFunc:      isVariablesValuesEqual,
+			},
 		},
 	},
 }

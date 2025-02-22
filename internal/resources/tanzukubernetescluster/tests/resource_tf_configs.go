@@ -168,6 +168,8 @@ func (builder *ResourceTFConfigBuilder) GetTKGSClusterConfig(tkgsEnvVars map[Clu
 				  version = "%s"
 				  arch    = "%s"
 			    }
+
+				overrides = jsonencode(%s)
 			  }
 
               %s
@@ -199,6 +201,7 @@ func (builder *ResourceTFConfigBuilder) GetTKGSClusterConfig(tkgsEnvVars map[Clu
 		tkgsEnvVars[TKGSOSImageNameEnv],
 		tkgsEnvVars[TKGSOSImageVersionEnv],
 		tkgsEnvVars[TKGSOSImageArchEnv],
+		tkgsEnvVars[TKGSControlPlaneOverridesEnv],
 		nodePools,
 	)
 }

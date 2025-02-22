@@ -100,6 +100,7 @@ Optional:
 
 - `meta` (Block List, Max: 1) Metadata for the resource (see [below for nested schema](#nestedblock--spec--topology--control_plane--meta))
 - `os_image` (Block List, Max: 1) OS image block (see [below for nested schema](#nestedblock--spec--topology--control_plane--os_image))
+- `overrides` (String) Overrides can be used to override cluster level variables.
 
 <a id="nestedblock--spec--topology--control_plane--meta"></a>
 ### Nested Schema for `spec.topology.control_plane.meta`
