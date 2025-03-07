@@ -1,5 +1,5 @@
 # Create Tanzu Mission Control source secret with attached set as default value.
-resource "tanzu-mission-control_repository_credential" "create_cluster_group_source_secret_username_password" {
+resource "tanzu-mission-control_repository_credential" "cluster_group_source_secret_username_password" {
   name = "tf-secret" # Required
 
   scope {

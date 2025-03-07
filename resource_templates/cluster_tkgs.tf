@@ -9,7 +9,7 @@ data "tanzu-mission-control_cluster" "ready_only_cluster_view" {
 }
 
 # Create Tanzu Mission Control Tanzu Kubernetes Grid Service workload cluster entry
-resource "tanzu-mission-control_cluster" "create_tkgs_workload" {
+resource "tanzu-mission-control_cluster" "tkgs_workload" {
   management_cluster_name = "<management-cluster>"
   provisioner_name        = "<prov-name>"
   name                    = "<cluster-name>"

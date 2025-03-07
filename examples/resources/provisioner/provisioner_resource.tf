@@ -1,5 +1,5 @@
 # Create provisioner resource
-resource "tanzu-mission-control_provisioner" "create_provisioner" {
+resource "tanzu-mission-control_provisioner" "provisioner" {
   name = "demo-test" # Required
   management_cluster = "eks" # Required
 
