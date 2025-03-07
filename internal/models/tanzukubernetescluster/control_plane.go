@@ -21,6 +21,9 @@ type VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesCluster
 	// The OS image of the control plane.
 	OsImage *tkccommon.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterCommonClusterOSImage `json:"osImage,omitempty"`
 
+	// Overrides can be used to override cluster level variables.
+	Overrides []*tkccommon.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterCommonClusterClusterVariable `json:"overrides"`
+
 	// The replicas of the control plane.
 	Replicas int32 `json:"replicas,omitempty"`
 }
