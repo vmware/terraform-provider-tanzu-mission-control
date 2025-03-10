@@ -10,7 +10,7 @@ data "tanzu-mission-control_namespace" "read_namespace" {
 }
 
 // Create Tanzu Mission Control namespace entry
-resource "tanzu-mission-control_namespace" "create_namespace" {
+resource "tanzu-mission-control_namespace" "namespace" {
   name                    = "<namespace-name>"     // Required
   cluster_name            = "<cluster_name>"       // Required
   provisioner_name        = "<prov-name>"          // Default: attached
@@ -28,7 +28,7 @@ resource "tanzu-mission-control_namespace" "create_namespace" {
 }
 
 // Create Tanzu Mission Control namespace entry with minimal information
-resource "tanzu-mission-control_namespace" "create_namespace_min_info" {
+resource "tanzu-mission-control_namespace" "namespace_min_info" {
   name         = "<namespace-name>" // Required
   cluster_name = "<cluster_name>"   // Required
 }

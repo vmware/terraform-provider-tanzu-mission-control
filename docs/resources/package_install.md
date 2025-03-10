@@ -23,7 +23,7 @@ The Available tab on the Catalog page in the Tanzu Mission Control console shows
 
 ```terraform
 # Create Tanzu Mission Control package install with attached set as default value.
-resource "tanzu-mission-control_package_install" "create_package_install" {
+resource "tanzu-mission-control_package_install" "package_install" {
   name = "test-pakage-install-name" # Required
 
   namespace = "test-namespace-name" # Required

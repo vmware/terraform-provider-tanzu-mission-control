@@ -62,7 +62,7 @@ terraform {
 }
 
 # Create cluster group
-resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
+resource "tanzu-mission-control_cluster_group" "cluster_group" {
   name = "demo-cluster-group"
 }
 
@@ -84,7 +84,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
   }
 
   spec {
-    cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name // Default: default
+    cluster_group = tanzu-mission-control_cluster_group.cluster_group.name // Default: default
   }
 
   ready_wait_timeout = "15m" # Default: waits until 3 min for the cluster to become ready
@@ -92,7 +92,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
 }
 
 # Create basic Repository Credential
-resource "tanzu-mission-control_repository_credential" "create_cluster_source_secret_username_password" {
+resource "tanzu-mission-control_repository_credential" "cluster_source_secret_username_password" {
   name = "tf-secret" # Required
 
   scope {
@@ -119,7 +119,7 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
 }
 
 # Create cluster level Git Repository with basic authentication
-resource "tanzu-mission-control_git_repository" "create_cluster_git_repository" {
+resource "tanzu-mission-control_git_repository" "cluster_git_repository" {
   name = "tf-git-repository-name" # Required
 
   namespace_name = "tf-namespace" #Required
@@ -139,7 +139,7 @@ resource "tanzu-mission-control_git_repository" "create_cluster_git_repository" 
 
   spec {
     url                = "testGitRepositoryURL" # Required
-    secret_ref         = tanzu-mission-control_repository_credential.create_cluster_source_secret_username_password.name
+    secret_ref         = tanzu-mission-control_repository_credential.cluster_source_secret_username_password.name
     interval           = "10m"    # Default: 5m
     git_implementation = "GO_GIT" # Default: GO_GIT
     ref {
@@ -152,7 +152,7 @@ resource "tanzu-mission-control_git_repository" "create_cluster_git_repository" 
 }
 
 # Create cluster level Kustomization
-resource "tanzu-mission-control_kustomization" "create_cluster_kustomization" {
+resource "tanzu-mission-control_kustomization" "cluster_kustomization" {
   name = "tf-kustomization-name" # Required
 
   namespace_name = "tf-namespace" #Required
@@ -176,8 +176,8 @@ resource "tanzu-mission-control_kustomization" "create_cluster_kustomization" {
     interval         = "10m" # Default: 5m
     target_namespace = "testTargetNamespace"
     source {
-      name      = tanzu-mission-control_git_repository.create_cluster_git_repository.name           # Required
-      namespace = tanzu-mission-control_git_repository.create_cluster_git_repository.namespace_name # Required
+      name      = tanzu-mission-control_git_repository.cluster_git_repository.name           # Required
+      namespace = tanzu-mission-control_git_repository.cluster_git_repository.namespace_name # Required
     }
   }
 }
@@ -200,7 +200,7 @@ terraform {
 }
 
 # Create cluster group
-resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
+resource "tanzu-mission-control_cluster_group" "cluster_group" {
   name = "demo-cluster-group"
 }
 
@@ -222,7 +222,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
   }
 
   spec {
-    cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name // Default: default
+    cluster_group = tanzu-mission-control_cluster_group.cluster_group.name // Default: default
   }
 
   ready_wait_timeout = "15m" # Default: waits until 3 min for the cluster to become ready
@@ -230,7 +230,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
 }
 
 # Create cluster level Git Repository
-resource "tanzu-mission-control_git_repository" "create_cluster_git_repository" {
+resource "tanzu-mission-control_git_repository" "cluster_git_repository" {
   name = "tf-git-repository-name" # Required
 
   namespace_name = "tf-namespace" #Required
@@ -262,7 +262,7 @@ resource "tanzu-mission-control_git_repository" "create_cluster_git_repository" 
 }
 
 # Create cluster level Kustomization
-resource "tanzu-mission-control_kustomization" "create_cluster_kustomization" {
+resource "tanzu-mission-control_kustomization" "cluster_kustomization" {
   name = "tf-kustomization-name" # Required
 
   namespace_name = "tf-namespace" #Required
@@ -286,8 +286,8 @@ resource "tanzu-mission-control_kustomization" "create_cluster_kustomization" {
     interval         = "10m" # Default: 5m
     target_namespace = "testTargetNamespace"
     source {
-      name      = tanzu-mission-control_git_repository.create_cluster_git_repository.name           # Required
-      namespace = tanzu-mission-control_git_repository.create_cluster_git_repository.namespace_name # Required
+      name      = tanzu-mission-control_git_repository.cluster_git_repository.name           # Required
+      namespace = tanzu-mission-control_git_repository.cluster_git_repository.namespace_name # Required
     }
   }
 }
@@ -312,7 +312,7 @@ terraform {
 }
 
 # Create cluster group
-resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
+resource "tanzu-mission-control_cluster_group" "cluster_group" {
   name = "demo-cluster-group"
 }
 
@@ -334,7 +334,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
   }
 
   spec {
-    cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name // Default: default
+    cluster_group = tanzu-mission-control_cluster_group.cluster_group.name // Default: default
   }
 
   ready_wait_timeout = "15m" # Default: waits until 3 min for the cluster to become ready
@@ -342,7 +342,7 @@ resource "tanzu-mission-control_cluster" "attach_cluster_with_kubeconfig" {
 }
 
 # Create cluster level Repository Credential
-resource "tanzu-mission-control_repository_credential" "create_cluster_source_secret_ssh" {
+resource "tanzu-mission-control_repository_credential" "cluster_source_secret_ssh" {
   name = "tf-secret" # Required
 
   scope {
@@ -386,17 +386,17 @@ terraform {
 }
 
 # Create cluster group
-resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
+resource "tanzu-mission-control_cluster_group" "cluster_group" {
   name = "demo-cluster-group"
 }
 
 # Create cluster group level SSH key type Repository Credential
-resource "tanzu-mission-control_repository_credential" "create_cluster_source_secret_ssh" {
+resource "tanzu-mission-control_repository_credential" "cluster_source_secret_ssh" {
   name = "tf-secret" # Required
 
   scope {
     cluster_group {
-      name = tanzu-mission-control_cluster_group.create_cluster_group.name
+      name = tanzu-mission-control_cluster_group.cluster_group.name
     }
   }
 
@@ -417,14 +417,14 @@ resource "tanzu-mission-control_repository_credential" "create_cluster_source_se
 
 
 # Create cluster group level Git Repository with SSH key type authentication
-resource "tanzu-mission-control_git_repository" "create_cluster_group_git_repository" {
+resource "tanzu-mission-control_git_repository" "cluster_group_git_repository" {
   name = "tf-git-repository-name" # Required
 
   namespace_name = "tf-namespace" #Required
 
   scope {
     cluster_group {
-      cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name
+      cluster_group = tanzu-mission-control_cluster_group.cluster_group.name
     }
   }
 
@@ -435,7 +435,7 @@ resource "tanzu-mission-control_git_repository" "create_cluster_group_git_reposi
 
   spec {
     url                = "testGitRepositoryURL" # Required
-    secret_ref         = tanzu-mission-control_repository_credential.create_cluster_source_secret_ssh.name
+    secret_ref         = tanzu-mission-control_repository_credential.cluster_source_secret_ssh.name
     interval           = "10m"    # Default: 5m
     git_implementation = "GO_GIT" # Default: GO_GIT
     ref {
@@ -449,14 +449,14 @@ resource "tanzu-mission-control_git_repository" "create_cluster_group_git_reposi
 
 
 # Create cluster group level Kustomization
-resource "tanzu-mission-control_kustomization" "create_cluster_group_kustomization" {
+resource "tanzu-mission-control_kustomization" "cluster_group_kustomization" {
   name = "tf-kustomization-name" # Required
 
   namespace_name = "tf-namespace" #Required
 
   scope {
     cluster_group {
-      cluster_group = tanzu-mission-control_cluster_group.create_cluster_group.name
+      cluster_group = tanzu-mission-control_cluster_group.cluster_group.name
     }
   }
 
@@ -471,8 +471,8 @@ resource "tanzu-mission-control_kustomization" "create_cluster_group_kustomizati
     interval         = "10m" # Default: 5m
     target_namespace = "testTargetNamespace"
     source {
-      name      = tanzu-mission-control_git_repository.create_cluster_group_git_repository.name           # Required
-      namespace = tanzu-mission-control_git_repository.create_cluster_group_git_repository.namespace_name # Required
+      name      = tanzu-mission-control_git_repository.cluster_group_git_repository.name           # Required
+      namespace = tanzu-mission-control_git_repository.cluster_group_git_repository.namespace_name # Required
     }
   }
 }
@@ -495,19 +495,19 @@ terraform {
 }
 
 # Create cluster group
-resource "tanzu-mission-control_cluster_group" "create_cluster_group" {
+resource "tanzu-mission-control_cluster_group" "cluster_group" {
   name = "demo-cluster-group"
 }
 
 # Create cluster group level Git Repository
-resource "tanzu-mission-control_git_repository" "create_cluster_git_repository" {
+resource "tanzu-mission-control_git_repository" "cluster_git_repository" {
   name = "tf-git-repository-name" # Required
 
   namespace_name = "tf-namespace" #Required
 
   scope {
     cluster_group {
-      name = tanzu-mission-control_cluster_group.create_cluster_group.name
+      name = tanzu-mission-control_cluster_group.cluster_group.name
     }
   }
 
@@ -530,14 +530,14 @@ resource "tanzu-mission-control_git_repository" "create_cluster_git_repository" 
 }
 
 # Create cluster group level Kustomization
-resource "tanzu-mission-control_kustomization" "create_cluster_kustomization" {
+resource "tanzu-mission-control_kustomization" "cluster_kustomization" {
   name = "tf-kustomization-name" # Required
 
   namespace_name = "tf-namespace" #Required
 
   scope {
     cluster_group {
-      name = tanzu-mission-control_cluster_group.create_cluster_group.name
+      name = tanzu-mission-control_cluster_group.cluster_group.name
     }
   }
 
@@ -552,8 +552,8 @@ resource "tanzu-mission-control_kustomization" "create_cluster_kustomization" {
     interval         = "10m" # Default: 5m
     target_namespace = "testTargetNamespace"
     source {
-      name      = tanzu-mission-control_git_repository.create_cluster_git_repository.name           # Required
-      namespace = tanzu-mission-control_git_repository.create_cluster_git_repository.namespace_name # Required
+      name      = tanzu-mission-control_git_repository.cluster_git_repository.name           # Required
+      namespace = tanzu-mission-control_git_repository.cluster_git_repository.namespace_name # Required
     }
   }
 }
