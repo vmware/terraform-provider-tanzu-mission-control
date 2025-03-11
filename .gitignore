@@ -1,5 +1,5 @@
 # Ignore any built binaries.
-terraform-provider-tanzu-mission-control
+terraform-provider-tanzu-mission-control*
 terraform-provider-tanzu-mission-control.exe
 
 # Ignore distribution directories.
@@ -14,3 +14,4 @@ dist/
 
 # Ignore macOS desktop services store files.
 **/.DS_Store
+
