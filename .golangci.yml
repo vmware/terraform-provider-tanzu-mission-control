@@ -56,7 +56,6 @@ linters:
     - wsl
 
 run:
-  deadline: 5m
   build-tags:
     - akscluster
     - cluster
