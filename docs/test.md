@@ -47,7 +47,7 @@ By default, running acceptance test without explicitly setting `BUILD_TAGS` runs
 test. To specifically run acceptances test for a resources, set `BUILD_TAGS` value to corresponding
 resource name.
 
-For example: Run acceptance test for `clustergroup` and `namespace` resource.
+For example, Run acceptance test for `clustergroup` and `namespace` resource.
 
 ```sh
 $ export BUILD_TAGS = "clustergroup namespace"
