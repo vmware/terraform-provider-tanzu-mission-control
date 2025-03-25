@@ -18,7 +18,6 @@ import (
 )
 
 func DataSourceTanzuKubernetesCluster() *schema.Resource {
-
 	dsSchema := helper.DatasourceSchemaFromResourceSchema(tanzuKubernetesClusterSchema)
 
 	// Set 'Required' schema elements

@@ -228,6 +228,7 @@ func GetAllMapsKeys(maps ...map[string]interface{}) map[string]bool {
 	return keys
 }
 
+// nolint:godot
 // DatasourceSchemaFromResourceSchema is a recursive func that
 // converts an existing Resource schema to a Datasource schema.
 // All schema elements are copied, but certain attributes are ignored or changed:
@@ -236,6 +237,7 @@ func GetAllMapsKeys(maps ...map[string]interface{}) map[string]bool {
 // - Validation funcs and attributes (e.g. MaxItems) are not copied
 func DatasourceSchemaFromResourceSchema(rs map[string]*schema.Schema) map[string]*schema.Schema {
 	ds := make(map[string]*schema.Schema, len(rs))
+
 	for k, v := range rs {
 		dv := &schema.Schema{
 			Computed:    true,
@@ -266,11 +268,11 @@ func DatasourceSchemaFromResourceSchema(rs map[string]*schema.Schema) map[string
 		default:
 			// Elem of all other types are copied as-is
 			dv.Elem = v.Elem
-
 		}
-		ds[k] = dv
 
+		ds[k] = dv
 	}
+
 	return ds
 }
 
