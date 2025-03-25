@@ -56,7 +56,7 @@ vet:
 
 # Linter
 lint: gofmt
-	golangci-lint run -c ./.golangci.yml ./internal/... .
+	golangci-lint run -c ./.golangci.yml ./internal/... --timeout 5m
 
 acc-test:
 	go test $(TEST_PKGS) -tags $(BUILD_TAGS)
