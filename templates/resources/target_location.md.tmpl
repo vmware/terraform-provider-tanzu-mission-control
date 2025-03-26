@@ -13,7 +13,7 @@ Once created, a target location can be used to store cluster backups.
 
 For more information regarding target location, see [Target Location][target-location].
 
-[target-location]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-867683CE-8AF0-4DC7-9121-81AD507EDB3B.html
+[target-location]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-867683CE-8AF0-4DC7-9121-81AD507EDB3B.html
 
 
 # TMC Managed Target Location

@@ -10,7 +10,7 @@ The `tanzu-mission-control_iam_policy` resource allows you to add, update, and d
 
 IAM policy (also known as Access Management) allows you to implement role-based access control (RBAC) in Tanzu Mission Control. For more information, see [Access Control.][access-control]
 
-[access-control]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-EB9C6D83-1132-444F-8218-F264E43F25BD.html
+[access-control]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-concepts-GUID-EB9C6D83-1132-444F-8218-F264E43F25BD.html
 
 ## Policy Scope and Inheritance
 
@@ -31,7 +31,7 @@ Only one scope per resource is allowed.
 To use the **Tanzu Mission Control provider** for adding, editing, and removing role bindings, you must define who has access to each resource in your organization using role-based access control.
 For more information, see [Managing Access to Resources.][managing-access]
 
-[managing-access]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-CA5A31BC-4D7B-4EDD-A4C8-95BEEC08F7C4.html
+[managing-access]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-CA5A31BC-4D7B-4EDD-A4C8-95BEEC08F7C4.html
 
 ## Organization scoped IAM Policy
 

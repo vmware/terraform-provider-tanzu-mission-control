@@ -21,14 +21,14 @@ infrastructure platforms.
 For creating management cluster registration resource, you must have `managementcluster.admin` permissions in Tanzu Mission Control.
 For more information, see [Register a Management Cluster with Tanzu Mission Control.][registration]
 
-[registration]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-EB507AAF-5F4F-400F-9623-BA611233E0BD.html
+[registration]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-EB507AAF-5F4F-400F-9623-BA611233E0BD.html
 
 ## Create registration for Tanzu Kubernetes Grid management cluster
 
 Registration output contains registration URL which could be applied according to following
 tutorial [Complete the Registration][grid-registration]
 
-[grid-registration]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-CC6E721E-43BF-4066-AA0A-F744280D6A03.html
+[grid-registration]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-CC6E721E-43BF-4066-AA0A-F744280D6A03.html
 
 ### Example Usage
 
@@ -48,7 +48,7 @@ resource "tanzu-mission-control_management_cluster" "management_cluster_registra
 Registration output contains registration URL which could be applied according to following
 tutorial [Complete the Registration][grid-registration]
 
-[grid-registration]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-CC6E721E-43BF-4066-AA0A-F744280D6A03.html
+[grid-registration]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-CC6E721E-43BF-4066-AA0A-F744280D6A03.html
 
 ### Example Usage
 
@@ -119,12 +119,12 @@ EOF
 }
 ```
 
-## Register vSphere with Tanzu management cluster
+## Register vSphere Supervisor management cluster
 
 Registration output contains registration URL which could be applied according to following
 tutorial [Complete the Registration][vpshere-registration]
 
-[vpshere-registration]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-D85335D2-1430-4662-ABF6-722B7C6276FA.html
+[vpshere-registration]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-D85335D2-1430-4662-ABF6-722B7C6276FA.html
 
 ### Example Usage
 
@@ -139,12 +139,12 @@ resource "tanzu-mission-control_management_cluster" "management_cluster_registra
 }
 ```
 
-## Register vSphere with Tanzu management cluster with image registry and proxy
+## Register vSphere Supervisor management cluster with image registry and proxy
 
 Registration output contains registration URL which could be applied according to following
 tutorial [Complete the Registration][vpshere-registration]
 
-[vpshere-registration]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-D85335D2-1430-4662-ABF6-722B7C6276FA.html
+[vpshere-registration]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-D85335D2-1430-4662-ABF6-722B7C6276FA.html
 
 ### Example Usage
 

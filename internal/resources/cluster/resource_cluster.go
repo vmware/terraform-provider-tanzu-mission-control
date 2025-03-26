@@ -518,7 +518,7 @@ func resourceClusterDelete(_ context.Context, d *schema.ResourceData, m interfac
 
 		diags = diag.FromErr(errors.Wrapf(err, "Initiating force detach for %s cluster."+
 			"Ideally clean up of tmc agents and vmware-system-tmc namespace should have happened if not please remove them manually following "+
-			"https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-3061A796-CA3D-4354-A0B7-19F50F2617CE.html", d.Get(NameKey)))
+			"https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-3061A796-CA3D-4354-A0B7-19F50F2617CE.html", d.Get(NameKey)))
 	}
 
 	if err != nil {

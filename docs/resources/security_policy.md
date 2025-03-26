@@ -10,7 +10,7 @@ The `tanzu-mission-control_security_policy` resource enables you to attach a sec
 
 Security policies allow you to manage the security context in which deployed pods operate in your clusters by imposing constraints that define what pods can do and which resources they can access. For more information, see [Pod Security Management.][pod-security-management]
 
-[pod-security-management]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-6C65B33B-C1EA-465D-B909-3C4F51704C1A.html#GUID-6C65B33B-C1EA-465D-B909-3C4F51704C1A
+[pod-security-management]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-concepts-GUID-6C65B33B-C1EA-465D-B909-3C4F51704C1A.html#GUID-6C65B33B-C1EA-465D-B909-3C4F51704C1A
 
 ## Input Recipe
 
@@ -37,7 +37,7 @@ Only one scope per resource is allowed.
 To use the **Tanzu Mission Control provider** for creating a security policy for an object, you must be associated with the `.admin` role for that object.
 For more information, see [Managing Pod Security.][managing-pod-security]
 
-[managing-pod-security]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-939955FC-17EF-4A84-B686-CAF0BBE018D4.html
+[managing-pod-security]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-939955FC-17EF-4A84-B686-CAF0BBE018D4.html
 
 ## Cluster scoped Baseline Security Policy
 

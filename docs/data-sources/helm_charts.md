@@ -10,7 +10,7 @@ This resource allows you to get list of Helm Charts through Tanzu Mission Contro
 
 The Helm charts tab on the Catalog page in the Tanzu Mission Control console shows the Available Helm charts.
 
-[Helm]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-2602A6A3-1FDA-4270-A76F-047FBD039ADF.html
+[Helm]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-2602A6A3-1FDA-4270-A76F-047FBD039ADF.html
 
 
 ## Organization scoped Helm Charts

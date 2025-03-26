@@ -17,7 +17,7 @@ Each namespace and workspace can be protected by an image registry policy that d
 and these policies are inherited down through the organizational hierarchy.
 For more information, see [Policy-Driven Cluster Management][policy-driven-cluster-management] in VMware Tanzu Mission Control Concepts.
 
-[policy-driven-cluster-management]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-847414C9-EF54-44E5-BA62-C4895160CE1D.html
+[policy-driven-cluster-management]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-concepts-GUID-847414C9-EF54-44E5-BA62-C4895160CE1D.html
 
 ## Input Recipe
 

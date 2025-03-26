@@ -13,7 +13,7 @@ A cluster group is a logical grouping of clusters in the Tanzu Mission Control o
 To create a cluster group, you must have `organization.edit` permissions in Tanzu Mission Control.
 For more information, please refer [create a Cluster Group.][cluster-group]
 
-[cluster-group]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-E36D5205-5291-4201-809D-B8E26277CCF4.html
+[cluster-group]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-E36D5205-5291-4201-809D-B8E26277CCF4.html
 
 ## Example Usage
 

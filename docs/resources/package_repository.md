@@ -10,7 +10,7 @@ This resource allows you to add, update, and delete package repository to a clus
 
 It's a Kubernetes resource which references Package Repository Bundle.It has information such as image url of Package Repository Bundle and necessary credentials to pull Package Repository Bundle.
 
-[package-repository]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-E0168103-7A6F-4C07-8768-19D9B1EB4EFA.html
+[package-repository]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-E0168103-7A6F-4C07-8768-19D9B1EB4EFA.html
 
 
 ## Cluster scoped Package Repository

@@ -10,7 +10,7 @@ This resource allows you to get list of Packages from a cluster through Tanzu Mi
 
 The Available tab on the Catalog page in the Tanzu Mission Control console shows the packages that are available to be installed, including those that are in the Tanzu Standard package repository and other repositories that you have associated with a cluster.
 
-[packages]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-4B45987F-D5A0-4283-8B4E-139F38DCBFD9.html
+[packages]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-4B45987F-D5A0-4283-8B4E-139F38DCBFD9.html
 
 
 ## Cluster scoped Package

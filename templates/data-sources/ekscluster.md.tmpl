@@ -20,8 +20,8 @@ You must also have the appropriate permissions in Tanzu Mission Control:
 - To provision a cluster, you must have `cluster.admin` permissions.
 - You must also have `clustergroup.edit` permissions on the cluster group in which you want to put the new cluster.
 
-[aws-account]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-E4627693-7D1A-4914-A9DF-61E49F97FECC.html
-[create-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-208B2A5A-AE08-4CE1-9DC0-EB573E4BA4A8.html?hWord=N4IghgNiBcIKIGkDKIC+Q
+[aws-account]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-E4627693-7D1A-4914-A9DF-61E49F97FECC.html
+[create-cluster]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-208B2A5A-AE08-4CE1-9DC0-EB573E4BA4A8.html?hWord=N4IghgNiBcIKIGkDKIC+Q
 
 ## Example Usage
 

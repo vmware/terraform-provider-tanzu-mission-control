@@ -10,7 +10,7 @@ This resource enables users to create custom IAM roles in TMC.
 
 For more information regarding custom roles, see [Custom Role][custom-role].
 
-[custom-role]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-F314ED9E-2736-48CC-A1BB-CB9C32900B30.html
+[custom-role]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-F314ED9E-2736-48CC-A1BB-CB9C32900B30.html
 
 ## Example Usage
 

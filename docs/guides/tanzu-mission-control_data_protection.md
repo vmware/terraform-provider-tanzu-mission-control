@@ -13,7 +13,7 @@ Once enabled, users can create instant backups or schedule backups for later.
 
 For more information regarding data protection, see [Data Protection][data-protection].
 
-[data-protection]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-C16557BC-EB1B-4414-8E63-28AD92E0CAE5.html
+[data-protection]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-concepts-GUID-C16557BC-EB1B-4414-8E63-28AD92E0CAE5.html
 
 
 # Target Location
@@ -25,7 +25,7 @@ Once created, a target location can be used to store cluster backups.
 
 For more information regarding target location, see [Target Location][target-location].
 
-[target-location]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-867683CE-8AF0-4DC7-9121-81AD507EDB3B.html
+[target-location]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-867683CE-8AF0-4DC7-9121-81AD507EDB3B.html
 
 # Backup Schedule
 
@@ -42,7 +42,7 @@ Backups can be applied in 3 levels:
 
 For more information regarding scheduled backups, see [Scheduled Backups][backup-schedule].
 
-[backup-schedule]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-89926F80-050A-4F1C-9D04-D56D5F453995.html?hWord=N4IghgNiBcIEZgMYGsCuAHABAZ0QCwFMATVCAkAXyA
+[backup-schedule]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-89926F80-050A-4F1C-9D04-D56D5F453995.html?hWord=N4IghgNiBcIEZgMYGsCuAHABAZ0QCwFMATVCAkAXyA
 
 ## Sample usage of Data Protection
 

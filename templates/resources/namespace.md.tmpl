@@ -14,7 +14,7 @@ When you create a namespace through Tanzu Mission Control, you specify the works
 To create a namespace, you must have `cluster.edit` permissions on the cluster and `workspace.edit` permissions in Tanzu Mission Control.
 For more information, see [create a Managed Namespace.][namespace]
 
-[namespace]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-FB8AD386-8DA1-4287-AE85-1287F5C0101B.html
+[namespace]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-FB8AD386-8DA1-4287-AE85-1287F5C0101B.html
 
 ## Example Usage
 

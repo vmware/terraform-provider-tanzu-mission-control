@@ -18,7 +18,7 @@ For more information about Kubernetes native network policies, see [Network Poli
 For more information about policy inheritance in Tanzu Mission Control, see [Policy-Driven Cluster Management][policy-driven-cluster-management] in VMware Tanzu Mission Control Concepts.
 
 [network-policies]: https://kubernetes.io/docs/concepts/services-networking/network-policies/
-[policy-driven-cluster-management]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-847414C9-EF54-44E5-BA62-C4895160CE1D.html
+[policy-driven-cluster-management]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-concepts-GUID-847414C9-EF54-44E5-BA62-C4895160CE1D.html
 
 ## Input Recipe
 

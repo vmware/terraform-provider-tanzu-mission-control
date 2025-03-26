@@ -11,7 +11,7 @@ The `tanzu-mission-control_helm_feature` resource allows you to enable and disab
 When you enable the Helm service on a cluster or cluster group, you can then create releases in your cluster from Helm charts stored in the Bitnami repository.
 To enable a helm service, you must be associated with the cluster.admin or clustergroup.admin role.
 
-[helm-feature]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-0927CDC8-A5C1-4FAE-9A7C-8A5D62FDF8D8.html
+[helm-feature]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-0927CDC8-A5C1-4FAE-9A7C-8A5D62FDF8D8.html
 
 ## Helm Feature Scope
 

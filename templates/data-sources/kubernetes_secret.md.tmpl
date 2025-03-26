@@ -12,7 +12,7 @@ In managed clusters, both attached and provisioned, you can create Kubernetes Se
 
 To create a kubernetes secret, you must be associated with the cluster.admin or clustergroup.admin role.
 
-[kubernetes Secret]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-BBE2404D-C2EE-41C7-B639-C0322783A74D.html
+[kubernetes Secret]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-BBE2404D-C2EE-41C7-B639-C0322783A74D.html
 
 ## Kubernetes Secret Scope and Inheritance
 

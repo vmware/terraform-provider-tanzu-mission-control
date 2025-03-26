@@ -25,7 +25,7 @@ Only one scope per resource is allowed.
 ### Install a Helm Chart from a Git Repository
 
 The Helm service must already be enabled to be able to install Helm releases on a cluster or cluster group.
-[helm-release]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-F7F4EFA4-F681-42BC-AFDC-874C43D39CD4.html
+[helm-release]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-F7F4EFA4-F681-42BC-AFDC-874C43D39CD4.html
 
 ## Cluster group scoped Helm Release using Git Repository
 
@@ -116,7 +116,7 @@ resource "tanzu-mission-control_helm_release" "cl_helm_release_gitrepo_type" {
 ### Install a Helm Chart from a Helm Repository
 
 The Helm service must already be enabled to be able to install Helm releases on a cluster.
-[helm-release]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-2602A6A3-1FDA-4270-A76F-047FBD039ADF.html
+[helm-release]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-2602A6A3-1FDA-4270-A76F-047FBD039ADF.html
 
 ## Cluster scoped Helm Release using Helm Repository
 

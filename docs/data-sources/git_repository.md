@@ -11,7 +11,7 @@ The `tanzu-mission-control_git_repository` Data Source allows you to get git rep
 Git repositories are used to store kustomizations that will be synced to your cluster.
 To add a repository, you must be associated with the cluster.admin or clustergroup.admin role.
 
-[git-repository]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-26C2D2F3-0E5C-4E56-B875-B7FB003267E4.html
+[git-repository]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-26C2D2F3-0E5C-4E56-B875-B7FB003267E4.html
 
 ## Git Repository Scope
 

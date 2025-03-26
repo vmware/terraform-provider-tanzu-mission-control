@@ -14,7 +14,7 @@ Use the Catalog page of the Tanzu Mission Control console to install a package f
 
 The Available tab on the Catalog page in the Tanzu Mission Control console shows the packages that are available to be installed, including those that are in the Tanzu Standard package repository and other repositories that you have associated with a cluster.
 
-[package-install]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-E0168103-7A6F-4C07-8768-19D9B1EB4EFA.html
+[package-install]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-E0168103-7A6F-4C07-8768-19D9B1EB4EFA.html
 
 
 ## Cluster scoped Package install

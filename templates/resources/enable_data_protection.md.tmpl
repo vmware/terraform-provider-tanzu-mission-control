@@ -11,7 +11,7 @@ Once enabled, users can create instant backups or schedule backups for later.
 
 For more information regarding data protection, see [Data Protection][data-protection].
 
-[data-protection]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-C16557BC-EB1B-4414-8E63-28AD92E0CAE5.html
+[data-protection]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-concepts-GUID-C16557BC-EB1B-4414-8E63-28AD92E0CAE5.html
 
 ## Cluster Scope Example Usage
 

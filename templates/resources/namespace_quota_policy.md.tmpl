@@ -11,7 +11,7 @@ The `tanzu-mission-control_namespace_quota_policy` resource enables you to attac
 Namespace quota policies allow you to constrain the resources used in your clusters, as aggregate quantities across specified namespaces, using preconfigured and custom templates.
 For more information, see [Managing Resource Consumption in Your Clusters][managing-resource-consumption] in using VMware Tanzu Mission Control.
 
-[managing-resource-consumption]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-1905352C-856F-4D06-BB86-426F90486C32.html
+[managing-resource-consumption]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-1905352C-856F-4D06-BB86-426F90486C32.html
 
 ## Input Recipe
 

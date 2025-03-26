@@ -16,9 +16,9 @@ The `tanzu-mission-control_kubernetes_secret` resource enables you to create kub
 
 You can optionally make export to true to make the secret available to all namespaces.
 
-[kubernetes Secret]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-BBE2404D-C2EE-41C7-B639-C0322783A74D.html
+[kubernetes Secret]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-BBE2404D-C2EE-41C7-B639-C0322783A74D.html
 
-[export secret to all namespaces]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-B0A72F72-4216-4869-B293-6802368B11D2.html
+[export secret to all namespaces]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-B0A72F72-4216-4869-B293-6802368B11D2.html
 
 ## Kubernetes Secret Scope and Inheritance
 

@@ -10,7 +10,7 @@ This resource allows you to read Helm Repository from a cluster through Tanzu Mi
 
 The Available tab on the Catalog page in the Tanzu Mission Control console shows the Helm repositories that are available.
 
-[Helm]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-2602A6A3-1FDA-4270-A76F-047FBD039ADF.html
+[Helm]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-2602A6A3-1FDA-4270-A76F-047FBD039ADF.html
 
 
 ## Cluster scoped Helm Repository

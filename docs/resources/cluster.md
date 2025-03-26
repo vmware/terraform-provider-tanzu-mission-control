@@ -22,7 +22,7 @@ To use the **Tanzu Mission Control provider** to attach an existing conformant K
 you must have `cluster.admin` permissions on the cluster and `clustergroup.edit` permissions in Tanzu Mission Control.
 For more information, please refer [Attach a Cluster.][attach-cluster]
 
-[attach-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-6DF2CE3E-DD07-499B-BC5E-6B3B2E02A070.html
+[attach-cluster]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-6DF2CE3E-DD07-499B-BC5E-6B3B2E02A070.html
 
 ### Example Usage
 
@@ -204,8 +204,8 @@ You must also have the appropriate permissions:
 - To provision a cluster, you must have admin permissions on the management cluster to provision resources within it.
 - You must also have `clustergroup.edit` permissions on the cluster group in which you want to put the new cluster.
 
-[create-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-1F847180-1F98-4F8F-9062-46DE9AD8F79D.html
-[lifecycle-management]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-A6B0184F-269F-41D3-B7FE-5C4F96B3A099.html
+[create-cluster]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-1F847180-1F98-4F8F-9062-46DE9AD8F79D.html
+[lifecycle-management]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-concepts-GUID-A6B0184F-269F-41D3-B7FE-5C4F96B3A099.html
 
 ### Example Usage
 
@@ -308,8 +308,8 @@ You must also have the appropriate permissions:
 - To provision a cluster, you must have admin permissions on the management cluster to provision resources within it.
 - You must also have `clustergroup.edit` permissions on the cluster group in which you want to put the new cluster.
 
-[create-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-1F847180-1F98-4F8F-9062-46DE9AD8F79D.html
-[lifecycle-management]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-A6B0184F-269F-41D3-B7FE-5C4F96B3A099.html
+[create-cluster]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-1F847180-1F98-4F8F-9062-46DE9AD8F79D.html
+[lifecycle-management]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-concepts-GUID-A6B0184F-269F-41D3-B7FE-5C4F96B3A099.html
 
 ### Example Usage
 
@@ -423,8 +423,8 @@ You must also have the appropriate permissions:
 - To provision a cluster, you must have admin permissions on the management cluster to provision resources within it.
 - You must also have `clustergroup.edit` permissions on the cluster group in which you want to put the new cluster.
 
-[create-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-1F847180-1F98-4F8F-9062-46DE9AD8F79D.html
-[lifecycle-management]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-concepts/GUID-A6B0184F-269F-41D3-B7FE-5C4F96B3A099.html
+[create-cluster]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-1F847180-1F98-4F8F-9062-46DE9AD8F79D.html
+[lifecycle-management]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-concepts-GUID-A6B0184F-269F-41D3-B7FE-5C4F96B3A099.html
 
 ### Example Usage
 

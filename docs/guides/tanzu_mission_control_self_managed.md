@@ -5,12 +5,12 @@ Tanzu Mission Control Self-Managed offers a packaged deployment model for Kubern
 For more information about deploying a local instance of Tanzu Mission Control Self-Managed, see the following topics in the Tanzu Mission Control documentation:
 
 - [VMware Tanzu Mission Control Self-Managed Release Notes][release-notes]
-- [Installing and Running VMware Tanzu Mission Control Self-Managed][install-tmc-sm]  to learn about the self-managed version.
-- [Preparing your cluster to host Tanzu Mission Control Self-Managed][prepapre-cluster-for-tmc-sm]  to learn how to set up your cluster before deployment.
-- [Using Tanzu Mission Control Self-Managed][using-tmc-sm]  to learn about the functional differences between the SaaS version and the self-managed version.
+- [Installing and Running VMware Tanzu Mission Control Self-Managed][install-tmc-sm] to learn about the self-managed version.
+- [Preparing your cluster to host Tanzu Mission Control Self-Managed][prepapre-cluster-for-tmc-sm] to learn how to set up your cluster before deployment.
+- [Using Tanzu Mission Control Self-Managed][using-tmc-sm] to learn about the functional differences between the SaaS version and the self-managed version.
 
 
-[using-tmc-sm]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/1.0/tanzumc-sm-install/using-tmc-sm.html
-[release-notes]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/1.0/rn/tanzumc-selfmanaged-10-release-notes/index.html
-[prepapre-cluster-for-tmc-sm]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/1.0/tanzumc-sm-install/prepare-cluster.html
-[install-tmc-sm]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/1.0/tanzumc-sm-install/index-sm-install.html
+[using-tmc-sm]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-index-tmc-using-GUID-B3349CE8-C98D-4453-9EC8-536A72239F8D.html
+[release-notes]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/rn-tmc-sm-release-notes.htmll
+[prepapre-cluster-for-tmc-sm]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-sm-install-config-prepare-cluster.html
+[install-tmc-sm]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-sm-install-config-index-sm-install.html

@@ -14,7 +14,7 @@ Workspaces allow you to organize your managed namespaces into logical groups acr
 To create a workspace, you must have `organization.edit` permissions in Tanzu Mission Control.
 For more information, please refer [create a Workspace.][workspace]
 
-[workspace]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-473F0C1F-DA60-4B04-9783-E6057A405604.html
+[workspace]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-473F0C1F-DA60-4B04-9783-E6057A405604.html
 
 ## Example Usage
 
