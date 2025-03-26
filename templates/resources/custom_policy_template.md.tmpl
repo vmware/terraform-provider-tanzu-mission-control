@@ -10,7 +10,7 @@ This resource enables users to create custom policy template in TMC.
 
 For more information regarding custom policy template, see [Custom Policy Template][custom-policy-template].
 
-[custom-policy-template]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-F147492B-04FD-4CFD-8D1F-66E36D40D49C.html
+[custom-policy-template]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-F147492B-04FD-4CFD-8D1F-66E36D40D49C.html
 
 ## Example Usage
 

@@ -11,7 +11,7 @@ The `tanzu-mission-control_repository_credential` resource allows you to add, up
 Repository credentials are used to authenticate to Git repositories and must be created before adding your Git repository.
 To create a repository credential, you must be associated with the cluster.admin or clustergroup.admin role.
 
-[repository-credential]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-657661A2-B26E-412A-9A46-7467A44A075A.html
+[repository-credential]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-657661A2-B26E-412A-9A46-7467A44A075A.html
 
 ## Repository Credential Scope
 

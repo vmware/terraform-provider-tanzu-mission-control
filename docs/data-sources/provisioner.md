@@ -13,14 +13,14 @@ Read provisioner in a management cluster using this Terraform module.
 - For a Tanzu Kubernetes cluster running in vSphere, you add a provisioner by creating
   a namespace in the management cluster, which you can do using kubectl.
   For more information, see [Create Namespaces in the Management Cluster][create-namespaces-in-the-management-cluster] in the VMware Tanzu Kubernetes Grid Product Documentation.
-- For a Tanzu Kubernetes cluster running in vSphere with Tanzu, you add a provisioner by creating
+- For a Tanzu Kubernetes cluster running in vSphere Supervisor, you add a provisioner by creating
   a vSphere namespace in the Supervisor Cluster, which you can do in your vSphere environment.
   For more information, see Configuring and Managing [vSphere 7.x][vsphere-7.x] and  [vSphere 8.x][vsphere-8.x] Namespaces in the vSphere with
   Tanzu Configuration and Management documentation.
 
-[create-namespaces-in-the-management-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/1.5/vmware-tanzu-kubernetes-grid-15/GUID-cluster-lifecycle-multiple-management-clusters.html
-[vsphere-7.x]: https://docs.vmware.com/en/VMware-vSphere/7.0/vmware-vsphere-with-tanzu/GUID-1544C9FE-0B23-434E-B823-C59EFC2F7309.html
-[vsphere-8.x]: https://docs.vmware.com/en/VMware-vSphere/8.0/vsphere-with-tanzu-services-workloads/GUID-1544C9FE-0B23-434E-B823-C59EFC2F7309.html
+[create-namespaces-in-the-management-cluster]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-kubernetes-grid/2-5/tkg/mgmt-manage-index.html
+[vsphere-7.x]: https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere-supervisor/7-0/vsphere-with-tanzu-configuration-and-management-7-0.html
+[vsphere-8.x]: https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere-supervisor/8-0/vsphere-supervisor-services-and-workloads-8-0.html
 
 ### Example Usage
 

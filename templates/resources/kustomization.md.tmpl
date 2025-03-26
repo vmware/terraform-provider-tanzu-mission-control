@@ -12,7 +12,7 @@ To create a kustomization, you must be associated with the cluster.admin or clus
 
 In Creation of kustomization we must required to create Git Repository first, which we need to referenced in spec of kustomization, Git Repository can be created by using "tanzu-mission-control_git_repository" resource from terraform provider itself.
 
-[kustomization]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-99916A6D-5DAF-4A26-88C7-28662F847F2F.html
+[kustomization]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-99916A6D-5DAF-4A26-88C7-28662F847F2F.html
 
 ## Kustomization Scope
 

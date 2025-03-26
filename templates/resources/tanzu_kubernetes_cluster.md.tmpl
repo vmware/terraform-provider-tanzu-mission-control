@@ -15,7 +15,7 @@ For identifying the structure of the cluster variables supported in the cluster 
 In order to configure & reuse cluster variables and node pools overrides, it is recommended defining these values in a local variable named after the cluster type
 and cluster class version.
 
-[provision-cluster-class-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-C778E447-DDBB-49FC-B0B2-A8012AC56B0E.html
+[provision-cluster-class-cluster]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-C778E447-DDBB-49FC-B0B2-A8012AC56B0E.html
 [cluster-class-datasource]: https://registry.terraform.io/providers/vmware/tanzu-mission-control/latest/docs/data-sources/cluster_class
 
 ```

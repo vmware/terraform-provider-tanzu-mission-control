@@ -17,7 +17,7 @@ To manage the lifecycle of EKS clusters, you need the following prerequisites.
 
 - Ensure the CSP token used in initialising the terraform provider has the right set of permissions to create a workload cluster.
 
-[tanzu-vpc-guide]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-5708F04E-7EA3-495D-A484-FD6DB7AA8356.html
+[tanzu-vpc-guide]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-5708F04E-7EA3-495D-A484-FD6DB7AA8356.html
 [aws-vpc-guide]: https://docs.aws.amazon.com/eks/latest/userguide/creating-a-vpc.html
 
 ## Provisioning the cluster

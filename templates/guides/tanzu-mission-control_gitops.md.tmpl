@@ -21,7 +21,7 @@ Git repositories are used to store kustomizations that will be synced to your cl
 
 Please refer to [Add a Git Repository to a Cluster or Cluster Group.][git-repository]
 
-[git-repository]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-26C2D2F3-0E5C-4E56-B875-B7FB003267E4.html
+[git-repository]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-26C2D2F3-0E5C-4E56-B875-B7FB003267E4.html
 
 ## Kustomization
 
@@ -31,7 +31,7 @@ In Creation of kustomization we must required to create Git Repository first, wh
 
 Please refer to [Add a Kustomization to a Cluster or Cluster Group.][kustomization]
 
-[kustomization]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-99916A6D-5DAF-4A26-88C7-28662F847F2F.html
+[kustomization]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-99916A6D-5DAF-4A26-88C7-28662F847F2F.html
 
 ## Repository Credential
 
@@ -41,7 +41,7 @@ Repository credentials are used to authenticate to Git repositories and must be 
 
 Please refer to [Create a Repository Credential for a Cluster or Cluster Group.][repository-credential]
 
-[repository-credential]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-657661A2-B26E-412A-9A46-7467A44A075A.html
+[repository-credential]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-657661A2-B26E-412A-9A46-7467A44A075A.html
 
 To Create these resources you must be associated with the cluster.admin or clustergroup.admin role.
 

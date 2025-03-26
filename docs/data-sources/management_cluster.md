@@ -21,7 +21,7 @@ infrastructure platforms.
 For creating management cluster registration resource, you must have `managementcluster.admin` permissions in Tanzu Mission Control.
 For more information, see [Register a Management Cluster with Tanzu Mission Control.][registration]
 
-[registration]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-EB507AAF-5F4F-400F-9623-BA611233E0BD.html
+[registration]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-EB507AAF-5F4F-400F-9623-BA611233E0BD.html
 
 ## Example Usage
 

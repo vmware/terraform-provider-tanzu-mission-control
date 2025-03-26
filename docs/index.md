@@ -34,7 +34,7 @@ To gather this information, you need to do the following:
 
     Here, the endpoint is `my-org.tmc.cloud.vmware.com`
 
-[login]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-855A8998-E19A-46AC-A833-12C347486EF7.html
+[login]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-855A8998-E19A-46AC-A833-12C347486EF7.html
 
 2. In the Tanzu Mission Control console, click on your name in the top right corner, and then click **My Account**.
 
@@ -45,7 +45,7 @@ From this page, you can generate a new API token, and then copy it to use for th
 ~> **Note:**
 Current version of Tanzu Mission Control provider does not support when API tokens are secured using [multi-factor authentication][mfa-for-api-token].
 
-[mfa-for-api-token]: https://docs.vmware.com/en/VMware-Cloud-services/services/Using-VMware-Cloud-Services/GUID-38D09558-D468-4A21-95BD-581940119FA7.html
+[mfa-for-api-token]: https://techdocs.broadcom.com/us/en/vmware-cis/other/vmware-cloud-services/GA/using-vmware-cloud-services-console/how-do-i-manage-my-cloud-services-account/how-do-i-generate-api-tokens/how-do-i-manage-my-api-tokens.html
 
 # Tanzu Mission Control Self-Managed
 
@@ -58,9 +58,9 @@ For more information, please refer [What is Tanzu Mission Control Self-Managed][
 To use the **Tanzu Mission Control provider** for Tanzu Mission Control Self-Managed prior to initializing this provider in Terraform, make sure you have the following information of the deployed Tanzu Mission Control Self-Managed instance:
 
 - The endpoint URL of your Tanzu Mission Control Self-Managed deployment.
-- IDP credentials. To log in to the Tanzu Mission Control console in a self-managed deployment, you must be a user enrolled in the IDP associated to Tanzu Mission Control Self-Managed. For more information, see the section on setting up authentication in [Preparing your cluster for Tanzu Mission Control Self-Managed][prepapre-cluster-for-tmc-sm].
+- IDP credentials. To log in to the Tanzu Mission Control console in a self-managed deployment, you must be a user enrolled in the IDP associated to Tanzu Mission Control Self-Managed. For more information, see the section on setting up authentication in [Preparing your cluster for Tanzu Mission Control Self-Managed][prepare-cluster-for-tmc-sm].
 
-[prepapre-cluster-for-tmc-sm]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/1.0/tanzumc-sm-install/prepare-cluster.html
+[prepare-cluster-for-tmc-sm]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-sm-install-config-prepare-cluster.html
 
 -> **Note:**
 Tanzu Mission Control Terraform Provider v1.2.0 onwards required for usage with Tanzu Mission Control Self-Managed v1.0 onwards.

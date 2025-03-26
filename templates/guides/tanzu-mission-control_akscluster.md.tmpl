@@ -19,8 +19,8 @@ You can also use `tanzu-mission-control_credential` Terraform resource for this 
 
 - Ensure the CSP token used in initialising the terraform provider has the right set of permissions to create a workload cluster.
 
-[tanzu-aks-credential]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-90ED8C73-8A40-46FF-85AE-A8DAA9048AA9.html?hWord=N4IghgNiBcIMoFEBKA1AkgYQQAgApLQDkM1cBBAGRAF8g
-[azure-account]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-2CA6A21A-1D33-4852-B8F2-86BB3A1337E4.html
+[tanzu-aks-credential]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-90ED8C73-8A40-46FF-85AE-A8DAA9048AA9.html?hWord=N4IghgNiBcIMoFEBKA1AkgYQQAgApLQDkM1cBBAGRAF8g
+[azure-account]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-2CA6A21A-1D33-4852-B8F2-86BB3A1337E4.html
 
 ## Provisioning the cluster
 

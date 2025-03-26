@@ -281,7 +281,7 @@ Template provides a declarative definition of a policy, which can be used to app
 Custom policy consumes these declared custom templates to enforce specific policies. One must create the [custom template][custom-policy-template] before consuming it in the custom policy.
 Please refer to custom policy template and custom policy terraform scripts within examples.
 
-[custom-policy-template]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-F147492B-04FD-4CFD-8D1F-66E36D40D49C.html
+[custom-policy-template]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-F147492B-04FD-4CFD-8D1F-66E36D40D49C.html
 
 ## Refer the following example for creating custom policy template and assign it to custom policy
 

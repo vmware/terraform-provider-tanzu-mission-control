@@ -21,8 +21,8 @@ You must also have the appropriate permissions in Tanzu Mission Control:
 - To provision a cluster, you must have `cluster.admin` permissions.
 - You must also have `clustergroup.edit` permissions on the cluster group to detach a cluster.
 
-[azure-account]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-2CA6A21A-1D33-4852-B8F2-86BB3A1337E4.html
-[create-cluster]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-90ED8C73-8A40-46FF-85AE-A8DAA9048AA9.html
+[azure-account]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-2CA6A21A-1D33-4852-B8F2-86BB3A1337E4.html
+[create-cluster]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-90ED8C73-8A40-46FF-85AE-A8DAA9048AA9.html
 
 __Note__: Fields under the [nested Schema for `spec.nodepool`](#nestedblock--spec--nodepool) which are marked as "immutable" can't be changed. To update those fields, you need to create a new node pool or rename the node pool (which will have the same effect).
 

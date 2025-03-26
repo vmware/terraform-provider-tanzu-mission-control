@@ -15,7 +15,7 @@ Backups can be applied in 3 levels:
 
 For more information regarding scheduled backups, see [Scheduled Backups][backup-schedule].
 
-[backup-schedule]: https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/services/tanzumc-using/GUID-89926F80-050A-4F1C-9D04-D56D5F453995.html?hWord=N4IghgNiBcIEZgMYGsCuAHABAZ0QCwFMATVCAkAXyA
+[backup-schedule]: https://techdocs.broadcom.com/us/en/vmware-tanzu/standalone-components/tanzu-mission-control/1-4/tanzu-mission-control-documentation/tanzumc-using-GUID-89926F80-050A-4F1C-9D04-D56D5F453995.html?hWord=N4IghgNiBcIEZgMYGsCuAHABAZ0QCwFMATVCAkAXyA
 
 **NOTE :** To resolve cluster and cluster group backup schedule conflicts use the below command
 ``terraform refresh``
