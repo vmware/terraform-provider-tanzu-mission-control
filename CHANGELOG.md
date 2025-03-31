@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## [v1.4.9](https://github.com/vmware/terraform-provider-tanzu-mission-control/releases/tag/v1.4.9)
+
+> Release Date: 2025-04-01
+
+FEATURES:
+
+- Added support to override variables in the control plane for VKS 3.2.0. [\#488](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/488)
+
+DOCUMENTATION:
+
+- Update links in product documentation. [\#524](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/524)
+- Update naming style from imperative to declarative. [\#491](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/491)
+
+BUG FIXES:
+
+- Fixed datasource schema for tanzu kubernetes clusters. [\#479](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/479)
+
+CHORES:
+
+- Bump `codecov/codecov-action` from 5.3.1 to 5.4.0. [/#515](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/515)
+- Bump `actions/checkout` from 4.2.1 to 4.2.2. [/#514](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/514)
+- Remove `codeql`. [/#512](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/512)
+- Bump `goreleaser/goreleaser-action` from 6.1.0 to 6.2.1. [/#510](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/510)
+- Bump `golangci/golangci-lint-action` from 6.2.0 to 6.5.0. [/509](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/509)
+- Bump `codecov/codecov-action` from 5.1.2 to 5.3.1. [/#502](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/502)
+- Bump `actions/stale` from 9.0.0 to 9.1.0. [/#501](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/501)
+- Bump `actions/setup-go` from 5.2.0 to 5.3.0. [/#500](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/500)
+
 ## [v1.4.8](https://github.com/vmware/terraform-provider-tanzu-mission-control/releases/tag/v1.4.8)
 
 > Release Date: 2024-01-30
