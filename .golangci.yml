@@ -1,59 +1,5 @@
-# © Broadcom. All Rights Reserved.
-# The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
-# SPDX-License-Identifier: MPL-2.0
-
-# For more information about the golangci-lint configuration file, refer to:
-# https://golangci-lint.run/usage/configuration/
-
-issues:
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - dogsled
-        - funlen
-        - gocognit
-    - path: internal/authctx
-      linters:
-        - gosec
-        - nestif
-    - path: flatten_test.go
-      linters:
-        - dupl
-
-linters:
-  disable-all: true
-  enable:
-    - asciicheck
-    - bodyclose
-    - copyloopvar
-    - dogsled
-    - dupl
-    - errcheck
-    - funlen
-    - goconst
-    - gocognit
-    - gocritic
-    - gocyclo
-    - godot
-    - gofmt
-    - goimports
-    - goprintffuncname
-    - gosec
-    - gosimple
-    - govet
-    - ineffassign
-    - misspell
-    - nakedret
-    - nestif
-    - prealloc
-    - staticcheck
-    - stylecheck
-    - typecheck
-    - unconvert
-    - unparam
-    - unused
-    - whitespace
-    - wsl
+---
+version: "2"
 
 run:
   build-tags:
@@ -86,15 +32,95 @@ run:
 
 output:
   formats:
-    - format: colored-line-number
+    text:
+      path: stdout
 
-linters-settings:
-  funlen:
-    lines: 150
-    statements: 100
-  gocognit:
-    min-complexity: 60
-  goimports:
-    local-prefixes: github.com/vmware/terraform-provider-tanzu-mission-control
-  nestif:
-    min-complexity: 14
+linters:
+  default: none
+  enable:
+    - asciicheck
+    - bodyclose
+    - copyloopvar
+    - dogsled
+    - dupl
+    - errcheck
+    - funlen
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - goprintffuncname
+    - gosec
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - nestif
+    - prealloc
+    - staticcheck
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+    - wsl
+  settings:
+    funlen:
+      lines: 150
+      statements: 100
+    gocognit:
+      min-complexity: 60
+    nestif:
+      min-complexity: 14
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      # TODO: Setting temporary exclusions.
+      - linters:
+          - dogsled
+          - funlen
+          - gocognit
+        path: _test\.go
+      - linters:
+          - gosec
+          - nestif
+        path: internal/authctx
+      - linters:
+          - dupl
+        path: flatten_test.go
+      - linters:
+          - staticcheck
+        text: QF1001
+      - linters:
+          - staticcheck
+        text: QF1003
+      - linters:
+          - staticcheck
+        text: QF1007
+      - linters:
+          - staticcheck
+        text: QF1011
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/vmware/terraform-provider-tanzu-mission-control
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
