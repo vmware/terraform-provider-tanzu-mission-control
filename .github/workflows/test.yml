@@ -1,4 +1,5 @@
-name: Test and Code Coverage
+---
+name: Test
 
 on:
   pull_request:
@@ -11,9 +12,11 @@ on:
 env:
   BUILD_TAGS: 'akscluster cluster clustergroup credential ekscluster gitrepository iampolicy kustomization namespace custompolicy imagepolicy networkpolicy quotapolicy securitypolicy sourcesecret workspace tanzupackage tanzupackages packagerepository packageinstall clustersecret mutationpolicy backupschedule targetlocation dataprotection tanzukubernetescluster clusterclass managementcluster provisioner inspections custompolicytemplate customiamrole permissiontemplate'
 
+permissions:
+  contents: read
+
 jobs:
-  build:
-    name: Test and Code Coverage
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
