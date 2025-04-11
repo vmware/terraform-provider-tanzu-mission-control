@@ -43,7 +43,7 @@ resource "tanzu-mission-control_enable_data_protection" "demo" {
 resource "tanzu-mission-control_enable_data_protection" "cgdemo" {
   scope {
     cluster_group {
-      cluster_group_name            = "default"
+      cluster_group_name = "default"
     }
   }
 
@@ -53,22 +53,22 @@ resource "tanzu-mission-control_enable_data_protection" "cgdemo" {
     enable_all_api_group_versions_backup = false
 
     selector {
-        labelselector {
-            matchexpressions {
-                key      = "site"
-                operator = "NotIn"
-                values   = [
-                    "one",
-                    "two"
-                ]
-            }
+      labelselector {
+        matchexpressions {
+          key      = "site"
+          operator = "NotIn"
+          values = [
+            "one",
+            "two"
+          ]
         }
+      }
     }
   }
 
   deletion_policy {
     delete_backups = false
-    force = true
+    force          = true
   }
 }
 ```

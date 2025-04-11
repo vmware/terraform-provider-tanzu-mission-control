@@ -84,7 +84,7 @@ resource "tanzu-mission-control_ekscluster" "tf_eks_cluster" {
         vpc_cni_config {
           eni_config {
             id = "subnet-0a680171b6330619f" // Required, need not belong to the same VPC as the cluster, subnets provided in vpc_cni_config are expected to be in different AZs
-            security_groups = [ //optional, if not provided, the cluster security group will be used
+            security_groups = [             //optional, if not provided, the cluster security group will be used
               "sg-00c96ad9d02a22522",
             ]
           }
