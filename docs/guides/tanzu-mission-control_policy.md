@@ -392,7 +392,7 @@ resource "tanzu-mission-control_custom_policy" "cluster_group_scoped_custom_temp
     input {
       custom {
         template_name = tanzu-mission-control_custom_policy_template.sample_template.name
-        audit = false
+        audit         = false
 
         target_kubernetes_resources {
           api_groups = [

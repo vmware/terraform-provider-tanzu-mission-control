@@ -28,8 +28,8 @@ Read provisioner in a management cluster using this Terraform module.
 # Read Tanzu Mission Control provisioner : fetch the given provisioner details
 data "tanzu-mission-control_provisioner" "read_provisioner" {
   provisioners {
-    name = "test-provisioner" # Optional
-    management_cluster = "eks" # Required
+    name               = "test-provisioner" # Optional
+    management_cluster = "eks"              # Required
   }
 }
 

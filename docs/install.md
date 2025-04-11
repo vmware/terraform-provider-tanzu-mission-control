@@ -26,7 +26,7 @@ Providers listed on the Terraform Registry can be automatically downloaded when 
 terraform {
   required_providers {
     vmc = {
-      source  = "vmware/tanzu-mission-control"
+      source = "vmware/tanzu-mission-control"
     }
   }
   required_version = ">= x.y.z"

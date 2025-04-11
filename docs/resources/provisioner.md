@@ -29,8 +29,8 @@ Addition of a provisioner resource refers to creation of namespace in the manage
 ```terraform
 # Create provisioner resource
 resource "tanzu-mission-control_provisioner" "provisioner" {
-  name = "demo-test" # Required
-  management_cluster = "eks" # Required
+  name               = "demo-test" # Required
+  management_cluster = "eks"       # Required
 
   meta {
     description = "Create provisioner through terraform"

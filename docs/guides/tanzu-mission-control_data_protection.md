@@ -52,7 +52,7 @@ You can use the following template as reference for enabling all stages of data 
 // Tanzu Mission Control Data Protection Feature
 
 locals {
-  cluster_name = "<cluster-name>"
+  cluster_name            = "<cluster-name>"
   management_cluster_name = "<management-cluster-name>"
   provisioner_name        = "<provisioner-name>"
 }
@@ -81,11 +81,11 @@ resource "tanzu-mission-control_enable_data_protection" "data_protection" {
 // Create Target Location for Scheduled Back Up
 // Self managed AWS Target Location
 resource "tanzu-mission-control_target_location" "aws_self_provisioned" {
-  name          = "<target-location-name>"
+  name = "<target-location-name>"
 
   spec {
     target_provider = "AWS"
-    credential      = {
+    credential = {
       name = "<aws-credential-name?"
     }
 
@@ -114,7 +114,7 @@ resource "tanzu-mission-control_target_location" "aws_self_provisioned" {
 
 // Create Full Cluster Scheduled Back Up
 resource "tanzu-mission-control_backup_schedule" "backup_full_cluster" {
-  name                    = "<scheduled-backup-name>"
+  name = "<scheduled-backup-name>"
   scope {
     cluster {
       cluster_name            = local.cluster_name
@@ -131,7 +131,7 @@ resource "tanzu-mission-control_backup_schedule" "backup_full_cluster" {
     }
 
     template {
-      backup_ttl          = "2592000s"
+      backup_ttl = "2592000s"
       excluded_namespaces = [
         "<namespace-1>",
       ]
