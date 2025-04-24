@@ -4,7 +4,7 @@
 
 package testing
 
-import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+import "github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 const (
 	MetaTemplate = `meta {
