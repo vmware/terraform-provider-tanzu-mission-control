@@ -4,7 +4,7 @@
 
 package iampolicy
 
-import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+import "github.com/hashicorp/terraform-plugin-testing/helper/resource"
 
 func MetaResourceAttributeCheck(resourceName string) []resource.TestCheckFunc {
 	return []resource.TestCheckFunc{
