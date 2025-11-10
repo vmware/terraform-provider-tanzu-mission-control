@@ -10,7 +10,7 @@ require (
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.36.1
 	github.com/hashicorp/terraform-plugin-testing v1.12.0
 	github.com/pkg/errors v0.9.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	go.pinniped.dev v0.23.0
 	golang.org/x/exp v0.0.0-20221126150942-6ab00d035af9
 	k8s.io/apiextensions-apiserver v0.28.2
