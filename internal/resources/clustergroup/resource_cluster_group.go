@@ -119,7 +119,6 @@ func resourceClusterGroupCreate(_ context.Context, d *schema.ResourceData, m int
 	}
 
 	clusterGroupResponse, err := config.TMCConnection.ClusterGroupResourceService.ManageV1alpha1ClusterGroupResourceServiceCreate(clusterGroupRequest)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control cluster group entry, name : %s", clusterGroupName))
 	}

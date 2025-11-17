@@ -113,7 +113,6 @@ func dataSourceProvisionerRead(ctx context.Context, d *schema.ResourceData, m in
 	}
 
 	err = tfModelDataConverter.FillTFSchema(resp, d)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to populate tf schema"))
 	}

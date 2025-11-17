@@ -78,7 +78,6 @@ func resourceProvisionerCreate(ctx context.Context, d *schema.ResourceData, m in
 	}
 
 	provisionerResponse, err := config.TMCConnection.ProvisionerResourceService.ProvisionerResourceServiceCreate(provisionerRequest)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control provisioner entry, name : %s", model.FullName.Name))
 	}

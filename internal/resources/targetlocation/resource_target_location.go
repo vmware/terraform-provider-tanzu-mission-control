@@ -41,21 +41,20 @@ func ResourceTargetLocation() *schema.Resource {
 
 func resourceTargetLocationCreate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
 
+	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "Couldn't create Tanzu Mission Control backup target location."))
 	}
 
 	model.FullName.ProviderName = TMCProviderName
-	credentialsType, err := getCredentialsType(config, model.Spec.Credential.Name)
 
+	credentialsType, err := getCredentialsType(config, model.Spec.Credential.Name)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "Couldn't create Tanzu Mission Control backup target location."))
 	}
 
 	err = validateSchemaByCredentials(model, credentialsType)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "Couldn't create Tanzu Mission Control backup target location."))
 	}
@@ -65,7 +64,6 @@ func resourceTargetLocationCreate(ctx context.Context, data *schema.ResourceData
 	}
 
 	_, err = config.TMCConnection.TargetLocationService.TargetLocationResourceServiceCreate(request)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't create Tanzu Mission Control backup target location.\nName: %s, Provider: %s",
 			request.BackupLocation.FullName.Name, request.BackupLocation.FullName.ProviderName))
@@ -78,16 +76,16 @@ func resourceTargetLocationCreate(ctx context.Context, data *schema.ResourceData
 
 func resourceTargetLocationRead(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey})
 
+	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "Couldn't read Tanzu Mission Control backup target location."))
 	}
 
 	targetLocationFn := model.FullName
 	targetLocationFn.ProviderName = TMCProviderName
-	resp, err := readResourceWait(ctx, &config, targetLocationFn)
 
+	resp, err := readResourceWait(ctx, &config, targetLocationFn)
 	if err != nil {
 		if clienterrors.IsNotFoundError(err) {
 			if !helper.IsContextCallerSet(ctx) {
@@ -112,7 +110,6 @@ func resourceTargetLocationRead(ctx context.Context, data *schema.ResourceData, 
 
 		if credentialsTypeCtx == nil {
 			credentialsType, err = getCredentialsType(config, resp.BackupLocation.Spec.Credential.Name)
-
 			if err != nil {
 				return diag.Errorf("Couldn't read backup target location. Credentials Error: %s", err.Error())
 			}
@@ -122,7 +119,6 @@ func resourceTargetLocationRead(ctx context.Context, data *schema.ResourceData, 
 
 		// When Credentials are TMC managed, bucket returns with a generated name, therefore removing it from the response to keep the state consistent
 		err = tfModelResourceConverter.FillTFSchema(resp.BackupLocation, data)
-
 		if err != nil {
 			return diag.Errorf("Couldn't read backup target location.\nName: %s, Provider: %s", targetLocationFn.Name, targetLocationFn.ProviderName)
 		}
@@ -136,8 +132,8 @@ func resourceTargetLocationRead(ctx context.Context, data *schema.ResourceData, 
 
 func resourceTargetLocationDelete(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey})
 
+	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "Couldn't delete Tanzu Mission Control backup target location."))
 	}
@@ -155,15 +151,15 @@ func resourceTargetLocationDelete(ctx context.Context, data *schema.ResourceData
 
 func resourceTargetLocationUpdate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
 
+	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "Couldn't update Tanzu Mission Control backup target location."))
 	}
 
 	model.FullName.ProviderName = TMCProviderName
-	credentialsType, err := getCredentialsType(config, model.Spec.Credential.Name)
 
+	credentialsType, err := getCredentialsType(config, model.Spec.Credential.Name)
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "Couldn't update Tanzu Mission Control backup target location."))
 	}
@@ -185,7 +181,6 @@ func resourceTargetLocationUpdate(ctx context.Context, data *schema.ResourceData
 	}
 
 	_, err = config.TMCConnection.TargetLocationService.TargetLocationResourceServiceUpdate(request)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't update Tanzu Mission Control backup target location.\nName: %s, Provider: %s",
 			request.BackupLocation.FullName.Name, request.BackupLocation.FullName.ProviderName))
@@ -212,13 +207,11 @@ func resourceTargetLocationImporter(ctx context.Context, data *schema.ResourceDa
 		return nil, errors.Errorf("Couldn't Import backup target location.\nName: %s, Provider: %s", targetLocationFn.Name, targetLocationFn.ProviderName)
 	} else {
 		credentialsType, err := getCredentialsType(config, resp.BackupLocation.Spec.Credential.Name)
-
 		if err != nil {
 			return nil, errors.Errorf("Couldn't Import backup target location. Credentials Error: %s", err.Error())
 		}
 
 		err = tfModelResourceConverter.FillTFSchema(resp.BackupLocation, data)
-
 		if err != nil {
 			return nil, err
 		}
@@ -325,7 +318,6 @@ func getCredentialsType(config authctx.TanzuContext, credentialsName string) (cr
 	}
 
 	resp, err := config.TMCConnection.CredentialResourceService.CredentialResourceServiceGet(credentialsFn)
-
 	if err != nil {
 		return credentialsmodels.VmwareTanzuManageV1alpha1AccountCredentialProviderPROVIDERUNSPECIFIED, err
 	}

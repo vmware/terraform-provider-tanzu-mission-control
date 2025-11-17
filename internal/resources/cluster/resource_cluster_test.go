@@ -1,5 +1,4 @@
 //go:build cluster
-// +build cluster
 
 // © Broadcom. All Rights Reserved.
 // The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
@@ -57,6 +56,7 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 						t.Log("ATTACH_KUBECONFIG env var is not set")
 						return true, nil
 					}
+
 					return false, nil
 				},
 			},
@@ -70,6 +70,7 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 						t.Log("ATTACH_WITH_IMAGE_REGISTRY_KUBECONFIG or IMAGE_REGISTRY env var is not set")
 						return true, nil
 					}
+
 					return false, nil
 				},
 			},
@@ -83,6 +84,7 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 						t.Log("ATTACH_WITH_PROXY_KUBECONFIG or PROXY env var is not set")
 						return true, nil
 					}
+
 					return false, nil
 				},
 			},
@@ -96,6 +98,7 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 						t.Log("TKGM_AWS_MANAGEMENT_CLUSTER or TKGM_AWS_PROVISIONER_NAME env var is not set for TKGm AWS acceptance test")
 						return true, nil
 					}
+
 					return false, nil
 				},
 			},
@@ -110,6 +113,7 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 						t.Log("TKGS_MANAGEMENT_CLUSTER, TKGS_PROVISIONER_NAME, VERSION or STORAGE CLASS env var is not set for TKGs acceptance test")
 						return true, nil
 					}
+
 					return false, nil
 				},
 			},
@@ -124,6 +128,7 @@ func TestAcceptanceForAttachClusterResource(t *testing.T) {
 						t.Log("TKGM_VSPHERE_MANAGEMENT_CLUSTER or TKGM_VSPHERE_PROVISIONER_NAME env var is not set for TKGm Vsphere acceptance test")
 						return true, nil
 					}
+
 					return false, nil
 				},
 			},

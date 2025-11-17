@@ -244,6 +244,7 @@ func TestGetConnectorTLSConfig(t *testing.T) {
 					caCert1, _ := os.ReadFile(clientCertPath)
 					caCertPool := x509.NewCertPool()
 					caCertPool.AppendCertsFromPEM(caCert1)
+
 					return caCertPool
 				}(),
 			},
@@ -268,6 +269,7 @@ func TestGetConnectorTLSConfig(t *testing.T) {
 				RootCAs: func() *x509.CertPool {
 					caCertPool := x509.NewCertPool()
 					caCertPool.AppendCertsFromPEM([]byte(caCert))
+
 					return caCertPool
 				}(),
 			},

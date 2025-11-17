@@ -1,5 +1,4 @@
 //go:build clusterclass || tanzukubernetescluster
-// +build clusterclass tanzukubernetescluster
 
 // © Broadcom. All Rights Reserved.
 // The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.

@@ -1,5 +1,4 @@
 //go:build networkpolicy
-// +build networkpolicy
 
 // © Broadcom. All Rights Reserved.
 // The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
@@ -111,6 +110,7 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.AllowAllRecipe),
 				})
 			}
+
 			return steps
 		}(),
 	})
@@ -145,6 +145,7 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.AllowAllToPodsRecipe),
 				})
 			}
+
 			return steps
 		}(),
 	})
@@ -227,6 +228,7 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 					Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.DenyAllToPodsRecipe),
 				})
 			}
+
 			return steps
 		}(),
 	})
@@ -284,8 +286,10 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 						Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.CustomEgressRecipe),
 					},
 				}
+
 				return steps
 			}
+
 			return []resource.TestStep{}
 		}(),
 	})
@@ -318,8 +322,10 @@ func TestAcceptanceForNetworkPolicyResource(t *testing.T) {
 						Check:  testConfig.checkNetworkPolicyResourceAttributes(scope.WorkspaceScope, policykindNetwork.CustomIngressRecipe),
 					},
 				}
+
 				return steps
 			}
+
 			return []resource.TestStep{}
 		}(),
 	})

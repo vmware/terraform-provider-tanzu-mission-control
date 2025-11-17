@@ -76,27 +76,23 @@ func (converter *TFSchemaModelConverter[T]) FillTFSchema(modelPtr T, data *schem
 	)
 
 	jsonBytes, err := modelPtr.MarshalBinary()
-
 	if err != nil {
 		return err
 	}
 
 	err = json.Unmarshal(jsonBytes, &modelJSONData)
-
 	if err != nil {
 		return err
 	}
 
 	for mapKey, mapValue := range *converter.TFModelMap {
 		tfValue, err = converter.buildTFValue(&modelJSONData, mapValue, &arrIndexer)
-
 		if err != nil {
 			return err
 		}
 
 		if tfValue != nil {
 			err = data.Set(mapKey, tfValue)
-
 			if err != nil {
 				return err
 			}

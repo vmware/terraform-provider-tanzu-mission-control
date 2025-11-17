@@ -43,27 +43,24 @@ func dataSourcePermissionTemplateRead(ctx context.Context, data *schema.Resource
 	var response *permissiontemplatemodels.VmwareTanzuManageV1alpha1AccountCredentialPermissionTemplateResponse
 
 	err := validateSchema(data)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Schema validation failed."))
 	}
 
 	config := m.(authctx.TanzuContext)
-	request, err := tfModelRequestConverter.ConvertTFSchemaToAPIModel(data, []string{CredentialsNameKey, CapabilityKey, ProviderKey})
 
+	request, err := tfModelRequestConverter.ConvertTFSchemaToAPIModel(data, []string{CredentialsNameKey, CapabilityKey, ProviderKey})
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't read permission template."))
 	}
 
 	response, err = config.TMCConnection.PermissionTemplateService.PermissionTemplateResourceServiceGet(request)
-
 	if err != nil {
 		if !clienterrors.IsNotFoundError(err) {
 			return diag.FromErr(errors.Wrapf(err, "Couldn't read permission template."))
 		}
 
 		response, err = config.TMCConnection.PermissionTemplateService.PermissionTemplateResourceServiceGenerate(request)
-
 		if err != nil {
 			diags = diag.FromErr(errors.Wrapf(err, "Couldn't read permission template."))
 		}
@@ -72,14 +69,12 @@ func dataSourcePermissionTemplateRead(ctx context.Context, data *schema.Resource
 	if len(response.TemplateValues) > 0 {
 		// This is necessary because sometimes the template parameters definition and the template values returned from the API do not match.
 		err = removeUndefinedTemplateValues(response)
-
 		if err != nil {
 			diags = diag.FromErr(errors.Wrapf(err, "Couldn't read permission template."))
 		}
 	}
 
 	err = tfModelResponseConverter.FillTFSchema(response, data)
-
 	if err != nil {
 		diags = diag.FromErr(errors.Wrapf(err, "Couldn't read permission template."))
 	}
@@ -95,13 +90,11 @@ func removeUndefinedTemplateValues(response *permissiontemplatemodels.VmwareTanz
 	var templateJSON map[string]interface{}
 
 	templateBytes, err := base64.StdEncoding.DecodeString(response.PermissionTemplate)
-
 	if err != nil {
 		return err
 	}
 
 	err = json.Unmarshal(templateBytes, &templateJSON)
-
 	if err != nil {
 		return err
 	}

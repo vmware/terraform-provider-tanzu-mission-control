@@ -1,5 +1,4 @@
 //go:build managementcluster
-// +build managementcluster
 
 // © Broadcom. All Rights Reserved.
 // The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
@@ -84,6 +83,7 @@ func TestAcceptanceForManagementClusterRegistrationResource(t *testing.T) {
 					if kubeconfigPath == "" {
 						t.Skip("KUBECONFIG env var is not set for management cluster registration acceptance test")
 					}
+
 					if !enablePolicyEnvTest {
 						t.Skip("Acceptance tests against outside systems are not enabled")
 					}
@@ -207,7 +207,6 @@ func getContext(s *terraform.State, resourceName string) (*authctx.TanzuContext,
 	}
 
 	err := getSetupConfig(config)
-
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to set the context")
 	}

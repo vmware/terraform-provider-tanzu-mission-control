@@ -39,7 +39,6 @@ func dataSourceCredentialRead(ctx context.Context, d *schema.ResourceData, m int
 	)
 
 	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(d, []string{NameKey})
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "unable to get Tanzu Mission Control credential"))
 	}
@@ -80,8 +79,8 @@ func dataSourceCredentialRead(ctx context.Context, d *schema.ResourceData, m int
 		_, err = getCredentialResourceRetryableFunc()
 	default:
 		var parseErr error
-		timeoutDuration, parseErr = time.ParseDuration(timeoutData)
 
+		timeoutDuration, parseErr = time.ParseDuration(timeoutData)
 		if parseErr != nil {
 			log.Printf("[INFO] unable to parse the duration value for the key %s. Defaulting to %s minutes"+
 				" Please refer to 'https://pkg.go.dev/time#ParseDuration' for providing the right value", waitKey, defaultWaitTimeout)

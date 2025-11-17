@@ -1,5 +1,4 @@
 //go:build packageinstall
-// +build packageinstall
 
 // © Broadcom. All Rights Reserved.
 // The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.

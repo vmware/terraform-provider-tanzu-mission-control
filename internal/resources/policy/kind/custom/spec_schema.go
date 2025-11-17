@@ -212,7 +212,6 @@ func FlattenSpec(spec *policymodel.VmwareTanzuManageV1alpha1CommonPolicySpec) (d
 		var tmcCustomRecipeInput policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustom
 
 		err = tmcCustomRecipeInput.UnmarshalBinary(byteSlice)
-
 		if err != nil {
 			return data
 		}

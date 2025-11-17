@@ -186,7 +186,6 @@ func resourceEnableDataProtectionImporter(ctx context.Context, data *schema.Reso
 	}
 
 	err := populateDataFromServer(ctx, config, scopedFullname, data)
-
 	if err != nil {
 		return nil, errors.Wrap(err, "Couldn't import data protection configuration.")
 	}

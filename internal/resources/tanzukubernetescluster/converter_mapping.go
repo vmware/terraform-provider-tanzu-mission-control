@@ -107,7 +107,6 @@ func evaluateClusterVariables(mode tfModelConverterHelper.EvaluationMode, value 
 		overridesTFJSON := map[string]interface{}{}
 
 		err = json.Unmarshal([]byte(overridesTFData), &overridesTFJSON)
-
 		if err != nil {
 			return nil
 		}

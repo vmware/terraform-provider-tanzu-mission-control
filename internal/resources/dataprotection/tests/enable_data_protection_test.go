@@ -1,5 +1,4 @@
 //go:build dataprotection
-// +build dataprotection
 
 // © Broadcom. All Rights Reserved.
 // The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.

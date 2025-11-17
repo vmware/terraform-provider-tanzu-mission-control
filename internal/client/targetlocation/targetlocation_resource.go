@@ -58,7 +58,6 @@ func (c *Client) TargetLocationResourceServiceList(request *targetlocationsmodel
 	}
 
 	requestURL, err := buildTargetLocationsRequestURL(request)
-
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +127,6 @@ func buildTargetLocationsRequestURL(request *targetlocationsmodel.ListBackupLoca
 	}
 
 	err := buildQueryParams(&queryParams, "", requestMap)
-
 	if err != nil {
 		return "", errors.New("couldn't create request url")
 	}
@@ -152,7 +150,6 @@ func buildQueryParams(queryParams *url.Values, parentParam string, request map[s
 			switch value := value.(type) {
 			case map[string]interface{}:
 				err = buildQueryParams(queryParams, parent, value)
-
 				if err != nil {
 					return err
 				}

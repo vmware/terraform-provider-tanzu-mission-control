@@ -1,5 +1,4 @@
 //go:build akscluster
-// +build akscluster
 
 // © Broadcom. All Rights Reserved.
 // The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
@@ -266,6 +265,7 @@ func TestAccAksCluster_basics(t *testing.T) {
 			if err != nil {
 				return err
 			}
+
 			_, err = config.TMCConnection.AKSClusterResourceService.AksClusterResourceServiceGet(fn)
 			if !clienterrors.IsNotFoundError(err) {
 				return err

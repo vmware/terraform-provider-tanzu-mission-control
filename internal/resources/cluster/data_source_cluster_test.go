@@ -1,5 +1,4 @@
 //go:build cluster
-// +build cluster
 
 // © Broadcom. All Rights Reserved.
 // The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.

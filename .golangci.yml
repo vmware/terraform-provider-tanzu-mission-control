@@ -63,7 +63,7 @@ linters:
     - unparam
     - unused
     - whitespace
-    - wsl
+    - wsl_v5
   settings:
     funlen:
       lines: 150
@@ -72,6 +72,10 @@ linters:
       min-complexity: 60
     nestif:
       min-complexity: 14
+    wsl_v5:
+      allow-first-in-block: true
+      allow-whole-block: false
+      branch-max-lines: 2
   exclusions:
     generated: lax
     presets:
@@ -105,6 +109,9 @@ linters:
       - linters:
           - staticcheck
         text: QF1011
+      - linters:
+          - staticcheck
+        text: SA1019
     paths:
       - third_party$
       - builtin$

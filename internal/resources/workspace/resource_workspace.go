@@ -72,7 +72,6 @@ func resourceWorkspaceCreate(ctx context.Context, d *schema.ResourceData, m inte
 	}
 
 	workspaceResponse, err := config.TMCConnection.WorkspaceResourceService.ManageV1alpha1WorkspaceResourceServiceCreate(workspaceRequest)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to create Tanzu Mission Control workspace entry, name : %s", workspaceName))
 	}

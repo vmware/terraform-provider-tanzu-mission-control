@@ -42,7 +42,6 @@ func readResourceWait(ctx context.Context, config *authctx.TanzuContext, cluster
 	}
 
 	resp, err = readFullClusterResourceWait(ctx, config, clusterFn, existingNodePools, waitForKubeConfig)
-
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) && !failOnTimeOut {
 			return resp, nil
@@ -59,13 +58,11 @@ func readFullClusterResourceWait(ctx context.Context, config *authctx.TanzuConte
 	// We call this first in case we receive a timeout while waiting for the cluster to be ready, therefore in order
 	// to return the last results in case of a timeout, the calling function will have to get some cluster response.
 	resp, err = readFullClusterResource(config, clusterFn)
-
 	if err != nil {
 		return resp, err
 	}
 
 	err = waitClusterReady(ctx, config, clusterFn)
-
 	if err != nil {
 		return resp, err
 	}
@@ -85,15 +82,14 @@ func readFullClusterResourceWait(ctx context.Context, config *authctx.TanzuConte
 	}
 
 	resp.TanzuKubernetesCluster.Spec.Topology.NodePools = nodePoolsToCheck
-	err = waitNodePoolsReady(ctx, config, clusterFn, nodePoolsToCheck)
 
+	err = waitNodePoolsReady(ctx, config, clusterFn, nodePoolsToCheck)
 	if err != nil {
 		return resp, err
 	}
 
 	if waitForKubeConfig && resp.TanzuKubernetesCluster.Spec.KubeConfig == "" {
 		resp.TanzuKubernetesCluster.Spec.KubeConfig, err = waitKubeConfigReady(ctx, config, clusterFn)
-
 		if err != nil {
 			return resp, err
 		}
@@ -117,7 +113,6 @@ func waitClusterReady(ctx context.Context, config *authctx.TanzuContext, cluster
 		time.Sleep(5 * time.Second)
 
 		err := ctx.Err()
-
 		if err != nil {
 			if errors.Is(err, context.DeadlineExceeded) {
 				err = errors.Wrapf(err, "Timeout exceeded while waiting for the cluster to be ready. Cluster Status: %s, Cluster Health: %s", clusterStatus, clusterHealth)
@@ -195,7 +190,6 @@ func waitNodePoolsReady(ctx context.Context, config *authctx.TanzuContext, clust
 			time.Sleep(5 * time.Second)
 
 			err := ctx.Err()
-
 			if err != nil {
 				if errors.Is(err, context.DeadlineExceeded) {
 					errMsg := "Timeout exceeded while waiting for the cluster node pools to be ready."
@@ -249,7 +243,6 @@ func waitKubeConfigReady(ctx context.Context, config *authctx.TanzuContext, clus
 		time.Sleep(5 * time.Second)
 
 		err := ctx.Err()
-
 		if err != nil {
 			if errors.Is(err, context.DeadlineExceeded) {
 				err = errors.Wrapf(err, "Timeout exceeded while waiting for the cluster kubeconfig to be ready. KubeConfig Status: %s", kubeConfigStatus)
@@ -292,7 +285,6 @@ func readFullClusterResource(config *authctx.TanzuContext, clusterFn *tanzukuber
 	}
 
 	nodePoolsResp, err := config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterNodePoolResourceServiceList(clusterFn)
-
 	if err != nil {
 		return nil, err
 	}
@@ -300,7 +292,6 @@ func readFullClusterResource(config *authctx.TanzuContext, clusterFn *tanzukuber
 	resp.TanzuKubernetesCluster.Spec.Topology.NodePools = nodePoolsResp.Nodepools
 
 	kubeConfigResp, err := config.TMCConnection.TanzuKubernetesClusterResourceService.KubeConfigResourceServiceGet(clusterFn)
-
 	if err != nil {
 		return nil, err
 	}

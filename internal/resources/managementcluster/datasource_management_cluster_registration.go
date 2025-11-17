@@ -91,8 +91,8 @@ func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, m interf
 		_, err = getRegistrationResourceRetryableFn()
 	default:
 		var parseErr error
-		timeoutDuration, parseErr = time.ParseDuration(timeoutData)
 
+		timeoutDuration, parseErr = time.ParseDuration(timeoutData)
 		if parseErr != nil {
 			log.Printf("[INFO] unable to prase the duration value for the key %s. Defaulting to 15 minutes(15m)"+
 				" Please refer to 'https://pkg.go.dev/time#ParseDuration' for providing the right value", waitKey)

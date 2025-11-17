@@ -588,7 +588,6 @@ func resourceNodePoolCreate(ctx context.Context, d *schema.ResourceData, m inter
 	}
 
 	nodePoolResponse, err := config.TMCConnection.NodePoolResourceService.ManageV1alpha1ClusterNodePoolResourceServiceCreate(nodePoolRequest)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "unable to create tanzu node pool entry"))
 	}

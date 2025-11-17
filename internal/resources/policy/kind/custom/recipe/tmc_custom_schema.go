@@ -115,7 +115,6 @@ func ValidateCustomRecipe(config authctx.TanzuContext, customRecipe map[string]i
 	}
 
 	recipeData, err := config.TMCConnection.RecipeResourceService.RecipeResourceServiceGet(recipeModel)
-
 	if err != nil {
 		// NOTE: If error is 404 not found then do not fail the planning. This fix ensures that if user tries to create the new custom template
 		// and assign the same template to the custom policy in a single terraform apply operation will be able to proceed, instead of failing in the planning phase.

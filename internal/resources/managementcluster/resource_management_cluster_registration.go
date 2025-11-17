@@ -154,7 +154,6 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	}
 
 	createResponse, createError := createRegistrationResource(config, d)
-
 	if createError != nil {
 		return diag.FromErr(errors.Wrapf(createError, "Unable to create Management cluster registration, name : %s", d.Get(NameKey)))
 	}
@@ -352,7 +351,6 @@ func resourceClusterInPlaceUpdate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	registrationResponse, err := config.TMCConnection.ManagementClusterRegistrationResourceService.ManagementClusterResourceServiceUpdate(registrationRequest)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Unable to update Management cluster registration, name : %s", d.Get(NameKey)))
 	}

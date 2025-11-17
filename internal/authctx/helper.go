@@ -191,8 +191,8 @@ func ProviderConfigureContextWithDefaultTransportForTesting(_ context.Context, d
 	config.TLSConfig.CaCert, _ = d.Get(caCert).(string)
 
 	var err error
-	config.TMCConnection, err = client.NewHTTPClient(config.TLSConfig)
 
+	config.TMCConnection, err = client.NewHTTPClient(config.TLSConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -214,7 +214,6 @@ func setContext(config *TanzuContext) (TanzuContext, diag.Diagnostics) {
 	}
 
 	err := config.Setup()
-
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -242,7 +241,6 @@ func setContextWithDefaultTransport(config *TanzuContext) (TanzuContext, diag.Di
 	}
 
 	err := config.SetupWithDefaultTransportForTesting()
-
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,

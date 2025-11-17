@@ -96,8 +96,8 @@ var dataSpec = &schema.Schema{
 
 func resourceCredentialCreate(ctx context.Context, d *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(d, []string{})
 
+	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(d, []string{})
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "unable to create Tanzu Mission Control credential."))
 	}
@@ -107,7 +107,6 @@ func resourceCredentialCreate(ctx context.Context, d *schema.ResourceData, m int
 	}
 
 	response, err := config.TMCConnection.CredentialResourceService.CredentialResourceServiceCreate(request)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "unable to create Tanzu Mission Control credential entry, name : %s", NameKey))
 	}
@@ -119,8 +118,8 @@ func resourceCredentialCreate(ctx context.Context, d *schema.ResourceData, m int
 
 func resourceCredentialDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(d, []string{NameKey})
 
+	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(d, []string{NameKey})
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "unable to create Tanzu Mission Control credential."))
 	}

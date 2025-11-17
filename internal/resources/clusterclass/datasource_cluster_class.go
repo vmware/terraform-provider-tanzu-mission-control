@@ -29,8 +29,8 @@ func dataSourceClusterClassRead(ctx context.Context, data *schema.ResourceData, 
 	var resp *clusterclassmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassListData
 
 	config := m.(authctx.TanzuContext)
-	request, err := tfModelDataSourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey, ManagementClusterNameKey, ProvisionerNameKey})
 
+	request, err := tfModelDataSourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey, ManagementClusterNameKey, ProvisionerNameKey})
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't read cluster class"))
 	}
@@ -45,8 +45,8 @@ func dataSourceClusterClassRead(ctx context.Context, data *schema.ResourceData, 
 		data.SetId("NO_DATA")
 	default:
 		clusterClass := resp.ClusterClasses[0]
-		err = tfModelDataSourceConverter.FillTFSchema(clusterClass, data)
 
+		err = tfModelDataSourceConverter.FillTFSchema(clusterClass, data)
 		if err != nil {
 			diags = diag.FromErr(err)
 		}
