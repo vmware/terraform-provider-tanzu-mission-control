@@ -30,6 +30,7 @@ func TestFlattenClusterSpec(t *testing.T) {
 			getInput: func() (*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec, []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) {
 				spec, nps := getClusterSpec()
 				spec.Config.AddonsConfig = nil
+
 				return spec, nps
 			},
 			expected: []interface{}{
@@ -317,6 +318,7 @@ func TestFlattenClusterSpec(t *testing.T) {
 			getInput: func() (*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec, []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) {
 				spec, _ := getClusterSpec()
 				spec.Config.AddonsConfig = nil
+
 				return spec, nil
 			},
 			expected: []interface{}{
@@ -374,6 +376,7 @@ func TestFlattenClusterSpec(t *testing.T) {
 				spec, _ := getClusterSpec()
 				spec.ProxyName = ""
 				spec.Config.AddonsConfig = nil
+
 				return spec, nil
 			},
 			expected: []interface{}{
@@ -430,6 +433,7 @@ func TestFlattenClusterSpec(t *testing.T) {
 				spec, _ := getClusterSpec()
 				spec.ProxyName = ""
 				spec.Config = nil
+
 				return spec, nil
 			},
 			expected: []interface{}{
@@ -470,6 +474,7 @@ func TestFlattenConfig(t *testing.T) {
 			getInput: func() *eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig {
 				config := getConfig()
 				config.AddonsConfig = nil
+
 				return config
 			},
 			expected: []interface{}{
@@ -520,6 +525,7 @@ func TestFlattenConfig(t *testing.T) {
 				config := getConfig()
 				config.KubernetesNetworkConfig = nil
 				config.AddonsConfig = nil
+
 				return config
 			},
 			expected: []interface{}{
@@ -565,6 +571,7 @@ func TestFlattenConfig(t *testing.T) {
 				config := getConfig()
 				config.Logging = nil
 				config.AddonsConfig = nil
+
 				return config
 			},
 			expected: []interface{}{
@@ -606,6 +613,7 @@ func TestFlattenConfig(t *testing.T) {
 				config := getConfig()
 				config.Vpc = nil
 				config.AddonsConfig = nil
+
 				return config
 			},
 			expected: []interface{}{

@@ -60,8 +60,8 @@ func ResourceTanzuKubernetesCluster() *schema.Resource {
 
 func resourceTanzuKubernetesClusterCreate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
 
+	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't create TKG Cluster."))
 	}
@@ -74,7 +74,6 @@ func resourceTanzuKubernetesClusterCreate(ctx context.Context, data *schema.Reso
 	}
 
 	_, err = config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterResourceServiceCreate(clusterRequest)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't create TKG Cluster.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s",
 			model.FullName.ManagementClusterName, model.FullName.ProvisionerName, model.FullName.Name))
@@ -91,8 +90,8 @@ func resourceTanzuKubernetesClusterCreate(ctx context.Context, data *schema.Reso
 		nodePoolRequest := &tkcnodepoolmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepoolData{
 			Nodepool: np,
 		}
-		_, err = config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterNodePoolResourceServiceCreate(nodePoolRequest)
 
+		_, err = config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterNodePoolResourceServiceCreate(nodePoolRequest)
 		if err != nil {
 			return diag.FromErr(errors.Wrapf(err, "Couldn't create TKG Cluster Nodepool.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s, Node Pool Name: %s",
 				np.FullName.ManagementClusterName, np.FullName.ProvisionerName, np.FullName.TanzuKubernetesClusterName, np.FullName.Name))
@@ -108,9 +107,9 @@ func resourceTanzuKubernetesClusterRead(ctx context.Context, data *schema.Resour
 	)
 
 	config := m.(authctx.TanzuContext)
+
 	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey, ProvisionerNameKey, ManagementClusterNameKey, TimeoutPolicyKey,
 		strings.Join([]string{SpecKey, TopologyKey, NodePoolKey}, tfModelConverterHelper.DefaultModelPathSeparator)})
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't read TKG Cluster."))
 	}
@@ -155,7 +154,6 @@ func resourceTanzuKubernetesClusterRead(ctx context.Context, data *schema.Resour
 		removeUnspecifiedNodePoolsOverrides(nodePoolsData, kubernetesClusterModel)
 
 		err = tfModelResourceConverter.FillTFSchema(kubernetesClusterModel, data)
-
 		if err != nil {
 			diags = diag.FromErr(err)
 		}
@@ -172,9 +170,9 @@ func resourceTanzuKubernetesClusterRead(ctx context.Context, data *schema.Resour
 
 func resourceTanzuKubernetesClusterDelete(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
+
 	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey, ProvisionerNameKey, ManagementClusterNameKey,
 		strings.Join([]string{SpecKey, TopologyKey, NodePoolKey}, tfModelConverterHelper.DefaultModelPathSeparator)})
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't delete TKG cluster"))
 	}
@@ -192,8 +190,8 @@ func resourceTanzuKubernetesClusterDelete(ctx context.Context, data *schema.Reso
 
 func resourceTanzuKubernetesClusterUpdate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
 
+	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't update TKG Cluster."))
 	}
@@ -209,7 +207,6 @@ func resourceTanzuKubernetesClusterUpdate(ctx context.Context, data *schema.Reso
 			}
 
 			_, err = config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterResourceServiceUpdate(clusterRequest)
-
 			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Couldn't update TKG Cluster.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s",
 					model.FullName.ManagementClusterName, model.FullName.ProvisionerName, model.FullName.Name))
@@ -262,7 +259,6 @@ func resourceTanzuKubernetesClusterNodePoolsUpdate(config authctx.TanzuContext, 
 
 				if isNodePoolNew {
 					_, err := config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterNodePoolResourceServiceCreate(nodePoolRequest)
-
 					if err != nil {
 						return diag.FromErr(errors.Wrapf(err, "Couldn't create TKG Cluster Nodepool.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s, Node Pool Name: %s",
 							np.FullName.ManagementClusterName, np.FullName.ProvisionerName, np.FullName.TanzuKubernetesClusterName, np.FullName.Name))
@@ -274,7 +270,6 @@ func resourceTanzuKubernetesClusterNodePoolsUpdate(config authctx.TanzuContext, 
 
 					if nodePoolHasChanged(oldNodePoolMap, newNodePoolMap) {
 						_, err := config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterNodePoolResourceServiceUpdate(nodePoolRequest)
-
 						if err != nil {
 							return diag.FromErr(errors.Wrapf(err, "Couldn't update TKG Cluster Nodepool.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s, Node Pool Name: %s",
 								np.FullName.ManagementClusterName, np.FullName.ProvisionerName, np.FullName.TanzuKubernetesClusterName, np.FullName.Name))
@@ -302,7 +297,6 @@ func resourceTanzuKubernetesClusterNodePoolsUpdate(config authctx.TanzuContext, 
 			}
 
 			err := config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterNodePoolResourceServiceDelete(nodePoolFn)
-
 			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Couldn't delete TKG Cluster Nodepool.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s, Node Pool Name: %s",
 					nodePoolFn.ManagementClusterName, nodePoolFn.ProvisionerName, nodePoolFn.TanzuKubernetesClusterName, nodePoolFn.Name))
@@ -334,7 +328,6 @@ func resourceTanzuKubernetesClusterImporter(ctx context.Context, data *schema.Re
 	}
 
 	clusterResp, err := readFullClusterResource(&config, clusterFn)
-
 	if err != nil {
 		return nil, errors.Wrapf(err, "Couldn't import TKG cluster.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s",
 			clusterFn.ManagementClusterName, clusterFn.ProvisionerName, clusterFn.Name)
@@ -350,7 +343,6 @@ func resourceTanzuKubernetesClusterImporter(ctx context.Context, data *schema.Re
 	}
 
 	clusterClassResp, err := config.TMCConnection.ClusterClassResourceService.ClusterClassResourceServiceGet(clusterClassFn)
-
 	if err != nil {
 		return nil, errors.Wrapf(err, "Couldn't find cluster class.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Class Name: %s.",
 			clusterClassFn.ManagementClusterName, clusterClassFn.ProvisionerName, clusterClassFn.Name)
@@ -364,7 +356,6 @@ func resourceTanzuKubernetesClusterImporter(ctx context.Context, data *schema.Re
 	modifyClusterClassVariables(clusterClassVariablesMap, clusterResp.TanzuKubernetesCluster, removeModelVariable)
 
 	err = tfModelResourceConverter.FillTFSchema(clusterResp.TanzuKubernetesCluster, data)
-
 	if err != nil {
 		return nil, errors.Wrapf(err, "Couldn't import TKG cluster.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s",
 			clusterFn.ManagementClusterName, clusterFn.ProvisionerName, clusterFn.Name)
@@ -390,7 +381,6 @@ func validateSchema(_ context.Context, data *schema.ResourceDiff, value interfac
 	}
 
 	resp, err := config.TMCConnection.ClusterClassResourceService.ClusterClassResourceServiceGet(clusterClassFn)
-
 	if err != nil {
 		return errors.Wrapf(err, "Couldn't find cluster class.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Class Name: %s.",
 			clusterClassFn.ManagementClusterName, clusterClassFn.ProvisionerName, clusterClassFn.Name)

@@ -32,8 +32,8 @@ func ResourceCustomPolicyTemplate() *schema.Resource {
 
 func resourceCustomPolicyTemplateCreate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{})
 
+	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{})
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't create custom policy template."))
 	}
@@ -43,7 +43,6 @@ func resourceCustomPolicyTemplateCreate(ctx context.Context, data *schema.Resour
 	}
 
 	_, err = config.TMCConnection.CustomPolicyTemplateResourceService.CustomPolicyTemplateResourceServiceCreate(request)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't create custom policy template.\nName: %s", model.FullName.Name))
 	}
@@ -67,7 +66,6 @@ func resourceCustomPolicyTemplateUpdate(ctx context.Context, data *schema.Resour
 	}
 
 	_, err = config.TMCConnection.CustomPolicyTemplateResourceService.CustomPolicyTemplateResourceServiceUpdate(request)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't update custom policy template.\nName: %s", model.FullName.Name))
 	}
@@ -79,15 +77,15 @@ func resourceCustomPolicyTemplateRead(ctx context.Context, data *schema.Resource
 	var resp *custompolicytemplatemodels.VmwareTanzuManageV1alpha1PolicyTemplateData
 
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey})
 
+	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey})
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't read custom policy template."))
 	}
 
 	customPolicyFn := model.FullName
-	resp, err = config.TMCConnection.CustomPolicyTemplateResourceService.CustomPolicyTemplateResourceServiceGet(customPolicyFn)
 
+	resp, err = config.TMCConnection.CustomPolicyTemplateResourceService.CustomPolicyTemplateResourceServiceGet(customPolicyFn)
 	if err != nil {
 		if clienterrors.IsNotFoundError(err) {
 			if !helper.IsContextCallerSet(ctx) {
@@ -106,7 +104,6 @@ func resourceCustomPolicyTemplateRead(ctx context.Context, data *schema.Resource
 		return diag.FromErr(errors.Wrapf(err, "Couldn't read custom policy template.\nName: %s", customPolicyFn.Name))
 	} else if resp != nil {
 		err = tfModelConverter.FillTFSchema(resp.Template, data)
-
 		if err != nil {
 			return diag.FromErr(errors.Wrapf(err, "Couldn't read custom policy template.\nName: %s", customPolicyFn.Name))
 		}
@@ -119,15 +116,15 @@ func resourceCustomPolicyTemplateRead(ctx context.Context, data *schema.Resource
 
 func resourceCustomPolicyTemplateDelete(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey})
 
+	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey})
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't delete custom policy template."))
 	}
 
 	customPolicyFn := model.FullName
-	err = config.TMCConnection.CustomPolicyTemplateResourceService.CustomPolicyTemplateResourceServiceDelete(customPolicyFn)
 
+	err = config.TMCConnection.CustomPolicyTemplateResourceService.CustomPolicyTemplateResourceServiceDelete(customPolicyFn)
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't delete custom policy template.\nName: %s", customPolicyFn.Name))
 	}
@@ -154,7 +151,6 @@ func resourceCustomPolicyTemplateImporter(_ context.Context, data *schema.Resour
 	}
 
 	err = tfModelConverter.FillTFSchema(resp.Template, data)
-
 	if err != nil {
 		return nil, errors.Wrapf(err, "Couldn't read custom policy template.\nName: %s", customPolicyFn.Name)
 	}

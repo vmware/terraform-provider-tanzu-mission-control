@@ -121,7 +121,6 @@ func resourceHelmReleaseCreate(ctx context.Context, d *schema.ResourceData, m in
 	case commonscope.ClusterScope:
 		if scopedFullnameData.FullnameCluster != nil {
 			specVal, err := spec.ConstructSpecForClusterScope(d)
-
 			if err != nil {
 				return diag.FromErr(err)
 			}
@@ -144,7 +143,6 @@ func resourceHelmReleaseCreate(ctx context.Context, d *schema.ResourceData, m in
 	case commonscope.ClusterGroupScope:
 		if scopedFullnameData.FullnameClusterGroup != nil {
 			specVal, err := spec.ConstructSpecForClusterGroupScope(d)
-
 			if err != nil {
 				return diag.FromErr(err)
 			}
@@ -382,7 +380,6 @@ func checkHelmFeature(config authctx.TanzuContext, scopedFullnameData *scope.Sco
 				},
 			},
 		)
-
 		if err != nil {
 			return err
 		}
@@ -402,7 +399,6 @@ func checkHelmFeature(config authctx.TanzuContext, scopedFullnameData *scope.Sco
 				},
 			},
 		)
-
 		if err != nil {
 			return err
 		}

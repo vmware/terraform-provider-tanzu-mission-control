@@ -1,5 +1,4 @@
 //go:build tanzupackages
-// +build tanzupackages
 
 // © Broadcom. All Rights Reserved.
 // The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.

@@ -69,7 +69,6 @@ func getBearerToken(cspEndpoint, cspToken string, config *proxy.TLSConfig) (stri
 			"application/x-www-form-urlencoded",
 			encodedToken,
 		)
-
 		if err == nil {
 			defer resp.Body.Close()
 			break

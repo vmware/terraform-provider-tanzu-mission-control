@@ -4,7 +4,9 @@
 
 package clustergroupsecret
 
-import "github.com/go-openapi/swag"
+import (
+	"github.com/go-openapi/swag"
+)
 
 // VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretFullName Full name of the Secret.
 //

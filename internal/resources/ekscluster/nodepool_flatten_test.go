@@ -469,6 +469,7 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 					Name:    "",
 					Version: "7",
 				}
+
 				return spec
 			},
 			expected: []interface{}{
@@ -543,6 +544,7 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			getInput: func() *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec {
 				spec := getNodepoolSpec()
 				spec.RemoteAccess = nil
+
 				return spec
 			},
 			expected: []interface{}{
@@ -609,6 +611,7 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			getInput: func() *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec {
 				spec := getNodepoolSpec()
 				spec.RootDiskSize = 0
+
 				return spec
 			},
 			expected: []interface{}{
@@ -682,6 +685,7 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			getInput: func() *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec {
 				spec := getNodepoolSpec()
 				spec.ScalingConfig = nil
+
 				return spec
 			},
 			expected: []interface{}{
@@ -749,6 +753,7 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			getInput: func() *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec {
 				spec := getNodepoolSpec()
 				spec.SubnetIds = nil
+
 				return spec
 			},
 			expected: []interface{}{
@@ -817,6 +822,7 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			getInput: func() *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec {
 				spec := getNodepoolSpec()
 				spec.Taints = nil
+
 				return spec
 			},
 			expected: []interface{}{
@@ -884,6 +890,7 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			getInput: func() *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec {
 				spec := getNodepoolSpec()
 				spec.UpdateConfig = nil
+
 				return spec
 			},
 			expected: []interface{}{
@@ -952,6 +959,7 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			getInput: func() *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec {
 				spec := getNodepoolSpec()
 				spec.RemoteAccess.SecurityGroups = nil
+
 				return spec
 			},
 			expected: []interface{}{

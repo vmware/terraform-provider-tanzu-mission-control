@@ -149,7 +149,6 @@ func resourceNamespaceCreate(ctx context.Context, d *schema.ResourceData, m inte
 	}
 
 	namespaceResponse, err := config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceCreate(namespaceRequest)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "unable to create Tanzu Mission Control namespace entry, name : %s", NameKey))
 	}

@@ -86,7 +86,6 @@ func getManifests(manifestsBlob string) (manifests []manifest, err error) {
 		}
 
 		namespace, ok, err := unstructured.NestedString(usObj, "metadata", "namespace")
-
 		if err != nil {
 			return nil, fmt.Errorf("provided value for namespace in the metadata of kind %v is not of type string, error :%v", gvk, err)
 		}

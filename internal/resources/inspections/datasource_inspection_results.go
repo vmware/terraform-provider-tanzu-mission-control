@@ -40,7 +40,6 @@ func dataSourceInspectionResultsRead(ctx context.Context, data *schema.ResourceD
 		data.SetId("NO_DATA")
 	default:
 		err = tfInspectionModelConverter.FillTFSchema(resp.Scan, data)
-
 		if err != nil {
 			return diag.FromErr(err)
 		}

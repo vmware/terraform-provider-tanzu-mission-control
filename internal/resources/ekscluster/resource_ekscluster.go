@@ -599,8 +599,8 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	// Copy tags from cluster to nodepool
 	for _, npDefData := range nps {
 		var err error
-		npDefData.Spec.Tags, err = copyClusterTagsToNodepools(npDefData.Spec.Tags, clusterSpec.Config.Tags)
 
+		npDefData.Spec.Tags, err = copyClusterTagsToNodepools(npDefData.Spec.Tags, clusterSpec.Config.Tags)
 		if err != nil {
 			return diag.FromErr(errors.Wrap(err, "Nodepool tags should not be same as cluster tags"))
 		}
@@ -793,7 +793,6 @@ func handleClusterDiff(config authctx.TanzuContext, tmcCluster *eksmodel.VmwareT
 			EksCluster: newCluster,
 		},
 	)
-
 	if err != nil {
 		return errors.Wrapf(err, "Unable to update Tanzu Mission Control EKS cluster entry, name : %s", tmcCluster.FullName.Name)
 	}

@@ -55,7 +55,6 @@ func resourceBackupScheduleCreate(ctx context.Context, data *schema.ResourceData
 	case commonscope.ClusterScope:
 		if scopedFullnameData.FullnameCluster != nil {
 			model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
-
 			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Couldn't create Tanzu Mission Control backup schedule."))
 			}
@@ -71,7 +70,6 @@ func resourceBackupScheduleCreate(ctx context.Context, data *schema.ResourceData
 			}
 
 			_, err = config.TMCConnection.BackupScheduleService.BackupScheduleResourceServiceCreate(request)
-
 			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Couldn't create Tanzu Mission Control backup schedule.\nManagement Cluster Name: %s, Provisioner Name: %s, Cluster Name: %s, Schedule Name: %s,"+
 					"Template %v",
@@ -96,7 +94,6 @@ func resourceBackupScheduleCreate(ctx context.Context, data *schema.ResourceData
 			}
 
 			_, err = config.TMCConnection.ClusterGroupBackupScheduleService.VmwareTanzuManageV1alpha1ClustergroupBackupScheduleResourceServiceCreate(request)
-
 			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Couldn't create Tanzu Mission Control backup schedule.\nClusterGroup Name: %s, Schedule Name: %s, Template: %v",
 					model.FullName.ClusterGroupName, model.FullName.Name,
@@ -165,7 +162,6 @@ func resourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData, 
 			}
 
 			err = tfModelResourceConverter.FillTFSchema(resp.Schedule, data)
-
 			if err != nil {
 				return diag.Errorf("Couldn't read backup schedule.\nManagement Cluster Name: %s, Provisioner Name: %s, Cluster Name: %s, Schedule Name: %s",
 					backupScheduleFn.ManagementClusterName, backupScheduleFn.ProvisionerName, backupScheduleFn.ClusterName, backupScheduleFn.Name)
@@ -178,7 +174,6 @@ func resourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData, 
 		}
 	case commonscope.ClusterGroupScope:
 		model, err := tfModelCGResourceConverter.ConvertTFSchemaToAPIModel(data, []string{ScopeKey, ClusterGroupScopeKey, ClusterGroupNameKey})
-
 		if err != nil {
 			return diag.FromErr(errors.Wrapf(err, "Couldn't read Tanzu Mission Control backup schedule."))
 		}
@@ -188,7 +183,6 @@ func resourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData, 
 		backupScheduleFn.Name = backupScheduleName
 
 		resp, err := readCGResourceWait(ctx, &config, backupScheduleFn)
-
 		if err != nil {
 			if clienterrors.IsNotFoundError(err) {
 				if !helper.IsContextCallerSet(ctx) {
@@ -216,7 +210,6 @@ func resourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData, 
 			}
 
 			err = tfModelCGResourceConverter.FillTFSchema(resp.Schedule, data)
-
 			if err != nil {
 				return diag.Errorf("Couldn't read backup schedule.\n Cluster Group Name: %s, Schedule Name: %s",
 					backupScheduleFn.ClusterGroupName, backupScheduleFn.Name)
@@ -252,7 +245,6 @@ func resourceBackupScheduleDelete(ctx context.Context, data *schema.ResourceData
 	case commonscope.ClusterScope:
 		if scopedFullnameData.FullnameCluster != nil {
 			model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{ScopeKey, ClusterScopeKey, ClusterNameKey, ManagementClusterNameKey, ProvisionerNameKey})
-
 			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Couldn't delete Tanzu Mission Control backup schedule."))
 			}
@@ -308,7 +300,6 @@ func resourceBackupScheduleUpdate(ctx context.Context, data *schema.ResourceData
 	case commonscope.ClusterScope:
 		if scopedFullnameData.FullnameCluster != nil {
 			model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
-
 			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Couldn't update Tanzu Mission Control backup schedule."))
 			}
@@ -327,7 +318,6 @@ func resourceBackupScheduleUpdate(ctx context.Context, data *schema.ResourceData
 			}
 
 			_, err = config.TMCConnection.BackupScheduleService.BackupScheduleResourceServiceUpdate(request)
-
 			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Couldn't update Tanzu Mission Control backup schedule.\nManagement Cluster Name: %s, Provisioner Name: %s, Cluster Name: %s, Schedule Name: %s",
 					model.FullName.ManagementClusterName, model.FullName.ProvisionerName, model.FullName.ClusterName, model.FullName.Name))
@@ -336,7 +326,6 @@ func resourceBackupScheduleUpdate(ctx context.Context, data *schema.ResourceData
 	case commonscope.ClusterGroupScope:
 		if scopedFullnameData.FullnameClusterGroup != nil {
 			model, err := tfModelCGResourceConverter.ConvertTFSchemaToAPIModel(data, []string{})
-
 			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Couldn't update Tanzu Mission Control backup schedule."))
 			}
@@ -355,7 +344,6 @@ func resourceBackupScheduleUpdate(ctx context.Context, data *schema.ResourceData
 			}
 
 			_, err = config.TMCConnection.ClusterGroupBackupScheduleService.VmwareTanzuManageV1alpha1ClustergroupBackupScheduleResourceServiceUpdate(request)
-
 			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Couldn't update Tanzu Mission Control backup schedule.\nClusterGroup Name: %s,  Schedule Name: %s",
 					model.FullName.ClusterGroupName, model.FullName.Name))
@@ -393,7 +381,6 @@ func resourceBackupScheduleImporter(ctx context.Context, data *schema.ResourceDa
 				backupScheduleFn.ManagementClusterName, backupScheduleFn.ProvisionerName, backupScheduleFn.ClusterName, backupScheduleFn.Name)
 		} else {
 			err = tfModelResourceConverter.FillTFSchema(resp.Schedule, data)
-
 			if err != nil {
 				return nil, err
 			}
@@ -421,7 +408,6 @@ func resourceBackupScheduleImporter(ctx context.Context, data *schema.ResourceDa
 				backupScheduleFn.ClusterGroupName, backupScheduleFn.Name)
 		} else {
 			err = tfModelCGResourceConverter.FillTFSchema(resp.Schedule, data)
-
 			if err != nil {
 				return nil, err
 			}

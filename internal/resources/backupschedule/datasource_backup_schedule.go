@@ -46,7 +46,6 @@ func dataSourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData
 	case commonscope.ClusterScope:
 		if scopedFullnameData.FullnameCluster != nil {
 			request, err := tfModelDataSourceRequestConverter.ConvertTFSchemaToAPIModel(data, []string{})
-
 			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Couldn't read Tanzu Mission Control backup schedule."))
 			}
@@ -62,7 +61,6 @@ func dataSourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData
 				data.SetId("NO_DATA")
 			default:
 				err = tfModelDataSourceResponseConverter.FillTFSchema(resp, data)
-
 				if err != nil {
 					diags = diag.FromErr(err)
 				}
@@ -75,7 +73,6 @@ func dataSourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData
 	case commonscope.ClusterGroupScope:
 		if scopedFullnameData.FullnameClusterGroup != nil {
 			request, err := tfModelCGDataSourceRequestConverter.ConvertTFSchemaToAPIModel(data, []string{})
-
 			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Couldn't read Tanzu Mission Control backup schedule."))
 			}
@@ -89,7 +86,6 @@ func dataSourceBackupScheduleRead(ctx context.Context, data *schema.ResourceData
 				data.SetId("NO_DATA")
 			default:
 				err = tfModelCGDataSourceResponseConverter.FillTFSchema(resp, data)
-
 				if err != nil {
 					diags = diag.FromErr(err)
 				}

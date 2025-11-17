@@ -225,8 +225,8 @@ func ValidateInput(ctx context.Context, diff *schema.ResourceDiff, i interface{}
 	if recipeData, ok := inputData[reciperesource.TMCCustomKey]; ok {
 		if recipeType, ok := recipeData.([]interface{}); ok && len(recipeType) != 0 {
 			config := i.(authctx.TanzuContext)
-			err := reciperesource.ValidateCustomRecipe(config, recipeType[0].(map[string]interface{}))
 
+			err := reciperesource.ValidateCustomRecipe(config, recipeType[0].(map[string]interface{}))
 			if err != nil {
 				return errors.Wrapf(err, "Custom Recipe validation failed:\n")
 			}

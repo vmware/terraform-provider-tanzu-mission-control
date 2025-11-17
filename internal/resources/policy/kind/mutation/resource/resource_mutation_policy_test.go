@@ -1,5 +1,4 @@
 //go:build mutationpolicy
-// +build mutationpolicy
 
 // © Broadcom. All Rights Reserved.
 // The term “Broadcom” refers to Broadcom Inc. and/or its subsidiaries.
@@ -310,7 +309,6 @@ func (testConfig *testAcceptanceConfig) getContext(s *terraform.State) (*authctx
 	}
 
 	err := getSetupConfig(config)
-
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to set the context")
 	}

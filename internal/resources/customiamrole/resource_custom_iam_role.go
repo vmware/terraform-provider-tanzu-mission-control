@@ -34,8 +34,8 @@ func ResourceCustomIAMRole() *schema.Resource {
 
 func resourceCustomIAMRoleCreate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{})
 
+	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{})
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't create Custom IAM Role."))
 	}
@@ -45,7 +45,6 @@ func resourceCustomIAMRoleCreate(ctx context.Context, data *schema.ResourceData,
 	}
 
 	_, err = config.TMCConnection.CustomIAMRoleResourceService.CustomIAMRoleResourceServiceCreate(request)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't create Custom IAM Role.\nName: %s", model.FullName.Name))
 	}
@@ -55,8 +54,8 @@ func resourceCustomIAMRoleCreate(ctx context.Context, data *schema.ResourceData,
 
 func resourceCustomIAMRoleUpdate(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{})
 
+	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{})
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't update Custom IAM Role."))
 	}
@@ -66,7 +65,6 @@ func resourceCustomIAMRoleUpdate(ctx context.Context, data *schema.ResourceData,
 	}
 
 	_, err = config.TMCConnection.CustomIAMRoleResourceService.CustomIAMRoleResourceServiceUpdate(request)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't update Custom IAM Role.\nName: %s", model.FullName.Name))
 	}
@@ -78,15 +76,15 @@ func resourceCustomIAMRoleRead(ctx context.Context, data *schema.ResourceData, m
 	var resp *customiamrolemodels.VmwareTanzuManageV1alpha1IamRoleData
 
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey})
 
+	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey})
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't read Custom IAM Role."))
 	}
 
 	customIAMRoleFn := model.FullName
-	resp, err = config.TMCConnection.CustomIAMRoleResourceService.CustomIAMRoleResourceServiceGet(customIAMRoleFn)
 
+	resp, err = config.TMCConnection.CustomIAMRoleResourceService.CustomIAMRoleResourceServiceGet(customIAMRoleFn)
 	if err != nil {
 		if clienterrors.IsNotFoundError(err) {
 			if !helper.IsContextCallerSet(ctx) {
@@ -107,8 +105,8 @@ func resourceCustomIAMRoleRead(ctx context.Context, data *schema.ResourceData, m
 		oldSpecData := data.Get(SpecKey).([]interface{})[0].(map[string]interface{})
 		aggregationRuleData, aggregationRuleExists := oldSpecData[AggregationRuleKey]
 		allowedScopesData, allowedScopesExist := oldSpecData[AllowedScopesKey]
-		err = tfModelConverter.FillTFSchema(resp.Role, data)
 
+		err = tfModelConverter.FillTFSchema(resp.Role, data)
 		if err != nil {
 			return diag.FromErr(errors.Wrapf(err, "Couldn't read Custom IAM Role.\nName: %s", customIAMRoleFn.Name))
 		}
@@ -133,15 +131,15 @@ func resourceCustomIAMRoleRead(ctx context.Context, data *schema.ResourceData, m
 
 func resourceCustomIAMRoleDelete(ctx context.Context, data *schema.ResourceData, m interface{}) (diags diag.Diagnostics) {
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey})
 
+	model, err := tfModelConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey})
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't delete Custom IAM Role."))
 	}
 
 	customIAMRoleFn := model.FullName
-	err = config.TMCConnection.CustomIAMRoleResourceService.CustomIAMRoleResourceServiceDelete(customIAMRoleFn)
 
+	err = config.TMCConnection.CustomIAMRoleResourceService.CustomIAMRoleResourceServiceDelete(customIAMRoleFn)
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't delete Custom IAM Role.\nName: %s", customIAMRoleFn.Name))
 	}
@@ -168,7 +166,6 @@ func resourceCustomIAMRoleImporter(_ context.Context, data *schema.ResourceData,
 	}
 
 	err = tfModelConverter.FillTFSchema(resp.Role, data)
-
 	if err != nil {
 		return nil, errors.Wrapf(err, "Couldn't import Custom IAM Role.\nName: %s", customIAMRoleFn.Name)
 	}

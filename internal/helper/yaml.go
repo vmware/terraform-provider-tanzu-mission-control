@@ -31,8 +31,8 @@ func ReadYamlFile(filePath string) (string, error) {
 	}(inputFile)
 
 	buf := bytes.NewBuffer(nil)
-	_, err = io.Copy(buf, inputFile)
 
+	_, err = io.Copy(buf, inputFile)
 	if err != nil {
 		return "", err
 	}

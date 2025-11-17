@@ -203,7 +203,6 @@ func validateStringFormat(parentKey string, variableValue interface{}, variableS
 
 	if regexPattern, ok := variableSchema[string(PatternKey)]; ok {
 		regex, err := regexp.Compile(regexPattern.(string))
-
 		if err == nil {
 			if !regex.MatchString(variableValue.(string)) {
 				errs = append(errs, errors.Errorf("Key '%s' doesn't match regular expression '%s', value provided: '%s'", parentKey, regexPattern, variableValue))

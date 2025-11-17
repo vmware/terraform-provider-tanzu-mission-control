@@ -31,8 +31,8 @@ func dataSourceTargetLocationsRead(ctx context.Context, data *schema.ResourceDat
 	var resp *targetlocationmodels.VmwareTanzuManageV1alpha1DataprotectionProviderBackuplocationListBackupLocationsResponse
 
 	config := m.(authctx.TanzuContext)
-	request, err := tfModelDataSourceRequestConverter.ConvertTFSchemaToAPIModel(data, []string{})
 
+	request, err := tfModelDataSourceRequestConverter.ConvertTFSchemaToAPIModel(data, []string{})
 	if err != nil {
 		return diag.FromErr(errors.Wrap(err, "Couldn't read Tanzu Mission Control backup target location."))
 	}
@@ -50,7 +50,6 @@ func dataSourceTargetLocationsRead(ctx context.Context, data *schema.ResourceDat
 		data.SetId("NO_DATA")
 	default:
 		err = tfModelDataSourceResponseConverter.FillTFSchema(resp, data)
-
 		if err != nil {
 			return diag.FromErr(err)
 		}

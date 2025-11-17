@@ -37,8 +37,8 @@ func dataSourceTanzuKubernetesClusterRead(_ context.Context, data *schema.Resour
 	)
 
 	config := m.(authctx.TanzuContext)
-	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey, ProvisionerNameKey, ManagementClusterNameKey, TimeoutPolicyKey})
 
+	model, err := tfModelResourceConverter.ConvertTFSchemaToAPIModel(data, []string{NameKey, ProvisionerNameKey, ManagementClusterNameKey, TimeoutPolicyKey})
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't read TKG Cluster."))
 	}
@@ -46,7 +46,6 @@ func dataSourceTanzuKubernetesClusterRead(_ context.Context, data *schema.Resour
 	clusterFn := model.FullName
 
 	resp, err = readFullClusterResource(&config, clusterFn)
-
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't read TKG cluster.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s",
 			clusterFn.ManagementClusterName, clusterFn.ProvisionerName, clusterFn.Name))
@@ -54,7 +53,6 @@ func dataSourceTanzuKubernetesClusterRead(_ context.Context, data *schema.Resour
 		kubernetesClusterModel := resp.TanzuKubernetesCluster
 
 		err = tfModelResourceConverter.FillTFSchema(kubernetesClusterModel, data)
-
 		if err != nil {
 			diags = diag.FromErr(err)
 		}

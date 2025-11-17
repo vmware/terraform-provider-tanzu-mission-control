@@ -390,8 +390,8 @@ var OSImageSchema = &schema.Schema{
 
 func validateJSONString(value interface{}, path cty.Path) diag.Diagnostics {
 	valueJSON := make(map[string]interface{})
-	err := json.Unmarshal([]byte(value.(string)), &valueJSON)
 
+	err := json.Unmarshal([]byte(value.(string)), &valueJSON)
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Value is not a valid JSON string."))
 	}
