@@ -6,6 +6,7 @@ package authctx
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -16,6 +17,8 @@ import (
 	"go.pinniped.dev/pkg/oidcclient/pkce"
 	"go.pinniped.dev/pkg/oidcclient/state"
 	"golang.org/x/oauth2"
+
+	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
 )
 
 const (
@@ -35,18 +38,24 @@ const (
 
 type smSession struct {
 	sharedOauthConfig             *oauth2.Config
+	tlsConfig                     *tls.Config
 	issuerURL, username, password string
 	pkceCodePair                  pkce.Code
 	stateVal                      state.State
 }
 
 // todo: proxy support is not added for the self-managed flow. Add it when there is a requirement.
-func getSMUserAuthCtx(pinnipedURL, uName, password string) (metadata map[string]string, err error) {
+func getSMUserAuthCtx(pinnipedURL, uName, password string, config *proxy.TLSConfig) (metadata map[string]string, err error) {
 	if pinnipedURL == "" || uName == "" || password == "" {
 		return nil, errors.New("Invalid auth configuration for self_managed")
 	}
 
-	session, err := initSession(pinnipedURL, uName, password)
+	tlsConfig, err := proxy.GetConnectorTLSConfig(config)
+	if err != nil {
+		return nil, err
+	}
+
+	session, err := initSession(pinnipedURL, uName, password, tlsConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +120,7 @@ func getSMUserAuthCtx(pinnipedURL, uName, password string) (metadata map[string]
 }
 
 // todo: if slowness is experienced, then we can avoid re-initialising same values again.
-func initSession(pinnipedURL, uName, password string) (*smSession, error) {
+func initSession(pinnipedURL, uName, password string, config *tls.Config) (*smSession, error) {
 	// TMC Local Pinniped sample endpoint:
 	// https://pinniped-supervisor.*******.com/provider/pinniped
 	u := url.URL{
@@ -137,6 +146,7 @@ func initSession(pinnipedURL, uName, password string) (*smSession, error) {
 
 	session := &smSession{
 		sharedOauthConfig: sharedOauthConfig,
+		tlsConfig:         config,
 		issuerURL:         issuerURL,
 		username:          uName,
 		password:          password,
@@ -192,6 +202,9 @@ func (s *smSession) initiateAuthorizeRequestUnamePwd() (*url.URL, error) {
 
 	redirected := false
 	httpClient := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: s.tlsConfig,
+		},
 		CheckRedirect: func(r *http.Request, via []*http.Request) error {
 			redirected = true
 			return http.ErrUseLastResponse
@@ -230,7 +243,7 @@ func (s *smSession) getAuthCodeURL() string {
 }
 
 func refreshSMUserAuthCtx(config *TanzuContext) {
-	md, _ := getSMUserAuthCtx(config.VMWCloudEndPoint, config.SMUsername, config.Token)
+	md, _ := getSMUserAuthCtx(config.VMWCloudEndPoint, config.SMUsername, config.Token, config.TLSConfig)
 	for key, value := range md {
 		config.TMCConnection.Headers.Set(key, value)
 	}
