@@ -101,7 +101,7 @@ func getUserAuthCtxHeaders(config *TanzuContext) func() (map[string]string, erro
 		username := config.SMUsername
 
 		return func() (map[string]string, error) {
-			return getSMUserAuthCtx(issuerURL, username, token)
+			return getSMUserAuthCtx(issuerURL, username, token, proxyConfig)
 		}
 	}
 
