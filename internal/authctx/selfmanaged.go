@@ -96,10 +96,17 @@ func getSMUserAuthCtx(pinnipedURL, uName, password string, config *proxy.TLSConf
 		return nil, fmt.Errorf("login failed with code %q: %s", requiredErrorCode, optionalErrorDescription)
 	}
 
+	customClient := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: tlsConfig,
+			Proxy:           http.ProxyFromEnvironment,
+		},
+	}
 	// Exchange the authorization code for access, ID, and refresh tokens and perform required
 	// validations on the returned ID token.
-	tokenCtx, tokenCtxCancelFunc := context.WithTimeout(context.Background(), contextTimeout)
+	ctxWithValue := context.WithValue(context.Background(), oauth2.HTTPClient, customClient)
 
+	tokenCtx, tokenCtxCancelFunc := context.WithTimeout(ctxWithValue, contextTimeout)
 	defer tokenCtxCancelFunc()
 
 	token, err := session.sharedOauthConfig.Exchange(tokenCtx, authCode, session.pkceCodePair.Verifier())
@@ -204,6 +211,7 @@ func (s *smSession) initiateAuthorizeRequestUnamePwd() (*url.URL, error) {
 	httpClient := &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: s.tlsConfig,
+			Proxy:           http.ProxyFromEnvironment,
 		},
 		CheckRedirect: func(r *http.Request, via []*http.Request) error {
 			redirected = true
