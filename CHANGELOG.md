@@ -1,5 +1,45 @@
 # CHANGELOG
 
+## [v1.4.10](https://github.com/vmware/terraform-provider-tanzu-mission-control/releases/tag/v1.4.10)
+
+> Release Date: 2025-12-04
+
+DOCUMENTATION:
+
+* Apply hcl formatting https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/531
+
+BUG FIXES:
+
+* Allowing tls config to be passed to sm login https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/596
+* Adding proxy from environment and tls config to token request for TMC SM https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/608
+
+CHORES:
+
+* Bump `goreleaser/goreleaser-action` to 6.3.0 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/526
+* Bump `crazy-max/ghaction-import-gpg` to 6.3.0 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/527
+* Migrate to `hashicorp/terraform-plugin-testing` https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/538
+* Bump `golang.org/x/net` to 0.38.0 in the go_modules group https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/535
+* Bump `github.com/cloudflare/circl` to 1.6.1 in the go_modules group https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/551
+* Bump `codecov/codecov-action` to 5.5.1 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/575
+* Bump `actions/labeler` to 6.0.1 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/574
+* Bump `goreleaser/goreleaser-action` to 6.4.0 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/565
+* Bump `github.com/stretchr/testify` to 1.11.1 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/586
+* Bump `actions/stale` to 10.1.0 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/589
+* Bump `github.com/go-openapi/strfmt` to 0.25.0 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/585
+* Corrected formatting and removed unused types https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/323
+* Bump s`igs.k8s.io/yaml` to 1.6.0 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/587
+* Bump `golang.org/x/oauth2` to 0.33.0 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/590
+* Remove redundant code and update build tags https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/595
+* Bump `github.com/hashicorp/terraform-plugin-testing` to 1.13.3 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/593
+* Bump `golangci/golangci-lint-action` to 9.1.0 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/604
+* Bump `actions/setup-go` to 6.1.0 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/603
+* Bump `actions/checkout` to 6.0.0 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/602
+* Bump `golang.org/x/crypto` to 0.45.0 in the go_modules https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/597
+* Bump `google.golang.org/grpc` to 1.77.0 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/600
+* Bump `github.com/hashicorp/terraform-plugin-sdk/v2` to 2.38.1 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/599
+* Bump `github.com/jarcoal/httpmock` to 1.4.1 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/606
+* Bump `github.com/go-openapi/swag` to 0.25.4 https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/607
+
 ## [v1.4.9](https://github.com/vmware/terraform-provider-tanzu-mission-control/releases/tag/v1.4.9)
 
 > Release Date: 2025-04-01
