@@ -44,7 +44,7 @@ type OpenAPIV3SchemaValidator struct {
 }
 
 func (validator *OpenAPIV3SchemaValidator) ValidateRequiredFields(objectValues map[string]interface{}) (errs []error) {
-	errs = make([]error, 0)
+	errs = make([]error, 0, len(validator.Schema))
 
 	for k, v := range validator.Schema {
 		objectValue := objectValues[k]

@@ -145,7 +145,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocksUpdate(t *testing.T, scope
 		Rid: "test_rid",
 		UID: "test_uid",
 	}
-	referenceArray := make([]*objectmetamodel.VmwareTanzuCoreV1alpha1ObjectReference, 0)
+	referenceArray := make([]*objectmetamodel.VmwareTanzuCoreV1alpha1ObjectReference, 0, 1)
 	referenceArray = append(referenceArray, &reference)
 
 	switch scope {
@@ -239,7 +239,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 		Rid: "test_rid",
 		UID: "test_uid",
 	}
-	referenceArray := make([]*objectmetamodel.VmwareTanzuCoreV1alpha1ObjectReference, 0)
+	referenceArray := make([]*objectmetamodel.VmwareTanzuCoreV1alpha1ObjectReference, 0, 1)
 	referenceArray = append(referenceArray, &reference)
 
 	// cluster level source secret resorce.

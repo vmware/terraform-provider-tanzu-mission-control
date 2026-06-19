@@ -68,7 +68,7 @@ func ConstructTKGVsphereClusterSpec(data []interface{}) (spec *tkgvspheremodel.V
 func FlattenTKGVsphereClusterSpec(spec *tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereSpec) (data []interface{}) {
 	flattenSpecData := make(map[string]interface{})
 
-	acs := make([]interface{}, 0)
+	acs := make([]interface{}, 0, len(spec.AdvancedConfigs))
 
 	for _, ac := range spec.AdvancedConfigs {
 		acs = append(acs, common.FlattenAdvancedConfig(ac))

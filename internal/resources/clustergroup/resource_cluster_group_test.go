@@ -71,12 +71,13 @@ resource "%s" "%s" {
 }
 
 func checkResourceAttributes(provider *schema.Provider, resourceName, clusterGroupName string) resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
+	metaChecks := testhelper.MetaResourceAttributeCheck(resourceName)
+	check := make([]resource.TestCheckFunc, 0, 2+len(metaChecks))
+	check = append(check,
 		verifyClusterGroupResourceCreation(provider, resourceName, clusterGroupName),
 		resource.TestCheckResourceAttr(resourceName, "name", clusterGroupName),
-	}
-
-	check = append(check, testhelper.MetaResourceAttributeCheck(resourceName)...)
+	)
+	check = append(check, metaChecks...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }

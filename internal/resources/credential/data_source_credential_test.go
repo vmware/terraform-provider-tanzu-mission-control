@@ -71,17 +71,17 @@ data "%s" "%s" {
 }
 
 func checkDataSourceAttributes(dataSourceName, resourceName string) resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
-		verifyClusterGroupDataSource(dataSourceName),
-		resource.TestCheckResourceAttrPair(dataSourceName, "name", resourceName, "name"),
-		resource.TestCheckResourceAttrSet(dataSourceName, "id"),
-	}
-
 	checks := []resource.TestCheckFunc{
 		resource.TestCheckResourceAttr(resourceName, "meta.#", "1"),
 		resource.TestCheckResourceAttrSet(resourceName, "meta.0.uid"),
 	}
 
+	check := make([]resource.TestCheckFunc, 0, 3+len(checks))
+	check = append(check,
+		verifyClusterGroupDataSource(dataSourceName),
+		resource.TestCheckResourceAttrPair(dataSourceName, "name", resourceName, "name"),
+		resource.TestCheckResourceAttrSet(dataSourceName, "id"),
+	)
 	check = append(check, checks...)
 
 	return resource.ComposeTestCheckFunc(check...)

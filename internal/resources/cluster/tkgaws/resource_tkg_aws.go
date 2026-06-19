@@ -66,7 +66,7 @@ func ConstructTKGAWSClusterSpec(data []interface{}) (spec *tkgawsmodel.VmwareTan
 func FlattenTKGAWSClusterSpec(spec *tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSpec) (data []interface{}) {
 	flattenSpecData := make(map[string]interface{})
 
-	acs := make([]interface{}, 0)
+	acs := make([]interface{}, 0, len(spec.AdvancedConfigs))
 
 	for _, ac := range spec.AdvancedConfigs {
 		acs = append(acs, common.FlattenAdvancedConfig(ac))

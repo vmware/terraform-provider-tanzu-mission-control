@@ -87,12 +87,13 @@ resource "%s" "%s" {
 }
 
 func checkResourceAttributes(provider *schema.Provider, resourceName, clusterName, namespaceName string) resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
+	metaChecks := testhelper.MetaResourceAttributeCheck(resourceName)
+	check := make([]resource.TestCheckFunc, 0, 2+len(metaChecks))
+	check = append(check,
 		verifyNamespaceResourceCreation(provider, resourceName, clusterName, namespaceName),
 		resource.TestCheckResourceAttr(resourceName, "name", namespaceName),
-	}
-
-	check = append(check, testhelper.MetaResourceAttributeCheck(resourceName)...)
+	)
+	check = append(check, metaChecks...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }

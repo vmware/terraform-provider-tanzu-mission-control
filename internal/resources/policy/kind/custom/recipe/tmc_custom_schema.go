@@ -161,7 +161,7 @@ func ValidateRecipeParameters(recipeSchema string, recipeParameters string) (err
 
 		recipeParametersJSON := make(map[string]interface{})
 		_ = json.Unmarshal([]byte(recipeParameters), &recipeParametersJSON)
-		errs = make([]error, 0)
+		errs = make([]error, 0, 2)
 
 		errs = append(errs, openAPIV3Validator.ValidateRequiredFields(recipeParametersJSON)...)
 		errs = append(errs, openAPIV3Validator.ValidateFormat(recipeParametersJSON)...)

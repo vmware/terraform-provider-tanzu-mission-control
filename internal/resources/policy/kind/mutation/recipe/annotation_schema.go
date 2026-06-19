@@ -131,7 +131,7 @@ func FlattenAnnotation(mutationAnnotation *policyrecipemutationmodel.VmwareTanzu
 }
 
 func flattenKeyValuesFromAnnotation(keyValue *policyrecipemutationcommonmodel.KeyValue) []interface{} {
-	var annotationKeyValue []interface{}
+	annotationKeyValue := make([]interface{}, 0, 1)
 
 	flattenAnnotationValue := make(map[string]interface{})
 	flattenAnnotationValue[keyKey] = keyValue.Key

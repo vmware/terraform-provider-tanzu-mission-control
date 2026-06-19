@@ -171,16 +171,16 @@ resource "%s" "%s" {
 }
 
 func checkResourceAttributes(provider *schema.Provider, resourceName, credentialName string) resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
-		verifyCredentialResourceCreation(provider, resourceName, credentialName),
-		resource.TestCheckResourceAttr(resourceName, "name", credentialName),
-	}
-
 	checks := []resource.TestCheckFunc{
 		resource.TestCheckResourceAttr(resourceName, "meta.#", "1"),
 		resource.TestCheckResourceAttrSet(resourceName, "meta.0.uid"),
 	}
 
+	check := make([]resource.TestCheckFunc, 0, 2+len(checks))
+	check = append(check,
+		verifyCredentialResourceCreation(provider, resourceName, credentialName),
+		resource.TestCheckResourceAttr(resourceName, "name", credentialName),
+	)
 	check = append(check, checks...)
 
 	return resource.ComposeTestCheckFunc(check...)

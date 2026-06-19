@@ -180,37 +180,40 @@ func (testConfig *testAcceptanceConfig) getTestMutationPolicyResourceBasicConfig
 }
 
 func (testConfig *testAcceptanceConfig) checkClusterScopeMutationPolicyResourceAttributes(recipe string) resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
+	metaChecks := policy.MetaResourceAttributeCheck(testConfig.MutationPolicyResourceName)
+	check := make([]resource.TestCheckFunc, 0, 3+len(metaChecks))
+	check = append(check,
 		testConfig.verifyClusterScopeMutationPolicyResourceCreation(recipe),
 		resource.TestCheckResourceAttr(testConfig.MutationPolicyResourceName, "name", testConfig.MutationPolicyName+recipe),
-	}
-
-	check = append(check, resource.TestCheckResourceAttr(testConfig.MutationPolicyResourceName, "scope.0.cluster.0.name", testConfig.ScopeHelperResources.Cluster.Name))
-	check = append(check, policy.MetaResourceAttributeCheck(testConfig.MutationPolicyResourceName)...)
+		resource.TestCheckResourceAttr(testConfig.MutationPolicyResourceName, "scope.0.cluster.0.name", testConfig.ScopeHelperResources.Cluster.Name),
+	)
+	check = append(check, metaChecks...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }
 
 func (testConfig *testAcceptanceConfig) checkClusterGroupScopeMutationPolicyResourceAttributes(recipe string) resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
+	metaChecks := policy.MetaResourceAttributeCheck(testConfig.MutationPolicyResourceName)
+	check := make([]resource.TestCheckFunc, 0, 3+len(metaChecks))
+	check = append(check,
 		testConfig.verifyClusterGroupScopeMutationPolicyResourceCreation(recipe),
 		resource.TestCheckResourceAttr(testConfig.MutationPolicyResourceName, "name", testConfig.MutationPolicyName+recipe),
-	}
-
-	check = append(check, resource.TestCheckResourceAttr(testConfig.MutationPolicyResourceName, "scope.0.cluster_group.0.cluster_group", testConfig.ScopeHelperResources.ClusterGroup.Name))
-	check = append(check, policy.MetaResourceAttributeCheck(testConfig.MutationPolicyResourceName)...)
+		resource.TestCheckResourceAttr(testConfig.MutationPolicyResourceName, "scope.0.cluster_group.0.cluster_group", testConfig.ScopeHelperResources.ClusterGroup.Name),
+	)
+	check = append(check, metaChecks...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }
 
 func (testConfig *testAcceptanceConfig) checkOrganizationScopeMutationPolicyResourceAttributes(recipe string) resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
+	metaChecks := policy.MetaResourceAttributeCheck(testConfig.MutationPolicyResourceName)
+	check := make([]resource.TestCheckFunc, 0, 3+len(metaChecks))
+	check = append(check,
 		testConfig.verifyOrganizationScopeMutationPolicyResourceCreation(recipe),
 		resource.TestCheckResourceAttr(testConfig.MutationPolicyResourceName, "name", testConfig.MutationPolicyName+recipe),
-	}
-
-	check = append(check, resource.TestCheckResourceAttr(testConfig.MutationPolicyResourceName, "scope.0.organization.0.organization", testConfig.ScopeHelperResources.OrgID))
-	check = append(check, policy.MetaResourceAttributeCheck(testConfig.MutationPolicyResourceName)...)
+		resource.TestCheckResourceAttr(testConfig.MutationPolicyResourceName, "scope.0.organization.0.organization", testConfig.ScopeHelperResources.OrgID),
+	)
+	check = append(check, metaChecks...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }

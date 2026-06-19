@@ -59,13 +59,14 @@ func getTestProvisionerWithDataSourceConfigValue(prvName string) string {
 }
 
 func checkDataSourceAttributes(dataSourceName, resourceName string) resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
+	metaChecks := metaDataSourceAttributeCheck(dataSourceName, resourceName)
+	check := make([]resource.TestCheckFunc, 0, 3+len(metaChecks))
+	check = append(check,
 		verifyProvisionerDataSource(dataSourceName),
 		resource.TestCheckResourceAttrPair(dataSourceName, "provisioners.0.name", resourceName, "name"),
 		resource.TestCheckResourceAttrSet(dataSourceName, "id"),
-	}
-
-	check = append(check, metaDataSourceAttributeCheck(dataSourceName, resourceName)...)
+	)
+	check = append(check, metaChecks...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }

@@ -85,13 +85,14 @@ func (testConfig *testAcceptanceConfig) getTestSourceSecretDataSourceBasicConfig
 
 // checkSourceSecretDataSourceAttributes checks for source secret creation along with meta attributes.
 func (testConfig *testAcceptanceConfig) checkSourceSecretDataSourceAttributes() resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
+	metaChecks := MetaDataSourceAttributeCheck(testConfig.SourceSecretDataSourceName, testConfig.SourceSecretResourceName)
+	check := make([]resource.TestCheckFunc, 0, 3+len(metaChecks))
+	check = append(check,
 		testConfig.verifySourceSecretDataSourceCreation(testConfig.SourceSecretDataSourceName),
 		resource.TestCheckResourceAttrPair(testConfig.SourceSecretDataSourceName, "name", testConfig.SourceSecretResourceName, "name"),
 		resource.TestCheckResourceAttrSet(testConfig.SourceSecretDataSourceName, "id"),
-	}
-
-	check = append(check, MetaDataSourceAttributeCheck(testConfig.SourceSecretDataSourceName, testConfig.SourceSecretResourceName)...)
+	)
+	check = append(check, metaChecks...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }
