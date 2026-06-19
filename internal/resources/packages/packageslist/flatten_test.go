@@ -14,6 +14,11 @@ import (
 	packagespec "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/package/spec"
 )
 
+const (
+	testCertManager                         = "cert-manager"
+	testSomecapacityrequirementsdescription = "someCapacityRequirementsDescription"
+)
+
 func TestFlattenSpecForClusterScope(t *testing.T) {
 	t.Parallel()
 
@@ -36,7 +41,7 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 							Name: "someName",
 						},
 						Spec: &packageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageSpec{
-							CapacityRequirementsDescription: "someCapacityRequirementsDescription",
+							CapacityRequirementsDescription: testSomecapacityrequirementsdescription,
 							Licenses: []string{
 								"some1",
 							},
@@ -55,7 +60,7 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 							Name: "someName3",
 						},
 						Spec: &packageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageSpec{
-							CapacityRequirementsDescription: "someCapacityRequirementsDescription",
+							CapacityRequirementsDescription: testSomecapacityrequirementsdescription,
 							Licenses: []string{
 								"some3",
 							},
@@ -76,14 +81,14 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 					nameKey: "someName",
 					SpecKey: []interface{}{
 						map[string]interface{}{
-							packagespec.CapacityRequirementsDescriptionKey: "someCapacityRequirementsDescription",
+							packagespec.CapacityRequirementsDescriptionKey: testSomecapacityrequirementsdescription,
 							packagespec.LicensesKey: []string{
 								"some1",
 							},
 							packagespec.RepositoryNameKey: "testrepo1",
 							packagespec.ReleaseNotesKey: []interface{}{
 								map[string]interface{}{
-									metadataNameKey: "cert-manager",
+									metadataNameKey: testCertManager,
 									versionKey:      "1.1.0",
 									urlKey:          "https://github.com/jetstack/cert-manager/1.1.0",
 								},
@@ -97,14 +102,14 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 												map[string]interface{}{
 													examplesKey: []interface{}{
 														map[string]interface{}{
-															namespaceKey: "cert-manager",
+															namespaceKey: testCertManager,
 														},
 													},
 													propertiesKey: []interface{}{
 														map[string]interface{}{
 															namespaceKey: []interface{}{
 																map[string]interface{}{
-																	defaultKey:     "cert-manager",
+																	defaultKey:     testCertManager,
 																	descriptionKey: "The namespace in which to deploy cert-manager.",
 																	typeKey:        "string",
 																},
@@ -125,14 +130,14 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 					nameKey: "someName3",
 					SpecKey: []interface{}{
 						map[string]interface{}{
-							packagespec.CapacityRequirementsDescriptionKey: "someCapacityRequirementsDescription",
+							packagespec.CapacityRequirementsDescriptionKey: testSomecapacityrequirementsdescription,
 							packagespec.LicensesKey: []string{
 								"some3",
 							},
 							packagespec.RepositoryNameKey: "testrepo2",
 							packagespec.ReleaseNotesKey: []interface{}{
 								map[string]interface{}{
-									metadataNameKey: "cert-manager",
+									metadataNameKey: testCertManager,
 									versionKey:      "1.1.0",
 									urlKey:          "https://github.com/jetstack/cert-manager/1.1.0",
 								},
@@ -146,14 +151,14 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 												map[string]interface{}{
 													examplesKey: []interface{}{
 														map[string]interface{}{
-															namespaceKey: "cert-manager",
+															namespaceKey: testCertManager,
 														},
 													},
 													propertiesKey: []interface{}{
 														map[string]interface{}{
 															namespaceKey: []interface{}{
 																map[string]interface{}{
-																	defaultKey:     "cert-manager",
+																	defaultKey:     testCertManager,
 																	descriptionKey: "The namespace in which to deploy cert-manager.",
 																	typeKey:        "string",
 																},

@@ -28,43 +28,43 @@ func TestFlattenPodSecurity(t *testing.T) {
 			description: "flatten pod security mutation policy struct",
 			input: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecurity{
 				AllowPrivilegeEscalation: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecurityAllowPrivilegeEscalation{
-					Condition: helper.StringPointer("IfFieldExists"),
+					Condition: helper.StringPointer(testIffieldexists),
 					Value:     helper.BoolPointer(true),
 				},
 				CapabilitiesAdd: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecurityCapabilitiesAdd{
-					Operation: helper.StringPointer("prune"),
+					Operation: helper.StringPointer(testPrune),
 					Values:    []string{"AUDIT_CONTROL", "AUDIT_READ"},
 				},
 				CapabilitiesDrop: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecurityCapabilitiesDrop{
-					Operation: helper.StringPointer("prune"),
+					Operation: helper.StringPointer(testPrune),
 					Values:    []string{"SETFCAP"},
 				},
 				FsGroup: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecurityFsGroup{
-					Condition: helper.StringPointer("Always"),
+					Condition: helper.StringPointer(testAlways),
 					Value:     helper.Float64Pointer(4),
 				},
 				Privileged: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecurityPrivileged{
-					Condition: helper.StringPointer("IfFieldExists"),
+					Condition: helper.StringPointer(testIffieldexists),
 					Value:     helper.BoolPointer(false),
 				},
 				ReadOnlyRootFilesystem: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecurityReadOnlyRootFilesystem{
-					Condition: helper.StringPointer("IfFieldDoesNotExist"),
+					Condition: helper.StringPointer(testIffielddoesnotexist),
 					Value:     helper.BoolPointer(false),
 				},
 				RunAsGroup: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecurityRunAsGroup{
-					Condition: helper.StringPointer("IfFieldExists"),
+					Condition: helper.StringPointer(testIffieldexists),
 					Value:     helper.Float64Pointer(567),
 				},
 				RunAsNonRoot: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecurityRunAsNonRoot{
-					Condition: helper.StringPointer("Always"),
+					Condition: helper.StringPointer(testAlways),
 					Value:     helper.BoolPointer(true),
 				},
 				RunAsUser: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecurityRunAsUser{
-					Condition: helper.StringPointer("Always"),
+					Condition: helper.StringPointer(testAlways),
 					Value:     helper.Float64Pointer(2444),
 				},
 				SeLinuxOptions: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecuritySeLinuxOptions{
-					Condition: helper.StringPointer("IfFieldDoesNotExist"),
+					Condition: helper.StringPointer(testIffielddoesnotexist),
 					Value: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecuritySeLinuxOptionsValue{
 						Level: "level_up",
 						Role:  "role_role",
@@ -73,7 +73,7 @@ func TestFlattenPodSecurity(t *testing.T) {
 					},
 				},
 				SupplementalGroups: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1PodSecuritySupplementalGroups{
-					Condition: helper.StringPointer("IfFieldDoesNotExist"),
+					Condition: helper.StringPointer(testIffielddoesnotexist),
 					Values:    []*float64{helper.Float64Pointer(4546), helper.Float64Pointer(4)},
 				},
 			},
@@ -81,61 +81,61 @@ func TestFlattenPodSecurity(t *testing.T) {
 				map[string]interface{}{
 					allowPrivilegeEscalationKey: []interface{}{
 						map[string]interface{}{
-							conditionKey: "IfFieldExists",
+							conditionKey: testIffieldexists,
 							valueKey:     true,
 						},
 					},
 					capabilitiesAddKey: []interface{}{
 						map[string]interface{}{
-							operationKey: "prune",
+							operationKey: testPrune,
 							valuesKey:    []interface{}{"AUDIT_CONTROL", "AUDIT_READ"},
 						},
 					},
 					capabilitiesDropKey: []interface{}{
 						map[string]interface{}{
-							operationKey: "prune",
+							operationKey: testPrune,
 							valuesKey:    []interface{}{"SETFCAP"},
 						},
 					},
 					fsGroupKey: []interface{}{
 						map[string]interface{}{
-							conditionKey: "Always",
+							conditionKey: testAlways,
 							valueKey:     float64(4),
 						},
 					},
 					privilegedKey: []interface{}{
 						map[string]interface{}{
-							conditionKey: "IfFieldExists",
+							conditionKey: testIffieldexists,
 							valueKey:     false,
 						},
 					},
 					readOnlyRootFilesystemKey: []interface{}{
 						map[string]interface{}{
-							conditionKey: "IfFieldDoesNotExist",
+							conditionKey: testIffielddoesnotexist,
 							valueKey:     false,
 						},
 					},
 					runAsGroupKey: []interface{}{
 						map[string]interface{}{
-							conditionKey: "IfFieldExists",
+							conditionKey: testIffieldexists,
 							valueKey:     float64(567),
 						},
 					},
 					runAsNonRootKey: []interface{}{
 						map[string]interface{}{
-							conditionKey: "Always",
+							conditionKey: testAlways,
 							valueKey:     true,
 						},
 					},
 					runAsUserKey: []interface{}{
 						map[string]interface{}{
-							conditionKey: "Always",
+							conditionKey: testAlways,
 							valueKey:     float64(2444),
 						},
 					},
 					seLinuxOptionsKey: []interface{}{
 						map[string]interface{}{
-							conditionKey: "IfFieldDoesNotExist",
+							conditionKey: testIffielddoesnotexist,
 							levelKey:     "level_up",
 							roleKey:      "role_role",
 							typeKey:      "type_type",
@@ -144,7 +144,7 @@ func TestFlattenPodSecurity(t *testing.T) {
 					},
 					supplementalGroupsKey: []interface{}{
 						map[string]interface{}{
-							conditionKey: "IfFieldDoesNotExist",
+							conditionKey: testIffielddoesnotexist,
 							valuesKey:    []interface{}{float64(4546), float64(4)},
 						},
 					},

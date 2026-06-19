@@ -14,6 +14,18 @@ import (
 	policyrecipemutationcommonmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/mutation/common"
 )
 
+const (
+	testAlways              = "Always"
+	testCluster             = "Cluster"
+	testIffielddoesnotexist = "IfFieldDoesNotExist"
+	testIffieldexists       = "IfFieldExists"
+	testKeyValue            = "key_value"
+	testPod                 = "pod"
+	testPolicy              = "policy"
+	testPrune               = "prune"
+	testValueValue          = "value_value"
+)
+
 func TestFlattenAnnotation(t *testing.T) {
 	t.Parallel()
 
@@ -29,13 +41,13 @@ func TestFlattenAnnotation(t *testing.T) {
 			description: "flatten normal annotation mutation policy struct",
 			input: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1Annotation{
 				Annotation: &policyrecipemutationcommonmodel.KeyValue{
-					Key:   "key_value",
-					Value: "value_value"},
+					Key:   testKeyValue,
+					Value: testValueValue},
 				Scope: policyrecipemutationcommonmodel.NewVmwareTanzuManageV1alpha1CommonPolicySpecMutationV1Scope(policyrecipemutationcommonmodel.Cluster),
 				TargetKubernetesResources: []*policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources{
 					{
-						APIGroups: []string{"policy"},
-						Kinds:     []string{"pod"},
+						APIGroups: []string{testPolicy},
+						Kinds:     []string{testPod},
 					},
 				},
 			},
@@ -43,15 +55,15 @@ func TestFlattenAnnotation(t *testing.T) {
 				map[string]interface{}{
 					AnnotationKey: []interface{}{
 						map[string]interface{}{
-							keyKey:   "key_value",
-							valueKey: "value_value",
+							keyKey:   testKeyValue,
+							valueKey: testValueValue,
 						},
 					},
-					scopeKey: "Cluster",
+					scopeKey: testCluster,
 					targetKubernetesResourcesKey: []interface{}{
 						map[string]interface{}{
-							apiGroupsKey: []string{"policy"},
-							kindsKey:     []string{"pod"},
+							apiGroupsKey: []string{testPolicy},
+							kindsKey:     []string{testPod},
 						},
 					},
 				},

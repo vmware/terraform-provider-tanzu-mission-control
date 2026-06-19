@@ -28,6 +28,16 @@ const (
 	apiSubGroup          = "namespaces"
 	apiKind              = "tanzupackage/repositories"
 	availabilityAPIKind  = "tanzupackage/repositories:setavailability"
+
+	testAttached                = "attached"
+	testKey1                    = "key1"
+	testKey2                    = "key2"
+	testMadeSuccessfully        = "made successfully"
+	testPkgrepository1          = "pkgrepository1"
+	testReady                   = "Ready"
+	testResourceWithDescription = "resource with description"
+	testValue1                  = "value1"
+	testValue2                  = "value2"
 )
 
 // nolint: unparam
@@ -109,28 +119,28 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocksUpdate(t *testing.T) {
 			OrgID:                 OrgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         globalRepoNamespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositorySpec{
 			ImgpkgBundle: &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositoryImgPkgBundleSpec{
-				Image: "extensions.aws-usw2.tmc-dev.cloud.vmware.com/packages/standard/repo:v2.2.0_update.1",
+				Image: updatedImageURL,
 			},
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: referenceArray,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "pkgrepository1",
+			UID:             testPkgrepository1,
 			ResourceVersion: "v1",
 		},
 		Status: &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositoryStatus{
 			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-				"Ready": {
-					Reason: "made successfully",
+				testReady: {
+					Reason: testMadeSuccessfully,
 				},
 			},
 			Disabled:   true,
@@ -173,7 +183,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			Meta:     postRequest.Repository.Meta,
 			Spec: &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositorySpec{
 				ImgpkgBundle: &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositoryImgPkgBundleSpec{
-					Image: "extensions.aws-usw2.tmc-dev.cloud.vmware.com/packages/standard/repo:v2.2.0_update.1",
+					Image: updatedImageURL,
 				},
 			},
 		},
@@ -185,13 +195,13 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			Meta:     postResponse.Repository.Meta,
 			Spec: &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositorySpec{
 				ImgpkgBundle: &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositoryImgPkgBundleSpec{
-					Image: "extensions.aws-usw2.tmc-dev.cloud.vmware.com/packages/standard/repo:v2.2.0_update.1",
+					Image: updatedImageURL,
 				},
 			},
 			Status: &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositoryStatus{
 				Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-					"Ready": {
-						Reason: "made successfully",
+					testReady: {
+						Reason: testMadeSuccessfully,
 					},
 				},
 				Disabled:   true,
@@ -212,8 +222,8 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 				},
 				Status: &tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageStatus{
 					Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-						"Ready": {
-							Reason: "made successfully",
+						testReady: {
+							Reason: testMadeSuccessfully,
 						},
 					},
 					PackageRepositoryGlobalNamespace: globalRepoNamespace,
@@ -272,18 +282,18 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         globalRepoNamespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &pkgRepoSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "pkgrepository1",
+			UID:             testPkgrepository1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -294,24 +304,24 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         globalRepoNamespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &pkgRepoSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "pkgrepository1",
+			UID:             testPkgrepository1,
 			ResourceVersion: "v1",
 		},
 		Status: &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositoryStatus{
 			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-				"Ready": {
-					Reason: "made successfully",
+				testReady: {
+					Reason: testMadeSuccessfully,
 				},
 			},
 			Disabled:   false,
@@ -334,24 +344,24 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         globalRepoNamespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &pkgRepoSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: referenceArray,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "pkgrepository1",
+			UID:             testPkgrepository1,
 			ResourceVersion: "v1",
 		},
 		Status: &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositoryStatus{
 			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-				"Ready": {
-					Reason: "made successfully",
+				testReady: {
+					Reason: testMadeSuccessfully,
 				},
 			},
 			Disabled:   false,
@@ -371,8 +381,8 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         globalRepoNamespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 	}
 
@@ -383,24 +393,24 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 				OrgID:                 orgID,
 				ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 				NamespaceName:         globalRepoNamespace,
-				ProvisionerName:       "attached",
-				ManagementClusterName: "attached",
+				ProvisionerName:       testAttached,
+				ManagementClusterName: testAttached,
 			},
 			Spec: &pkgRepoSpec,
 			Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 				ParentReferences: referenceArray,
-				Description:      "resource with description",
+				Description:      testResourceWithDescription,
 				Labels: map[string]string{
-					"key1": "value1",
-					"key2": "value2",
+					testKey1: testValue1,
+					testKey2: testValue2,
 				},
-				UID:             "pkgrepository1",
+				UID:             testPkgrepository1,
 				ResourceVersion: "v1",
 			},
 			Status: &pkgrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageRepositoryStatus{
 				Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-					"Ready": {
-						Reason: "made successfully",
+					testReady: {
+						Reason: testMadeSuccessfully,
 					},
 				},
 				Disabled:   true,

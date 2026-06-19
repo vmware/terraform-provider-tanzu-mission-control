@@ -403,8 +403,8 @@ func (testConfig *testAcceptanceConfig) getTestNetworkPolicyResourceBasicConfigV
 func (testConfig *testAcceptanceConfig) getTestNetworkPolicyResourceInput(recipe policykindNetwork.Recipe, opts ...OperationOption) string {
 	cfg := &OperationConfig{
 		fromOwnNamespace: "false",
-		podLabelKey:      "key1",
-		podLabelValue:    "value1",
+		podLabelKey:      testKey1,
+		podLabelValue:    testValue1,
 	}
 
 	for _, o := range opts {
@@ -566,7 +566,6 @@ func (testConfig *testAcceptanceConfig) checkNetworkPolicyResourceAttributes(sco
 		workspaceName := testConfig.ScopeHelperResources.Workspace.Name
 
 		if _, found := os.LookupEnv("ENABLE_POLICY_ENV_TEST"); !found {
-			workspaceName = "workspace1"
 		}
 
 		check = append(check, resource.TestCheckResourceAttr(testConfig.NetworkPolicyResourceName, "scope.0.workspace.0.workspace", workspaceName))
@@ -613,7 +612,6 @@ func (testConfig *testAcceptanceConfig) verifyNetworkPolicyResourceCreation(scop
 			workspaceName := testConfig.ScopeHelperResources.Workspace.Name
 
 			if _, found := os.LookupEnv("ENABLE_POLICY_ENV_TEST"); !found {
-				workspaceName = "workspace1"
 			}
 
 			fn := &policyworkspacemodel.VmwareTanzuManageV1alpha1WorkspacePolicyFullName{

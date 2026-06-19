@@ -13,6 +13,11 @@ import (
 	kustomizationclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kustomization/clustergroup"
 )
 
+const (
+	testDefault = "default"
+	testTmcCd   = "tmc-cd"
+)
+
 func TestFlattenSpecForClusterScope(t *testing.T) {
 	t.Parallel()
 
@@ -33,10 +38,10 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 				Path:     "/",
 				Prune:    true,
 				Source: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationRepositoryReference{
-					Name:      "tmc-cd",
-					Namespace: "default",
+					Name:      testTmcCd,
+					Namespace: testDefault,
 				},
-				TargetNamespace: "default",
+				TargetNamespace: testDefault,
 			},
 			expected: []interface{}{
 				map[string]interface{}{
@@ -45,11 +50,11 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 					pruneKey:    true,
 					sourceKey: []interface{}{
 						map[string]interface{}{
-							nameKey:      "tmc-cd",
-							namespaceKey: "default",
+							nameKey:      testTmcCd,
+							namespaceKey: testDefault,
 						},
 					},
-					targetNamespaceKey: "default",
+					targetNamespaceKey: testDefault,
 				},
 			},
 		},
@@ -85,10 +90,10 @@ func TestFlattenSpecForClusterGroupScope(t *testing.T) {
 					Path:     "/",
 					Prune:    true,
 					Source: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationRepositoryReference{
-						Name:      "tmc-cd",
-						Namespace: "default",
+						Name:      testTmcCd,
+						Namespace: testDefault,
 					},
-					TargetNamespace: "default",
+					TargetNamespace: testDefault,
 				},
 			},
 			expected: []interface{}{
@@ -98,11 +103,11 @@ func TestFlattenSpecForClusterGroupScope(t *testing.T) {
 					pruneKey:    true,
 					sourceKey: []interface{}{
 						map[string]interface{}{
-							nameKey:      "tmc-cd",
-							namespaceKey: "default",
+							nameKey:      testTmcCd,
+							namespaceKey: testDefault,
 						},
 					},
-					targetNamespaceKey: "default",
+					targetNamespaceKey: testDefault,
 				},
 			},
 		},

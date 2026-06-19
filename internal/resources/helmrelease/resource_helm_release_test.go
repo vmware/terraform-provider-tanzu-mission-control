@@ -36,7 +36,7 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 		HelmReleaseResourceName: fmt.Sprintf("%s.%s", helmReleaseResource, helmReleaseResourceVar),
 		HelmReleaseName:         acctest.RandomWithPrefix(helmReleaseNamePrefix),
 		ScopeHelperResources:    commonscope.NewScopeHelperResources(commonscope.WithRandomClusterGroupNameForCluster()), // Don't use the default cluster group
-		Namespace:               "tanzu-helm-resources",
+		Namespace:               testTanzuHelmResources,
 		HelmFeatureResource:     helmfeatureResource,
 		HelmFeatureResourceVar:  helmfeatureResourceVar,
 	}
@@ -159,7 +159,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 				chart_ref {
 					helm_repository{
 						repository_name = "bitnami"
-						repository_namespace = "tanzu-helm-resources"
+						repository_namespace = "%s"
 						chart_name = "airflow"
 						version = "%s"
 					}
@@ -167,7 +167,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 				interval = "5m"
 			}
 			}
-			`, testConfig.HelmReleaseResource, testConfig.HelmReleaseResourceVar, testConfig.HelmReleaseName, testConfig.Namespace, testConfig.ScopeHelperResources.Cluster.Name, constraints)
+			`, testConfig.HelmReleaseResource, testConfig.HelmReleaseResourceVar, testConfig.HelmReleaseName, testConfig.Namespace, testConfig.ScopeHelperResources.Cluster.Name, constraints, testTanzuHelmResources)
 		case commonscope.ClusterGroupScope:
 			return fmt.Sprintf(`
 			resource "%s" "%s" {
@@ -233,7 +233,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 			chart_ref {
 				helm_repository{
 					repository_name = "bitnami"
-					repository_namespace = "tanzu-helm-resources"
+					repository_namespace = "%s"
 					chart_name = "airflow"
 					version = "%s"
 				}
@@ -244,7 +244,7 @@ func (testConfig *testAcceptanceConfig) getTestResourceBasicConfigValue(scope co
 	}
 	`, helperBlock, testConfig.HelmFeatureResource, testConfig.HelmFeatureResourceVar, scopeBlock,
 			testConfig.HelmReleaseResource, testConfig.HelmReleaseResourceVar, testConfig.HelmReleaseName,
-			testConfig.Namespace, scopeBlock, constraints)
+			testConfig.Namespace, scopeBlock, constraints, testTanzuHelmResources)
 
 	case commonscope.ClusterGroupScope:
 		return fmt.Sprintf(`

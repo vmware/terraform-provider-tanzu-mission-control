@@ -14,6 +14,18 @@ import (
 	policyrecipecustomcommonmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom/common"
 )
 
+const (
+	customRecipeTemplateName = "some-custom-template"
+	test127001               = "127.0.0.1"
+	testKey1                 = "key-1"
+	testNodes                = "nodes"
+	testPod                  = "pod"
+	testPolicy               = "policy"
+	testTest                 = "test"
+	testUser                 = "User"
+	testValue1               = "value-1"
+)
+
 func TestFlattenTMCBlockRolebindingSubjects(t *testing.T) {
 	t.Parallel()
 
@@ -34,15 +46,15 @@ func TestFlattenTMCBlockRolebindingSubjects(t *testing.T) {
 				Parameters: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjectsParameters{
 					DisallowedSubjects: []*policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjectsParametersDisallowedSubjects{
 						{
-							Kind: "User",
-							Name: "test",
+							Kind: testUser,
+							Name: testTest,
 						},
 					},
 				},
 				TargetKubernetesResources: []*policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources{
 					{
-						APIGroups: []string{"policy"},
-						Kinds:     []string{"pod"},
+						APIGroups: []string{testPolicy},
+						Kinds:     []string{testPod},
 					},
 				},
 			},
@@ -53,16 +65,16 @@ func TestFlattenTMCBlockRolebindingSubjects(t *testing.T) {
 						map[string]interface{}{
 							disallowedSubjectsKey: []interface{}{
 								map[string]interface{}{
-									kindKey: "User",
-									nameKey: "test",
+									kindKey: testUser,
+									nameKey: testTest,
 								},
 							},
 						},
 					},
 					TargetKubernetesResourcesKey: []interface{}{
 						map[string]interface{}{
-							APIGroupsKey: []string{"policy"},
-							KindsKey:     []string{"pod"},
+							APIGroupsKey: []string{testPolicy},
+							KindsKey:     []string{testPod},
 						},
 					},
 				},
@@ -97,8 +109,8 @@ func TestFlattenBlockRoleBindingParameters(t *testing.T) {
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjectsParameters{
 				DisallowedSubjects: []*policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjectsParametersDisallowedSubjects{
 					{
-						Kind: "nodes",
-						Name: "test",
+						Kind: testNodes,
+						Name: testTest,
 					},
 				},
 			},
@@ -106,8 +118,8 @@ func TestFlattenBlockRoleBindingParameters(t *testing.T) {
 				map[string]interface{}{
 					disallowedSubjectsKey: []interface{}{
 						map[string]interface{}{
-							kindKey: "nodes",
-							nameKey: "test",
+							kindKey: testNodes,
+							nameKey: testTest,
 						},
 					},
 				},
@@ -140,12 +152,12 @@ func TestFlattenDisallowedSubjects(t *testing.T) {
 		{
 			description: "normal scenario with complete custom policy tmc_block_rolebinding_subjects parameters disallowed subjects",
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCBlockRoleBindingSubjectsParametersDisallowedSubjects{
-				Kind: "nodes",
-				Name: "test",
+				Kind: testNodes,
+				Name: testTest,
 			},
 			expected: map[string]interface{}{
-				kindKey: "nodes",
-				nameKey: "test",
+				kindKey: testNodes,
+				nameKey: testTest,
 			},
 		},
 	}

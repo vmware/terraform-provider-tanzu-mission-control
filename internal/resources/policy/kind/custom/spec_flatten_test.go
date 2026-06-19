@@ -17,6 +17,11 @@ import (
 	reciperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/custom/recipe"
 )
 
+const (
+	testPod    = "pod"
+	testPolicy = "policy"
+)
+
 func TestFlattenSpec(t *testing.T) {
 	t.Parallel()
 
@@ -62,8 +67,8 @@ func TestFlattenSpec(t *testing.T) {
 									reciperesource.AuditKey: true,
 									reciperesource.TargetKubernetesResourcesKey: []interface{}{
 										map[string]interface{}{
-											reciperesource.APIGroupsKey: []string{"policy"},
-											reciperesource.KindsKey:     []string{"pod"},
+											reciperesource.APIGroupsKey: []string{testPolicy},
+											reciperesource.KindsKey:     []string{testPod},
 										},
 									},
 								},
@@ -108,8 +113,8 @@ func constructTMCHTTPSIngressInput() (tmcHTTPSIngressRecipeInput map[string]inte
 		Audit: true,
 		TargetKubernetesResources: []*policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources{
 			{
-				APIGroups: []string{"policy"},
-				Kinds:     []string{"pod"},
+				APIGroups: []string{testPolicy},
+				Kinds:     []string{testPod},
 			},
 		},
 	}

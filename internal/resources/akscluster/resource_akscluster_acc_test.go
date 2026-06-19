@@ -394,10 +394,10 @@ func testAKSCluster(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) st
   name            = "%s"
   spec {
     config {
-      location = "eastus"
+      location = "%s"
       kubernetes_version = "%s"
       network_config {
-		network_plugin = "azure"
+		network_plugin = "%s"
         dns_prefix = "dns-tf-test"
       }
       storage_config {
@@ -420,7 +420,7 @@ func testAKSCluster(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) st
       }
     }
   }
-}`, fn.Name, fn.CredentialName, fn.SubscriptionID, fn.Name, aksKubernetesVersion)
+}`, fn.Name, fn.CredentialName, fn.SubscriptionID, fn.Name, testEastus, aksKubernetesVersion, testAzure)
 }
 
 func testAKSClusterEnableCSI(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) string {
@@ -431,10 +431,10 @@ func testAKSClusterEnableCSI(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFul
   name            = "%s"
   spec {
     config {
-      location = "eastus"
+      location = "%s"
       kubernetes_version = "%s"
       network_config {
-		network_plugin = "azure"
+		network_plugin = "%s"
         dns_prefix = "dns-tf-test"
       }
       storage_config {
@@ -457,7 +457,7 @@ func testAKSClusterEnableCSI(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFul
       }
     }
   }
-}`, fn.Name, fn.CredentialName, fn.SubscriptionID, fn.Name, aksKubernetesVersion)
+}`, fn.Name, fn.CredentialName, fn.SubscriptionID, fn.Name, testEastus, aksKubernetesVersion, testAzure)
 }
 
 func testAKSClusterAddUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) string {
@@ -468,10 +468,10 @@ func testAKSClusterAddUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1Aksclus
   name            = "%s"
   spec {
     config {
-      location = "eastus"
+      location = "%s"
       kubernetes_version = "%s"
       network_config {
-		network_plugin = "azure"
+		network_plugin = "%s"
         dns_prefix = "dns-tf-test"
       }
       storage_config {
@@ -505,7 +505,7 @@ func testAKSClusterAddUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1Aksclus
       }
     }
   }
-}`, fn.Name, fn.CredentialName, fn.SubscriptionID, fn.Name, aksKubernetesVersion)
+}`, fn.Name, fn.CredentialName, fn.SubscriptionID, fn.Name, testEastus, aksKubernetesVersion, testAzure)
 }
 
 func testAKSClusterRemoveUserNodepool(fn *aksmodel.VmwareTanzuManageV1alpha1AksclusterFullName) string {
@@ -522,9 +522,9 @@ func mockCluster(w ...clusterWither) *aksmodel.VmwareTanzuManageV1alpha1AksClust
 			AgentName:        "",
 			ClusterGroupName: "default",
 			Config: &aksmodel.VmwareTanzuManageV1alpha1AksclusterClusterConfig{
-				Location: "eastus",
+				Location: testEastus,
 				NetworkConfig: &aksmodel.VmwareTanzuManageV1alpha1AksclusterNetworkConfig{
-					NetworkPlugin: "azure",
+					NetworkPlugin: testAzure,
 					DNSPrefix:     "dns-tf-test",
 				},
 				StorageConfig: &aksmodel.VmwareTanzuManageV1alpha1AksclusterStorageConfig{

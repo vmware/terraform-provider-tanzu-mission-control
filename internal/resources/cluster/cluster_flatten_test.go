@@ -29,14 +29,14 @@ func TestFlattenClusterFullname(t *testing.T) {
 			description: "normal scenario with complete cluster full name",
 			input: &clustermodel.VmwareTanzuManageV1alpha1ClusterFullName{
 				Name:                  "dummy",
-				ManagementClusterName: "attached",
-				ProvisionerName:       "attached",
+				ManagementClusterName: attachedValue,
+				ProvisionerName:       attachedValue,
 			},
 			expected: []interface{}{
 				map[string]interface{}{
 					NameKey:                  "dummy",
-					ManagementClusterNameKey: "attached",
-					ProvisionerNameKey:       "attached",
+					ManagementClusterNameKey: attachedValue,
+					ProvisionerNameKey:       attachedValue,
 				},
 			},
 		},

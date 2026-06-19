@@ -14,6 +14,12 @@ import (
 	policyrecipeimagecommonmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/image/common"
 )
 
+const (
+	testBar  = "bar"
+	testFoo  = "foo"
+	testTest = "test"
+)
+
 func TestFlattenAllowedNameTag(t *testing.T) {
 	t.Parallel()
 
@@ -33,10 +39,10 @@ func TestFlattenAllowedNameTag(t *testing.T) {
 				Audit: nil,
 				Rules: []*policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1AllowedNameTagRules{
 					{
-						ImageName: "foo",
+						ImageName: testFoo,
 						Tag: &policyrecipeimagecommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1RulesTag{
 							Negate: helper.BoolPointer(false),
-							Value:  "test",
+							Value:  testTest,
 						},
 					},
 				},
@@ -45,11 +51,11 @@ func TestFlattenAllowedNameTag(t *testing.T) {
 				map[string]interface{}{
 					RulesKey: []interface{}{
 						map[string]interface{}{
-							ImageNameKey: "foo",
+							ImageNameKey: testFoo,
 							TagKey: []interface{}{
 								map[string]interface{}{
 									NegateKey: false,
-									ValueKey:  "test",
+									ValueKey:  testTest,
 								},
 							},
 						},
@@ -63,10 +69,10 @@ func TestFlattenAllowedNameTag(t *testing.T) {
 				Audit: helper.BoolPointer(true),
 				Rules: []*policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1AllowedNameTagRules{
 					{
-						ImageName: "foo",
+						ImageName: testFoo,
 						Tag: &policyrecipeimagecommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1RulesTag{
 							Negate: helper.BoolPointer(false),
-							Value:  "test",
+							Value:  testTest,
 						},
 					},
 				},
@@ -76,11 +82,11 @@ func TestFlattenAllowedNameTag(t *testing.T) {
 					AuditKey: true,
 					RulesKey: []interface{}{
 						map[string]interface{}{
-							ImageNameKey: "foo",
+							ImageNameKey: testFoo,
 							TagKey: []interface{}{
 								map[string]interface{}{
 									NegateKey: false,
-									ValueKey:  "test",
+									ValueKey:  testTest,
 								},
 							},
 						},
@@ -115,18 +121,18 @@ func TestFlattenNameTagRules(t *testing.T) {
 		{
 			description: "normal scenario with all fields of rules spec of allowed-name-tag recipe",
 			input: &policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1AllowedNameTagRules{
-				ImageName: "foo",
+				ImageName: testFoo,
 				Tag: &policyrecipeimagecommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1RulesTag{
 					Negate: helper.BoolPointer(false),
-					Value:  "test",
+					Value:  testTest,
 				},
 			},
 			expected: map[string]interface{}{
-				ImageNameKey: "foo",
+				ImageNameKey: testFoo,
 				TagKey: []interface{}{
 					map[string]interface{}{
 						NegateKey: false,
-						ValueKey:  "test",
+						ValueKey:  testTest,
 					},
 				},
 			},

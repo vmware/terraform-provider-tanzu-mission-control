@@ -59,14 +59,14 @@ func TestFlattenSpec(t *testing.T) {
 							reciperesource.CustomKey: []interface{}{
 								map[string]interface{}{
 									reciperesource.LimitsCPUKey:                      "4",
-									reciperesource.LimitsMemoryKey:                   "8Mi",
+									reciperesource.LimitsMemoryKey:                   test8mi,
 									reciperesource.PersistentVolumeClaimsKey:         int64(2),
-									reciperesource.PersistentVolumeClaimsPerClassKey: map[string]int{"test-1": 2},
+									reciperesource.PersistentVolumeClaimsPerClassKey: map[string]int{testTest1: 2},
 									reciperesource.RequestsCPUKey:                    "2",
-									reciperesource.RequestsMemoryKey:                 "4Mi",
+									reciperesource.RequestsMemoryKey:                 test4mi,
 									reciperesource.RequestsStorageKey:                "2G",
-									reciperesource.RequestsStoragePerClassKey:        map[string]string{"test-2": "2G"},
-									reciperesource.ResourceCountsKey:                 map[string]int{"pods": 2},
+									reciperesource.RequestsStoragePerClassKey:        map[string]string{testTest2: "2G"},
+									reciperesource.ResourceCountsKey:                 map[string]int{testPods: 2},
 								},
 							},
 						},
@@ -107,14 +107,14 @@ func TestFlattenSpec(t *testing.T) {
 func constructCustomInput() (customRecipeInput map[string]interface{}) {
 	customInput := policyrecipequotamodel.VmwareTanzuManageV1alpha1CommonPolicySpecQuotaV1Custom{
 		LimitsCPU:                      "4",
-		LimitsMemory:                   "8Mi",
+		LimitsMemory:                   test8mi,
 		Persistentvolumeclaims:         2,
-		PersistentvolumeclaimsPerClass: map[string]int{"test-1": 2},
+		PersistentvolumeclaimsPerClass: map[string]int{testTest1: 2},
 		RequestsCPU:                    "2",
-		RequestsMemory:                 "4Mi",
+		RequestsMemory:                 test4mi,
 		RequestsStorage:                "2G",
-		RequestsStoragePerClass:        map[string]string{"test-2": "2G"},
-		ResourceCounts:                 map[string]int{"pods": 2},
+		RequestsStoragePerClass:        map[string]string{testTest2: "2G"},
+		ResourceCounts:                 map[string]int{testPods: 2},
 	}
 
 	binary, err := customInput.MarshalBinary()

@@ -38,7 +38,7 @@ func testGetDefaultAcceptanceConfig(t *testing.T) *testAcceptanceConfig {
 		GitRepositoryResource:     gitRepositoryResource,
 		GitRepositoryResourceVar:  gitRepositoryResourceVar,
 		GitRepositoryName:         acctest.RandomWithPrefix(gitRepositoryNamePrefix),
-		Namespace:                 "tanzu-continuousdelivery-resources",
+		Namespace:                 testTanzuContinuousdeliveryResources,
 	}
 }
 
@@ -245,11 +245,11 @@ func getKustomizationspec(opts ...OperationOption) string {
 			interval = "%s"
 			source {
 				name = "someGitRepository"
-				namespace = "tanzu-continuousdelivery-resources"
+				namespace = "%s"
 			}
 		}
 `
-		inputBlock = fmt.Sprintf(inputBlock, cfg.pruneEnabled, cfg.interval)
+		inputBlock = fmt.Sprintf(inputBlock, cfg.pruneEnabled, cfg.interval, testTanzuContinuousdeliveryResources)
 
 		return inputBlock
 	}
@@ -324,7 +324,7 @@ func (testConfig *testAcceptanceConfig) verifyKustomizationResourceCreation(scop
 				ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 				ManagementClusterName: commonscope.AttachedValue,
 				Name:                  testConfig.KustomizationName,
-				NamespaceName:         "tanzu-continuousdelivery-resources",
+				NamespaceName:         testTanzuContinuousdeliveryResources,
 				ProvisionerName:       commonscope.AttachedValue,
 			}
 
@@ -340,7 +340,7 @@ func (testConfig *testAcceptanceConfig) verifyKustomizationResourceCreation(scop
 			fn := &kustomizationclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdKustomizationFullName{
 				ClusterGroupName: testConfig.ScopeHelperResources.ClusterGroup.Name,
 				Name:             testConfig.KustomizationName,
-				NamespaceName:    "tanzu-continuousdelivery-resources",
+				NamespaceName:    testTanzuContinuousdeliveryResources,
 			}
 
 			resp, err := config.TMCConnection.ClusterGroupKustomizationResourceService.VmwareTanzuManageV1alpha1ClustergroupFluxcdKustomizationResourceServiceGet(fn)

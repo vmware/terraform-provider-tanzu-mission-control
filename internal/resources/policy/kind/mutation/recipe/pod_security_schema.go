@@ -44,7 +44,7 @@ var booleanConditionSchema = &schema.Schema{
 			conditionKey: {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"Always", "IfFieldDoesNotExist", "IfFieldExists"}, false),
+				ValidateFunc: validation.StringInSlice([]string{alwaysConditionOp, ifFieldDoesNotExistOp, ifFieldExistsOp}, false),
 			},
 			valueKey: {
 				Type:     schema.TypeBool,
@@ -62,7 +62,7 @@ var ipConditionSchema = &schema.Schema{
 			conditionKey: {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"Always", "IfFieldDoesNotExist", "IfFieldExists"}, false),
+				ValidateFunc: validation.StringInSlice([]string{alwaysConditionOp, ifFieldDoesNotExistOp, ifFieldExistsOp}, false),
 			},
 			valueKey: {
 				Type:         schema.TypeFloat,
@@ -82,7 +82,7 @@ var conditionSchemaArrays = &schema.Schema{
 			conditionKey: {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"Always", "IfFieldDoesNotExist", "IfFieldExists"}, false),
+				ValidateFunc: validation.StringInSlice([]string{alwaysConditionOp, ifFieldDoesNotExistOp, ifFieldExistsOp}, false),
 			},
 			valuesKey: {
 				Type:     schema.TypeList,
@@ -158,7 +158,7 @@ var allowedSELinuxOptions = &schema.Schema{
 				Description:  "SELinux condition",
 				Optional:     true,
 				Default:      "",
-				ValidateFunc: validation.StringInSlice([]string{"Always", "IfFieldDoesNotExist", "IfFieldExists"}, false),
+				ValidateFunc: validation.StringInSlice([]string{alwaysConditionOp, ifFieldDoesNotExistOp, ifFieldExistsOp}, false),
 			},
 		},
 	},

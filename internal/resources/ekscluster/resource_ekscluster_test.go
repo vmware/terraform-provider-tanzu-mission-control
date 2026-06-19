@@ -37,6 +37,15 @@ import (
 	testhelper "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/testing"
 )
 
+const (
+	testSubnet0277c4ea9fc2fd193 = "subnet-0277c4ea9fc2fd193"
+	testSubnet0d3d1f9c48286ecdf = "subnet-0d3d1f9c48286ecdf"
+	testSubnet0ec0a74e995ba4634 = "subnet-0ec0a74e995ba4634"
+	testTestval                 = "testval"
+	testValue1                  = "value1"
+	testValue2                  = "value2"
+)
+
 // Function to set up HTTP mocks for the specific eks cluster/nodepool requests anticipated by this test, when not being run against a real TMC stack.
 func setupHTTPMocks(t *testing.T, clusterName string) {
 	httpmock.Activate()
@@ -56,10 +65,10 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 		Spec: &clusterSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
 		},
 	}
@@ -82,10 +91,10 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: referenceArray,
 			UID:              "1886ad24-40bb-4517-9712-af9df737b606",
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
 		},
 	}
@@ -101,7 +110,7 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 	// GET Cluster mock setup
 	readyStatus := eksmodel.VmwareTanzuCoreV1alpha1StatusConditionStatusTRUE
 	readyCondition := eksmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-		Type:   "ready",
+		Type:   testReady,
 		Status: &readyStatus,
 	}
 
@@ -116,16 +125,16 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: referenceArray,
 			UID:              "1886ad24-40bb-4517-9712-af9df737b606",
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
 		},
 		Status: &eksmodel.VmwareTanzuManageV1alpha1EksclusterStatus{
 			Phase: &readyPhase,
 			Conditions: map[string]eksmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-				"ready": readyCondition,
+				testReady: readyCondition,
 			},
 		},
 	}
@@ -171,7 +180,7 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 		npObjWithStatus.Status = &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolStatus{
 			Phase: &nodepoolReadyPhase,
 			Conditions: map[string]eksmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-				"ready": readyCondition,
+				testReady: readyCondition,
 			},
 		}
 
@@ -415,14 +424,14 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 	workerRoleArn := fmt.Sprintf("arn:aws:iam::%s:role/worker.%s.eks.tmc.cloud.vmware.com", accountID, templateID)
 
 	return eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec{
-			ClusterGroupName: "default",
+			ClusterGroupName: clusterGroupDefaultValue,
 			Config: &eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig{
 				Version: "1.26",
 				RoleArn: controlPlaneRoleARN,
 				Tags: map[string]string{
 					"tmc.cloud.vmware.com/tmc-managed": "true",
-					"testtag":                          "testval",
-					"newtesttag":                       "newtestval",
+					testTesttag:                        testTestval,
+					testNewtesttag:                     "newtestval",
 				},
 				KubernetesNetworkConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterKubernetesNetworkConfig{
 					ServiceCidr: "10.100.0.0/16",
@@ -442,7 +451,7 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 					},
 					SecurityGroups: []string{"sg-0197c9a8b1378eed5"},
 					SubnetIds: []string{
-						"subnet-022e4a6bc8c8ee7a6", "subnet-0277c4ea9fc2fd193", "subnet-0d3d1f9c48286ecdf", "subnet-0ec0a74e995ba4634",
+						testSubnet022e4a6bc8c8ee7a6, testSubnet0277c4ea9fc2fd193, testSubnet0d3d1f9c48286ecdf, testSubnet0ec0a74e995ba4634,
 					},
 				},
 			},
@@ -457,18 +466,18 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 					RoleArn:      workerRoleArn,
 					AmiType:      "AL2_x86_64",
 					AmiInfo:      &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAmiInfo{},
-					CapacityType: "ON_DEMAND",
+					CapacityType: testOnDemand,
 					RootDiskSize: 40,
 					Tags: map[string]string{
-						"testnptag":  "testnptagvalue",
-						"newtesttag": "testingtagvalue",
-						"testtag":    "testval",
+						"testnptag":    "testnptagvalue",
+						testNewtesttag: "testingtagvalue",
+						testTesttag:    testTestval,
 					},
 					NodeLabels: map[string]string{
 						"testnplabelkey": "testnplabelvalue",
 					},
 					SubnetIds: []string{
-						"subnet-022e4a6bc8c8ee7a6", "subnet-0277c4ea9fc2fd193", "subnet-0d3d1f9c48286ecdf", "subnet-0ec0a74e995ba4634",
+						testSubnet022e4a6bc8c8ee7a6, testSubnet0277c4ea9fc2fd193, testSubnet0d3d1f9c48286ecdf, testSubnet0ec0a74e995ba4634,
 					},
 					ScalingConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolScalingConfig{
 						DesiredSize: 4,
@@ -479,8 +488,8 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 						MaxUnavailableNodes: "2",
 					},
 					InstanceTypes: []string{
-						"t3.medium",
-						"m3.large",
+						testT3medium,
+						testM3large,
 					},
 					Taints:         make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaint, 0),
 					RemoteAccess:   &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolRemoteAccess{},
@@ -495,15 +504,15 @@ func getMockEksClusterSpec(accountID string, templateID string) (eksmodel.Vmware
 				Spec: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec{
 					RoleArn: workerRoleArn,
 					Tags: map[string]string{
-						"testnptag":  "testnptagvalue",
-						"newtesttag": "testingtagvalue",
-						"testtag":    "testval",
+						"testnptag":    "testnptagvalue",
+						testNewtesttag: "testingtagvalue",
+						testTesttag:    testTestval,
 					},
 					NodeLabels: map[string]string{
 						"testnplabelkey": "testnplabelvalue",
 					},
 					SubnetIds: []string{
-						"subnet-022e4a6bc8c8ee7a6", "subnet-0277c4ea9fc2fd193", "subnet-0d3d1f9c48286ecdf", "subnet-0ec0a74e995ba4634",
+						testSubnet022e4a6bc8c8ee7a6, testSubnet0277c4ea9fc2fd193, testSubnet0d3d1f9c48286ecdf, testSubnet0ec0a74e995ba4634,
 					},
 					LaunchTemplate: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolLaunchTemplate{},
 					ScalingConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolScalingConfig{

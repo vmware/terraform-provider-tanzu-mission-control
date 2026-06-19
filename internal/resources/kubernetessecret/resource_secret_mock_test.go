@@ -30,6 +30,14 @@ const (
 	apiKind              = "secrets"
 	exportAPIKind        = "secretexports"
 	cgAPIVersionAndGroup = "v1alpha1/clustergroups"
+
+	testAttached                = "attached"
+	testKey1                    = "key1"
+	testKey2                    = "key2"
+	testResourceWithDescription = "resource with description"
+	testSecret1                 = "secret1"
+	testValue1                  = "value1"
+	testValue2                  = "value2"
 )
 
 func getMockSpec(secretType string) secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec {
@@ -129,19 +137,19 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T, secretType 
 			Name:                  testConfig.SecretName,
 			OrgID:                 OrgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 			NamespaceName:         testConfig.NamespaceName,
 		},
 		Spec: &secretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "secret1",
+			UID:             testSecret1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -151,19 +159,19 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T, secretType 
 			Name:                  testConfig.SecretName,
 			OrgID:                 OrgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 			NamespaceName:         testConfig.NamespaceName,
 		},
 		Spec: &secretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "secret1",
+			UID:             testSecret1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -182,19 +190,19 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T, secretType 
 			Name:                  testConfig.SecretName,
 			OrgID:                 OrgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 			NamespaceName:         testConfig.NamespaceName,
 		},
 		Spec: &secretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "secret1",
+			UID:             testSecret1,
 			ResourceVersion: "v1",
 		},
 		Status: &secretmodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretStatus{
@@ -258,12 +266,12 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T, secretType 
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "secret1",
+			UID:             testSecret1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -280,12 +288,12 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T, secretType 
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "secret1",
+			UID:             testSecret1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -311,12 +319,12 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T, secretType 
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "secret1",
+			UID:             testSecret1,
 			ResourceVersion: "v1",
 		},
 		Status: &secretcgmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceSecretStatus{

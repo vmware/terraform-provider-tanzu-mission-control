@@ -12,6 +12,11 @@ import (
 	objectmetamodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/objectmeta"
 )
 
+const (
+	testDescriptionOfResource = "description of resource"
+	testTest                  = "test"
+)
+
 func TestFlattenMeta(t *testing.T) {
 	t.Parallel()
 
@@ -28,16 +33,16 @@ func TestFlattenMeta(t *testing.T) {
 		{
 			name: "normal scenario with all fields of meta data",
 			input: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
-				Annotations: map[string]string{"test": "test"},
-				Labels:      map[string]string{"test": "test"},
-				Description: "description of resource",
+				Annotations: map[string]string{testTest: testTest},
+				Labels:      map[string]string{testTest: testTest},
+				Description: testDescriptionOfResource,
 				UID:         "abc",
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					AnnotationsKey:     map[string]string{"test": "test"},
-					LabelsKey:          map[string]string{"test": "test"},
-					DescriptionKey:     "description of resource",
+					AnnotationsKey:     map[string]string{testTest: testTest},
+					LabelsKey:          map[string]string{testTest: testTest},
+					DescriptionKey:     testDescriptionOfResource,
 					resourceVersionKey: "",
 					uidKey:             "abc",
 				},
@@ -46,16 +51,16 @@ func TestFlattenMeta(t *testing.T) {
 		{
 			name: "normal scenario with annotation and description of meta data",
 			input: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
-				Annotations: map[string]string{"test": "test"},
+				Annotations: map[string]string{testTest: testTest},
 				Labels:      map[string]string{},
-				Description: "description of resource",
+				Description: testDescriptionOfResource,
 				UID:         "",
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					AnnotationsKey:     map[string]string{"test": "test"},
+					AnnotationsKey:     map[string]string{testTest: testTest},
 					LabelsKey:          map[string]string{},
-					DescriptionKey:     "description of resource",
+					DescriptionKey:     testDescriptionOfResource,
 					resourceVersionKey: "",
 					uidKey:             "",
 				},
@@ -65,14 +70,14 @@ func TestFlattenMeta(t *testing.T) {
 			name: "normal scenario with labels and UID of meta data",
 			input: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 				Annotations: map[string]string{},
-				Labels:      map[string]string{"test": "test"},
+				Labels:      map[string]string{testTest: testTest},
 				Description: "",
 				UID:         "123",
 			},
 			expected: []interface{}{
 				map[string]interface{}{
 					AnnotationsKey:     map[string]string{},
-					LabelsKey:          map[string]string{"test": "test"},
+					LabelsKey:          map[string]string{testTest: testTest},
 					DescriptionKey:     "",
 					resourceVersionKey: "",
 					uidKey:             "123",

@@ -34,15 +34,34 @@ const (
 	apiKind              = "fluxcd/helm/releases"
 	helmAPIKind          = "fluxcd/helm"
 	cgAPIVersionAndGroup = "v1alpha1/clustergroups"
+
+	testAirflow                          = "airflow"
+	testBitnami                          = "bitnami"
+	testCdgitrepository1                 = "cdgitrepository1"
+	testConstraints                      = "constraints"
+	testGitrepository1                   = "gitrepository1"
+	testKey1                             = "key1"
+	testKey2                             = "key2"
+	testMadeSuccessfully                 = "made successfully"
+	testReady                            = "Ready"
+	testResourceWithDescription          = "resource with description"
+	testTanzuContinuousdeliveryResources = "tanzu-continuousdelivery-resources"
+	testTanzuHelmResources               = "tanzu-helm-resources"
+	testTestclusterrole                  = "testclusterrole"
+	testTestrolebinding                  = "testrolebinding"
+	testTestserviceaccount               = "testserviceaccount"
+	testAttached                         = "attached"
+	testValue1                           = "value1"
+	testValue2                           = "value2"
 )
 
 func getMockSpec() releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseSpec {
 	return releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseSpec{
 		ChartRef: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseChartRef{
-			Chart:               "airflow",
+			Chart:               testAirflow,
 			Version:             "15.0.3",
-			RepositoryName:      "bitnami",
-			RepositoryNamespace: "tanzu-helm-resources",
+			RepositoryName:      testBitnami,
+			RepositoryNamespace: testTanzuHelmResources,
 			RepositoryType:      releaseclustermodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryType(releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryTypeHELM),
 		},
 		Interval: "5m",
@@ -130,39 +149,39 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocksUpdate(t *testing.T, scope
 				OrgID:                 OrgID,
 				ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 				NamespaceName:         testConfig.Namespace,
-				ProvisionerName:       "attached",
-				ManagementClusterName: "attached",
+				ProvisionerName:       testAttached,
+				ManagementClusterName: testAttached,
 			},
 			Spec: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseSpec{
 				ChartRef: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseChartRef{
-					Chart:               "airflow",
+					Chart:               testAirflow,
 					Version:             "15.0.5",
-					RepositoryName:      "bitnami",
-					RepositoryNamespace: "tanzu-helm-resources",
+					RepositoryName:      testBitnami,
+					RepositoryNamespace: testTanzuHelmResources,
 					RepositoryType:      releaseclustermodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryType(releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryTypeHELM),
 				},
 				Interval: "5m",
 			},
 			Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 				ParentReferences: referenceArray,
-				Description:      "resource with description",
+				Description:      testResourceWithDescription,
 				Labels: map[string]string{
-					"key1": "value1",
-					"key2": "value2",
+					testKey1: testValue1,
+					testKey2: testValue2,
 				},
-				UID:             "gitrepository1",
+				UID:             testGitrepository1,
 				ResourceVersion: "v1",
 			},
 			Status: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseStatus{
 				Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-					"Ready": {
-						Reason: "made successfully",
+					testReady: {
+						Reason: testMadeSuccessfully,
 					},
 				},
 				GeneratedResources: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseGeneratedResources{
-					ClusterRoleName:    "testclusterrole",
-					RoleBindingName:    "testrolebinding",
-					ServiceAccountName: "testserviceaccount",
+					ClusterRoleName:    testTestclusterrole,
+					RoleBindingName:    testTestrolebinding,
+					ServiceAccountName: testTestserviceaccount,
 				},
 			},
 		}
@@ -187,9 +206,9 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocksUpdate(t *testing.T, scope
 			Spec: &releaseclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdHelmReleaseSpec{
 				AtomicSpec: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseSpec{
 					ChartRef: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseChartRef{
-						Chart:               "constraints",
-						RepositoryName:      "test-git-repo",
-						RepositoryNamespace: "tanzu-continuousdelivery-resources",
+						Chart:               testConstraints,
+						RepositoryName:      gitRepoName,
+						RepositoryNamespace: testTanzuContinuousdeliveryResources,
 						RepositoryType:      releaseclustermodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryType(releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryTypeGIT),
 					},
 					Interval: "5m",
@@ -197,12 +216,12 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocksUpdate(t *testing.T, scope
 			},
 			Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 				ParentReferences: referenceArray,
-				Description:      "resource with description",
+				Description:      testResourceWithDescription,
 				Labels: map[string]string{
-					"key1": "value1",
-					"key2": "value2",
+					testKey1: testValue1,
+					testKey2: testValue2,
 				},
-				UID:             "cdgitrepository1",
+				UID:             testCdgitrepository1,
 				ResourceVersion: "v1",
 			},
 			Status: &releaseclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdHelmReleaseStatus{
@@ -245,10 +264,10 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			Meta:     postRequest.Release.Meta,
 			Spec: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseSpec{
 				ChartRef: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseChartRef{
-					Chart:               "airflow",
+					Chart:               testAirflow,
 					Version:             constraints,
-					RepositoryName:      "bitnami",
-					RepositoryNamespace: "tanzu-helm-resources",
+					RepositoryName:      testBitnami,
+					RepositoryNamespace: testTanzuHelmResources,
 					RepositoryType:      releaseclustermodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryType(releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryTypeHELM),
 				},
 				Interval: "5m",
@@ -262,10 +281,10 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			Meta:     postRequest.Release.Meta,
 			Spec: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseSpec{
 				ChartRef: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseChartRef{
-					Chart:               "airflow",
+					Chart:               testAirflow,
 					Version:             constraints,
-					RepositoryName:      "bitnami",
-					RepositoryNamespace: "tanzu-helm-resources",
+					RepositoryName:      testBitnami,
+					RepositoryNamespace: testTanzuHelmResources,
 					RepositoryType:      releaseclustermodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryType(releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryTypeHELM),
 				},
 				Interval: "5m",
@@ -320,9 +339,9 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			Spec: &releaseclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdHelmReleaseSpec{
 				AtomicSpec: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseSpec{
 					ChartRef: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseChartRef{
-						Chart:               "constraints",
-						RepositoryName:      "test-git-repo",
-						RepositoryNamespace: "tanzu-continuousdelivery-resources",
+						Chart:               testConstraints,
+						RepositoryName:      gitRepoName,
+						RepositoryNamespace: testTanzuContinuousdeliveryResources,
 						RepositoryType:      releaseclustermodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryType(releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryTypeGIT),
 					},
 					Interval: "5m",
@@ -338,9 +357,9 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			Spec: &releaseclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdHelmReleaseSpec{
 				AtomicSpec: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseSpec{
 					ChartRef: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseChartRef{
-						Chart:               "constraints",
-						RepositoryName:      "test-git-repo",
-						RepositoryNamespace: "tanzu-continuousdelivery-resources",
+						Chart:               testConstraints,
+						RepositoryName:      gitRepoName,
+						RepositoryNamespace: testTanzuContinuousdeliveryResources,
 						RepositoryType:      releaseclustermodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryType(releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryTypeGIT),
 					},
 					Interval: "5m",
@@ -405,8 +424,8 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		AtomicSpec: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseSpec{
 			ChartRef: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseChartRef{
 				Chart:               "manifests",
-				RepositoryName:      "test-git-repo",
-				RepositoryNamespace: "tanzu-continuousdelivery-resources",
+				RepositoryName:      gitRepoName,
+				RepositoryNamespace: testTanzuContinuousdeliveryResources,
 				RepositoryType:      releaseclustermodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryType(releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseRepositoryTypeGIT),
 			},
 			Interval: "5m",
@@ -423,12 +442,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		Spec: cdSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "cdgitrepository1",
+			UID:             testCdgitrepository1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -443,12 +462,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		Spec: cdSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "cdgitrepository1",
+			UID:             testCdgitrepository1,
 			ResourceVersion: "v1",
 		},
 		Status: &releaseclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdHelmReleaseStatus{
@@ -474,12 +493,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		Spec: cdSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: referenceArray,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "cdgitrepository1",
+			UID:             testCdgitrepository1,
 			ResourceVersion: "v1",
 		},
 		Status: &releaseclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdHelmReleaseStatus{
@@ -498,12 +517,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "gitrepository1",
+			UID:             testGitrepository1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -515,12 +534,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "gitrepository1",
+			UID:             testGitrepository1,
 			ResourceVersion: "v1",
 		},
 		Status: &helmclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFluxcdHelmStatus{
@@ -550,12 +569,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "cdgitrepository1",
+			UID:             testCdgitrepository1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -574,12 +593,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "cdgitrepository1",
+			UID:             testCdgitrepository1,
 			ResourceVersion: "v1",
 		},
 		Status: &gitrepoclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdGitrepositoryStatus{
@@ -612,18 +631,18 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         testConfig.Namespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &secretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "gitrepository1",
+			UID:             testGitrepository1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -634,30 +653,30 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         testConfig.Namespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &secretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "gitrepository1",
+			UID:             testGitrepository1,
 			ResourceVersion: "v1",
 		},
 		Status: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseStatus{
 			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-				"Ready": {
-					Reason: "made successfully",
+				testReady: {
+					Reason: testMadeSuccessfully,
 				},
 			},
 			GeneratedResources: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseGeneratedResources{
-				ClusterRoleName:    "testclusterrole",
-				RoleBindingName:    "testrolebinding",
-				ServiceAccountName: "testserviceaccount",
+				ClusterRoleName:    testTestclusterrole,
+				RoleBindingName:    testTestrolebinding,
+				ServiceAccountName: testTestserviceaccount,
 			},
 		},
 	}
@@ -676,30 +695,30 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         testConfig.Namespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &secretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: referenceArray,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "gitrepository1",
+			UID:             testGitrepository1,
 			ResourceVersion: "v1",
 		},
 		Status: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseStatus{
 			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-				"Ready": {
-					Reason: "made successfully",
+				testReady: {
+					Reason: testMadeSuccessfully,
 				},
 			},
 			GeneratedResources: &releaseclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdHelmReleaseGeneratedResources{
-				ClusterRoleName:    "testclusterrole",
-				RoleBindingName:    "testrolebinding",
-				ServiceAccountName: "testserviceaccount",
+				ClusterRoleName:    testTestclusterrole,
+				RoleBindingName:    testTestrolebinding,
+				ServiceAccountName: testTestserviceaccount,
 			},
 		},
 	}
@@ -715,12 +734,12 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "gitrepository1",
+			UID:             testGitrepository1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -732,18 +751,18 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "gitrepository1",
+			UID:             testGitrepository1,
 			ResourceVersion: "v1",
 		},
 		Status: &helmclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdHelmStatus{
 			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-				"Ready": {
-					Reason: "made successfully",
+				testReady: {
+					Reason: testMadeSuccessfully,
 				},
 			},
 		},

@@ -13,6 +13,15 @@ import (
 	gitrepositoryclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/gitrepository/clustergroup"
 )
 
+const (
+	test123prereleasebuild                       = "1.2.3-prerelease+build"
+	testCeb15bcd23d4bb76751064534e3c8d2e09104da6 = "ceb15bcd23d4bb76751064534e3c8d2e09104da6"
+	testMain                                     = "main"
+	testNameOfTheSecret                          = "name-of-the-secret"
+	testURL                                      = "https://github.com/dineshtripathi30/tmc-cd"
+	testV100                                     = "v1.0.0"
+)
+
 func TestFlattenSpecForClusterScope(t *testing.T) {
 	t.Parallel()
 
@@ -29,15 +38,15 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 		{
 			description: "normal scenario with complete cluster git repository spec",
 			input: &gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositorySpec{
-				URL:               "https://github.com/dineshtripathi30/tmc-cd",
-				SecretRef:         "name-of-the-secret",
+				URL:               testURL,
+				SecretRef:         testNameOfTheSecret,
 				Interval:          "5m",
 				GitImplementation: gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT.Pointer(),
 				Ref: &gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryReference{
-					Branch: "main",
-					Tag:    "v1.0.0",
-					Semver: "1.2.3-prerelease+build",
-					Commit: "ceb15bcd23d4bb76751064534e3c8d2e09104da6",
+					Branch: testMain,
+					Tag:    testV100,
+					Semver: test123prereleasebuild,
+					Commit: testCeb15bcd23d4bb76751064534e3c8d2e09104da6,
 				},
 			},
 			expected: []interface{}{
@@ -46,14 +55,14 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 					intervalKey:          "5m",
 					refKey: []interface{}{
 						map[string]interface{}{
-							branchKey: "main",
-							commitKey: "ceb15bcd23d4bb76751064534e3c8d2e09104da6",
-							semverKey: "1.2.3-prerelease+build",
-							tagKey:    "v1.0.0",
+							branchKey: testMain,
+							commitKey: testCeb15bcd23d4bb76751064534e3c8d2e09104da6,
+							semverKey: test123prereleasebuild,
+							tagKey:    testV100,
 						},
 					},
-					secretRefKey: "name-of-the-secret",
-					URLKey:       "https://github.com/dineshtripathi30/tmc-cd",
+					secretRefKey: testNameOfTheSecret,
+					URLKey:       testURL,
 				},
 			},
 		},
@@ -85,15 +94,15 @@ func TestFlattenSpecForClusterGroupScope(t *testing.T) {
 			description: "normal scenario with complete cluster group git repository spec",
 			input: &gitrepositoryclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdGitrepositorySpec{
 				AtomicSpec: &gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositorySpec{
-					URL:               "https://github.com/dineshtripathi30/tmc-cd",
-					SecretRef:         "name-of-the-secret",
+					URL:               testURL,
+					SecretRef:         testNameOfTheSecret,
 					Interval:          "5m",
 					GitImplementation: gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryGitImplementationGOGIT.Pointer(),
 					Ref: &gitrepositoryclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdGitrepositoryReference{
-						Branch: "main",
-						Tag:    "v1.0.0",
-						Semver: "1.2.3-prerelease+build",
-						Commit: "ceb15bcd23d4bb76751064534e3c8d2e09104da6",
+						Branch: testMain,
+						Tag:    testV100,
+						Semver: test123prereleasebuild,
+						Commit: testCeb15bcd23d4bb76751064534e3c8d2e09104da6,
 					},
 				},
 			},
@@ -103,14 +112,14 @@ func TestFlattenSpecForClusterGroupScope(t *testing.T) {
 					intervalKey:          "5m",
 					refKey: []interface{}{
 						map[string]interface{}{
-							branchKey: "main",
-							commitKey: "ceb15bcd23d4bb76751064534e3c8d2e09104da6",
-							semverKey: "1.2.3-prerelease+build",
-							tagKey:    "v1.0.0",
+							branchKey: testMain,
+							commitKey: testCeb15bcd23d4bb76751064534e3c8d2e09104da6,
+							semverKey: test123prereleasebuild,
+							tagKey:    testV100,
 						},
 					},
-					secretRefKey: "name-of-the-secret",
-					URLKey:       "https://github.com/dineshtripathi30/tmc-cd",
+					secretRefKey: testNameOfTheSecret,
+					URLKey:       testURL,
 				},
 			},
 		},

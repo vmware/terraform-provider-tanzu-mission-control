@@ -33,13 +33,13 @@ func TestFlattenCustom(t *testing.T) {
 				Audit: nil,
 				Rules: []*policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1CustomRules{
 					{
-						Hostname:      "bar",
-						ImageName:     "foo",
+						Hostname:      testBar,
+						ImageName:     testFoo,
 						Port:          "80",
 						RequireDigest: helper.BoolPointer(true),
 						Tag: &policyrecipeimagecommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1RulesTag{
 							Negate: helper.BoolPointer(false),
-							Value:  "test",
+							Value:  testTest,
 						},
 					},
 				},
@@ -48,14 +48,14 @@ func TestFlattenCustom(t *testing.T) {
 				map[string]interface{}{
 					RulesKey: []interface{}{
 						map[string]interface{}{
-							HostNameKey:  "bar",
-							ImageNameKey: "foo",
+							HostNameKey:  testBar,
+							ImageNameKey: testFoo,
 							PortKey:      "80",
 							RequireKey:   true,
 							TagKey: []interface{}{
 								map[string]interface{}{
 									NegateKey: false,
-									ValueKey:  "test",
+									ValueKey:  testTest,
 								},
 							},
 						},
@@ -69,13 +69,13 @@ func TestFlattenCustom(t *testing.T) {
 				Audit: helper.BoolPointer(true),
 				Rules: []*policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1CustomRules{
 					{
-						Hostname:      "bar",
-						ImageName:     "foo",
+						Hostname:      testBar,
+						ImageName:     testFoo,
 						Port:          "80",
 						RequireDigest: helper.BoolPointer(true),
 						Tag: &policyrecipeimagecommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1RulesTag{
 							Negate: helper.BoolPointer(false),
-							Value:  "test",
+							Value:  testTest,
 						},
 					},
 				},
@@ -85,14 +85,14 @@ func TestFlattenCustom(t *testing.T) {
 					AuditKey: true,
 					RulesKey: []interface{}{
 						map[string]interface{}{
-							HostNameKey:  "bar",
-							ImageNameKey: "foo",
+							HostNameKey:  testBar,
+							ImageNameKey: testFoo,
 							PortKey:      "80",
 							RequireKey:   true,
 							TagKey: []interface{}{
 								map[string]interface{}{
 									NegateKey: false,
-									ValueKey:  "test",
+									ValueKey:  testTest,
 								},
 							},
 						},
@@ -127,24 +127,24 @@ func TestFlattenCustomRules(t *testing.T) {
 		{
 			description: "normal scenario with all fields of rules spec of custom recipe",
 			input: &policyrecipeimagemodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1CustomRules{
-				Hostname:      "bar",
-				ImageName:     "foo",
+				Hostname:      testBar,
+				ImageName:     testFoo,
 				Port:          "80",
 				RequireDigest: helper.BoolPointer(true),
 				Tag: &policyrecipeimagecommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1RulesTag{
 					Negate: helper.BoolPointer(false),
-					Value:  "test",
+					Value:  testTest,
 				},
 			},
 			expected: map[string]interface{}{
-				HostNameKey:  "bar",
-				ImageNameKey: "foo",
+				HostNameKey:  testBar,
+				ImageNameKey: testFoo,
 				PortKey:      "80",
 				RequireKey:   true,
 				TagKey: []interface{}{
 					map[string]interface{}{
 						NegateKey: false,
-						ValueKey:  "test",
+						ValueKey:  testTest,
 					},
 				},
 			},

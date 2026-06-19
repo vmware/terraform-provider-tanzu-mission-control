@@ -30,15 +30,15 @@ func TestFlattenNamespaceFullname(t *testing.T) {
 			input: &namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName{
 				Name:                  "n-1",
 				ClusterName:           "dummy",
-				ManagementClusterName: "attached",
-				ProvisionerName:       "attached",
+				ManagementClusterName: attachedValue,
+				ProvisionerName:       attachedValue,
 			},
 			expected: []interface{}{
 				map[string]interface{}{
 					NameKey:                  "n-1",
 					ClusterNameKey:           "dummy",
-					ManagementClusterNameKey: "attached",
-					ProvisionerNameKey:       "attached",
+					ManagementClusterNameKey: attachedValue,
+					ProvisionerNameKey:       attachedValue,
 				},
 			},
 		},

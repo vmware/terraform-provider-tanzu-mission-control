@@ -16,6 +16,24 @@ import (
 	tkgvspheremodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgvsphere"
 )
 
+const (
+	testCloudKey                   = "cloud-key"
+	testEtcd0                      = "etcd-0"
+	testM5large                    = "m5.large"
+	testNodeKey                    = "node-key"
+	testTest                       = "test"
+	testTestClassSpec              = "test-class-spec"
+	testTestStorageSpec            = "test-storage-spec"
+	testTestingGetNodepoolFunction = "testing get nodepool function"
+	testTkgsK8sObjPolicy           = "tkgs-k8s-obj-policy"
+	testUsWest2a                   = "us-west-2a"
+	testV1212vmware1               = "v1.21.2+vmware.1"
+	testVarLibEtcd                 = "/var/lib/etcd"
+
+	testCloudValue = "cloud-value"
+	testNodeValue  = "node-value"
+)
+
 func TestGetNodepoolForCluster(t *testing.T) {
 	t.Parallel()
 
@@ -34,39 +52,39 @@ func TestGetNodepoolForCluster(t *testing.T) {
 		{
 			description: "scenario for attach cluster",
 			inputClusterSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 			},
 			inputRespSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 			},
 			expectedSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 			},
 		},
 		{
 			description: "scenario for TKG AWS spec",
 			inputClusterSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgAws: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSpec{
 					Topology: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsTopology{
 						NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 							{
 								Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-									Name:        "test",
-									Description: "testing get nodepool function",
+									Name:        testTest,
+									Description: testTestingGetNodepoolFunction,
 								},
 								Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 									WorkerNodeCount: "1",
 									TkgAws: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodepool{
-										AvailabilityZone: "us-west-2a",
-										InstanceType:     "m5.large",
+										AvailabilityZone: testUsWest2a,
+										InstanceType:     testM5large,
 										NodePlacement: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodePlacement{
 											{
-												AvailabilityZone: "us-west-2a",
+												AvailabilityZone: testUsWest2a,
 											},
 										},
-										SubnetID: "default",
-										Version:  "v1.21.2+vmware.1",
+										SubnetID: clusterGroupDefaultValue,
+										Version:  testV1212vmware1,
 									},
 								},
 							},
@@ -75,27 +93,27 @@ func TestGetNodepoolForCluster(t *testing.T) {
 				},
 			},
 			inputRespSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgAws: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSpec{
 					Topology: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsTopology{
 						NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 							{
 								Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-									Name:        "test",
-									Description: "testing get nodepool function",
+									Name:        testTest,
+									Description: testTestingGetNodepoolFunction,
 								},
 								Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 									WorkerNodeCount: "1",
 									TkgAws: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodepool{
 										AvailabilityZone: "us-east-2a",
-										InstanceType:     "m5.large",
+										InstanceType:     testM5large,
 										NodePlacement: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodePlacement{
 											{
-												AvailabilityZone: "us-west-2a",
+												AvailabilityZone: testUsWest2a,
 											},
 										},
-										SubnetID: "default",
-										Version:  "v1.21.2+vmware.1",
+										SubnetID: clusterGroupDefaultValue,
+										Version:  testV1212vmware1,
 									},
 								},
 							},
@@ -104,27 +122,27 @@ func TestGetNodepoolForCluster(t *testing.T) {
 				},
 			},
 			expectedSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgAws: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSpec{
 					Topology: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsTopology{
 						NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 							{
 								Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-									Name:        "test",
-									Description: "testing get nodepool function",
+									Name:        testTest,
+									Description: testTestingGetNodepoolFunction,
 								},
 								Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 									WorkerNodeCount: "1",
 									TkgAws: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodepool{
-										AvailabilityZone: "us-west-2a",
-										InstanceType:     "m5.large",
+										AvailabilityZone: testUsWest2a,
+										InstanceType:     testM5large,
 										NodePlacement: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodePlacement{
 											{
-												AvailabilityZone: "us-west-2a",
+												AvailabilityZone: testUsWest2a,
 											},
 										},
-										SubnetID: "default",
-										Version:  "v1.21.2+vmware.1",
+										SubnetID: clusterGroupDefaultValue,
+										Version:  testV1212vmware1,
 									},
 								},
 							},
@@ -136,27 +154,27 @@ func TestGetNodepoolForCluster(t *testing.T) {
 		{
 			description: "scenario for TKG AWS spec topology is nil",
 			inputClusterSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgAws: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSpec{
 					Topology: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsTopology{
 						NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 							{
 								Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-									Name:        "test",
-									Description: "testing get nodepool function",
+									Name:        testTest,
+									Description: testTestingGetNodepoolFunction,
 								},
 								Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 									WorkerNodeCount: "1",
 									TkgAws: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodepool{
-										AvailabilityZone: "us-west-2a",
-										InstanceType:     "m5.large",
+										AvailabilityZone: testUsWest2a,
+										InstanceType:     testM5large,
 										NodePlacement: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodePlacement{
 											{
-												AvailabilityZone: "us-west-2a",
+												AvailabilityZone: testUsWest2a,
 											},
 										},
-										SubnetID: "default",
-										Version:  "v1.21.2+vmware.1",
+										SubnetID: clusterGroupDefaultValue,
+										Version:  testV1212vmware1,
 									},
 								},
 							},
@@ -165,13 +183,13 @@ func TestGetNodepoolForCluster(t *testing.T) {
 				},
 			},
 			inputRespSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgAws: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSpec{
 					Topology: nil,
 				},
 			},
 			expectedSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgAws: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSpec{
 					Topology: nil,
 				},
@@ -180,14 +198,14 @@ func TestGetNodepoolForCluster(t *testing.T) {
 		{
 			description: "scenario for TKG vSphere spec",
 			inputClusterSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgVsphere: &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereSpec{
 					Topology: &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereTopology{
 						NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 							{
 								Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-									Name:        "test",
-									Description: "testing get nodepool function",
+									Name:        testTest,
+									Description: testTestingGetNodepoolFunction,
 								},
 								Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 									WorkerNodeCount: "1",
@@ -205,14 +223,14 @@ func TestGetNodepoolForCluster(t *testing.T) {
 				},
 			},
 			inputRespSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgVsphere: &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereSpec{
 					Topology: &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereTopology{
 						NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 							{
 								Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-									Name:        "test",
-									Description: "testing get nodepool function",
+									Name:        testTest,
+									Description: testTestingGetNodepoolFunction,
 								},
 								Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 									WorkerNodeCount: "1",
@@ -230,14 +248,14 @@ func TestGetNodepoolForCluster(t *testing.T) {
 				},
 			},
 			expectedSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgVsphere: &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereSpec{
 					Topology: &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereTopology{
 						NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 							{
 								Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-									Name:        "test",
-									Description: "testing get nodepool function",
+									Name:        testTest,
+									Description: testTestingGetNodepoolFunction,
 								},
 								Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 									WorkerNodeCount: "1",
@@ -258,14 +276,14 @@ func TestGetNodepoolForCluster(t *testing.T) {
 		{
 			description: "scenario for TKG vSphere spec topology is nil",
 			inputClusterSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgVsphere: &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereSpec{
 					Topology: &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereTopology{
 						NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 							{
 								Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-									Name:        "test",
-									Description: "testing get nodepool function",
+									Name:        testTest,
+									Description: testTestingGetNodepoolFunction,
 								},
 								Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 									WorkerNodeCount: "1",
@@ -283,13 +301,13 @@ func TestGetNodepoolForCluster(t *testing.T) {
 				},
 			},
 			inputRespSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgVsphere: &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereSpec{
 					Topology: nil,
 				},
 			},
 			expectedSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgVsphere: &tkgvspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgvsphereSpec{
 					Topology: nil,
 				},
@@ -298,28 +316,28 @@ func TestGetNodepoolForCluster(t *testing.T) {
 		{
 			description: "scenario for TKGs spec",
 			inputClusterSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgServiceVsphere: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereSpec{
 					Topology: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereTopology{
 						NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 							{
 								Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-									Name:        "test",
-									Description: "testing get nodepool function",
+									Name:        testTest,
+									Description: testTestingGetNodepoolFunction,
 								},
 								Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
-									CloudLabels:     map[string]string{"cloud-key": "cloud-value"},
-									NodeLabels:      map[string]string{"node-key": "node-value"},
+									CloudLabels:     map[string]string{testCloudKey: testCloudValue},
+									NodeLabels:      map[string]string{testNodeKey: testNodeValue},
 									WorkerNodeCount: "1",
 									TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
-										Class:        "test-class-spec",
-										StorageClass: "test-storage-spec",
+										Class:        testTestClassSpec,
+										StorageClass: testTestStorageSpec,
 										Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
 											{
 												Capacity:     4,
-												MountPath:    "/var/lib/etcd",
-												Name:         "etcd-0",
-												StorageClass: "tkgs-k8s-obj-policy",
+												MountPath:    testVarLibEtcd,
+												Name:         testEtcd0,
+												StorageClass: testTkgsK8sObjPolicy,
 											},
 										},
 									},
@@ -330,28 +348,28 @@ func TestGetNodepoolForCluster(t *testing.T) {
 				},
 			},
 			inputRespSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgServiceVsphere: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereSpec{
 					Topology: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereTopology{
 						NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 							{
 								Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-									Name:        "test",
-									Description: "testing get nodepool function",
+									Name:        testTest,
+									Description: testTestingGetNodepoolFunction,
 								},
 								Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
-									CloudLabels:     map[string]string{"cloud-key": "cloud-value"},
-									NodeLabels:      map[string]string{"node-key": "node-value"},
+									CloudLabels:     map[string]string{testCloudKey: testCloudValue},
+									NodeLabels:      map[string]string{testNodeKey: testNodeValue},
 									WorkerNodeCount: "1",
 									TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
-										Class:        "test-class-spec",
-										StorageClass: "test-storage-spec",
+										Class:        testTestClassSpec,
+										StorageClass: testTestStorageSpec,
 										Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
 											{
 												Capacity:     4,
-												MountPath:    "/var/lib/etcd",
-												Name:         "etcd-0",
-												StorageClass: "tkgs-k8s-obj-policy",
+												MountPath:    testVarLibEtcd,
+												Name:         testEtcd0,
+												StorageClass: testTkgsK8sObjPolicy,
 											},
 										},
 									},
@@ -362,28 +380,28 @@ func TestGetNodepoolForCluster(t *testing.T) {
 				},
 			},
 			expectedSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgServiceVsphere: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereSpec{
 					Topology: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereTopology{
 						NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 							{
 								Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-									Name:        "test",
-									Description: "testing get nodepool function",
+									Name:        testTest,
+									Description: testTestingGetNodepoolFunction,
 								},
 								Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
-									CloudLabels:     map[string]string{"cloud-key": "cloud-value"},
-									NodeLabels:      map[string]string{"node-key": "node-value"},
+									CloudLabels:     map[string]string{testCloudKey: testCloudValue},
+									NodeLabels:      map[string]string{testNodeKey: testNodeValue},
 									WorkerNodeCount: "1",
 									TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
-										Class:        "test-class-spec",
-										StorageClass: "test-storage-spec",
+										Class:        testTestClassSpec,
+										StorageClass: testTestStorageSpec,
 										Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
 											{
 												Capacity:     4,
-												MountPath:    "/var/lib/etcd",
-												Name:         "etcd-0",
-												StorageClass: "tkgs-k8s-obj-policy",
+												MountPath:    testVarLibEtcd,
+												Name:         testEtcd0,
+												StorageClass: testTkgsK8sObjPolicy,
 											},
 										},
 									},
@@ -397,28 +415,28 @@ func TestGetNodepoolForCluster(t *testing.T) {
 		{
 			description: "scenario for TKGs spec topology is nil",
 			inputClusterSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgServiceVsphere: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereSpec{
 					Topology: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereTopology{
 						NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 							{
 								Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-									Name:        "test",
-									Description: "testing get nodepool function",
+									Name:        testTest,
+									Description: testTestingGetNodepoolFunction,
 								},
 								Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
-									CloudLabels:     map[string]string{"cloud-key": "cloud-value"},
-									NodeLabels:      map[string]string{"node-key": "node-value"},
+									CloudLabels:     map[string]string{testCloudKey: testCloudValue},
+									NodeLabels:      map[string]string{testNodeKey: testNodeValue},
 									WorkerNodeCount: "1",
 									TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
-										Class:        "test-class-spec",
-										StorageClass: "test-storage-spec",
+										Class:        testTestClassSpec,
+										StorageClass: testTestStorageSpec,
 										Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
 											{
 												Capacity:     4,
-												MountPath:    "/var/lib/etcd",
-												Name:         "etcd-0",
-												StorageClass: "tkgs-k8s-obj-policy",
+												MountPath:    testVarLibEtcd,
+												Name:         testEtcd0,
+												StorageClass: testTkgsK8sObjPolicy,
 											},
 										},
 									},
@@ -429,13 +447,13 @@ func TestGetNodepoolForCluster(t *testing.T) {
 				},
 			},
 			inputRespSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgServiceVsphere: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereSpec{
 					Topology: nil,
 				},
 			},
 			expectedSpec: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 				TkgServiceVsphere: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereSpec{
 					Topology: nil,
 				},

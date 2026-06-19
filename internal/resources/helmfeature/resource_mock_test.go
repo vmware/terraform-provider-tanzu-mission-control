@@ -27,6 +27,14 @@ const (
 	clAPIVersionAndGroup = "v1alpha1/clusters"
 	helmAPIKind          = "fluxcd/helm"
 	cgAPIVersionAndGroup = "v1alpha1/clustergroups"
+
+	testGitrepository1          = "gitrepository1"
+	testKey1                    = "key1"
+	testKey2                    = "key2"
+	testResourceWithDescription = "resource with description"
+	testAttached                = "attached"
+	testValue1                  = "value1"
+	testValue2                  = "value2"
 )
 
 // nolint: unparam
@@ -111,17 +119,17 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 				FullName: &helmclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdHelmFullName{
 					ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 					OrgID:                 OrgID,
-					ManagementClusterName: "attached",
-					ProvisionerName:       "attached",
+					ManagementClusterName: testAttached,
+					ProvisionerName:       testAttached,
 				},
 				Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 					ParentReferences: referenceArray,
-					Description:      "resource with description",
+					Description:      testResourceWithDescription,
 					Labels: map[string]string{
-						"key1": "value1",
-						"key2": "value2",
+						testKey1: testValue1,
+						testKey2: testValue2,
 					},
-					UID:             "gitrepository1",
+					UID:             testGitrepository1,
 					ResourceVersion: "v1",
 				},
 				Status: &helmclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdHelmStatus{
@@ -183,12 +191,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "gitrepository1",
+			UID:             testGitrepository1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -200,12 +208,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: referenceArray,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "gitrepository1",
+			UID:             testGitrepository1,
 			ResourceVersion: "v1",
 		},
 		Status: &helmclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFluxcdHelmStatus{
@@ -239,17 +247,17 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 		FullName: &helmclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdHelmFullName{
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			OrgID:                 orgID,
-			ManagementClusterName: "attached",
-			ProvisionerName:       "attached",
+			ManagementClusterName: testAttached,
+			ProvisionerName:       testAttached,
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "gitrepository1",
+			UID:             testGitrepository1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -258,17 +266,17 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 		FullName: &helmclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdHelmFullName{
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			OrgID:                 orgID,
-			ManagementClusterName: "attached",
-			ProvisionerName:       "attached",
+			ManagementClusterName: testAttached,
+			ProvisionerName:       testAttached,
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "gitrepository1",
+			UID:             testGitrepository1,
 			ResourceVersion: "v1",
 		},
 		Status: &helmclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdHelmStatus{
@@ -294,17 +302,17 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 				FullName: &helmclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdHelmFullName{
 					ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 					OrgID:                 orgID,
-					ManagementClusterName: "attached",
-					ProvisionerName:       "attached",
+					ManagementClusterName: testAttached,
+					ProvisionerName:       testAttached,
 				},
 				Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 					ParentReferences: referenceArray,
-					Description:      "resource with description",
+					Description:      testResourceWithDescription,
 					Labels: map[string]string{
-						"key1": "value1",
-						"key2": "value2",
+						testKey1: testValue1,
+						testKey2: testValue2,
 					},
-					UID:             "gitrepository1",
+					UID:             testGitrepository1,
 					ResourceVersion: "v1",
 				},
 				Status: &helmclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdHelmStatus{

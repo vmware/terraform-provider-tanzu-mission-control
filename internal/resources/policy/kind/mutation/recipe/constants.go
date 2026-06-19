@@ -34,4 +34,7 @@ const (
 	supplementalGroupsKey        = "supplemental_groups"
 	minKey                       = "min"
 	maxKey                       = "max"
+	alwaysConditionOp            = "Always"
+	ifFieldDoesNotExistOp        = "IfFieldDoesNotExist"
+	ifFieldExistsOp              = "IfFieldExists"
 )

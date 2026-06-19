@@ -12,6 +12,10 @@ import (
 	eksmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/ekscluster"
 )
 
+const (
+	testSgYyyyyy = "sg-yyyyyy"
+)
+
 func TestNodepoolSpecEqual(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -68,8 +72,8 @@ func TestNodepoolSpecEqual(t *testing.T) {
 			},
 			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {
 				spec2.InstanceTypes = []string{
-					"m3.large",
-					"t3.medium",
+					testM3large,
+					testT3medium,
 				}
 			},
 			result: true,
@@ -110,7 +114,7 @@ func TestNodepoolSpecEqual(t *testing.T) {
 			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {},
 			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {
 				spec2.NodeLabels = map[string]string{
-					"key2": "val2",
+					testKey2: "val2",
 				}
 			},
 			result: false,
@@ -127,17 +131,17 @@ func TestNodepoolSpecEqual(t *testing.T) {
 			name:        "remote accesses' security grps are not equal",
 			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {},
 			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {
-				spec2.RemoteAccess.SecurityGroups = []string{"sg-2"}
+				spec2.RemoteAccess.SecurityGroups = []string{testSg2}
 			},
 			result: false,
 		},
 		{
 			name: "remote accesses' security grps are set equal",
 			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {
-				spec1.RemoteAccess.SecurityGroups = []string{"sg-1", "sg-2", "sg-3"}
+				spec1.RemoteAccess.SecurityGroups = []string{testSg1, testSg2, testSg3}
 			},
 			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {
-				spec2.RemoteAccess.SecurityGroups = []string{"sg-3", "sg-1", "sg-2"}
+				spec2.RemoteAccess.SecurityGroups = []string{testSg3, testSg1, testSg2}
 			},
 			result: true,
 		},
@@ -190,8 +194,8 @@ func TestNodepoolSpecEqual(t *testing.T) {
 			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {},
 			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {
 				spec2.SubnetIds = []string{
-					"subnet-1",
-					"subnet-2",
+					testSubnet1,
+					testSubnet2,
 				}
 			},
 			result: false,
@@ -210,16 +214,16 @@ func TestNodepoolSpecEqual(t *testing.T) {
 			name: "subnet IDs are set equal",
 			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {
 				spec1.SubnetIds = []string{
-					"subnet-1",
-					"subnet-2",
-					"subnet-3",
+					testSubnet1,
+					testSubnet2,
+					testSubnet3,
 				}
 			},
 			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {
 				spec2.SubnetIds = []string{
-					"subnet-3",
-					"subnet-1",
-					"subnet-2",
+					testSubnet3,
+					testSubnet1,
+					testSubnet2,
 				}
 			},
 			result: true,
@@ -229,7 +233,7 @@ func TestNodepoolSpecEqual(t *testing.T) {
 			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {},
 			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec) {
 				spec2.Tags = map[string]string{
-					"tag2": "val2",
+					testTag2: "val2",
 				}
 			},
 			result: false,
@@ -241,8 +245,8 @@ func TestNodepoolSpecEqual(t *testing.T) {
 				spec2.Taints = []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaint{
 					{
 						Effect: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-						Key:    "tkey2",
-						Value:  "tvalue2",
+						Key:    testTkey2,
+						Value:  testTvalue2,
 					},
 				}
 			},
@@ -269,8 +273,8 @@ func TestNodepoolSpecEqual(t *testing.T) {
 					},
 					{
 						Effect: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-						Key:    "tkey2",
-						Value:  "tvalue2",
+						Key:    testTkey2,
+						Value:  testTvalue2,
 					},
 					{
 						Effect: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectNOSCHEDULE),
@@ -293,8 +297,8 @@ func TestNodepoolSpecEqual(t *testing.T) {
 					},
 					{
 						Effect: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-						Key:    "tkey2",
-						Value:  "tvalue2",
+						Key:    testTkey2,
+						Value:  testTvalue2,
 					},
 				}
 			},
@@ -490,8 +494,8 @@ func TestClusterSpecEqual(t *testing.T) {
 			name: "public cirds are not equal",
 			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
 				spec1.Config.Vpc.PublicAccessCidrs = []string{
-					"100.10.1.0/24",
-					"196.19.1.0/24",
+					test100101024,
+					test196191024,
 				}
 			},
 			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
@@ -506,14 +510,14 @@ func TestClusterSpecEqual(t *testing.T) {
 			name: "public cirds are set equal",
 			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
 				spec1.Config.Vpc.PublicAccessCidrs = []string{
-					"100.10.1.0/24",
-					"196.19.1.0/24",
+					test100101024,
+					test196191024,
 				}
 			},
 			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
 				spec2.Config.Vpc.PublicAccessCidrs = []string{
-					"196.19.1.0/24",
-					"100.10.1.0/24",
+					test196191024,
+					test100101024,
 				}
 			},
 			result: true,
@@ -522,14 +526,14 @@ func TestClusterSpecEqual(t *testing.T) {
 			name: "security groups are not equal",
 			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
 				spec1.Config.Vpc.SecurityGroups = []string{
-					"sg-1",
-					"sg-2",
+					testSg1,
+					testSg2,
 				}
 			},
 			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
 				spec2.Config.Vpc.SecurityGroups = []string{
-					"sg-3",
-					"sg-4",
+					testSg3,
+					testSg4,
 				}
 			},
 			result: false,
@@ -538,14 +542,14 @@ func TestClusterSpecEqual(t *testing.T) {
 			name: "security groups are set equal",
 			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
 				spec1.Config.Vpc.SecurityGroups = []string{
-					"sg-1",
-					"sg-2",
+					testSg1,
+					testSg2,
 				}
 			},
 			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
 				spec2.Config.Vpc.SecurityGroups = []string{
-					"sg-2",
-					"sg-1",
+					testSg2,
+					testSg1,
 				}
 			},
 			result: true,
@@ -554,13 +558,13 @@ func TestClusterSpecEqual(t *testing.T) {
 			name: "subnets are not equal",
 			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
 				spec1.Config.Vpc.SubnetIds = []string{
-					"subnet-1",
-					"subnet-2",
+					testSubnet1,
+					testSubnet2,
 				}
 			},
 			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
 				spec2.Config.Vpc.SubnetIds = []string{
-					"subnet-3",
+					testSubnet3,
 					"subnet-4",
 				}
 			},
@@ -570,14 +574,14 @@ func TestClusterSpecEqual(t *testing.T) {
 			name: "subnets are set equal",
 			modifySpec1: func(spec1 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
 				spec1.Config.Vpc.SubnetIds = []string{
-					"subnet-1",
-					"subnet-2",
+					testSubnet1,
+					testSubnet2,
 				}
 			},
 			modifySpec2: func(spec2 *eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec) {
 				spec2.Config.Vpc.SubnetIds = []string{
-					"subnet-2",
-					"subnet-1",
+					testSubnet2,
+					testSubnet1,
 				}
 			},
 			result: true,
@@ -589,12 +593,12 @@ func TestClusterSpecEqual(t *testing.T) {
 					VpcCniAddonConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig{
 						EniConfigs: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig{
 							{
-								SubnetID:         "subnet-id-1",
-								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+								SubnetID:         testSubnetId1,
+								SecurityGroupIds: []string{testSgXxxxxxx, testSgYyyyyy},
 							},
 							{
-								SubnetID:         "subnet-id-2",
-								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+								SubnetID:         testSubnetId2,
+								SecurityGroupIds: []string{testSgXxxxxxx, testSgYyyyyy},
 							},
 						},
 					},
@@ -605,11 +609,11 @@ func TestClusterSpecEqual(t *testing.T) {
 					VpcCniAddonConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig{
 						EniConfigs: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig{
 							{
-								SubnetID:         "subnet-id-2",
-								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+								SubnetID:         testSubnetId2,
+								SecurityGroupIds: []string{testSgXxxxxxx, testSgYyyyyy},
 							}, {
-								SubnetID:         "subnet-id-1",
-								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+								SubnetID:         testSubnetId1,
+								SecurityGroupIds: []string{testSgXxxxxxx, testSgYyyyyy},
 							},
 						},
 					},
@@ -624,12 +628,12 @@ func TestClusterSpecEqual(t *testing.T) {
 					VpcCniAddonConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig{
 						EniConfigs: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig{
 							{
-								SubnetID:         "subnet-id-1",
-								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+								SubnetID:         testSubnetId1,
+								SecurityGroupIds: []string{testSgXxxxxxx, testSgYyyyyy},
 							},
 							{
-								SubnetID:         "subnet-id-2",
-								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+								SubnetID:         testSubnetId2,
+								SecurityGroupIds: []string{testSgXxxxxxx, testSgYyyyyy},
 							},
 						},
 					},
@@ -640,12 +644,12 @@ func TestClusterSpecEqual(t *testing.T) {
 					VpcCniAddonConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig{
 						EniConfigs: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig{
 							{
-								SubnetID:         "subnet-id-1",
-								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+								SubnetID:         testSubnetId1,
+								SecurityGroupIds: []string{testSgXxxxxxx, testSgYyyyyy},
 							},
 							{
 								SubnetID:         "subnet-id-3",
-								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+								SecurityGroupIds: []string{testSgXxxxxxx, testSgYyyyyy},
 							},
 						},
 					},
@@ -660,12 +664,12 @@ func TestClusterSpecEqual(t *testing.T) {
 					VpcCniAddonConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig{
 						EniConfigs: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig{
 							{
-								SubnetID:         "subnet-id-1",
-								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+								SubnetID:         testSubnetId1,
+								SecurityGroupIds: []string{testSgXxxxxxx, testSgYyyyyy},
 							},
 							{
-								SubnetID:         "subnet-id-2",
-								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+								SubnetID:         testSubnetId2,
+								SecurityGroupIds: []string{testSgXxxxxxx, testSgYyyyyy},
 							},
 						},
 					},
@@ -676,12 +680,12 @@ func TestClusterSpecEqual(t *testing.T) {
 					VpcCniAddonConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig{
 						EniConfigs: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig{
 							{
-								SubnetID:         "subnet-id-1",
-								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-yyyyyy"},
+								SubnetID:         testSubnetId1,
+								SecurityGroupIds: []string{testSgXxxxxxx, testSgYyyyyy},
 							},
 							{
-								SubnetID:         "subnet-id-2",
-								SecurityGroupIds: []string{"sg-xxxxxxx", "sg-zzzzzz"},
+								SubnetID:         testSubnetId2,
+								SecurityGroupIds: []string{testSgXxxxxxx, "sg-zzzzzz"},
 							},
 						},
 					},
@@ -706,30 +710,30 @@ func TestClusterSpecEqual(t *testing.T) {
 
 func getNodepoolSpec() *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec {
 	return &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec{
-		AmiType: "CUSTOM",
+		AmiType: testCustom,
 		AmiInfo: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAmiInfo{
-			AmiID:                "ami-2qu8409oisdfj0qw",
-			OverrideBootstrapCmd: "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+			AmiID:                testAmi2qu8409oisdfj0qw,
+			OverrideBootstrapCmd: testBootstrapCmd,
 		},
-		CapacityType: "ON_DEMAND",
+		CapacityType: testOnDemand,
 		InstanceTypes: []string{
-			"t3.medium",
-			"m3.large",
+			testT3medium,
+			testM3large,
 		},
 		LaunchTemplate: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolLaunchTemplate{
-			Name:    "templ",
+			Name:    testTempl,
 			Version: "7",
 		},
 		NodeLabels: map[string]string{
-			"key1": "val1",
+			testKey1: testVal1,
 		},
 		RemoteAccess: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolRemoteAccess{
 			SecurityGroups: []string{
-				"sg-0a6768722e9716768",
+				testSg0a6768722e9716768,
 			},
-			SSHKey: "test-key",
+			SSHKey: testTestKey,
 		},
-		RoleArn:      "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
+		RoleArn:      testArnAwsIam000000000000,
 		RootDiskSize: 20,
 		ScalingConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolScalingConfig{
 			DesiredSize: 8,
@@ -737,25 +741,25 @@ func getNodepoolSpec() *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolSpec
 			MinSize:     3,
 		},
 		SubnetIds: []string{
-			"subnet-0a184f9301ae39a86",
-			"subnet-0b495d7c212fc92a1",
-			"subnet-0c86ec9ecde7b9bf7",
-			"subnet-06497e6063c209f4d",
+			testSubnet0a184f9301ae39a86,
+			testSubnet0b495d7c212fc92a1,
+			testSubnet0c86ec9ecde7b9bf7,
+			testSubnet06497e6063c209f4d,
 		},
 		Tags: map[string]string{
-			"tg1": "tv1",
+			testTg1: testTv1,
 		},
 		Taints: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaint{
 			{
 				Effect: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-				Key:    "tkey",
-				Value:  "tvalue",
+				Key:    testTkey,
+				Value:  testTvalue,
 			},
 		},
 		UpdateConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolUpdateConfig{
 			MaxUnavailableNodes:      "10",
 			MaxUnavailablePercentage: "12",
 		},
-		ReleaseVersion: "1.26.4-20230703",
+		ReleaseVersion: test126420230703,
 	}
 }

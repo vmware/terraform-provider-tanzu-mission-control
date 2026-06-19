@@ -28,12 +28,12 @@ func TestFlattenSubjects(t *testing.T) {
 		{
 			description: "normal scenario with all fields of subject",
 			input: &iammodel.VmwareTanzuCoreV1alpha1PolicySubject{
-				Name: "test",
+				Name: testTest,
 				Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindGROUP.Pointer(),
 			},
 			expected: map[string]interface{}{
-				subjectNameKey: "test",
-				subjectKindKey: "GROUP",
+				subjectNameKey: testTest,
+				subjectKindKey: subject1Kind,
 			},
 		},
 	}

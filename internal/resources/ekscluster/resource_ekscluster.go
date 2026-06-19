@@ -79,7 +79,7 @@ var clusterSchema = map[string]*schema.Schema{
 	waitKey: {
 		Type:        schema.TypeString,
 		Description: "Wait timeout duration until cluster resource reaches READY state. Accepted timeout duration values like 5s, 45m, or 3h, higher than zero",
-		Default:     "default",
+		Default:     clusterGroupDefaultValue,
 		Optional:    true,
 		DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
 			return true
@@ -188,6 +188,7 @@ var configSchema = &schema.Schema{
 
 					k = k[:lastDotIndex]
 					v1, v2 := d.GetChange(k)
+
 					return reflect.DeepEqual(v1, v2)
 				},
 				Elem: &schema.Resource{
@@ -812,7 +813,7 @@ func constructFullname(d *schema.ResourceData) (fullname *eksmodel.VmwareTanzuMa
 
 func getRetryTimeout(d *schema.ResourceData) time.Duration {
 	timeoutValueData, _ := d.Get(waitKey).(string)
-	if timeoutValueData != "default" {
+	if timeoutValueData != clusterGroupDefaultValue {
 		providedDuration, parseErr := time.ParseDuration(timeoutValueData)
 		if parseErr == nil {
 			return providedDuration

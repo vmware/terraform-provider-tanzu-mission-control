@@ -30,11 +30,11 @@ func TestFlattenTag(t *testing.T) {
 			description: "scenario for nil negate value of tag",
 			input: &policyrecipeimagecommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1RulesTag{
 				Negate: nil,
-				Value:  "test",
+				Value:  testTest,
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					ValueKey: "test",
+					ValueKey: testTest,
 				},
 			},
 		},
@@ -42,12 +42,12 @@ func TestFlattenTag(t *testing.T) {
 			description: "normal scenario with all values of tag data",
 			input: &policyrecipeimagecommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecImageV1RulesTag{
 				Negate: helper.BoolPointer(false),
-				Value:  "test",
+				Value:  testTest,
 			},
 			expected: []interface{}{
 				map[string]interface{}{
 					NegateKey: false,
-					ValueKey:  "test",
+					ValueKey:  testTest,
 				},
 			},
 		},

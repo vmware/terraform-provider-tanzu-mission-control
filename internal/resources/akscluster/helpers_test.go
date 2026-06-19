@@ -22,6 +22,21 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/akscluster"
 )
 
+const (
+	test127001        = "127.0.0.1"
+	testAzure         = "azure"
+	testEastus        = "eastus"
+	testEnable        = "enable"
+	testName          = "name"
+	testResourceGroup = "resource-group"
+	testSubId         = "sub-id"
+	testTestCluster   = "test-cluster"
+	testTestCred      = "test-cred"
+	testVal           = "val"
+
+	test127002 = "127.0.0.2"
+)
+
 func dataDiffFrom(t *testing.T, original map[string]any, updated map[string]any) *schema.ResourceData {
 	originalData := schema.TestResourceDataRaw(t, akscluster.ClusterSchema, original)
 	originalData.SetId("test-uid")
@@ -36,10 +51,10 @@ func dataDiffFrom(t *testing.T, original map[string]any, updated map[string]any)
 
 func expectedFullName() *models.VmwareTanzuManageV1alpha1AksclusterFullName {
 	return &models.VmwareTanzuManageV1alpha1AksclusterFullName{
-		CredentialName:    "test-cred",
-		SubscriptionID:    "sub-id",
-		ResourceGroupName: "resource-group",
-		Name:              "test-cluster",
+		CredentialName:    testTestCred,
+		SubscriptionID:    testSubId,
+		ResourceGroupName: testResourceGroup,
+		Name:              testTestCluster,
 	}
 }
 
@@ -89,10 +104,10 @@ func enableCSI(c *models.VmwareTanzuManageV1alpha1AksCluster) {
 func aTestCluster(w ...clusterWither) *models.VmwareTanzuManageV1alpha1AksCluster {
 	c := &models.VmwareTanzuManageV1alpha1AksCluster{
 		FullName: &models.VmwareTanzuManageV1alpha1AksclusterFullName{
-			CredentialName:    "test-cred",
-			ResourceGroupName: "resource-group",
-			SubscriptionID:    "sub-id",
-			Name:              "test-cluster",
+			CredentialName:    testTestCred,
+			ResourceGroupName: testResourceGroup,
+			SubscriptionID:    testSubId,
+			Name:              testTestCluster,
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			UID: "test-uid",
@@ -100,7 +115,7 @@ func aTestCluster(w ...clusterWither) *models.VmwareTanzuManageV1alpha1AksCluste
 		Spec: &models.VmwareTanzuManageV1alpha1AksclusterSpec{
 			ClusterGroupName: "my-cluster-group",
 			Config: &models.VmwareTanzuManageV1alpha1AksclusterClusterConfig{
-				Location:              "eastus",
+				Location:              testEastus,
 				Version:               "1.26.0",
 				NodeResourceGroupName: "my-node-group",
 				DiskEncryptionSetID:   "disk-encryption-set-id",
@@ -120,7 +135,7 @@ func aTestCluster(w ...clusterWither) *models.VmwareTanzuManageV1alpha1AksCluste
 					EnableRbac:           true,
 				},
 				APIServerAccessConfig: &models.VmwareTanzuManageV1alpha1AksclusterAPIServerAccessConfig{
-					AuthorizedIPRanges:   []string{"127.0.0.1", "127.0.0.2"},
+					AuthorizedIPRanges:   []string{test127001, test127002},
 					EnablePrivateCluster: true,
 				},
 				LinuxConfig: &models.VmwareTanzuManageV1alpha1AksclusterLinuxConfig{
@@ -129,10 +144,10 @@ func aTestCluster(w ...clusterWither) *models.VmwareTanzuManageV1alpha1AksCluste
 				},
 				NetworkConfig: &models.VmwareTanzuManageV1alpha1AksclusterNetworkConfig{
 					DNSPrefix:        "net-prefix",
-					DNSServiceIP:     "127.0.0.1",
-					DockerBridgeCidr: "127.0.0.2",
+					DNSServiceIP:     test127001,
+					DockerBridgeCidr: test127002,
 					LoadBalancerSku:  "load-balancer",
-					NetworkPlugin:    "azure",
+					NetworkPlugin:    testAzure,
 					NetworkPolicy:    "policy",
 					ServiceCidrs:     []string{"127.0.0.4"},
 				},
@@ -261,7 +276,7 @@ func withNodepools(nps []any) mapWither {
 
 func withName(name string) mapWither {
 	return func(m map[string]any) {
-		m["name"] = name
+		m[testName] = name
 	}
 }
 
@@ -307,15 +322,15 @@ func withPodSubnetID(podSubnetID string) mapWither {
 
 func aTestClusterDataMap(w ...mapWither) map[string]any {
 	m := map[string]any{
-		"credential_name": "test-cred",
-		"subscription_id": "sub-id",
-		"resource_group":  "resource-group",
-		"name":            "test-cluster",
+		"credential_name": testTestCred,
+		"subscription_id": testSubId,
+		"resource_group":  testResourceGroup,
+		testName:          testTestCluster,
 		"spec": []any{map[string]any{
 			"cluster_group": "my-cluster-group",
 			"proxy":         "my-proxy",
 			"config": []any{map[string]any{
-				"location":                 "eastus",
+				"location":                 testEastus,
 				"kubernetes_version":       "1.26.0",
 				"node_resource_group_name": "my-node-group",
 				"disk_encryption_set":      "disk-encryption-set-id",
@@ -323,8 +338,8 @@ func aTestClusterDataMap(w ...mapWither) map[string]any {
 					"custom-tag": "tag-data",
 				},
 				"sku": []any{map[string]any{
-					"name": "BASIC",
-					"tier": "FREE",
+					testName: "BASIC",
+					"tier":   "FREE",
 				}},
 				"access_config": []any{map[string]any{
 					"enable_rbac":            true,
@@ -337,7 +352,7 @@ func aTestClusterDataMap(w ...mapWither) map[string]any {
 					}},
 				}},
 				"api_server_access_config": []any{map[string]any{
-					"authorized_ip_ranges":   []any{"127.0.0.1", "127.0.0.2"},
+					"authorized_ip_ranges":   []any{test127001, test127002},
 					"enable_private_cluster": true,
 				}},
 				"linux_config": []any{map[string]any{
@@ -346,11 +361,11 @@ func aTestClusterDataMap(w ...mapWither) map[string]any {
 				}},
 				"network_config": []any{map[string]any{
 					"load_balancer_sku":   "load-balancer",
-					"network_plugin":      "azure",
+					"network_plugin":      testAzure,
 					"network_plugin_mode": "",
 					"network_policy":      "policy",
-					"dns_service_ip":      "127.0.0.1",
-					"docker_bridge_cidr":  "127.0.0.2",
+					"dns_service_ip":      test127001,
+					"docker_bridge_cidr":  test127002,
 					"pod_cidr":            nil,
 					"service_cidr":        []any{"127.0.0.4"},
 					"dns_prefix":          "net-prefix",
@@ -363,16 +378,16 @@ func aTestClusterDataMap(w ...mapWither) map[string]any {
 				}},
 				"addon_config": []any{map[string]any{
 					"azure_keyvault_secrets_provider_addon_config": []any{map[string]any{
-						"enable":                 true,
+						testEnable:               true,
 						"enable_secret_rotation": true,
 						"rotation_poll_interval": "5m",
 					}},
 					"monitor_addon_config": []any{map[string]any{
-						"enable":                     true,
+						testEnable:                   true,
 						"log_analytics_workspace_id": "workspace-id",
 					}},
 					"azure_policy_addon_config": []any{map[string]any{
-						"enable": true,
+						testEnable: true,
 					}},
 				}},
 				"auto_upgrade_config": []any{map[string]any{
@@ -457,7 +472,7 @@ func aTestNodePool(w ...nodepoolWither) *models.VmwareTanzuManageV1alpha1Aksclus
 			},
 			EnableNodePublicIP: true,
 			MaxPods:            110,
-			NodeLabels:         map[string]string{"label": "val"},
+			NodeLabels:         map[string]string{"label": testVal},
 			NodeTaints: []*models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaint{{
 				Effect: models.VmwareTanzuManageV1alpha1AksclusterNodepoolTaintEffectNOSCHEDULE.Pointer(),
 				Key:    "tkey",
@@ -466,7 +481,7 @@ func aTestNodePool(w ...nodepoolWither) *models.VmwareTanzuManageV1alpha1Aksclus
 			OsDiskSizeGb: 30,
 			OsDiskType:   models.VmwareTanzuManageV1alpha1AksclusterNodepoolOsDiskTypeEPHEMERAL.Pointer(),
 			OsType:       models.VmwareTanzuManageV1alpha1AksclusterNodepoolOsTypeLINUX.Pointer(),
-			Tags:         map[string]string{"tmc.node.tag": "val"},
+			Tags:         map[string]string{"tmc.node.tag": testVal},
 			UpgradeConfig: &models.VmwareTanzuManageV1alpha1AksclusterNodepoolUpgradeConfig{
 				MaxSurge: "50%",
 			},
@@ -484,7 +499,7 @@ func aTestNodePool(w ...nodepoolWither) *models.VmwareTanzuManageV1alpha1Aksclus
 
 func aTestNodepoolDataMap(w ...mapWither) map[string]any {
 	m := map[string]any{
-		"name": "system-np",
+		testName: "system-np",
 		"spec": []any{map[string]any{
 			"mode":                      "SYSTEM",
 			"node_image_version":        "v1",
@@ -509,10 +524,10 @@ func aTestNodepoolDataMap(w ...mapWither) map[string]any {
 			},
 			"vnet_subnet_id": "vnet-1/subnets/subnet-1",
 			"pod_subnet_id":  "vnet-1/subnets/subnet-2",
-			"node_labels":    map[string]any{"label": "val"},
-			"tags":           map[string]any{"tmc.node.tag": "val"},
+			"node_labels":    map[string]any{"label": testVal},
+			"tags":           map[string]any{"tmc.node.tag": testVal},
 			"auto_scaling_config": []any{map[string]any{
-				"enable":    true,
+				testEnable:  true,
 				"min_count": 1,
 				"max_count": 10,
 			}},

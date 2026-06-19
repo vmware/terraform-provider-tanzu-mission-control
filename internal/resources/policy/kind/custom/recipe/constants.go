@@ -25,4 +25,6 @@ const (
 	kindKey                        = "kind"
 	nameKey                        = "name"
 	TemplateNameKey                = "template_name"
+	auditDryRunDotDescription      = "Audit (dry-run)."
+	parametersDotDescription       = "Parameters."
 )

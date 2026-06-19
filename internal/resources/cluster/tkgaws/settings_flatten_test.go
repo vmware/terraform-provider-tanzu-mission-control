@@ -33,27 +33,27 @@ func TestFlattenSettings(t *testing.T) {
 						APIServerPort: 6443,
 						Pods: []*tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsNetworkRange{
 							{
-								CidrBlocks: "100.96.0.0/11",
+								CidrBlocks: testPodsCIDRBlock,
 							},
 						},
 						Services: []*tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsNetworkRange{
 							{
-								CidrBlocks: "100.64.0.0/13",
+								CidrBlocks: testServicesCIDRBlock,
 							},
 						},
 					},
 					Provider: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsProviderNetwork{
 						Subnets: []*tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSubnet{
 							{
-								AvailabilityZone: "us-west-2a",
-								CidrBlock:        "10.0.0.0/16",
-								ID:               "default",
+								AvailabilityZone: testUsWest2aAvailabilityZone,
+								CidrBlock:        testVpcCIDRBlock,
+								ID:               testDefaultID,
 								IsPublic:         false,
 							},
 						},
 						Vpc: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsVPC{
-							CidrBlock: "10.0.0.0/16",
-							ID:        "default",
+							CidrBlock: testVpcCIDRBlock,
+							ID:        testDefaultID,
 						},
 					},
 				},
@@ -67,12 +67,12 @@ func TestFlattenSettings(t *testing.T) {
 									apiServerPortKey: int32(6443),
 									podsKey: []interface{}{
 										map[string]interface{}{
-											cidrBlocksKey: "100.96.0.0/11",
+											cidrBlocksKey: testPodsCIDRBlock,
 										},
 									},
 									servicesKey: []interface{}{
 										map[string]interface{}{
-											cidrBlocksKey: "100.64.0.0/13",
+											cidrBlocksKey: testServicesCIDRBlock,
 										},
 									},
 								},
@@ -81,16 +81,16 @@ func TestFlattenSettings(t *testing.T) {
 								map[string]interface{}{
 									subnetsKey: []interface{}{
 										map[string]interface{}{
-											availabilityZoneKey: "us-west-2a",
-											subnetCIDRBlockKey:  "10.0.0.0/16",
-											subnetIDKey:         "default",
+											availabilityZoneKey: testUsWest2aAvailabilityZone,
+											subnetCIDRBlockKey:  testVpcCIDRBlock,
+											subnetIDKey:         testDefaultID,
 											isPublicKey:         false,
 										},
 									},
 									vpcKey: []interface{}{
 										map[string]interface{}{
-											vpcCIDRBlockKey: "10.0.0.0/16",
-											vpcIDKey:        "default",
+											vpcCIDRBlockKey: testVpcCIDRBlock,
+											vpcIDKey:        testDefaultID,
 										},
 									},
 								},
@@ -104,14 +104,14 @@ func TestFlattenSettings(t *testing.T) {
 			name: "normal scenario with security settings data",
 			input: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSettings{
 				Security: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSecuritySettings{
-					SSHKey: "jumper_ssh_key-sh-1529663-220321-074908",
+					SSHKey: testJumperSSHKey,
 				},
 			},
 			expected: []interface{}{
 				map[string]interface{}{
 					securityKey: []interface{}{
 						map[string]interface{}{
-							sshKey: "jumper_ssh_key-sh-1529663-220321-074908",
+							sshKey: testJumperSSHKey,
 						},
 					},
 				},
@@ -125,32 +125,32 @@ func TestFlattenSettings(t *testing.T) {
 						APIServerPort: 6443,
 						Pods: []*tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsNetworkRange{
 							{
-								CidrBlocks: "100.96.0.0/11",
+								CidrBlocks: testPodsCIDRBlock,
 							},
 						},
 						Services: []*tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsNetworkRange{
 							{
-								CidrBlocks: "100.64.0.0/13",
+								CidrBlocks: testServicesCIDRBlock,
 							},
 						},
 					},
 					Provider: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsProviderNetwork{
 						Subnets: []*tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSubnet{
 							{
-								AvailabilityZone: "us-west-2a",
-								CidrBlock:        "10.0.0.0/16",
-								ID:               "default",
+								AvailabilityZone: testUsWest2aAvailabilityZone,
+								CidrBlock:        testVpcCIDRBlock,
+								ID:               testDefaultID,
 								IsPublic:         false,
 							},
 						},
 						Vpc: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsVPC{
-							CidrBlock: "10.0.0.0/16",
-							ID:        "default",
+							CidrBlock: testVpcCIDRBlock,
+							ID:        testDefaultID,
 						},
 					},
 				},
 				Security: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsSecuritySettings{
-					SSHKey: "jumper_ssh_key-sh-1529663-220321-074908",
+					SSHKey: testJumperSSHKey,
 				},
 			},
 			expected: []interface{}{
@@ -162,12 +162,12 @@ func TestFlattenSettings(t *testing.T) {
 									apiServerPortKey: int32(6443),
 									podsKey: []interface{}{
 										map[string]interface{}{
-											cidrBlocksKey: "100.96.0.0/11",
+											cidrBlocksKey: testPodsCIDRBlock,
 										},
 									},
 									servicesKey: []interface{}{
 										map[string]interface{}{
-											cidrBlocksKey: "100.64.0.0/13",
+											cidrBlocksKey: testServicesCIDRBlock,
 										},
 									},
 								},
@@ -176,16 +176,16 @@ func TestFlattenSettings(t *testing.T) {
 								map[string]interface{}{
 									subnetsKey: []interface{}{
 										map[string]interface{}{
-											availabilityZoneKey: "us-west-2a",
-											subnetCIDRBlockKey:  "10.0.0.0/16",
-											subnetIDKey:         "default",
+											availabilityZoneKey: testUsWest2aAvailabilityZone,
+											subnetCIDRBlockKey:  testVpcCIDRBlock,
+											subnetIDKey:         testDefaultID,
 											isPublicKey:         false,
 										},
 									},
 									vpcKey: []interface{}{
 										map[string]interface{}{
-											vpcCIDRBlockKey: "10.0.0.0/16",
-											vpcIDKey:        "default",
+											vpcCIDRBlockKey: testVpcCIDRBlock,
+											vpcIDKey:        testDefaultID,
 										},
 									},
 								},
@@ -194,7 +194,7 @@ func TestFlattenSettings(t *testing.T) {
 					},
 					securityKey: []interface{}{
 						map[string]interface{}{
-							sshKey: "jumper_ssh_key-sh-1529663-220321-074908",
+							sshKey: testJumperSSHKey,
 						},
 					},
 				},

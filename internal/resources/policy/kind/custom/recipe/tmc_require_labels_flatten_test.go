@@ -34,15 +34,15 @@ func TestFlattenTMCRequireLabels(t *testing.T) {
 				Parameters: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCRequireLabelsParameters{
 					Labels: []*policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCRequireLabelsParametersLabels{
 						{
-							Key:   "key-1",
-							Value: "value-1",
+							Key:   testKey1,
+							Value: testValue1,
 						},
 					},
 				},
 				TargetKubernetesResources: []*policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources{
 					{
-						APIGroups: []string{"policy"},
-						Kinds:     []string{"pod"},
+						APIGroups: []string{testPolicy},
+						Kinds:     []string{testPod},
 					},
 				},
 			},
@@ -53,16 +53,16 @@ func TestFlattenTMCRequireLabels(t *testing.T) {
 						map[string]interface{}{
 							parametersLabelKey: []interface{}{
 								map[string]interface{}{
-									labelKey:      "key-1",
-									labelValueKey: "value-1",
+									labelKey:      testKey1,
+									labelValueKey: testValue1,
 								},
 							},
 						},
 					},
 					TargetKubernetesResourcesKey: []interface{}{
 						map[string]interface{}{
-							APIGroupsKey: []string{"policy"},
-							KindsKey:     []string{"pod"},
+							APIGroupsKey: []string{testPolicy},
+							KindsKey:     []string{testPod},
 						},
 					},
 				},
@@ -97,8 +97,8 @@ func TestFlattenRequiredLabelsParameters(t *testing.T) {
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCRequireLabelsParameters{
 				Labels: []*policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCRequireLabelsParametersLabels{
 					{
-						Key:   "key-1",
-						Value: "value-1",
+						Key:   testKey1,
+						Value: testValue1,
 					},
 				},
 			},
@@ -106,8 +106,8 @@ func TestFlattenRequiredLabelsParameters(t *testing.T) {
 				map[string]interface{}{
 					parametersLabelKey: []interface{}{
 						map[string]interface{}{
-							labelKey:      "key-1",
-							labelValueKey: "value-1",
+							labelKey:      testKey1,
+							labelValueKey: testValue1,
 						},
 					},
 				},
@@ -140,12 +140,12 @@ func TestFlattenRequiredLabelsParametersLabels(t *testing.T) {
 		{
 			description: "normal scenario with complete custom policy tmc_require_labels parameters labels",
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCRequireLabelsParametersLabels{
-				Key:   "key-1",
-				Value: "value-1",
+				Key:   testKey1,
+				Value: testValue1,
 			},
 			expected: map[string]interface{}{
-				labelKey:      "key-1",
-				labelValueKey: "value-1",
+				labelKey:      testKey1,
+				labelValueKey: testValue1,
 			},
 		},
 	}

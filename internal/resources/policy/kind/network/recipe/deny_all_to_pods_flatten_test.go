@@ -31,14 +31,14 @@ func TestFlattenDenyAllToPods(t *testing.T) {
 			input: &policyrecipenetworkmodel.V1alpha1CommonPolicySpecNetworkV1DenyAllToPods{
 				ToPodLabels: []*policyrecipenetworkcommonmodel.V1alpha1CommonPolicySpecNetworkV1Labels{
 					{
-						Key:   "foo",
-						Value: "bar",
+						Key:   testFoo,
+						Value: testBar,
 					},
 				},
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					ToPodLabelsKey: map[string]interface{}{"foo": "bar"},
+					ToPodLabelsKey: map[string]interface{}{testFoo: testBar},
 				},
 			},
 		},
