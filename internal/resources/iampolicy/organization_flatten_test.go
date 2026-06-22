@@ -28,11 +28,11 @@ func TestFlattenOrganizationFullname(t *testing.T) {
 		{
 			description: "normal scenario with complete organization full name",
 			input: &organizationmodel.VmwareTanzuManageV1alpha1OrganizationFullName{
-				OrgID: "default",
+				OrgID: clusterGroupNameForCluster,
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					organizationIDKey: "default",
+					organizationIDKey: clusterGroupNameForCluster,
 				},
 			},
 		},

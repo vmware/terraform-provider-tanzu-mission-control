@@ -29,6 +29,8 @@ const (
 	apiSubGroup          = "namespaces"
 	apiKind              = "tanzupackage/metadatas"
 	packages             = "packages"
+
+	testAttached = "attached"
 )
 
 func bodyInspectingResponder(t *testing.T, expectedContent interface{}, successResponse int, successResponseBody interface{}) httpmock.Responder {
@@ -102,8 +104,8 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			{
 				FullName: &tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageFullName{
 					ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-					ManagementClusterName: "attached",
-					ProvisionerName:       "attached",
+					ManagementClusterName: testAttached,
+					ProvisionerName:       testAttached,
 					OrgID:                 OrgID,
 				},
 				Status: &tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageStatus{
@@ -122,8 +124,8 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 		Package: &pakageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackagePackage{
 			FullName: &pakageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageFullName{
 				ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-				ManagementClusterName: "attached",
-				ProvisionerName:       "attached",
+				ManagementClusterName: testAttached,
+				ProvisionerName:       testAttached,
 				OrgID:                 OrgID,
 				Name:                  testConfig.PkgName,
 				NamespaceName:         globalRepoNamespace,

@@ -26,11 +26,18 @@ import (
 )
 
 const (
-	https      = "https:/"
-	apiVersion = "v1alpha1"
-	workspaces = "workspaces"
-	org        = "organization"
-	apiKind    = "policies"
+	apiKind                     = "policies"
+	apiVersion                  = "v1alpha1"
+	https                       = "https:/"
+	org                         = "organization"
+	testKey1                    = "key1"
+	testKey2                    = "key2"
+	testResourceWithDescription = "resource with description"
+	testValue1                  = "value1"
+	testWorkspace1              = "workspace1"
+	workspaces                  = "workspaces"
+
+	testValue2 = "value2"
 )
 
 // Function to set up HTTP mocks for the network policy requests anticipated by this test, when not being run against a real TMC stack.
@@ -52,15 +59,15 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			FullName: &policyworkspacemodel.VmwareTanzuManageV1alpha1WorkspacePolicyFullName{
 				Name:          testConfig.NetworkPolicyName + recipe,
 				OrgID:         testConfig.ScopeHelperResources.OrgID,
-				WorkspaceName: "workspace1",
+				WorkspaceName: testWorkspace1,
 			},
 			Spec: getMockPolicyCreateSpec(recipe),
 			Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 				ParentReferences: nil,
-				Description:      "resource with description",
+				Description:      testResourceWithDescription,
 				Labels: map[string]string{
-					"key1": "value1",
-					"key2": "value2",
+					testKey1: testValue1,
+					testKey2: testValue2,
 				},
 				UID:             fmt.Sprintf("%s-ws-nw-policy", recipe),
 				ResourceVersion: "v1",
@@ -70,15 +77,15 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			FullName: &policyworkspacemodel.VmwareTanzuManageV1alpha1WorkspacePolicyFullName{
 				Name:          testConfig.NetworkPolicyName + recipe,
 				OrgID:         testConfig.ScopeHelperResources.OrgID,
-				WorkspaceName: "workspace1",
+				WorkspaceName: testWorkspace1,
 			},
 			Spec: getMockPolicyCreateSpec(recipe),
 			Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 				ParentReferences: referenceArray,
-				Description:      "resource with description",
+				Description:      testResourceWithDescription,
 				Labels: map[string]string{
-					"key1": "value1",
-					"key2": "value2",
+					testKey1: testValue1,
+					testKey2: testValue2,
 				},
 				UID:             fmt.Sprintf("%s-ws-nw-policy", recipe),
 				ResourceVersion: "v1",
@@ -89,8 +96,8 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 		postWorkspacePolicyResponse := &policyworkspacemodel.VmwareTanzuManageV1alpha1WorkspacePolicyPolicyResponse{Policy: postWorkspacePolicyModel}
 		getWorkspacePolicyResponse := &policyworkspacemodel.VmwareTanzuManageV1alpha1WorkspacePolicyGetPolicyResponse{Policy: getWorkspacePolicyModel}
 
-		postWorkspacePolicyEndpoint := helper.ConstructRequestURL(https, endpoint, apiVersion, workspaces, "workspace1", apiKind).String()
-		getWorkspacePolicyEndpoint := helper.ConstructRequestURL(https, endpoint, apiVersion, workspaces, "workspace1", apiKind, testConfig.NetworkPolicyName+recipe).String()
+		postWorkspacePolicyEndpoint := helper.ConstructRequestURL(https, endpoint, apiVersion, workspaces, testWorkspace1, apiKind).String()
+		getWorkspacePolicyEndpoint := helper.ConstructRequestURL(https, endpoint, apiVersion, workspaces, testWorkspace1, apiKind, testConfig.NetworkPolicyName+recipe).String()
 		deleteWorkspacePolicyEndpoint := getWorkspacePolicyEndpoint
 
 		postOrgPolicyModel := &policyorganizationmodel.VmwareTanzuManageV1alpha1OrganizationPolicyPolicy{
@@ -101,10 +108,10 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			Spec: getMockPolicyCreateSpec(recipe),
 			Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 				ParentReferences: nil,
-				Description:      "resource with description",
+				Description:      testResourceWithDescription,
 				Labels: map[string]string{
-					"key1": "value1",
-					"key2": "value2",
+					testKey1: testValue1,
+					testKey2: testValue2,
 				},
 				UID:             fmt.Sprintf("%s-org-nw-policy", recipe),
 				ResourceVersion: "v1",
@@ -118,10 +125,10 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			Spec: getMockPolicyCreateSpec(recipe),
 			Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 				ParentReferences: referenceArray,
-				Description:      "resource with description",
+				Description:      testResourceWithDescription,
 				Labels: map[string]string{
-					"key1": "value1",
-					"key2": "value2",
+					testKey1: testValue1,
+					testKey2: testValue2,
 				},
 				UID:             fmt.Sprintf("%s-org-nw-policy", recipe),
 				ResourceVersion: "v1",
@@ -203,12 +210,12 @@ func getMockPolicyCreateSpec(recipe string) *policymodel.VmwareTanzuManageV1alph
 			FromOwnNamespace: helper.BoolPointer(false),
 			ToPodLabels: []*policyrecipenetworkcommonmodel.V1alpha1CommonPolicySpecNetworkV1Labels{
 				{
-					Key:   "key1",
-					Value: "value1",
+					Key:   testKey1,
+					Value: testValue1,
 				},
 				{
-					Key:   "key2",
-					Value: "value2",
+					Key:   testKey2,
+					Value: testValue2,
 				},
 			},
 		}
@@ -216,12 +223,12 @@ func getMockPolicyCreateSpec(recipe string) *policymodel.VmwareTanzuManageV1alph
 		spec.Input = &policyrecipenetworkmodel.V1alpha1CommonPolicySpecNetworkV1DenyAllToPods{
 			ToPodLabels: []*policyrecipenetworkcommonmodel.V1alpha1CommonPolicySpecNetworkV1Labels{
 				{
-					Key:   "key1",
-					Value: "value1",
+					Key:   testKey1,
+					Value: testValue1,
 				},
 				{
-					Key:   "key2",
-					Value: "value2",
+					Key:   testKey2,
+					Value: testValue2,
 				},
 			},
 		}
@@ -274,12 +281,12 @@ func getMockPolicyCreateSpec(recipe string) *policymodel.VmwareTanzuManageV1alph
 	//		ToPodLabels: func() *[]policyrecipenetworkcommonmodel.V1alpha1CommonPolicySpecNetworkV1Labels {
 	//			return &[]policyrecipenetworkcommonmodel.V1alpha1CommonPolicySpecNetworkV1Labels{
 	//				{
-	//					Key:   "key1",
-	//					Value: "value1",
+	//					Key:   testKey1,
+	//					Value: testValue1,
 	//				},
 	//				{
-	//					Key:   "key2",
-	//					Value: "value2",
+	//					Key:   testKey2,
+	//					Value: testValue2,
 	//				},
 	//			}
 	//		}(),
@@ -316,12 +323,12 @@ func getMockPolicyCreateSpec(recipe string) *policymodel.VmwareTanzuManageV1alph
 	//		ToPodLabels: func() *[]policyrecipenetworkcommonmodel.V1alpha1CommonPolicySpecNetworkV1Labels {
 	//			return &[]policyrecipenetworkcommonmodel.V1alpha1CommonPolicySpecNetworkV1Labels{
 	//				{
-	//					Key:   "key1",
-	//					Value: "value1",
+	//					Key:   testKey1,
+	//					Value: testValue1,
 	//				},
 	//				{
-	//					Key:   "key2",
-	//					Value: "value2",
+	//					Key:   testKey2,
+	//					Value: testValue2,
 	//				},
 	//			}
 	//		}(),

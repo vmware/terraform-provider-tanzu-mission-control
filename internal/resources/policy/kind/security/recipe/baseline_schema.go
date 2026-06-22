@@ -23,13 +23,13 @@ var Baseline = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			AuditKey: {
 				Type:        schema.TypeBool,
-				Description: "Audit (dry-run)",
+				Description: auditDryRunDescription,
 				Optional:    true,
 				Default:     false,
 			},
 			DisableNativePspKey: {
 				Type:        schema.TypeBool,
-				Description: "Disable native pod security policy",
+				Description: disableNativePspDescription,
 				Optional:    true,
 				Default:     false,
 			},

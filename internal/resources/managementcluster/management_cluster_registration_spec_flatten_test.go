@@ -13,6 +13,10 @@ import (
 	managementclusterregistrationmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/managementcluster"
 )
 
+const (
+	testVmwareTanzuKubernetesGrid = "VMWARE_TANZU_KUBERNETES_GRID"
+)
+
 func TestFlattenSpec(t *testing.T) {
 	t.Parallel()
 
@@ -31,7 +35,7 @@ func TestFlattenSpec(t *testing.T) {
 				DefaultWorkloadClusterImageRegistry: "managed_workload_cluster_image_registry",
 				DefaultWorkloadClusterProxyName:     "managed_workload_cluster_proxy_name_value",
 				ImageRegistry:                       "image_registry_value",
-				KubernetesProviderType:              clustermodel.NewVmwareTanzuManageV1alpha1CommonClusterKubernetesProviderType("VMWARE_TANZU_KUBERNETES_GRID"),
+				KubernetesProviderType:              clustermodel.NewVmwareTanzuManageV1alpha1CommonClusterKubernetesProviderType(testVmwareTanzuKubernetesGrid),
 				ProxyName:                           "proxy_name_value",
 			},
 			expected: []interface{}{
@@ -40,7 +44,7 @@ func TestFlattenSpec(t *testing.T) {
 					managedWorkloadClusterImageRegistryKey: "managed_workload_cluster_image_registry",
 					managedWorkloadClusterProxyNameKey:     "managed_workload_cluster_proxy_name_value",
 					imageRegistryKey:                       "image_registry_value",
-					kubernetesProviderTypeKey:              "VMWARE_TANZU_KUBERNETES_GRID",
+					kubernetesProviderTypeKey:              testVmwareTanzuKubernetesGrid,
 					managementClusterProxyNameKey:          "proxy_name_value",
 				},
 			},

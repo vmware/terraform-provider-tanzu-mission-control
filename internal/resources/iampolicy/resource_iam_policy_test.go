@@ -41,14 +41,10 @@ const (
 	IAMPolicyResourceVar2 = "test_iam_policy_2"
 	managementClusterName = scoperesource.AttachedValue
 	provisionerName       = scoperesource.AttachedValue
-	subject1Name          = "test-1"
-	subject1Kind          = "GROUP"
 	// Cluster.
-	clusterResource            = clusterresource.ResourceName
-	clusterResourceVar         = "test_cluster"
-	clusterName                = "tf-attach-test"
-	clusterGroupNameForCluster = "default"
-	clusterRole                = "cluster.view"
+	clusterResource    = clusterresource.ResourceName
+	clusterResourceVar = "test_cluster"
+	clusterName        = "tf-attach-test"
 	// ClusterGroup.
 	clusterGroupResource    = clustergroupresource.ResourceName
 	clusterGroupResourceVar = "test_cluster_group"

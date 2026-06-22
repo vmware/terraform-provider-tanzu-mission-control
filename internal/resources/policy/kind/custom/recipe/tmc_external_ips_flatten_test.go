@@ -31,12 +31,12 @@ func TestFlattenTMCExternalIPS(t *testing.T) {
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCExternalIPS{
 				Audit: true,
 				Parameters: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCExternalIPSParameters{
-					AllowedIPs: []string{"127.0.0.1"},
+					AllowedIPs: []string{test127001},
 				},
 				TargetKubernetesResources: []*policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources{
 					{
-						APIGroups: []string{"policy"},
-						Kinds:     []string{"pod"},
+						APIGroups: []string{testPolicy},
+						Kinds:     []string{testPod},
 					},
 				},
 			},
@@ -45,13 +45,13 @@ func TestFlattenTMCExternalIPS(t *testing.T) {
 					AuditKey: true,
 					ParametersKey: []interface{}{
 						map[string]interface{}{
-							allowedIPsKey: []string{"127.0.0.1"},
+							allowedIPsKey: []string{test127001},
 						},
 					},
 					TargetKubernetesResourcesKey: []interface{}{
 						map[string]interface{}{
-							APIGroupsKey: []string{"policy"},
-							KindsKey:     []string{"pod"},
+							APIGroupsKey: []string{testPolicy},
+							KindsKey:     []string{testPod},
 						},
 					},
 				},
@@ -84,11 +84,11 @@ func TestFlattenExternalIPSParameters(t *testing.T) {
 		{
 			description: "normal scenario with complete custom policy tmc_external_ips parameters",
 			input: &policyrecipecustommodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TMCExternalIPSParameters{
-				AllowedIPs: []string{"127.0.0.1"},
+				AllowedIPs: []string{test127001},
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					allowedIPsKey: []string{"127.0.0.1"},
+					allowedIPsKey: []string{test127001},
 				},
 			},
 		},

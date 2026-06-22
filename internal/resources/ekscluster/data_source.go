@@ -85,8 +85,8 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 			clusFullName := &clustermodel.VmwareTanzuManageV1alpha1ClusterFullName{
 				Name:                  resp.EksCluster.Spec.AgentName,
 				OrgID:                 clusterFn.OrgID,
-				ManagementClusterName: "eks",
-				ProvisionerName:       "eks",
+				ManagementClusterName: eksProvisionerName,
+				ProvisionerName:       eksProvisionerName,
 			}
 			clusterResp, err := config.TMCConnection.ClusterResourceService.ManageV1alpha1ClusterResourceServiceGet(clusFullName)
 			// nolint: wsl
@@ -102,8 +102,8 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 			}
 
 			fn := &configModels.VmwareTanzuManageV1alpha1ClusterFullName{
-				ManagementClusterName: "eks",
-				ProvisionerName:       "eks",
+				ManagementClusterName: eksProvisionerName,
+				ProvisionerName:       eksProvisionerName,
 				Name:                  resp.EksCluster.Spec.AgentName,
 			}
 			resp, err := config.TMCConnection.KubeConfigResourceService.KubeconfigServiceGet(fn)
@@ -138,7 +138,7 @@ func dataSourceTMCEKSClusterRead(ctx context.Context, d *schema.ResourceData, m 
 		_, err = getEksClusterResourceRetryableFn()
 	case "":
 		fallthrough
-	case "default":
+	case clusterGroupDefaultValue:
 		timeoutValueData = strconv.Itoa(minutesBasedDefaultTimeout) + "m"
 
 		fallthrough

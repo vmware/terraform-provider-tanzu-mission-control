@@ -33,6 +33,19 @@ const (
 	apiKind              = "fluxcd/sourcesecrets"
 	cdAPIKind            = "fluxcd/continuousdelivery"
 	cgAPIVersionAndGroup = "v1alpha1/clustergroups"
+
+	testAttached                = "attached"
+	testCdkustomization1        = "cdkustomization1"
+	testIdentity                = "identity"
+	testKey1                    = "key1"
+	testKey2                    = "key2"
+	testKnownHosts              = "known_hosts"
+	testKustomization1          = "kustomization1"
+	testPassword                = "password"
+	testResourceWithDescription = "resource with description"
+	testUsername                = "username"
+	testValue1                  = "value1"
+	testValue2                  = "value2"
 )
 
 func getMockSpec(allowedCredential string) sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSpec {
@@ -42,8 +55,8 @@ func getMockSpec(allowedCredential string) sourcesecretclustermodel.VmwareTanzuM
 			SourceSecretType: sourcesecretclustermodel.NewVmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretType(sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretTypeUSERNAMEPASSWORD),
 			Data: &sourcesecretclustermodel.VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpec{
 				Data: map[string]strfmt.Base64{
-					"username": []byte("testusername"),
-					"password": []byte(""),
+					testUsername: []byte("testusername"),
+					testPassword: []byte(""),
 				},
 			},
 		}
@@ -52,8 +65,8 @@ func getMockSpec(allowedCredential string) sourcesecretclustermodel.VmwareTanzuM
 			SourceSecretType: sourcesecretclustermodel.NewVmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretType(sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretTypeSSH),
 			Data: &sourcesecretclustermodel.VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpec{
 				Data: map[string]strfmt.Base64{
-					"identity":    []byte(""),
-					"known_hosts": []byte("testhostes"),
+					testIdentity:   []byte(""),
+					testKnownHosts: []byte("testhostes"),
 				},
 			},
 		}
@@ -142,26 +155,26 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocksUpdate(t *testing.T, scope
 				Name:                  testConfig.SourceSecretName,
 				OrgID:                 OrgID,
 				ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-				ProvisionerName:       "attached",
-				ManagementClusterName: "attached",
+				ProvisionerName:       testAttached,
+				ManagementClusterName: testAttached,
 			},
 			Spec: &sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretSpec{
 				SourceSecretType: sourcesecretclustermodel.NewVmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretType(sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretTypeUSERNAMEPASSWORD),
 				Data: &sourcesecretclustermodel.VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpec{
 					Data: map[string]strfmt.Base64{
-						"username": []byte("someusername"),
-						"password": []byte(""),
+						testUsername: []byte("someusername"),
+						testPassword: []byte(""),
 					},
 				},
 			},
 			Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 				ParentReferences: referenceArray,
-				Description:      "resource with description",
+				Description:      testResourceWithDescription,
 				Labels: map[string]string{
-					"key1": "value1",
-					"key2": "value2",
+					testKey1: testValue1,
+					testKey2: testValue2,
 				},
-				UID:             "kustomization1",
+				UID:             testKustomization1,
 				ResourceVersion: "v1",
 			},
 		}
@@ -185,20 +198,20 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocksUpdate(t *testing.T, scope
 					SourceSecretType: sourcesecretclustermodel.NewVmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretType(sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretTypeSSH),
 					Data: &sourcesecretclustermodel.VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpec{
 						Data: map[string]strfmt.Base64{
-							"identity":    []byte(""),
-							"known_hosts": []byte("somehosts"),
+							testIdentity:   []byte(""),
+							testKnownHosts: []byte("somehosts"),
 						},
 					},
 				},
 			},
 			Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 				ParentReferences: referenceArray,
-				Description:      "resource with description",
+				Description:      testResourceWithDescription,
 				Labels: map[string]string{
-					"key1": "value1",
-					"key2": "value2",
+					testKey1: testValue1,
+					testKey2: testValue2,
 				},
-				UID:             "cdkustomization1",
+				UID:             testCdkustomization1,
 				ResourceVersion: "v1",
 			},
 		}
@@ -240,8 +253,8 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 				SourceSecretType: sourcesecretclustermodel.NewVmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretType(sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretTypeUSERNAMEPASSWORD),
 				Data: &sourcesecretclustermodel.VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpec{
 					Data: map[string]strfmt.Base64{
-						"username": []byte("someusername"),
-						"password": []byte(""),
+						testUsername: []byte("someusername"),
+						testPassword: []byte(""),
 					},
 				},
 			},
@@ -256,8 +269,8 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 				SourceSecretType: sourcesecretclustermodel.NewVmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretType(sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretTypeUSERNAMEPASSWORD),
 				Data: &sourcesecretclustermodel.VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpec{
 					Data: map[string]strfmt.Base64{
-						"username": []byte("someusername"),
-						"password": []byte(""),
+						testUsername: []byte("someusername"),
+						testPassword: []byte(""),
 					},
 				},
 			},
@@ -303,8 +316,8 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 					SourceSecretType: sourcesecretclustermodel.NewVmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretType(sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretTypeSSH),
 					Data: &sourcesecretclustermodel.VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpec{
 						Data: map[string]strfmt.Base64{
-							"identity":    []byte(""),
-							"known_hosts": []byte("somehosts"),
+							testIdentity:   []byte(""),
+							testKnownHosts: []byte("somehosts"),
 						},
 					},
 				},
@@ -321,8 +334,8 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 					SourceSecretType: sourcesecretclustermodel.NewVmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretType(sourcesecretclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdSourcesecretTypeSSH),
 					Data: &sourcesecretclustermodel.VmwareTanzuManageV1alpha1AccountCredentialTypeKeyvalueSpec{
 						Data: map[string]strfmt.Base64{
-							"identity":    []byte(""),
-							"known_hosts": []byte("somehosts"),
+							testIdentity:   []byte(""),
+							testKnownHosts: []byte("somehosts"),
 						},
 					},
 				},
@@ -380,12 +393,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		Spec: cgSourcesecretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "cdkustomization1",
+			UID:             testCdkustomization1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -399,12 +412,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		Spec: cgSourcesecretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "cdkustomization1",
+			UID:             testCdkustomization1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -426,12 +439,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		Spec: cgSourcesecretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: referenceArray,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "cdkustomization1",
+			UID:             testCdkustomization1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -447,10 +460,10 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
 			UID:             "cdcontinuousdelivery1",
 			ResourceVersion: "v1",
@@ -464,10 +477,10 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
 			UID:             "cdcontinuousdelivery1",
 			ResourceVersion: "v1",
@@ -501,18 +514,18 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			Name:                  testConfig.SourceSecretName,
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &sourcesecretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "kustomization1",
+			UID:             testKustomization1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -522,18 +535,18 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			Name:                  testConfig.SourceSecretName,
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &sourcesecretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "kustomization1",
+			UID:             testKustomization1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -551,18 +564,18 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			Name:                  testConfig.SourceSecretName,
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &sourcesecretSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: referenceArray,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "kustomization1",
+			UID:             testKustomization1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -578,10 +591,10 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
 			UID:             "continuousdelivery1",
 			ResourceVersion: "v1",
@@ -595,10 +608,10 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
 			UID:             "continuousdelivery1",
 			ResourceVersion: "v1",

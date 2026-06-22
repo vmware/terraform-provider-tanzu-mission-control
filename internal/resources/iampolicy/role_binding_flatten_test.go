@@ -28,20 +28,20 @@ func TestFlattenRoleBinding(t *testing.T) {
 		{
 			description: "normal scenario with all fields of role binding data",
 			input: &iammodel.VmwareTanzuCoreV1alpha1PolicyRoleBinding{
-				Role: "cluster-group.admin",
+				Role: testClustergroupadmin,
 				Subjects: []*iammodel.VmwareTanzuCoreV1alpha1PolicySubject{
 					{
-						Name: "test-1",
+						Name: subject1Name,
 						Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindGROUP.Pointer(),
 					},
 				},
 			},
 			expected: map[string]interface{}{
-				roleKey: "cluster-group.admin",
+				roleKey: testClustergroupadmin,
 				subjectsKey: []interface{}{
 					map[string]interface{}{
-						subjectNameKey: "test-1",
-						subjectKindKey: "GROUP",
+						subjectNameKey: subject1Name,
+						subjectKindKey: subject1Kind,
 					},
 				},
 			},

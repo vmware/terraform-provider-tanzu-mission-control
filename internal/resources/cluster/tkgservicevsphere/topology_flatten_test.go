@@ -13,6 +13,23 @@ import (
 	tkgservicevspheremodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgservicevsphere"
 )
 
+const (
+	testCloudKey                       = "cloud-key"
+	testEtcd0                          = "etcd-0"
+	testNodeKey                        = "node-key"
+	testTest                           = "test"
+	testTestClass                      = "test-class"
+	testTestClassSpec                  = "test-class-spec"
+	testTestStorageClass               = "test-storage-class"
+	testTestStorageSpec                = "test-storage-spec"
+	testTestingTopologyFlattenFunction = "testing topology flatten function"
+	testTkgsK8sObjPolicy               = "tkgs-k8s-obj-policy"
+	testVarLibEtcd                     = "/var/lib/etcd"
+
+	testCloudValue = "cloud-value"
+	testNodeValue  = "node-value"
+)
+
 func TestFlattenTopology(t *testing.T) {
 	t.Parallel()
 
@@ -46,15 +63,15 @@ func TestFlattenTopology(t *testing.T) {
 			name: "normal scenario with control plane data of topology",
 			input: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereTopology{
 				ControlPlane: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereControlPlane{
-					Class:            "test-class",
+					Class:            testTestClass,
 					HighAvailability: false,
-					StorageClass:     "test-storage-class",
+					StorageClass:     testTestStorageClass,
 					Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
 						{
 							Capacity:     4,
-							MountPath:    "/var/lib/etcd",
-							Name:         "etcd-0",
-							StorageClass: "tkgs-k8s-obj-policy",
+							MountPath:    testVarLibEtcd,
+							Name:         testEtcd0,
+							StorageClass: testTkgsK8sObjPolicy,
 						},
 					},
 				},
@@ -63,15 +80,15 @@ func TestFlattenTopology(t *testing.T) {
 				map[string]interface{}{
 					controlPlaneKey: []interface{}{
 						map[string]interface{}{
-							classKey:            "test-class",
+							classKey:            testTestClass,
 							highAvailabilityKey: false,
-							storageClassKey:     "test-storage-class",
+							storageClassKey:     testTestStorageClass,
 							volumesKey: []interface{}{
 								map[string]interface{}{
 									capacityKey:        float32(4),
-									mountPathKey:       "/var/lib/etcd",
-									volumeNameKey:      "etcd-0",
-									pvcStorageClassKey: "tkgs-k8s-obj-policy",
+									mountPathKey:       testVarLibEtcd,
+									volumeNameKey:      testEtcd0,
+									pvcStorageClassKey: testTkgsK8sObjPolicy,
 								},
 							},
 						},
@@ -86,23 +103,23 @@ func TestFlattenTopology(t *testing.T) {
 				NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 					{
 						Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-							Name:        "test",
-							Description: "testing topology flatten function",
+							Name:        testTest,
+							Description: testTestingTopologyFlattenFunction,
 						},
 						Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
-							CloudLabels:     map[string]string{"cloud-key": "cloud-value"},
-							NodeLabels:      map[string]string{"node-key": "node-value"},
+							CloudLabels:     map[string]string{testCloudKey: testCloudValue},
+							NodeLabels:      map[string]string{testNodeKey: testNodeValue},
 							WorkerNodeCount: "1",
 							TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
-								Class:         "test-class-spec",
-								StorageClass:  "test-storage-spec",
+								Class:         testTestClassSpec,
+								StorageClass:  testTestStorageSpec,
 								FailureDomain: "",
 								Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
 									{
 										Capacity:     4,
-										MountPath:    "/var/lib/etcd",
-										Name:         "etcd-0",
-										StorageClass: "tkgs-k8s-obj-policy",
+										MountPath:    testVarLibEtcd,
+										Name:         testEtcd0,
+										StorageClass: testTkgsK8sObjPolicy,
 									},
 								},
 							},
@@ -117,26 +134,26 @@ func TestFlattenTopology(t *testing.T) {
 						map[string]interface{}{
 							infoKey: []interface{}{
 								map[string]interface{}{
-									nodepoolNameKey: "test",
-									descriptionKey:  "testing topology flatten function",
+									nodepoolNameKey: testTest,
+									descriptionKey:  testTestingTopologyFlattenFunction,
 								},
 							},
 							specKey: []interface{}{
 								map[string]interface{}{
-									cloudLabelKey:      map[string]string{"cloud-key": "cloud-value"},
-									nodeLabelKey:       map[string]string{"node-key": "node-value"},
+									cloudLabelKey:      map[string]string{testCloudKey: testCloudValue},
+									nodeLabelKey:       map[string]string{testNodeKey: testNodeValue},
 									workerNodeCountKey: "1",
 									tkgServiceVsphereKey: []interface{}{
 										map[string]interface{}{
-											classKey:         "test-class-spec",
-											storageClassKey:  "test-storage-spec",
+											classKey:         testTestClassSpec,
+											storageClassKey:  testTestStorageSpec,
 											failureDomainKey: "",
 											volumesKey: []interface{}{
 												map[string]interface{}{
 													capacityKey:        float32(4),
-													mountPathKey:       "/var/lib/etcd",
-													volumeNameKey:      "etcd-0",
-													pvcStorageClassKey: "tkgs-k8s-obj-policy",
+													mountPathKey:       testVarLibEtcd,
+													volumeNameKey:      testEtcd0,
+													pvcStorageClassKey: testTkgsK8sObjPolicy,
 												},
 											},
 										},
@@ -152,38 +169,38 @@ func TestFlattenTopology(t *testing.T) {
 			name: "normal scenario with all fields of topology data",
 			input: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereTopology{
 				ControlPlane: &tkgservicevspheremodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgservicevsphereControlPlane{
-					Class:            "test-class",
+					Class:            testTestClass,
 					HighAvailability: false,
-					StorageClass:     "test-storage-class",
+					StorageClass:     testTestStorageClass,
 					Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
 						{
 							Capacity:     4,
-							MountPath:    "/var/lib/etcd",
-							Name:         "etcd-0",
-							StorageClass: "tkgs-k8s-obj-policy",
+							MountPath:    testVarLibEtcd,
+							Name:         testEtcd0,
+							StorageClass: testTkgsK8sObjPolicy,
 						},
 					},
 				},
 				NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 					{
 						Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-							Name:        "test",
-							Description: "testing topology flatten function",
+							Name:        testTest,
+							Description: testTestingTopologyFlattenFunction,
 						},
 						Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
-							CloudLabels:     map[string]string{"cloud-key": "cloud-value"},
-							NodeLabels:      map[string]string{"node-key": "node-value"},
+							CloudLabels:     map[string]string{testCloudKey: testCloudValue},
+							NodeLabels:      map[string]string{testNodeKey: testNodeValue},
 							WorkerNodeCount: "1",
 							TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
-								Class:         "test-class-spec",
-								StorageClass:  "test-storage-spec",
+								Class:         testTestClassSpec,
+								StorageClass:  testTestStorageSpec,
 								FailureDomain: "domain-x50",
 								Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
 									{
 										Capacity:     4,
-										MountPath:    "/var/lib/etcd",
-										Name:         "etcd-0",
-										StorageClass: "tkgs-k8s-obj-policy",
+										MountPath:    testVarLibEtcd,
+										Name:         testEtcd0,
+										StorageClass: testTkgsK8sObjPolicy,
 									},
 								},
 							},
@@ -195,15 +212,15 @@ func TestFlattenTopology(t *testing.T) {
 				map[string]interface{}{
 					controlPlaneKey: []interface{}{
 						map[string]interface{}{
-							classKey:            "test-class",
+							classKey:            testTestClass,
 							highAvailabilityKey: false,
-							storageClassKey:     "test-storage-class",
+							storageClassKey:     testTestStorageClass,
 							volumesKey: []interface{}{
 								map[string]interface{}{
 									capacityKey:        float32(4),
-									mountPathKey:       "/var/lib/etcd",
-									volumeNameKey:      "etcd-0",
-									pvcStorageClassKey: "tkgs-k8s-obj-policy",
+									mountPathKey:       testVarLibEtcd,
+									volumeNameKey:      testEtcd0,
+									pvcStorageClassKey: testTkgsK8sObjPolicy,
 								},
 							},
 						},
@@ -212,26 +229,26 @@ func TestFlattenTopology(t *testing.T) {
 						map[string]interface{}{
 							infoKey: []interface{}{
 								map[string]interface{}{
-									nodepoolNameKey: "test",
-									descriptionKey:  "testing topology flatten function",
+									nodepoolNameKey: testTest,
+									descriptionKey:  testTestingTopologyFlattenFunction,
 								},
 							},
 							specKey: []interface{}{
 								map[string]interface{}{
-									cloudLabelKey:      map[string]string{"cloud-key": "cloud-value"},
-									nodeLabelKey:       map[string]string{"node-key": "node-value"},
+									cloudLabelKey:      map[string]string{testCloudKey: testCloudValue},
+									nodeLabelKey:       map[string]string{testNodeKey: testNodeValue},
 									workerNodeCountKey: "1",
 									tkgServiceVsphereKey: []interface{}{
 										map[string]interface{}{
-											classKey:         "test-class-spec",
-											storageClassKey:  "test-storage-spec",
+											classKey:         testTestClassSpec,
+											storageClassKey:  testTestStorageSpec,
 											failureDomainKey: "domain-x50",
 											volumesKey: []interface{}{
 												map[string]interface{}{
 													capacityKey:        float32(4),
-													mountPathKey:       "/var/lib/etcd",
-													volumeNameKey:      "etcd-0",
-													pvcStorageClassKey: "tkgs-k8s-obj-policy",
+													mountPathKey:       testVarLibEtcd,
+													volumeNameKey:      testEtcd0,
+													pvcStorageClassKey: testTkgsK8sObjPolicy,
 												},
 											},
 										},

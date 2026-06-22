@@ -13,6 +13,11 @@ import (
 	tkgvspheremodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgvsphere"
 )
 
+const (
+	testTest                           = "test"
+	testTestingTopologyFlattenFunction = "testing topology flatten function"
+)
+
 func TestFlattenTopology(t *testing.T) {
 	t.Parallel()
 
@@ -62,8 +67,8 @@ func TestFlattenTopology(t *testing.T) {
 				NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 					{
 						Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-							Name:        "test",
-							Description: "testing topology flatten function",
+							Name:        testTest,
+							Description: testTestingTopologyFlattenFunction,
 						},
 						Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 							WorkerNodeCount: "1",
@@ -85,8 +90,8 @@ func TestFlattenTopology(t *testing.T) {
 						map[string]interface{}{
 							nodePoolInfoKey: []interface{}{
 								map[string]interface{}{
-									nodePoolNameKey:        "test",
-									nodePoolDescriptionKey: "testing topology flatten function",
+									nodePoolNameKey:        testTest,
+									nodePoolDescriptionKey: testTestingTopologyFlattenFunction,
 								},
 							},
 							nodePoolSpecKey: []interface{}{
@@ -124,8 +129,8 @@ func TestFlattenTopology(t *testing.T) {
 				NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 					{
 						Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-							Name:        "test",
-							Description: "testing topology flatten function",
+							Name:        testTest,
+							Description: testTestingTopologyFlattenFunction,
 						},
 						Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 							WorkerNodeCount: "1",
@@ -158,8 +163,8 @@ func TestFlattenTopology(t *testing.T) {
 						map[string]interface{}{
 							nodePoolInfoKey: []interface{}{
 								map[string]interface{}{
-									nodePoolNameKey:        "test",
-									nodePoolDescriptionKey: "testing topology flatten function",
+									nodePoolNameKey:        testTest,
+									nodePoolDescriptionKey: testTestingTopologyFlattenFunction,
 								},
 							},
 							nodePoolSpecKey: []interface{}{

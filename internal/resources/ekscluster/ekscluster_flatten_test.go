@@ -35,45 +35,45 @@ func TestFlattenClusterSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"cluster_group": "test-cg",
-					"proxy":         "test-prooxy",
-					"config": []interface{}{
+					clusterGroupKey: testTestCg,
+					proxyNameKey:    testTestProoxy,
+					configKey: []interface{}{
 						map[string]interface{}{
-							"kubernetes_network_config": []interface{}{
+							kubernetesNetworkConfigKey: []interface{}{
 								map[string]interface{}{
-									"service_cidr": "10.0.0.0/10",
+									serviceCidrKey: test1000010,
 								},
 							},
 
-							"kubernetes_version": "1.12",
-							"logging": []interface{}{
+							kubernetesVersionKey: test112,
+							loggingKey: []interface{}{
 								map[string]interface{}{
-									"api_server":         false,
-									"audit":              false,
-									"authenticator":      false,
-									"controller_manager": true,
-									"scheduler":          true,
+									apiServerKey:         false,
+									auditKey:             false,
+									authenticatorKey:     false,
+									controllerManagerKey: true,
+									schedulerKey:         true,
 								},
 							},
-							"role_arn": "role-arn",
-							"tags": map[string]string{
-								"tag1": "tag2",
+							roleArnKey: testRoleArn,
+							tagsKey: map[string]string{
+								testTag1: testTag2,
 							},
-							"vpc": []interface{}{
+							vpcKey: []interface{}{
 								map[string]interface{}{
-									"enable_private_access": false,
-									"enable_public_access":  false,
-									"public_access_cidrs": []string{
-										"0.0.0.0/1",
-										"1.0.0.0/1",
+									enablePrivateAccessKey: false,
+									enablePublicAccessKey:  false,
+									publicAccessCidrsKey: []string{
+										test00001,
+										test10001,
 									},
-									"security_groups": []string{
-										"sg-1",
-										"sg-2",
+									securityGroupsKey: []string{
+										testSg1,
+										testSg2,
 									},
-									"subnet_ids": []string{
-										"subnet-1",
-										"subnet-2",
+									subnetIdsKey: []string{
+										testSubnet1,
+										testSubnet2,
 									},
 								},
 							},
@@ -81,76 +81,76 @@ func TestFlattenClusterSpec(t *testing.T) {
 					},
 					"nodepool": []interface{}{
 						map[string]interface{}{
-							"info": []interface{}{
+							infoKey: []interface{}{
 								map[string]interface{}{
-									"description": "test np",
-									"name":        "test-np",
+									testDescription: testTestNp,
+									NameKey:         testTestNp2,
 								},
 							},
-							"spec": []interface{}{
+							specKey: []interface{}{
 								map[string]interface{}{
-									"ami_type": "CUSTOM",
-									"ami_info": []interface{}{
+									amiTypeKey: testCustom,
+									amiInfoKey: []interface{}{
 										map[string]interface{}{
-											"ami_id":                 "ami-2qu8409oisdfj0qw",
-											"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+											amiIDKey:                testAmi2qu8409oisdfj0qw,
+											overrideBootstrapCmdKey: testBootstrapCmd,
 										},
 									},
-									"capacity_type": "ON_DEMAND",
-									"instance_types": []string{
-										"t3.medium",
-										"m3.large",
+									capacityTypeKey: testOnDemand,
+									instanceTypesKey: []string{
+										testT3medium,
+										testM3large,
 									},
-									"launch_template": []interface{}{
+									launchTemplateKey: []interface{}{
 										map[string]interface{}{
-											"id":      "",
-											"name":    "templ",
-											"version": "7",
+											"id":       "",
+											NameKey:    testTempl,
+											versionKey: "7",
 										},
 									},
-									"node_labels": map[string]string{
-										"key1": "val1",
+									nodeLabelsKey: map[string]string{
+										testKey1: testVal1,
 									},
-									"remote_access": []interface{}{
+									remoteAccessKey: []interface{}{
 										map[string]interface{}{
-											"security_groups": []string{
-												"sg-0a6768722e9716768",
+											securityGroupsKey: []string{
+												testSg0a6768722e9716768,
 											},
-											"ssh_key": "test-key",
+											sshKeyKey: testTestKey,
 										},
 									},
-									"role_arn":       "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-									"root_disk_size": int32(20),
-									"scaling_config": []interface{}{
+									roleArnKey:      testArnAwsIam000000000000,
+									rootDiskSizeKey: int32(20),
+									scalingConfigKey: []interface{}{
 										map[string]interface{}{
-											"desired_size": int32(8),
-											"max_size":     int32(16),
-											"min_size":     int32(3),
+											desiredSizeKey: int32(8),
+											maxSizeKey:     int32(16),
+											minSizeKey:     int32(3),
 										},
 									},
-									"subnet_ids": []string{
-										"subnet-0a184f9301ae39a86",
-										"subnet-0b495d7c212fc92a1",
-										"subnet-0c86ec9ecde7b9bf7",
-										"subnet-06497e6063c209f4d",
+									subnetIdsKey: []string{
+										testSubnet0a184f9301ae39a86,
+										testSubnet0b495d7c212fc92a1,
+										testSubnet0c86ec9ecde7b9bf7,
+										testSubnet06497e6063c209f4d,
 									},
-									"tags": map[string]string{
-										"tg1": "tv1",
+									tagsKey: map[string]string{
+										testTg1: testTv1,
 									},
-									"taints": []interface{}{
+									taintsKey: []interface{}{
 										map[string]interface{}{
-											"effect": eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-											"key":    "tkey",
-											"value":  "tvalue",
+											effectKey: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
+											keyKey:    testTkey,
+											valueKey:  testTvalue,
 										},
 									},
-									"update_config": []interface{}{
+									updateConfigKey: []interface{}{
 										map[string]interface{}{
-											"max_unavailable_nodes":      "10",
-											"max_unavailable_percentage": "12",
+											maxUnavailableNodesKey:      "10",
+											maxUnavailablePercentageKey: "12",
 										},
 									},
-									"release_version": "1.26.4-20230703",
+									releaseVersionKey: test126420230703,
 								},
 							},
 						},
@@ -166,45 +166,45 @@ func TestFlattenClusterSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"cluster_group": "test-cg",
-					"proxy":         "test-prooxy",
-					"config": []interface{}{
+					clusterGroupKey: testTestCg,
+					proxyNameKey:    testTestProoxy,
+					configKey: []interface{}{
 						map[string]interface{}{
-							"kubernetes_network_config": []interface{}{
+							kubernetesNetworkConfigKey: []interface{}{
 								map[string]interface{}{
-									"service_cidr": "10.0.0.0/10",
+									serviceCidrKey: test1000010,
 								},
 							},
 
-							"kubernetes_version": "1.12",
-							"logging": []interface{}{
+							kubernetesVersionKey: test112,
+							loggingKey: []interface{}{
 								map[string]interface{}{
-									"api_server":         false,
-									"audit":              false,
-									"authenticator":      false,
-									"controller_manager": true,
-									"scheduler":          true,
+									apiServerKey:         false,
+									auditKey:             false,
+									authenticatorKey:     false,
+									controllerManagerKey: true,
+									schedulerKey:         true,
 								},
 							},
-							"role_arn": "role-arn",
-							"tags": map[string]string{
-								"tag1": "tag2",
+							roleArnKey: testRoleArn,
+							tagsKey: map[string]string{
+								testTag1: testTag2,
 							},
-							"vpc": []interface{}{
+							vpcKey: []interface{}{
 								map[string]interface{}{
-									"enable_private_access": false,
-									"enable_public_access":  false,
-									"public_access_cidrs": []string{
-										"0.0.0.0/1",
-										"1.0.0.0/1",
+									enablePrivateAccessKey: false,
+									enablePublicAccessKey:  false,
+									publicAccessCidrsKey: []string{
+										test00001,
+										test10001,
 									},
-									"security_groups": []string{
-										"sg-1",
-										"sg-2",
+									securityGroupsKey: []string{
+										testSg1,
+										testSg2,
 									},
-									"subnet_ids": []string{
-										"subnet-1",
-										"subnet-2",
+									subnetIdsKey: []string{
+										testSubnet1,
+										testSubnet2,
 									},
 								},
 							},
@@ -214,17 +214,17 @@ func TestFlattenClusterSpec(t *testing.T) {
 										map[string]interface{}{
 											"eni_config": []interface{}{
 												map[string]interface{}{
-													"id": "subnet-1",
-													"security_groups": []string{
-														"sg-1",
-														"sg-2",
+													"id": testSubnet1,
+													securityGroupsKey: []string{
+														testSg1,
+														testSg2,
 													},
 												},
 												map[string]interface{}{
-													"id": "subnet-2",
-													"security_groups": []string{
-														"sg-3",
-														"sg-4",
+													"id": testSubnet2,
+													securityGroupsKey: []string{
+														testSg3,
+														testSg4,
 													},
 												},
 											},
@@ -236,76 +236,76 @@ func TestFlattenClusterSpec(t *testing.T) {
 					},
 					"nodepool": []interface{}{
 						map[string]interface{}{
-							"info": []interface{}{
+							infoKey: []interface{}{
 								map[string]interface{}{
-									"description": "test np",
-									"name":        "test-np",
+									testDescription: testTestNp,
+									NameKey:         testTestNp2,
 								},
 							},
-							"spec": []interface{}{
+							specKey: []interface{}{
 								map[string]interface{}{
-									"ami_type": "CUSTOM",
-									"ami_info": []interface{}{
+									amiTypeKey: testCustom,
+									amiInfoKey: []interface{}{
 										map[string]interface{}{
-											"ami_id":                 "ami-2qu8409oisdfj0qw",
-											"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+											amiIDKey:                testAmi2qu8409oisdfj0qw,
+											overrideBootstrapCmdKey: testBootstrapCmd,
 										},
 									},
-									"capacity_type": "ON_DEMAND",
-									"instance_types": []string{
-										"t3.medium",
-										"m3.large",
+									capacityTypeKey: testOnDemand,
+									instanceTypesKey: []string{
+										testT3medium,
+										testM3large,
 									},
-									"launch_template": []interface{}{
+									launchTemplateKey: []interface{}{
 										map[string]interface{}{
-											"id":      "",
-											"name":    "templ",
-											"version": "7",
+											"id":       "",
+											NameKey:    testTempl,
+											versionKey: "7",
 										},
 									},
-									"node_labels": map[string]string{
-										"key1": "val1",
+									nodeLabelsKey: map[string]string{
+										testKey1: testVal1,
 									},
-									"remote_access": []interface{}{
+									remoteAccessKey: []interface{}{
 										map[string]interface{}{
-											"security_groups": []string{
-												"sg-0a6768722e9716768",
+											securityGroupsKey: []string{
+												testSg0a6768722e9716768,
 											},
-											"ssh_key": "test-key",
+											sshKeyKey: testTestKey,
 										},
 									},
-									"role_arn":       "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-									"root_disk_size": int32(20),
-									"scaling_config": []interface{}{
+									roleArnKey:      testArnAwsIam000000000000,
+									rootDiskSizeKey: int32(20),
+									scalingConfigKey: []interface{}{
 										map[string]interface{}{
-											"desired_size": int32(8),
-											"max_size":     int32(16),
-											"min_size":     int32(3),
+											desiredSizeKey: int32(8),
+											maxSizeKey:     int32(16),
+											minSizeKey:     int32(3),
 										},
 									},
-									"subnet_ids": []string{
-										"subnet-0a184f9301ae39a86",
-										"subnet-0b495d7c212fc92a1",
-										"subnet-0c86ec9ecde7b9bf7",
-										"subnet-06497e6063c209f4d",
+									subnetIdsKey: []string{
+										testSubnet0a184f9301ae39a86,
+										testSubnet0b495d7c212fc92a1,
+										testSubnet0c86ec9ecde7b9bf7,
+										testSubnet06497e6063c209f4d,
 									},
-									"tags": map[string]string{
-										"tg1": "tv1",
+									tagsKey: map[string]string{
+										testTg1: testTv1,
 									},
-									"taints": []interface{}{
+									taintsKey: []interface{}{
 										map[string]interface{}{
-											"effect": eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-											"key":    "tkey",
-											"value":  "tvalue",
+											effectKey: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
+											keyKey:    testTkey,
+											valueKey:  testTvalue,
 										},
 									},
-									"update_config": []interface{}{
+									updateConfigKey: []interface{}{
 										map[string]interface{}{
-											"max_unavailable_nodes":      "10",
-											"max_unavailable_percentage": "12",
+											maxUnavailableNodesKey:      "10",
+											maxUnavailablePercentageKey: "12",
 										},
 									},
-									"release_version": "1.26.4-20230703",
+									releaseVersionKey: test126420230703,
 								},
 							},
 						},
@@ -323,45 +323,45 @@ func TestFlattenClusterSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"cluster_group": "test-cg",
-					"proxy":         "test-prooxy",
-					"config": []interface{}{
+					clusterGroupKey: testTestCg,
+					proxyNameKey:    testTestProoxy,
+					configKey: []interface{}{
 						map[string]interface{}{
-							"kubernetes_network_config": []interface{}{
+							kubernetesNetworkConfigKey: []interface{}{
 								map[string]interface{}{
-									"service_cidr": "10.0.0.0/10",
+									serviceCidrKey: test1000010,
 								},
 							},
 
-							"kubernetes_version": "1.12",
-							"logging": []interface{}{
+							kubernetesVersionKey: test112,
+							loggingKey: []interface{}{
 								map[string]interface{}{
-									"api_server":         false,
-									"audit":              false,
-									"authenticator":      false,
-									"controller_manager": true,
-									"scheduler":          true,
+									apiServerKey:         false,
+									auditKey:             false,
+									authenticatorKey:     false,
+									controllerManagerKey: true,
+									schedulerKey:         true,
 								},
 							},
-							"role_arn": "role-arn",
-							"tags": map[string]string{
-								"tag1": "tag2",
+							roleArnKey: testRoleArn,
+							tagsKey: map[string]string{
+								testTag1: testTag2,
 							},
-							"vpc": []interface{}{
+							vpcKey: []interface{}{
 								map[string]interface{}{
-									"enable_private_access": false,
-									"enable_public_access":  false,
-									"public_access_cidrs": []string{
-										"0.0.0.0/1",
-										"1.0.0.0/1",
+									enablePrivateAccessKey: false,
+									enablePublicAccessKey:  false,
+									publicAccessCidrsKey: []string{
+										test00001,
+										test10001,
 									},
-									"security_groups": []string{
-										"sg-1",
-										"sg-2",
+									securityGroupsKey: []string{
+										testSg1,
+										testSg2,
 									},
-									"subnet_ids": []string{
-										"subnet-1",
-										"subnet-2",
+									subnetIdsKey: []string{
+										testSubnet1,
+										testSubnet2,
 									},
 								},
 							},
@@ -381,44 +381,44 @@ func TestFlattenClusterSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"cluster_group": "test-cg",
-					"config": []interface{}{
+					clusterGroupKey: testTestCg,
+					configKey: []interface{}{
 						map[string]interface{}{
-							"kubernetes_network_config": []interface{}{
+							kubernetesNetworkConfigKey: []interface{}{
 								map[string]interface{}{
-									"service_cidr": "10.0.0.0/10",
+									serviceCidrKey: test1000010,
 								},
 							},
 
-							"kubernetes_version": "1.12",
-							"logging": []interface{}{
+							kubernetesVersionKey: test112,
+							loggingKey: []interface{}{
 								map[string]interface{}{
-									"api_server":         false,
-									"audit":              false,
-									"authenticator":      false,
-									"controller_manager": true,
-									"scheduler":          true,
+									apiServerKey:         false,
+									auditKey:             false,
+									authenticatorKey:     false,
+									controllerManagerKey: true,
+									schedulerKey:         true,
 								},
 							},
-							"role_arn": "role-arn",
-							"tags": map[string]string{
-								"tag1": "tag2",
+							roleArnKey: testRoleArn,
+							tagsKey: map[string]string{
+								testTag1: testTag2,
 							},
-							"vpc": []interface{}{
+							vpcKey: []interface{}{
 								map[string]interface{}{
-									"enable_private_access": false,
-									"enable_public_access":  false,
-									"public_access_cidrs": []string{
-										"0.0.0.0/1",
-										"1.0.0.0/1",
+									enablePrivateAccessKey: false,
+									enablePublicAccessKey:  false,
+									publicAccessCidrsKey: []string{
+										test00001,
+										test10001,
 									},
-									"security_groups": []string{
-										"sg-1",
-										"sg-2",
+									securityGroupsKey: []string{
+										testSg1,
+										testSg2,
 									},
-									"subnet_ids": []string{
-										"subnet-1",
-										"subnet-2",
+									subnetIdsKey: []string{
+										testSubnet1,
+										testSubnet2,
 									},
 								},
 							},
@@ -438,7 +438,7 @@ func TestFlattenClusterSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"cluster_group": "test-cg",
+					clusterGroupKey: testTestCg,
 				},
 			},
 		},
@@ -479,40 +479,40 @@ func TestFlattenConfig(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"kubernetes_network_config": []interface{}{
+					kubernetesNetworkConfigKey: []interface{}{
 						map[string]interface{}{
-							"service_cidr": "10.0.0.0/10",
+							serviceCidrKey: test1000010,
 						},
 					},
-					"kubernetes_version": "1.12",
-					"logging": []interface{}{
+					kubernetesVersionKey: test112,
+					loggingKey: []interface{}{
 						map[string]interface{}{
-							"api_server":         false,
-							"audit":              false,
-							"authenticator":      false,
-							"controller_manager": true,
-							"scheduler":          true,
+							apiServerKey:         false,
+							auditKey:             false,
+							authenticatorKey:     false,
+							controllerManagerKey: true,
+							schedulerKey:         true,
 						},
 					},
-					"role_arn": "role-arn",
-					"tags": map[string]string{
-						"tag1": "tag2",
+					roleArnKey: testRoleArn,
+					tagsKey: map[string]string{
+						testTag1: testTag2,
 					},
-					"vpc": []interface{}{
+					vpcKey: []interface{}{
 						map[string]interface{}{
-							"enable_private_access": false,
-							"enable_public_access":  false,
-							"public_access_cidrs": []string{
-								"0.0.0.0/1",
-								"1.0.0.0/1",
+							enablePrivateAccessKey: false,
+							enablePublicAccessKey:  false,
+							publicAccessCidrsKey: []string{
+								test00001,
+								test10001,
 							},
-							"security_groups": []string{
-								"sg-1",
-								"sg-2",
+							securityGroupsKey: []string{
+								testSg1,
+								testSg2,
 							},
-							"subnet_ids": []string{
-								"subnet-1",
-								"subnet-2",
+							subnetIdsKey: []string{
+								testSubnet1,
+								testSubnet2,
 							},
 						},
 					},
@@ -530,35 +530,35 @@ func TestFlattenConfig(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"kubernetes_version": "1.12",
-					"logging": []interface{}{
+					kubernetesVersionKey: test112,
+					loggingKey: []interface{}{
 						map[string]interface{}{
-							"api_server":         false,
-							"audit":              false,
-							"authenticator":      false,
-							"controller_manager": true,
-							"scheduler":          true,
+							apiServerKey:         false,
+							auditKey:             false,
+							authenticatorKey:     false,
+							controllerManagerKey: true,
+							schedulerKey:         true,
 						},
 					},
-					"role_arn": "role-arn",
-					"tags": map[string]string{
-						"tag1": "tag2",
+					roleArnKey: testRoleArn,
+					tagsKey: map[string]string{
+						testTag1: testTag2,
 					},
-					"vpc": []interface{}{
+					vpcKey: []interface{}{
 						map[string]interface{}{
-							"enable_private_access": false,
-							"enable_public_access":  false,
-							"public_access_cidrs": []string{
-								"0.0.0.0/1",
-								"1.0.0.0/1",
+							enablePrivateAccessKey: false,
+							enablePublicAccessKey:  false,
+							publicAccessCidrsKey: []string{
+								test00001,
+								test10001,
 							},
-							"security_groups": []string{
-								"sg-1",
-								"sg-2",
+							securityGroupsKey: []string{
+								testSg1,
+								testSg2,
 							},
-							"subnet_ids": []string{
-								"subnet-1",
-								"subnet-2",
+							subnetIdsKey: []string{
+								testSubnet1,
+								testSubnet2,
 							},
 						},
 					},
@@ -576,31 +576,31 @@ func TestFlattenConfig(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"kubernetes_network_config": []interface{}{
+					kubernetesNetworkConfigKey: []interface{}{
 						map[string]interface{}{
-							"service_cidr": "10.0.0.0/10",
+							serviceCidrKey: test1000010,
 						},
 					},
-					"role_arn":           "role-arn",
-					"kubernetes_version": "1.12",
-					"tags": map[string]string{
-						"tag1": "tag2",
+					roleArnKey:           testRoleArn,
+					kubernetesVersionKey: test112,
+					tagsKey: map[string]string{
+						testTag1: testTag2,
 					},
-					"vpc": []interface{}{
+					vpcKey: []interface{}{
 						map[string]interface{}{
-							"enable_private_access": false,
-							"enable_public_access":  false,
-							"public_access_cidrs": []string{
-								"0.0.0.0/1",
-								"1.0.0.0/1",
+							enablePrivateAccessKey: false,
+							enablePublicAccessKey:  false,
+							publicAccessCidrsKey: []string{
+								test00001,
+								test10001,
 							},
-							"security_groups": []string{
-								"sg-1",
-								"sg-2",
+							securityGroupsKey: []string{
+								testSg1,
+								testSg2,
 							},
-							"subnet_ids": []string{
-								"subnet-1",
-								"subnet-2",
+							subnetIdsKey: []string{
+								testSubnet1,
+								testSubnet2,
 							},
 						},
 					},
@@ -618,24 +618,24 @@ func TestFlattenConfig(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"kubernetes_network_config": []interface{}{
+					kubernetesNetworkConfigKey: []interface{}{
 						map[string]interface{}{
-							"service_cidr": "10.0.0.0/10",
+							serviceCidrKey: test1000010,
 						},
 					},
-					"kubernetes_version": "1.12",
-					"logging": []interface{}{
+					kubernetesVersionKey: test112,
+					loggingKey: []interface{}{
 						map[string]interface{}{
-							"api_server":         false,
-							"audit":              false,
-							"authenticator":      false,
-							"controller_manager": true,
-							"scheduler":          true,
+							apiServerKey:         false,
+							auditKey:             false,
+							authenticatorKey:     false,
+							controllerManagerKey: true,
+							schedulerKey:         true,
 						},
 					},
-					"role_arn": "role-arn",
-					"tags": map[string]string{
-						"tag1": "tag2",
+					roleArnKey: testRoleArn,
+					tagsKey: map[string]string{
+						testTag1: testTag2,
 					},
 				},
 			},
@@ -652,15 +652,15 @@ func TestFlattenConfig(t *testing.T) {
 
 func getClusterSpec() (*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec, []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition) {
 	spec := &eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec{
-		ClusterGroupName: "test-cg",
-		ProxyName:        "test-prooxy",
+		ClusterGroupName: testTestCg,
+		ProxyName:        testTestProoxy,
 		Config:           getConfig(),
 	}
 	nodepool := []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{
 		{
 			Info: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolInfo{
-				Description: "test np",
-				Name:        "test-np",
+				Description: testTestNp,
+				Name:        testTestNp2,
 			},
 			Spec: getNodepoolSpec(),
 		},
@@ -672,7 +672,7 @@ func getClusterSpec() (*eksmodel.VmwareTanzuManageV1alpha1EksclusterSpec, []*eks
 func getConfig() *eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig {
 	return &eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig{
 		KubernetesNetworkConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterKubernetesNetworkConfig{
-			ServiceCidr: "10.0.0.0/10",
+			ServiceCidr: test1000010,
 		},
 		Logging: &eksmodel.VmwareTanzuManageV1alpha1EksclusterLogging{
 			APIServer:         false,
@@ -681,42 +681,42 @@ func getConfig() *eksmodel.VmwareTanzuManageV1alpha1EksclusterControlPlaneConfig
 			ControllerManager: true,
 			Scheduler:         true,
 		},
-		RoleArn: "role-arn",
+		RoleArn: testRoleArn,
 		Tags: map[string]string{
-			"tag1": "tag2",
+			testTag1: testTag2,
 		},
-		Version: "1.12",
+		Version: test112,
 		Vpc: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVPCConfig{
 			EnablePrivateAccess: false,
 			EnablePublicAccess:  false,
 			PublicAccessCidrs: []string{
-				"0.0.0.0/1",
-				"1.0.0.0/1",
+				test00001,
+				test10001,
 			},
 			SecurityGroups: []string{
-				"sg-1",
-				"sg-2",
+				testSg1,
+				testSg2,
 			},
 			SubnetIds: []string{
-				"subnet-1",
-				"subnet-2",
+				testSubnet1,
+				testSubnet2,
 			},
 		},
 		AddonsConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterAddonsConfig{
 			VpcCniAddonConfig: &eksmodel.VmwareTanzuManageV1alpha1EksclusterVpcCniAddonConfig{
 				EniConfigs: []*eksmodel.VmwareTanzuManageV1alpha1EksclusterEniConfig{
 					{
-						SubnetID: "subnet-1",
+						SubnetID: testSubnet1,
 						SecurityGroupIds: []string{
-							"sg-1",
-							"sg-2",
+							testSg1,
+							testSg2,
 						},
 					},
 					{
-						SubnetID: "subnet-2",
+						SubnetID: testSubnet2,
 						SecurityGroupIds: []string{
-							"sg-3",
-							"sg-4",
+							testSg3,
+							testSg4,
 						},
 					},
 				},

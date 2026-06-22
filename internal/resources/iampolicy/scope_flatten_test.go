@@ -38,18 +38,18 @@ func TestFlattenScope(t *testing.T) {
 			input: &scopedFullname{
 				scope: clusterScope,
 				fullnameCluster: &clustermodel.VmwareTanzuManageV1alpha1ClusterFullName{
-					Name:                  "dummy",
-					ManagementClusterName: "attached",
-					ProvisionerName:       "attached",
+					Name:                  testDummy,
+					ManagementClusterName: testAttached,
+					ProvisionerName:       testAttached,
 				},
 			},
 			expectedData: []interface{}{
 				map[string]interface{}{
 					clusterKey: []interface{}{
 						map[string]interface{}{
-							cluster.NameKey:                  "dummy",
-							cluster.ManagementClusterNameKey: "attached",
-							cluster.ProvisionerNameKey:       "attached",
+							cluster.NameKey:                  testDummy,
+							cluster.ManagementClusterNameKey: testAttached,
+							cluster.ProvisionerNameKey:       testAttached,
 						},
 					},
 				},
@@ -60,14 +60,14 @@ func TestFlattenScope(t *testing.T) {
 			input: &scopedFullname{
 				scope: clusterGroupScope,
 				fullnameClusterGroup: &clustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupFullName{
-					Name: "default",
+					Name: clusterGroupNameForCluster,
 				},
 			},
 			expectedData: []interface{}{
 				map[string]interface{}{
 					clusterGroupKey: []interface{}{
 						map[string]interface{}{
-							clustergroup.NameKey: "default",
+							clustergroup.NameKey: clusterGroupNameForCluster,
 						},
 					},
 				},
@@ -96,14 +96,14 @@ func TestFlattenScope(t *testing.T) {
 			input: &scopedFullname{
 				scope: workspaceScope,
 				fullnameWorkspace: &workspacemodel.VmwareTanzuManageV1alpha1WorkspaceFullName{
-					Name: "default",
+					Name: clusterGroupNameForCluster,
 				},
 			},
 			expectedData: []interface{}{
 				map[string]interface{}{
 					workspaceKey: []interface{}{
 						map[string]interface{}{
-							workspace.NameKey: "default",
+							workspace.NameKey: clusterGroupNameForCluster,
 						},
 					},
 				},
@@ -115,9 +115,9 @@ func TestFlattenScope(t *testing.T) {
 				scope: namespaceScope,
 				fullnameNamespace: &namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName{
 					Name:                  "n-1",
-					ClusterName:           "dummy",
-					ManagementClusterName: "attached",
-					ProvisionerName:       "attached",
+					ClusterName:           testDummy,
+					ManagementClusterName: testAttached,
+					ProvisionerName:       testAttached,
 				},
 			},
 			expectedData: []interface{}{
@@ -125,9 +125,9 @@ func TestFlattenScope(t *testing.T) {
 					namespaceKey: []interface{}{
 						map[string]interface{}{
 							namespace.NameKey:                  "n-1",
-							namespace.ClusterNameKey:           "dummy",
-							namespace.ManagementClusterNameKey: "attached",
-							namespace.ProvisionerNameKey:       "attached",
+							namespace.ClusterNameKey:           testDummy,
+							namespace.ManagementClusterNameKey: testAttached,
+							namespace.ProvisionerNameKey:       testAttached,
 						},
 					},
 				},

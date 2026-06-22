@@ -32,16 +32,31 @@ const (
 	apiKind              = "fluxcd/kustomizations"
 	cdAPIKind            = "fluxcd/continuousdelivery"
 	cgAPIVersionAndGroup = "v1alpha1/clustergroups"
+
+	test10m                              = "10m"
+	testAttached                         = "attached"
+	testCdkustomization1                 = "cdkustomization1"
+	testKey1                             = "key1"
+	testKey2                             = "key2"
+	testKustomization1                   = "kustomization1"
+	testMadeSuccessfully                 = "made successfully"
+	testManifests                        = "manifests/"
+	testReady                            = "Ready"
+	testResourceWithDescription          = "resource with description"
+	testSomegitrepository                = "someGitRepository"
+	testTanzuContinuousdeliveryResources = "tanzu-continuousdelivery-resources"
+	testValue1                           = "value1"
+	testValue2                           = "value2"
 )
 
 func getMockSpec() kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationSpec {
 	return kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationSpec{
-		Path:     "manifests/",
+		Path:     testManifests,
 		Interval: "5m",
 		Prune:    false,
 		Source: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationRepositoryReference{
-			Name:      "someGitRepository",
-			Namespace: "tanzu-continuousdelivery-resources",
+			Name:      testSomegitrepository,
+			Namespace: testTanzuContinuousdeliveryResources,
 		},
 	}
 }
@@ -127,32 +142,32 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocksUpdate(t *testing.T, scope
 				OrgID:                 OrgID,
 				ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 				NamespaceName:         testConfig.Namespace,
-				ProvisionerName:       "attached",
-				ManagementClusterName: "attached",
+				ProvisionerName:       testAttached,
+				ManagementClusterName: testAttached,
 			},
 			Spec: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationSpec{
-				Path:     "manifests/",
-				Interval: "10m",
+				Path:     testManifests,
+				Interval: test10m,
 				Prune:    true,
 				Source: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationRepositoryReference{
-					Name:      "someGitRepository",
-					Namespace: "tanzu-continuousdelivery-resources",
+					Name:      testSomegitrepository,
+					Namespace: testTanzuContinuousdeliveryResources,
 				},
 			},
 			Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 				ParentReferences: referenceArray,
-				Description:      "resource with description",
+				Description:      testResourceWithDescription,
 				Labels: map[string]string{
-					"key1": "value1",
-					"key2": "value2",
+					testKey1: testValue1,
+					testKey2: testValue2,
 				},
-				UID:             "kustomization1",
+				UID:             testKustomization1,
 				ResourceVersion: "v1",
 			},
 			Status: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationStatus{
 				Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-					"Ready": {
-						Reason: "made successfully",
+					testReady: {
+						Reason: testMadeSuccessfully,
 					},
 				},
 			},
@@ -175,23 +190,23 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocksUpdate(t *testing.T, scope
 			},
 			Spec: &kustomizationclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdKustomizationSpec{
 				AtomicSpec: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationSpec{
-					Path:     "manifests/",
-					Interval: "10m",
+					Path:     testManifests,
+					Interval: test10m,
 					Prune:    true,
 					Source: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationRepositoryReference{
-						Name:      "someGitRepository",
-						Namespace: "tanzu-continuousdelivery-resources",
+						Name:      testSomegitrepository,
+						Namespace: testTanzuContinuousdeliveryResources,
 					},
 				},
 			},
 			Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 				ParentReferences: referenceArray,
-				Description:      "resource with description",
+				Description:      testResourceWithDescription,
 				Labels: map[string]string{
-					"key1": "value1",
-					"key2": "value2",
+					testKey1: testValue1,
+					testKey2: testValue2,
 				},
-				UID:             "cdkustomization1",
+				UID:             testCdkustomization1,
 				ResourceVersion: "v1",
 			},
 			Status: &kustomizationclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdKustomizationStatus{
@@ -233,12 +248,12 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			FullName: postRequest.Kustomization.FullName,
 			Meta:     postRequest.Kustomization.Meta,
 			Spec: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationSpec{
-				Path:     "manifests/",
-				Interval: "10m",
+				Path:     testManifests,
+				Interval: test10m,
 				Prune:    true,
 				Source: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationRepositoryReference{
-					Name:      "someGitRepository",
-					Namespace: "tanzu-continuousdelivery-resources",
+					Name:      testSomegitrepository,
+					Namespace: testTanzuContinuousdeliveryResources,
 				},
 			},
 		},
@@ -249,12 +264,12 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			FullName: postRequest.Kustomization.FullName,
 			Meta:     postRequest.Kustomization.Meta,
 			Spec: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationSpec{
-				Path:     "manifests/",
-				Interval: "10m",
+				Path:     testManifests,
+				Interval: test10m,
 				Prune:    true,
 				Source: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationRepositoryReference{
-					Name:      "someGitRepository",
-					Namespace: "tanzu-continuousdelivery-resources",
+					Name:      testSomegitrepository,
+					Namespace: testTanzuContinuousdeliveryResources,
 				},
 			},
 			Status: postResponse.Kustomization.Status,
@@ -297,12 +312,12 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			Meta:     postResponse.Kustomization.Meta,
 			Spec: &kustomizationclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdKustomizationSpec{
 				AtomicSpec: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationSpec{
-					Path:     "manifests/",
-					Interval: "10m",
+					Path:     testManifests,
+					Interval: test10m,
 					Prune:    true,
 					Source: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationRepositoryReference{
-						Name:      "someGitRepository",
-						Namespace: "tanzu-continuousdelivery-resources",
+						Name:      testSomegitrepository,
+						Namespace: testTanzuContinuousdeliveryResources,
 					},
 				},
 			},
@@ -315,12 +330,12 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			Meta:     postResponse.Kustomization.Meta,
 			Spec: &kustomizationclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdKustomizationSpec{
 				AtomicSpec: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationSpec{
-					Path:     "manifests/",
-					Interval: "10m",
+					Path:     testManifests,
+					Interval: test10m,
 					Prune:    true,
 					Source: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationRepositoryReference{
-						Name:      "someGitRepository",
-						Namespace: "tanzu-continuousdelivery-resources",
+						Name:      testSomegitrepository,
+						Namespace: testTanzuContinuousdeliveryResources,
 					},
 				},
 			},
@@ -379,12 +394,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		Spec: cdSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "cdkustomization1",
+			UID:             testCdkustomization1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -399,12 +414,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		Spec: cdSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "cdkustomization1",
+			UID:             testCdkustomization1,
 			ResourceVersion: "v1",
 		},
 		Status: &kustomizationclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdKustomizationStatus{
@@ -430,12 +445,12 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		Spec: cdSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: referenceArray,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "cdkustomization1",
+			UID:             testCdkustomization1,
 			ResourceVersion: "v1",
 		},
 		Status: &kustomizationclustergroupmodel.VmwareTanzuManageV1alpha1ClustergroupNamespaceFluxcdKustomizationStatus{
@@ -454,10 +469,10 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
 			UID:             "cdcontinuousdelivery1",
 			ResourceVersion: "v1",
@@ -471,10 +486,10 @@ func (testConfig *testAcceptanceConfig) getCGRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
 			UID:             "cdcontinuousdelivery1",
 			ResourceVersion: "v1",
@@ -509,18 +524,18 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         testConfig.Namespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &kustomizationSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "kustomization1",
+			UID:             testKustomization1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -531,24 +546,24 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         testConfig.Namespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &kustomizationSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "kustomization1",
+			UID:             testKustomization1,
 			ResourceVersion: "v1",
 		},
 		Status: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationStatus{
 			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-				"Ready": {
-					Reason: "made successfully",
+				testReady: {
+					Reason: testMadeSuccessfully,
 				},
 			},
 		},
@@ -568,24 +583,24 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         testConfig.Namespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &kustomizationSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: referenceArray,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "kustomization1",
+			UID:             testKustomization1,
 			ResourceVersion: "v1",
 		},
 		Status: &kustomizationclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceFluxcdKustomizationStatus{
 			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-				"Ready": {
-					Reason: "made successfully",
+				testReady: {
+					Reason: testMadeSuccessfully,
 				},
 			},
 		},
@@ -602,10 +617,10 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
 			UID:             "continuousdelivery1",
 			ResourceVersion: "v1",
@@ -619,18 +634,18 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
 			UID:             "continuousdelivery1",
 			ResourceVersion: "v1",
 		},
 		Status: &continuousdeliveryclustermodel.VmwareTanzuManageV1alpha1ClusterFluxcdContinuousdeliveryStatus{
 			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-				"Ready": {
-					Reason: "made successfully",
+				testReady: {
+					Reason: testMadeSuccessfully,
 				},
 			},
 		},

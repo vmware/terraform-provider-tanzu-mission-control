@@ -30,6 +30,23 @@ const (
 	apiSubGroup          = "namespaces"
 	apiKind              = "tanzupackage/installs"
 	apiKindMetadata      = "tanzupackage/metadatas"
+
+	test195vmware1tkg1          = "1.9.5+vmware.1-tkg.1"
+	testAttached                = "attached"
+	testKey1                    = "key1"
+	testKey2                    = "key2"
+	testPkginstall1             = "pkginstall1"
+	testReady                   = "Ready"
+	testReconcileSucceeded      = "Reconcile Succeeded"
+	testReconcilesucceeded      = "ReconcileSucceeded"
+	testResourceWithDescription = "resource with description"
+	testTestclusterrole         = "testclusterrole"
+	testTestrolebinding         = "testrolebinding"
+	testTestserviceaccount      = "testserviceaccount"
+	testBar                     = "bar"
+	testFoo                     = "foo"
+	testValue1                  = "value1"
+	testValue2                  = "value2"
 )
 
 // nolint: unparam
@@ -111,49 +128,49 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocksUpdate(t *testing.T) {
 			OrgID:                 OrgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         testConfig.Namespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec{
 			PackageRef: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackagePackageRef{
-				PackageMetadataName: "pkg.test.carvel.dev",
+				PackageMetadataName: pkgMetadataName,
 				VersionSelection: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageVersionSelection{
 					Constraints: constraints,
 				},
 			},
 			RoleBindingScope: packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScopeCLUSTER.Pointer(),
 			InlineValues: map[string]interface{}{
-				"bar": "foo",
+				testBar: testFoo,
 			},
 		},
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: referenceArray,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "pkginstall1",
+			UID:             testPkginstall1,
 			ResourceVersion: "v1",
 		},
 		Status: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallStatus{
 			Managed: false,
 			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-				"Ready": {
-					Type:     "Ready",
+				testReady: {
+					Type:     testReady,
 					Status:   statusmodel.VmwareTanzuCoreV1alpha1StatusConditionStatusTRUE.Pointer(),
 					Severity: statusmodel.VmwareTanzuCoreV1alpha1StatusConditionSeverityINFO.Pointer(),
-					Reason:   "ReconcileSucceeded",
-					Message:  "Reconcile Succeeded",
+					Reason:   testReconcilesucceeded,
+					Message:  testReconcileSucceeded,
 				},
 			},
-			ResolvedVersion: "1.9.5+vmware.1-tkg.1",
+			ResolvedVersion: test195vmware1tkg1,
 			GeneratedResources: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallGeneratedResources{
-				ClusterRoleName:    "testclusterrole",
-				RoleBindingName:    "testrolebinding",
-				ServiceAccountName: "testserviceaccount",
+				ClusterRoleName:    testTestclusterrole,
+				RoleBindingName:    testTestrolebinding,
+				ServiceAccountName: testTestserviceaccount,
 			},
-			ReferredBy: []string{"foo", "bar"},
+			ReferredBy: []string{testFoo, testBar},
 		},
 	}
 
@@ -187,8 +204,8 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			Package: &pakageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackagePackage{
 				FullName: &pakageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageFullName{
 					ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-					ManagementClusterName: "attached",
-					ProvisionerName:       "attached",
+					ManagementClusterName: testAttached,
+					ProvisionerName:       testAttached,
 					OrgID:                 OrgID,
 					Name:                  pkgName,
 					NamespaceName:         globalRepoNamespace,
@@ -196,10 +213,10 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 				},
 				Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 					ParentReferences: referenceArray,
-					Description:      "resource with description",
+					Description:      testResourceWithDescription,
 					Labels: map[string]string{
-						"key1": "value1",
-						"key2": "value2",
+						testKey1: testValue1,
+						testKey2: testValue2,
 					},
 					UID:             "package1",
 					ResourceVersion: "v1",
@@ -237,13 +254,13 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			{
 				FullName: &tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageFullName{
 					ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
-					ManagementClusterName: "attached",
-					ProvisionerName:       "attached",
+					ManagementClusterName: testAttached,
+					ProvisionerName:       testAttached,
 					OrgID:                 OrgID,
 				},
 				Status: &tanzupakageclustermodel.VmwareTanzuManageV1alpha1ClusterTanzupackageStatus{
 					Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-						"Ready": {
+						testReady: {
 							Reason: "made successfully",
 						},
 					},
@@ -267,14 +284,14 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			Meta:     postRequest.Install.Meta,
 			Spec: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec{
 				PackageRef: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackagePackageRef{
-					PackageMetadataName: "pkg.test.carvel.dev",
+					PackageMetadataName: pkgMetadataName,
 					VersionSelection: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageVersionSelection{
 						Constraints: constraints,
 					},
 				},
 				RoleBindingScope: packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScopeCLUSTER.Pointer(),
 				InlineValues: map[string]interface{}{
-					"bar": "foo",
+					testBar: testFoo,
 				},
 			},
 		},
@@ -286,34 +303,34 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 			Meta:     postRequest.Install.Meta,
 			Spec: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec{
 				PackageRef: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackagePackageRef{
-					PackageMetadataName: "pkg.test.carvel.dev",
+					PackageMetadataName: pkgMetadataName,
 					VersionSelection: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageVersionSelection{
 						Constraints: constraints,
 					},
 				},
 				RoleBindingScope: packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScopeCLUSTER.Pointer(),
 				InlineValues: map[string]interface{}{
-					"bar": "foo",
+					testBar: testFoo,
 				},
 			},
 			Status: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallStatus{
 				Managed: false,
 				Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-					"Ready": {
-						Type:     "Ready",
+					testReady: {
+						Type:     testReady,
 						Status:   statusmodel.VmwareTanzuCoreV1alpha1StatusConditionStatusTRUE.Pointer(),
 						Severity: statusmodel.VmwareTanzuCoreV1alpha1StatusConditionSeverityINFO.Pointer(),
-						Reason:   "ReconcileSucceeded",
-						Message:  "Reconcile Succeeded",
+						Reason:   testReconcilesucceeded,
+						Message:  testReconcileSucceeded,
 					},
 				},
-				ResolvedVersion: "1.9.5+vmware.1-tkg.1",
+				ResolvedVersion: test195vmware1tkg1,
 				GeneratedResources: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallGeneratedResources{
-					ClusterRoleName:    "testclusterrole",
-					RoleBindingName:    "testrolebinding",
-					ServiceAccountName: "testserviceaccount",
+					ClusterRoleName:    testTestclusterrole,
+					RoleBindingName:    testTestrolebinding,
+					ServiceAccountName: testTestserviceaccount,
 				},
-				ReferredBy: []string{"foo", "bar"},
+				ReferredBy: []string{testFoo, testBar},
 			},
 		},
 	}
@@ -348,14 +365,14 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 ) {
 	pkgInstallSpec := packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec{
 		PackageRef: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackagePackageRef{
-			PackageMetadataName: "pkg.test.carvel.dev",
+			PackageMetadataName: pkgMetadataName,
 			VersionSelection: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageVersionSelection{
 				Constraints: "2.0.0",
 			},
 		},
 		RoleBindingScope: packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScopeCLUSTER.Pointer(),
 		InlineValues: map[string]interface{}{
-			"bar": "foo",
+			testBar: testFoo,
 		},
 	}
 	postRequestModel := &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallInstall{
@@ -364,18 +381,18 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         testConfig.Namespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &pkgInstallSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "pkginstall1",
+			UID:             testPkginstall1,
 			ResourceVersion: "v1",
 		},
 	}
@@ -386,38 +403,38 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         testConfig.Namespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &pkgInstallSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: nil,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "pkginstall1",
+			UID:             testPkginstall1,
 			ResourceVersion: "v1",
 		},
 		Status: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallStatus{
 			Managed: false,
 			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-				"Ready": {
-					Type:     "Ready",
+				testReady: {
+					Type:     testReady,
 					Status:   statusmodel.VmwareTanzuCoreV1alpha1StatusConditionStatusTRUE.Pointer(),
 					Severity: statusmodel.VmwareTanzuCoreV1alpha1StatusConditionSeverityINFO.Pointer(),
-					Reason:   "ReconcileSucceeded",
-					Message:  "Reconcile Succeeded",
+					Reason:   testReconcilesucceeded,
+					Message:  testReconcileSucceeded,
 				},
 			},
-			ResolvedVersion: "1.9.5+vmware.1-tkg.1",
+			ResolvedVersion: test195vmware1tkg1,
 			GeneratedResources: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallGeneratedResources{
-				ClusterRoleName:    "testclusterrole",
-				RoleBindingName:    "testrolebinding",
-				ServiceAccountName: "testserviceaccount",
+				ClusterRoleName:    testTestclusterrole,
+				RoleBindingName:    testTestrolebinding,
+				ServiceAccountName: testTestserviceaccount,
 			},
-			ReferredBy: []string{"foo", "bar"},
+			ReferredBy: []string{testFoo, testBar},
 		},
 	}
 
@@ -435,38 +452,38 @@ func (testConfig *testAcceptanceConfig) getClRequestResponse(orgID string, refer
 			OrgID:                 orgID,
 			ClusterName:           testConfig.ScopeHelperResources.Cluster.Name,
 			NamespaceName:         testConfig.Namespace,
-			ProvisionerName:       "attached",
-			ManagementClusterName: "attached",
+			ProvisionerName:       testAttached,
+			ManagementClusterName: testAttached,
 		},
 		Spec: &pkgInstallSpec,
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			ParentReferences: referenceArray,
-			Description:      "resource with description",
+			Description:      testResourceWithDescription,
 			Labels: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
+				testKey1: testValue1,
+				testKey2: testValue2,
 			},
-			UID:             "pkginstall1",
+			UID:             testPkginstall1,
 			ResourceVersion: "v1",
 		},
 		Status: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallStatus{
 			Managed: false,
 			Conditions: map[string]statusmodel.VmwareTanzuCoreV1alpha1StatusCondition{
-				"Ready": {
-					Type:     "Ready",
+				testReady: {
+					Type:     testReady,
 					Status:   statusmodel.VmwareTanzuCoreV1alpha1StatusConditionStatusTRUE.Pointer(),
 					Severity: statusmodel.VmwareTanzuCoreV1alpha1StatusConditionSeverityINFO.Pointer(),
-					Reason:   "ReconcileSucceeded",
-					Message:  "Reconcile Succeeded",
+					Reason:   testReconcilesucceeded,
+					Message:  testReconcileSucceeded,
 				},
 			},
-			ResolvedVersion: "1.9.5+vmware.1-tkg.1",
+			ResolvedVersion: test195vmware1tkg1,
 			GeneratedResources: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallGeneratedResources{
-				ClusterRoleName:    "testclusterrole",
-				RoleBindingName:    "testrolebinding",
-				ServiceAccountName: "testserviceaccount",
+				ClusterRoleName:    testTestclusterrole,
+				RoleBindingName:    testTestrolebinding,
+				ServiceAccountName: testTestserviceaccount,
 			},
-			ReferredBy: []string{"foo", "bar"},
+			ReferredBy: []string{testFoo, testBar},
 		},
 	}
 

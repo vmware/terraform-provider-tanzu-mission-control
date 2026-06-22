@@ -13,6 +13,15 @@ import (
 	packageinstallmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/tanzupackageinstall"
 )
 
+const (
+	test1102vmware1tkg1           = "1.10.2+vmware.1-tkg.1"
+	testCertManager               = "cert-manager"
+	testCertmanagertanzuvmwarecom = "cert-manager.tanzu.vmware.com"
+	testSome                      = "some"
+
+	testNamespace = "namespace"
+)
+
 func TestFlattenSpecForClusterScope(t *testing.T) {
 	t.Parallel()
 
@@ -31,25 +40,25 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 			description: "normal scenario with complete cluster package install spec with inline values file",
 			input: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec{
 				PackageRef: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackagePackageRef{
-					PackageMetadataName: "cert-manager.tanzu.vmware.com",
+					PackageMetadataName: testCertmanagertanzuvmwarecom,
 					VersionSelection: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageVersionSelection{
-						Constraints: "1.10.2+vmware.1-tkg.1",
+						Constraints: test1102vmware1tkg1,
 					},
 				},
 				RoleBindingScope: packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScopeCLUSTER.Pointer(),
 				InlineValues: map[string]interface{}{
-					"namespace": "cert-manager",
-					"some":      91,
+					testNamespace: testCertManager,
+					testSome:      91,
 				},
 			},
 			expected: []interface{}{
 				map[string]interface{}{
 					PackageRefKey: []interface{}{
 						map[string]interface{}{
-							PackageMetadataNameKey: "cert-manager.tanzu.vmware.com",
+							PackageMetadataNameKey: testCertmanagertanzuvmwarecom,
 							VersionSelectionKey: []interface{}{
 								map[string]interface{}{
-									ConstraintsKey: "1.10.2+vmware.1-tkg.1",
+									ConstraintsKey: test1102vmware1tkg1,
 								},
 							},
 						},
@@ -64,33 +73,33 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 			description: "normal scenario with complete cluster package install spec without inline values file",
 			input: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallSpec{
 				PackageRef: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackagePackageRef{
-					PackageMetadataName: "cert-manager.tanzu.vmware.com",
+					PackageMetadataName: testCertmanagertanzuvmwarecom,
 					VersionSelection: &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataPackageVersionSelection{
-						Constraints: "1.10.2+vmware.1-tkg.1",
+						Constraints: test1102vmware1tkg1,
 					},
 				},
 				RoleBindingScope: packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScopeCLUSTER.Pointer(),
 				InlineValues: map[string]interface{}{
-					"namespace": "cert-manager",
-					"some":      91,
+					testNamespace: testCertManager,
+					testSome:      91,
 				},
 			},
 			expected: []interface{}{
 				map[string]interface{}{
 					PackageRefKey: []interface{}{
 						map[string]interface{}{
-							PackageMetadataNameKey: "cert-manager.tanzu.vmware.com",
+							PackageMetadataNameKey: testCertmanagertanzuvmwarecom,
 							VersionSelectionKey: []interface{}{
 								map[string]interface{}{
-									ConstraintsKey: "1.10.2+vmware.1-tkg.1",
+									ConstraintsKey: test1102vmware1tkg1,
 								},
 							},
 						},
 					},
 					RoleBindingScopeKey: fmt.Sprint(packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallRoleBindingScopeCLUSTER),
 					InlineValuesKey: map[string]string{
-						"namespace": "cert-manager",
-						"some":      "91",
+						testNamespace: testCertManager,
+						testSome:      "91",
 					},
 				},
 			},

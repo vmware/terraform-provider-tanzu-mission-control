@@ -11,6 +11,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const testMultiPathWithQueryParams = "p1/p2/p3?k1=v1&k2=v2"
+
 func TestConstructRequestURL(t *testing.T) {
 	t.Parallel()
 
@@ -75,7 +77,7 @@ func TestAppendQueryParams(t *testing.T) {
 				"k1": []string{"v1"},
 				"k2": []string{"v2"},
 			},
-			expected: "p1/p2/p3?k1=v1&k2=v2",
+			expected: testMultiPathWithQueryParams,
 		},
 	}
 
@@ -103,8 +105,8 @@ func TestString(t *testing.T) {
 		},
 		{
 			name:       "case for multiple paths and query parameters",
-			requestURL: "p1/p2/p3?k1=v1&k2=v2",
-			expected:   "p1/p2/p3?k1=v1&k2=v2",
+			requestURL: testMultiPathWithQueryParams,
+			expected:   testMultiPathWithQueryParams,
 		},
 	}
 

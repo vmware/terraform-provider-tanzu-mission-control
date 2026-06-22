@@ -12,6 +12,15 @@ import (
 	nodepoolmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/nodepool"
 )
 
+const (
+	testABCD           = "/a/b/c/d"
+	testKey            = "key"
+	testPvStorageClass = "pv_storage_class"
+	testVolume1        = "volume1"
+
+	testValue = "value"
+)
+
 func TestFlattenNodePoolSpec(t *testing.T) {
 	t.Parallel()
 
@@ -29,21 +38,21 @@ func TestFlattenNodePoolSpec(t *testing.T) {
 			description: "normal scenario with complete nodepool spec",
 			input: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 				CloudLabels: map[string]string{
-					"key": "value",
+					testKey: testValue,
 				},
 				NodeLabels: map[string]string{
-					"key": "value",
+					testKey: testValue,
 				},
 				TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
-					Class:         "class",
-					StorageClass:  "storage_class",
-					FailureDomain: "failure_domain",
+					Class:         classKey,
+					StorageClass:  storageClassKey,
+					FailureDomain: failureDomainKey,
 					Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
 						{
 							Capacity:     4,
-							MountPath:    "/a/b/c/d",
-							Name:         "volume1",
-							StorageClass: "pv_storage_class",
+							MountPath:    testABCD,
+							Name:         testVolume1,
+							StorageClass: testPvStorageClass,
 						},
 					},
 				},
@@ -59,23 +68,23 @@ func TestFlattenNodePoolSpec(t *testing.T) {
 			expected: []interface{}{
 				map[string]interface{}{
 					cloudLabelsKey: map[string]string{
-						"key": "value",
+						testKey: testValue,
 					},
 					nodeLabelsKey: map[string]string{
-						"key": "value",
+						testKey: testValue,
 					},
 					workerNodeCountKey: "1",
 					tkgServiceVsphereKey: []interface{}{
 						map[string]interface{}{
-							classKey:         "class",
-							storageClassKey:  "storage_class",
-							failureDomainKey: "failure_domain",
+							classKey:         classKey,
+							storageClassKey:  storageClassKey,
+							failureDomainKey: failureDomainKey,
 							volumesKey: []interface{}{
 								map[string]interface{}{
 									capacityKey:        float32(4),
-									mountPathKey:       "/a/b/c/d",
-									volumeNameKey:      "volume1",
-									pvcStorageClassKey: "pv_storage_class",
+									mountPathKey:       testABCD,
+									volumeNameKey:      testVolume1,
+									pvcStorageClassKey: testPvStorageClass,
 								},
 							},
 						},
@@ -98,10 +107,10 @@ func TestFlattenNodePoolSpec(t *testing.T) {
 			description: "normal scenario with empty TKGs Vsphere data",
 			input: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 				CloudLabels: map[string]string{
-					"key": "value",
+					testKey: testValue,
 				},
 				NodeLabels: map[string]string{
-					"key": "value",
+					testKey: testValue,
 				},
 				TkgVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGVsphereNodepool{
 					VMConfig: &nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGVsphereVMConfig{
@@ -116,10 +125,10 @@ func TestFlattenNodePoolSpec(t *testing.T) {
 			expected: []interface{}{
 				map[string]interface{}{
 					cloudLabelsKey: map[string]string{
-						"key": "value",
+						testKey: testValue,
 					},
 					nodeLabelsKey: map[string]string{
-						"key": "value",
+						testKey: testValue,
 					},
 					workerNodeCountKey: "1",
 					tkgVsphereKey: []interface{}{
@@ -140,10 +149,10 @@ func TestFlattenNodePoolSpec(t *testing.T) {
 			description: "normal scenario with empty VM config",
 			input: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 				CloudLabels: map[string]string{
-					"key": "value",
+					testKey: testValue,
 				},
 				NodeLabels: map[string]string{
-					"key": "value",
+					testKey: testValue,
 				},
 				TkgVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGVsphereNodepool{
 					VMConfig: nil,
@@ -154,10 +163,10 @@ func TestFlattenNodePoolSpec(t *testing.T) {
 			expected: []interface{}{
 				map[string]interface{}{
 					cloudLabelsKey: map[string]string{
-						"key": "value",
+						testKey: testValue,
 					},
 					nodeLabelsKey: map[string]string{
-						"key": "value",
+						testKey: testValue,
 					},
 					workerNodeCountKey: "1",
 					tkgVsphereKey: []interface{}{
@@ -170,21 +179,21 @@ func TestFlattenNodePoolSpec(t *testing.T) {
 			description: "normal scenario with empty TKGm Vsphere data",
 			input: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 				CloudLabels: map[string]string{
-					"key": "value",
+					testKey: testValue,
 				},
 				NodeLabels: map[string]string{
-					"key": "value",
+					testKey: testValue,
 				},
 				TkgServiceVsphere: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGServiceVsphereNodepool{
-					Class:         "class",
-					StorageClass:  "storage_class",
-					FailureDomain: "failure_domain",
+					Class:         classKey,
+					StorageClass:  storageClassKey,
+					FailureDomain: failureDomainKey,
 					Volumes: []*nodepoolmodel.VmwareTanzuManageV1alpha1CommonClusterTKGServiceVsphereVolume{
 						{
 							Capacity:     4,
-							MountPath:    "/a/b/c/d",
-							Name:         "volume1",
-							StorageClass: "pv_storage_class",
+							MountPath:    testABCD,
+							Name:         testVolume1,
+							StorageClass: testPvStorageClass,
 						},
 					},
 				},
@@ -194,23 +203,23 @@ func TestFlattenNodePoolSpec(t *testing.T) {
 			expected: []interface{}{
 				map[string]interface{}{
 					cloudLabelsKey: map[string]string{
-						"key": "value",
+						testKey: testValue,
 					},
 					nodeLabelsKey: map[string]string{
-						"key": "value",
+						testKey: testValue,
 					},
 					workerNodeCountKey: "1",
 					tkgServiceVsphereKey: []interface{}{
 						map[string]interface{}{
-							classKey:         "class",
-							storageClassKey:  "storage_class",
-							failureDomainKey: "failure_domain",
+							classKey:         classKey,
+							storageClassKey:  storageClassKey,
+							failureDomainKey: failureDomainKey,
 							volumesKey: []interface{}{
 								map[string]interface{}{
 									capacityKey:        float32(4),
-									mountPathKey:       "/a/b/c/d",
-									volumeNameKey:      "volume1",
-									pvcStorageClassKey: "pv_storage_class",
+									mountPathKey:       testABCD,
+									volumeNameKey:      testVolume1,
+									pvcStorageClassKey: testPvStorageClass,
 								},
 							},
 						},
@@ -222,20 +231,20 @@ func TestFlattenNodePoolSpec(t *testing.T) {
 			description: "normal scenario with empty TKGs and TKGm Vsphere data",
 			input: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 				CloudLabels: map[string]string{
-					"key": "value",
+					testKey: testValue,
 				},
 				NodeLabels: map[string]string{
-					"key": "value",
+					testKey: testValue,
 				},
 				WorkerNodeCount: "1",
 			},
 			expected: []interface{}{
 				map[string]interface{}{
 					cloudLabelsKey: map[string]string{
-						"key": "value",
+						testKey: testValue,
 					},
 					nodeLabelsKey: map[string]string{
-						"key": "value",
+						testKey: testValue,
 					},
 					workerNodeCountKey: "1",
 				},

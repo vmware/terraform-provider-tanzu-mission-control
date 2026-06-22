@@ -14,6 +14,10 @@ import (
 	sourcesecretclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/sourcesecret/clustergroup"
 )
 
+const (
+	testSomevalue = "somevalue"
+)
+
 func TestFlattenSpecForClusterScope(t *testing.T) {
 	t.Parallel()
 
@@ -45,7 +49,7 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 							UsernamePasswordKey: []interface{}{
 								map[string]interface{}{
 									usernameKey: "someusername",
-									PasswordKey: "somevalue",
+									PasswordKey: testSomevalue,
 								},
 							},
 						},
@@ -70,7 +74,7 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 						map[string]interface{}{
 							SSHKey: []interface{}{
 								map[string]interface{}{
-									IdentityKey:   "somevalue",
+									IdentityKey:   testSomevalue,
 									KnownhostsKey: "someknownhostvalue",
 								},
 							},
@@ -84,7 +88,7 @@ func TestFlattenSpecForClusterScope(t *testing.T) {
 	for _, each := range cases {
 		test := each
 		t.Run(test.description, func(t *testing.T) {
-			actual := FlattenSpecForClusterScope(test.input, "somevalue")
+			actual := FlattenSpecForClusterScope(test.input, testSomevalue)
 			require.Equal(t, test.expected, actual)
 		})
 	}
@@ -123,7 +127,7 @@ func TestFlattenStatusForClusterGroupScope(t *testing.T) {
 							UsernamePasswordKey: []interface{}{
 								map[string]interface{}{
 									usernameKey: "someusername",
-									PasswordKey: "somevalue",
+									PasswordKey: testSomevalue,
 								},
 							},
 						},
@@ -150,7 +154,7 @@ func TestFlattenStatusForClusterGroupScope(t *testing.T) {
 						map[string]interface{}{
 							SSHKey: []interface{}{
 								map[string]interface{}{
-									IdentityKey:   "somevalue",
+									IdentityKey:   testSomevalue,
 									KnownhostsKey: "someknownhostvalue",
 								},
 							},
@@ -164,7 +168,7 @@ func TestFlattenStatusForClusterGroupScope(t *testing.T) {
 	for _, each := range cases {
 		test := each
 		t.Run(test.description, func(t *testing.T) {
-			actual := FlattenSpecForClusterGroupScope(test.input, "somevalue")
+			actual := FlattenSpecForClusterGroupScope(test.input, testSomevalue)
 			require.Equal(t, test.expected, actual)
 		})
 	}

@@ -21,7 +21,7 @@ var AllowedNameTag = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			AuditKey: {
 				Type:        schema.TypeBool,
-				Description: "Audit (dry-run). Violations will be logged but not denied.",
+				Description: auditDryRunViolationsDescription,
 				Optional:    true,
 				Default:     false,
 			},

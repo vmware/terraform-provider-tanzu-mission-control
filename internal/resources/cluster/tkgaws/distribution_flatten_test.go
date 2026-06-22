@@ -33,7 +33,7 @@ func TestFlattenDistribution(t *testing.T) {
 				OsArch:                    "amd",
 				Region:                    "us-west-2",
 				Version:                   "v1.21.2+vmware.1-tkg.2",
-				ProvisionerCredentialName: "default",
+				ProvisionerCredentialName: testDefaultID,
 			},
 			expected: []interface{}{
 				map[string]interface{}{
@@ -42,7 +42,7 @@ func TestFlattenDistribution(t *testing.T) {
 					osArchKey:                "amd",
 					regionKey:                "us-west-2",
 					versionKey:               "v1.21.2+vmware.1-tkg.2",
-					provisionerCredentialKey: "default",
+					provisionerCredentialKey: testDefaultID,
 				},
 			},
 		},

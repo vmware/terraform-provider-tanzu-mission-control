@@ -13,6 +13,21 @@ import (
 	tkgawsmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/tkgaws"
 )
 
+const (
+	testM5LargeInstanceType      = "m5.large"
+	testUSEastAvailabilityZone   = "us-east"
+	testUsWest2aAvailabilityZone = "us-west-2a"
+	testDefaultID                = "default"
+	testVpcCIDRBlock             = "10.0.0.0/16"
+	testPodsCIDRBlock            = "100.96.0.0/11"
+	testServicesCIDRBlock        = "100.64.0.0/13"
+	testJumperSSHKey             = "jumper_ssh_key-sh-1529663-220321-074908"
+
+	testTest                           = "test"
+	testTestingTopologyFlattenFunction = "testing topology flatten function"
+	testV1212vmware1                   = "v1.21.2+vmware.1"
+)
+
 func TestFlattenTopology(t *testing.T) {
 	t.Parallel()
 
@@ -46,8 +61,8 @@ func TestFlattenTopology(t *testing.T) {
 			name: "normal scenario with control plane data of topology",
 			input: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsTopology{
 				ControlPlane: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsControlPlane{
-					AvailabilityZones: []string{"us-east"},
-					InstanceType:      "m5.large",
+					AvailabilityZones: []string{testUSEastAvailabilityZone},
+					InstanceType:      testM5LargeInstanceType,
 					HighAvailability:  false,
 				},
 			},
@@ -55,8 +70,8 @@ func TestFlattenTopology(t *testing.T) {
 				map[string]interface{}{
 					controlPlaneKey: []interface{}{
 						map[string]interface{}{
-							availabilityZonesKey: []string{"us-east"},
-							instanceTypeKey:      "m5.large",
+							availabilityZonesKey: []string{testUSEastAvailabilityZone},
+							instanceTypeKey:      testM5LargeInstanceType,
 							highAvailabilityKey:  false,
 						},
 					},
@@ -70,21 +85,21 @@ func TestFlattenTopology(t *testing.T) {
 				NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 					{
 						Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-							Name:        "test",
-							Description: "testing topology flatten function",
+							Name:        testTest,
+							Description: testTestingTopologyFlattenFunction,
 						},
 						Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 							WorkerNodeCount: "1",
 							TkgAws: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodepool{
-								AvailabilityZone: "us-west-2a",
-								InstanceType:     "m5.large",
+								AvailabilityZone: testUsWest2aAvailabilityZone,
+								InstanceType:     testM5LargeInstanceType,
 								NodePlacement: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodePlacement{
 									{
-										AvailabilityZone: "us-west-2a",
+										AvailabilityZone: testUsWest2aAvailabilityZone,
 									},
 								},
-								SubnetID: "default",
-								Version:  "v1.21.2+vmware.1",
+								SubnetID: testDefaultID,
+								Version:  testV1212vmware1,
 							},
 						},
 					},
@@ -97,8 +112,8 @@ func TestFlattenTopology(t *testing.T) {
 						map[string]interface{}{
 							nodePoolInfoKey: []interface{}{
 								map[string]interface{}{
-									nodePoolNameKey:        "test",
-									nodePoolDescriptionKey: "testing topology flatten function",
+									nodePoolNameKey:        testTest,
+									nodePoolDescriptionKey: testTestingTopologyFlattenFunction,
 								},
 							},
 							nodePoolSpecKey: []interface{}{
@@ -106,15 +121,15 @@ func TestFlattenTopology(t *testing.T) {
 									workerNodeCountKey: "1",
 									tkgAWSKey: []interface{}{
 										map[string]interface{}{
-											nodepoolAvailabilityZoneKey: "us-west-2a",
-											nodepoolInstanceTypeKey:     "m5.large",
+											nodepoolAvailabilityZoneKey: testUsWest2aAvailabilityZone,
+											nodepoolInstanceTypeKey:     testM5LargeInstanceType,
 											nodePlacementKey: []interface{}{
 												map[string]interface{}{
-													awsAvailabilityZoneKey: "us-west-2a",
+													awsAvailabilityZoneKey: testUsWest2aAvailabilityZone,
 												},
 											},
-											nodePoolSubnetIDKey: "default",
-											nodepoolVersionKey:  "v1.21.2+vmware.1",
+											nodePoolSubnetIDKey: testDefaultID,
+											nodepoolVersionKey:  testV1212vmware1,
 										},
 									},
 								},
@@ -128,28 +143,28 @@ func TestFlattenTopology(t *testing.T) {
 			name: "normal scenario with all fields of topology data",
 			input: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsTopology{
 				ControlPlane: &tkgawsmodel.VmwareTanzuManageV1alpha1ClusterInfrastructureTkgawsControlPlane{
-					AvailabilityZones: []string{"us-east"},
-					InstanceType:      "m5.large",
+					AvailabilityZones: []string{testUSEastAvailabilityZone},
+					InstanceType:      testM5LargeInstanceType,
 					HighAvailability:  false,
 				},
 				NodePools: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolDefinition{
 					{
 						Info: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolInfo{
-							Name:        "test",
-							Description: "testing topology flatten function",
+							Name:        testTest,
+							Description: testTestingTopologyFlattenFunction,
 						},
 						Spec: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolSpec{
 							WorkerNodeCount: "1",
 							TkgAws: &nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodepool{
-								AvailabilityZone: "us-west-2a",
-								InstanceType:     "m5.large",
+								AvailabilityZone: testUsWest2aAvailabilityZone,
+								InstanceType:     testM5LargeInstanceType,
 								NodePlacement: []*nodepoolmodel.VmwareTanzuManageV1alpha1ClusterNodepoolTKGAWSNodePlacement{
 									{
-										AvailabilityZone: "us-west-2a",
+										AvailabilityZone: testUsWest2aAvailabilityZone,
 									},
 								},
-								SubnetID: "default",
-								Version:  "v1.21.2+vmware.1",
+								SubnetID: testDefaultID,
+								Version:  testV1212vmware1,
 							},
 						},
 					},
@@ -159,8 +174,8 @@ func TestFlattenTopology(t *testing.T) {
 				map[string]interface{}{
 					controlPlaneKey: []interface{}{
 						map[string]interface{}{
-							availabilityZonesKey: []string{"us-east"},
-							instanceTypeKey:      "m5.large",
+							availabilityZonesKey: []string{testUSEastAvailabilityZone},
+							instanceTypeKey:      testM5LargeInstanceType,
 							highAvailabilityKey:  false,
 						},
 					},
@@ -168,8 +183,8 @@ func TestFlattenTopology(t *testing.T) {
 						map[string]interface{}{
 							nodePoolInfoKey: []interface{}{
 								map[string]interface{}{
-									nodePoolNameKey:        "test",
-									nodePoolDescriptionKey: "testing topology flatten function",
+									nodePoolNameKey:        testTest,
+									nodePoolDescriptionKey: testTestingTopologyFlattenFunction,
 								},
 							},
 							nodePoolSpecKey: []interface{}{
@@ -177,15 +192,15 @@ func TestFlattenTopology(t *testing.T) {
 									workerNodeCountKey: "1",
 									tkgAWSKey: []interface{}{
 										map[string]interface{}{
-											nodepoolAvailabilityZoneKey: "us-west-2a",
-											nodepoolInstanceTypeKey:     "m5.large",
+											nodepoolAvailabilityZoneKey: testUsWest2aAvailabilityZone,
+											nodepoolInstanceTypeKey:     testM5LargeInstanceType,
 											nodePlacementKey: []interface{}{
 												map[string]interface{}{
-													awsAvailabilityZoneKey: "us-west-2a",
+													awsAvailabilityZoneKey: testUsWest2aAvailabilityZone,
 												},
 											},
-											nodePoolSubnetIDKey: "default",
-											nodepoolVersionKey:  "v1.21.2+vmware.1",
+											nodePoolSubnetIDKey: testDefaultID,
+											nodepoolVersionKey:  testV1212vmware1,
 										},
 									},
 								},

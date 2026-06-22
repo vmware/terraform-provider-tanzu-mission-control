@@ -12,6 +12,12 @@ import (
 	policyrecipesecuritymodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/security"
 )
 
+const (
+	testRoot    = "root"
+	testSysadmR = "sysadm_r"
+	testURL     = "httpd_sys_content_t"
+)
+
 func TestFlattenCustom(t *testing.T) {
 	t.Parallel()
 
@@ -130,9 +136,9 @@ func TestFlattenCustom(t *testing.T) {
 				AllowedSELinuxOptions: []*policyrecipesecuritymodel.VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomAllowedSELinuxOption{
 					{
 						Level: "s0",
-						Role:  "sysadm_r",
-						Type:  "httpd_sys_content_t",
-						User:  "root",
+						Role:  testSysadmR,
+						Type:  testURL,
+						User:  testRoot,
 					},
 				},
 				Sysctls: &policyrecipesecuritymodel.VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomSysctls{
@@ -251,9 +257,9 @@ func TestFlattenCustom(t *testing.T) {
 					allowedSELinuxOptionsKey: []interface{}{
 						map[string]interface{}{
 							levelKey: "s0",
-							roleKey:  "sysadm_r",
-							typeKey:  "httpd_sys_content_t",
-							userKey:  "root",
+							roleKey:  testSysadmR,
+							typeKey:  testURL,
+							userKey:  testRoot,
 						},
 					},
 					sysctlsKey: []interface{}{
@@ -719,15 +725,15 @@ func TestFlattenAllowedSELinuxOption(t *testing.T) {
 			description: "normal scenario with complete allowed se linux option",
 			input: &policyrecipesecuritymodel.VmwareTanzuManageV1alpha1CommonPolicySpecSecurityV1CustomAllowedSELinuxOption{
 				Level: "s0",
-				Role:  "sysadm_r",
-				Type:  "httpd_sys_content_t",
-				User:  "root",
+				Role:  testSysadmR,
+				Type:  testURL,
+				User:  testRoot,
 			},
 			expected: map[string]interface{}{
 				levelKey: "s0",
-				roleKey:  "sysadm_r",
-				typeKey:  "httpd_sys_content_t",
-				userKey:  "root",
+				roleKey:  testSysadmR,
+				typeKey:  testURL,
+				userKey:  testRoot,
 			},
 		},
 	}

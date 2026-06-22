@@ -13,10 +13,6 @@ import (
 	policyrecipecustomcommonmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/custom/common"
 )
 
-const (
-	customRecipeTemplateName = "some-custom-template"
-)
-
 func TestFlattenTMCCustom(t *testing.T) {
 	t.Parallel()
 

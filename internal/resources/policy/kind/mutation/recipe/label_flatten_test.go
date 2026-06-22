@@ -29,13 +29,13 @@ func TestFlattenLabel(t *testing.T) {
 			description: "flatten normal label mutation policy struct",
 			input: &policyrecipemutationmodel.VmwareTanzuManageV1alpha1CommonPolicySpecMutationV1Label{
 				Label: &policyrecipemutationcommonmodel.KeyValue{
-					Key:   "key_value",
-					Value: "value_value"},
+					Key:   testKeyValue,
+					Value: testValueValue},
 				Scope: policyrecipemutationcommonmodel.NewVmwareTanzuManageV1alpha1CommonPolicySpecMutationV1Scope(policyrecipemutationcommonmodel.Cluster),
 				TargetKubernetesResources: []*policyrecipecustomcommonmodel.VmwareTanzuManageV1alpha1CommonPolicySpecCustomV1TargetKubernetesResources{
 					{
-						APIGroups: []string{"policy"},
-						Kinds:     []string{"pod"},
+						APIGroups: []string{testPolicy},
+						Kinds:     []string{testPod},
 					},
 				},
 			},
@@ -43,15 +43,15 @@ func TestFlattenLabel(t *testing.T) {
 				map[string]interface{}{
 					LabelKey: []interface{}{
 						map[string]interface{}{
-							keyKey:   "key_value",
-							valueKey: "value_value",
+							keyKey:   testKeyValue,
+							valueKey: testValueValue,
 						},
 					},
-					scopeKey: "Cluster",
+					scopeKey: testCluster,
 					targetKubernetesResourcesKey: []interface{}{
 						map[string]interface{}{
-							apiGroupsKey: []string{"policy"},
-							kindsKey:     []string{"pod"},
+							apiGroupsKey: []string{testPolicy},
+							kindsKey:     []string{testPod},
 						},
 					},
 				},

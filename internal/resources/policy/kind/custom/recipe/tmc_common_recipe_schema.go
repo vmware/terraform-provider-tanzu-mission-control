@@ -25,7 +25,7 @@ var TMCBlockNodeportService = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			AuditKey: {
 				Type:        schema.TypeBool,
-				Description: "Audit (dry-run).",
+				Description: auditDryRunDotDescription,
 				Optional:    true,
 				Default:     false,
 			},
@@ -44,7 +44,7 @@ var TMCBlockResources = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			AuditKey: {
 				Type:        schema.TypeBool,
-				Description: "Audit (dry-run).",
+				Description: auditDryRunDotDescription,
 				Optional:    true,
 				Default:     false,
 			},
@@ -63,7 +63,7 @@ var TMCHTTPSIngress = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			AuditKey: {
 				Type:        schema.TypeBool,
-				Description: "Audit (dry-run).",
+				Description: auditDryRunDotDescription,
 				Optional:    true,
 				Default:     false,
 			},

@@ -14,6 +14,11 @@ import (
 	secretclustergroupmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/kubernetessecret/clustergroup"
 )
 
+const (
+	testMyuser           = "myuser"
+	testSomelongpassword = "somelongpassword"
+)
+
 func TestFlattenClusterScopeSpec(t *testing.T) {
 	t.Parallel()
 
@@ -52,15 +57,15 @@ func TestFlattenClusterScopeSpec(t *testing.T) {
 			input: &secretclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec{
 				SecretType: secretclustermodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceSecretType(secretclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEOPAQUE),
 				Data: map[string]strfmt.Base64{
-					"username": []byte(`myuser`),
-					"password": []byte(`somelongpassword`),
+					UsernameKey: []byte(testMyuser),
+					PasswordKey: []byte(testSomelongpassword),
 				},
 			},
 			expected: []interface{}{
 				map[string]interface{}{
 					OpaqueKey: map[string]interface{}{
-						"username": "myuser",
-						"password": "somelongpassword",
+						UsernameKey: testMyuser,
+						PasswordKey: testSomelongpassword,
 					},
 				},
 			},
@@ -70,7 +75,7 @@ func TestFlattenClusterScopeSpec(t *testing.T) {
 	for _, each := range cases {
 		test := each
 		t.Run(test.description, func(t *testing.T) {
-			actual := FlattenSpecForClusterScope(test.input, "somepassword", map[string]interface{}{"username": "myuser", "password": "somelongpassword"})
+			actual := FlattenSpecForClusterScope(test.input, "somepassword", map[string]interface{}{UsernameKey: testMyuser, PasswordKey: testSomelongpassword})
 			require.Equal(t, test.expected, actual)
 		})
 	}
@@ -117,16 +122,16 @@ func TestFlattenClusterGroupScopeSpec(t *testing.T) {
 				AtomicSpec: &secretclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretSpec{
 					SecretType: secretclustermodel.NewVmwareTanzuManageV1alpha1ClusterNamespaceSecretType(secretclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceSecretTypeSECRETTYPEOPAQUE),
 					Data: map[string]strfmt.Base64{
-						"username": []byte(`myuser`),
-						"password": []byte(`somelongpassword`),
+						UsernameKey: []byte(testMyuser),
+						PasswordKey: []byte(testSomelongpassword),
 					},
 				},
 			},
 			expected: []interface{}{
 				map[string]interface{}{
 					OpaqueKey: map[string]interface{}{
-						"username": "myuser",
-						"password": "somelongpassword",
+						UsernameKey: testMyuser,
+						PasswordKey: testSomelongpassword,
 					},
 				},
 			},
@@ -136,7 +141,7 @@ func TestFlattenClusterGroupScopeSpec(t *testing.T) {
 	for _, each := range cases {
 		test := each
 		t.Run(test.description, func(t *testing.T) {
-			actual := FlattenSpecForClusterGroupScope(test.input, "somepassword", map[string]interface{}{"username": "myuser", "password": "somelongpassword"})
+			actual := FlattenSpecForClusterGroupScope(test.input, "somepassword", map[string]interface{}{UsernameKey: testMyuser, PasswordKey: testSomelongpassword})
 			require.Equal(t, test.expected, actual)
 		})
 	}

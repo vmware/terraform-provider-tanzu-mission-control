@@ -17,6 +17,21 @@ import (
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/workspace"
 )
 
+const (
+	clusterGroupNameForCluster = "default"
+	clusterRole                = "cluster.view"
+	subject1Kind               = "GROUP"
+	subject1Name               = "test-1"
+	testAttached               = "attached"
+	testClusteradmin           = "cluster.admin"
+	testClusteradmintestuser   = "cluster.admin;test;USER"
+	testClustergroupadmin      = "cluster-group.admin"
+	testDummy                  = "dummy"
+	testTest                   = "test"
+	testTest2                  = "test-2"
+	testTest3                  = "test-3"
+)
+
 func initTestProvider(t *testing.T) *schema.Provider {
 	testAccProvider := &schema.Provider{
 		Schema: authctx.ProviderAuthSchema(),

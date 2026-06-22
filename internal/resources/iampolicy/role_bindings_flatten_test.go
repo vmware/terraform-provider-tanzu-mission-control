@@ -34,19 +34,19 @@ func TestFlattenRoleBindingList(t *testing.T) {
 			description: "normal scenario with all fields of role binding data list",
 			input: []*iammodel.VmwareTanzuCoreV1alpha1PolicyRoleBinding{
 				{
-					Role: "cluster-group.admin",
+					Role: testClustergroupadmin,
 					Subjects: []*iammodel.VmwareTanzuCoreV1alpha1PolicySubject{
 						{
-							Name: "test-1",
+							Name: subject1Name,
 							Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindGROUP.Pointer(),
 						},
 					},
 				},
 				{
-					Role: "cluster.view",
+					Role: clusterRole,
 					Subjects: []*iammodel.VmwareTanzuCoreV1alpha1PolicySubject{
 						{
-							Name: "test-2",
+							Name: testTest2,
 							Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindUSER.Pointer(),
 						},
 					},
@@ -54,19 +54,19 @@ func TestFlattenRoleBindingList(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					roleKey: "cluster-group.admin",
+					roleKey: testClustergroupadmin,
 					subjectsKey: []interface{}{
 						map[string]interface{}{
-							subjectNameKey: "test-1",
-							subjectKindKey: "GROUP",
+							subjectNameKey: subject1Name,
+							subjectKindKey: subject1Kind,
 						},
 					},
 				},
 				map[string]interface{}{
-					roleKey: "cluster.view",
+					roleKey: clusterRole,
 					subjectsKey: []interface{}{
 						map[string]interface{}{
-							subjectNameKey: "test-2",
+							subjectNameKey: testTest2,
 							subjectKindKey: "USER",
 						},
 					},

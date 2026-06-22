@@ -15,6 +15,11 @@ import (
 	reciperesource "github.com/vmware/terraform-provider-tanzu-mission-control/internal/resources/policy/kind/network/recipe"
 )
 
+const (
+	testBar = "bar"
+	testFoo = "foo"
+)
+
 func TestFlattenInput(t *testing.T) {
 	t.Parallel()
 
@@ -54,8 +59,8 @@ func TestFlattenInput(t *testing.T) {
 					FromOwnNamespace: helper.BoolPointer(true),
 					ToPodLabels: []*policyrecipenetworkcommonmodel.V1alpha1CommonPolicySpecNetworkV1Labels{
 						{
-							Key:   "foo",
-							Value: "bar",
+							Key:   testFoo,
+							Value: testBar,
 						},
 					},
 				},
@@ -66,7 +71,7 @@ func TestFlattenInput(t *testing.T) {
 						map[string]interface{}{
 							reciperesource.FromOwnNamespaceKey: true,
 							reciperesource.ToPodLabelsKey: map[string]interface{}{
-								"foo": "bar",
+								testFoo: testBar,
 							},
 						},
 					},
@@ -106,8 +111,8 @@ func TestFlattenInput(t *testing.T) {
 				inputDenyAllToPods: &policyrecipenetworkmodel.V1alpha1CommonPolicySpecNetworkV1DenyAllToPods{
 					ToPodLabels: []*policyrecipenetworkcommonmodel.V1alpha1CommonPolicySpecNetworkV1Labels{
 						{
-							Key:   "foo",
-							Value: "bar",
+							Key:   testFoo,
+							Value: testBar,
 						},
 					},
 				},
@@ -117,7 +122,7 @@ func TestFlattenInput(t *testing.T) {
 					reciperesource.DenyAllToPodsKey: []interface{}{
 						map[string]interface{}{
 							reciperesource.ToPodLabelsKey: map[string]interface{}{
-								"foo": "bar",
+								testFoo: testBar,
 							},
 						},
 					},

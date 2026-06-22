@@ -71,8 +71,8 @@ resource "%s" "%s" {
 resource "%s" "%s" {
   name = "%s"
   cluster_name = tanzu-mission-control_cluster.tmc_cluster_test.name
-  provisioner_name        = "attached"
-  management_cluster_name = "attached"
+  provisioner_name        = attachedValue
+  management_cluster_name = attachedValue
 
   %s
 
@@ -133,8 +133,8 @@ func verifyNamespaceResourceCreation(
 		fn := &namespacemodel.VmwareTanzuManageV1alpha1ClusterNamespaceFullName{
 			Name:                  namespaceName,
 			ClusterName:           clusterName,
-			ManagementClusterName: "attached",
-			ProvisionerName:       "attached",
+			ManagementClusterName: attachedValue,
+			ProvisionerName:       attachedValue,
 		}
 
 		resp, err := config.TMCConnection.NamespaceResourceService.ManageV1alpha1NamespaceResourceServiceGet(fn)

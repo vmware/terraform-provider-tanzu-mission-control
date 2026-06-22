@@ -45,8 +45,8 @@ func TestFlattenCustomIngress(t *testing.T) {
 				ToPodLabels: func() *[]policyrecipenetworkcommonmodel.V1alpha1CommonPolicySpecNetworkV1Labels {
 					return &[]policyrecipenetworkcommonmodel.V1alpha1CommonPolicySpecNetworkV1Labels{
 						{
-							Key:   "foo",
-							Value: "bar",
+							Key:   testFoo,
+							Value: testBar,
 						},
 					}
 				}(),
@@ -63,7 +63,7 @@ func TestFlattenCustomIngress(t *testing.T) {
 							},
 						},
 					},
-					ToPodLabelsKey: map[string]interface{}{"foo": "bar"},
+					ToPodLabelsKey: map[string]interface{}{testFoo: testBar},
 				},
 			},
 		},

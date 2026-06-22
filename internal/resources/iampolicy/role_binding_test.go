@@ -44,7 +44,7 @@ func TestGetRoleBindingSchemaData(t *testing.T) {
 					},
 					map[string]interface{}{
 						subjectNameKey: "sub2",
-						subjectKindKey: "GROUP",
+						subjectKindKey: subject1Kind,
 					},
 				},
 			},
@@ -64,14 +64,14 @@ func TestRoleBindingListToUpdate(t *testing.T) {
 		{
 			description: "check for normal scenario of an entry in map",
 			input: &map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
+				testClusteradmintestuser: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
 			},
 			expected: []*iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDelta{
 				{
 					Op:   iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD.Pointer(),
-					Role: "cluster.admin",
+					Role: testClusteradmin,
 					Subject: &iammodel.VmwareTanzuCoreV1alpha1PolicySubject{
-						Name: "test",
+						Name: testTest,
 						Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindUSER.Pointer(),
 					},
 				},
@@ -102,84 +102,84 @@ func TestRBOpForUpdate(t *testing.T) {
 			description: "check for action as UNSPECIFIED",
 			inputRBL: []*iammodel.VmwareTanzuCoreV1alpha1PolicyRoleBinding{
 				{
-					Role: "cluster.admin",
+					Role: testClusteradmin,
 					Subjects: []*iammodel.VmwareTanzuCoreV1alpha1PolicySubject{
 						{
-							Name: "test",
+							Name: testTest,
 							Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindUSER.Pointer(),
 						},
 					},
 				},
 			},
 			inputMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
+				testClusteradmintestuser: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
 			},
 			action: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeOPTYPEUNSPECIFIED,
 			expectedMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeOPTYPEUNSPECIFIED,
+				testClusteradmintestuser: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeOPTYPEUNSPECIFIED,
 			},
 		},
 		{
 			description: "check for action as DELETE",
 			inputRBL: []*iammodel.VmwareTanzuCoreV1alpha1PolicyRoleBinding{
 				{
-					Role: "cluster.admin",
+					Role: testClusteradmin,
 					Subjects: []*iammodel.VmwareTanzuCoreV1alpha1PolicySubject{
 						{
-							Name: "test",
+							Name: testTest,
 							Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindUSER.Pointer(),
 						},
 					},
 				},
 			},
 			inputMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
+				testClusteradmintestuser: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
 			},
 			action: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeDELETE,
 			expectedMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeDELETE,
+				testClusteradmintestuser: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeDELETE,
 			},
 		},
 		{
 			description: "check for action as ADD",
 			inputRBL: []*iammodel.VmwareTanzuCoreV1alpha1PolicyRoleBinding{
 				{
-					Role: "cluster.admin",
+					Role: testClusteradmin,
 					Subjects: []*iammodel.VmwareTanzuCoreV1alpha1PolicySubject{
 						{
-							Name: "test",
+							Name: testTest,
 							Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindUSER.Pointer(),
 						},
 					},
 				},
 			},
 			inputMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
+				testClusteradmintestuser: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
 			},
 			action: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
 			expectedMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
+				testClusteradmintestuser: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
 			},
 		},
 		{
 			description: "check for flip action scenario",
 			inputRBL: []*iammodel.VmwareTanzuCoreV1alpha1PolicyRoleBinding{
 				{
-					Role: "cluster.admin",
+					Role: testClusteradmin,
 					Subjects: []*iammodel.VmwareTanzuCoreV1alpha1PolicySubject{
 						{
-							Name: "test",
+							Name: testTest,
 							Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindUSER.Pointer(),
 						},
 					},
 				},
 			},
 			inputMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeDELETE,
+				testClusteradmintestuser: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeDELETE,
 			},
 			action: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeADD,
 			expectedMap: map[string]iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpType{
-				"cluster.admin;test;USER": iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeOPTYPEUNSPECIFIED,
+				testClusteradmintestuser: iammodel.VmwareTanzuCoreV1alpha1PolicyBindingDeltaOpTypeOPTYPEUNSPECIFIED,
 			},
 		},
 	}
@@ -212,21 +212,21 @@ func TestGetIntersectionOfSubs(t *testing.T) {
 			description: "check for when state and server have no common subjects",
 			state: []*iammodel.VmwareTanzuCoreV1alpha1PolicySubject{
 				{
-					Name: "test-1",
+					Name: subject1Name,
 					Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindUSER.Pointer(),
 				},
 				{
-					Name: "test-2",
+					Name: testTest2,
 					Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindGROUP.Pointer(),
 				},
 			},
 			server: []*iammodel.VmwareTanzuCoreV1alpha1PolicySubject{
 				{
-					Name: "test-1",
+					Name: subject1Name,
 					Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindGROUP.Pointer(),
 				},
 				{
-					Name: "test-3",
+					Name: testTest3,
 					Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindUSER.Pointer(),
 				},
 			},
@@ -236,25 +236,25 @@ func TestGetIntersectionOfSubs(t *testing.T) {
 			description: "check for when state and server have subjects in common",
 			state: []*iammodel.VmwareTanzuCoreV1alpha1PolicySubject{
 				{
-					Name: "test-1",
+					Name: subject1Name,
 					Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindUSER.Pointer(),
 				},
 				{
-					Name: "test-2",
+					Name: testTest2,
 					Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindGROUP.Pointer(),
 				},
 				{
-					Name: "test-3",
+					Name: testTest3,
 					Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindGROUP.Pointer(),
 				},
 			},
 			server: []*iammodel.VmwareTanzuCoreV1alpha1PolicySubject{
 				{
-					Name: "test-1",
+					Name: subject1Name,
 					Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindUSER.Pointer(),
 				},
 				{
-					Name: "test-3",
+					Name: testTest3,
 					Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindUSER.Pointer(),
 				},
 				{
@@ -264,7 +264,7 @@ func TestGetIntersectionOfSubs(t *testing.T) {
 			},
 			expected: []*iammodel.VmwareTanzuCoreV1alpha1PolicySubject{
 				{
-					Name: "test-1",
+					Name: subject1Name,
 					Kind: iammodel.VmwareTanzuCoreV1alpha1PolicySubjectKindUSER.Pointer(),
 				},
 			},

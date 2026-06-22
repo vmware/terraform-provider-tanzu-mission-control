@@ -28,11 +28,11 @@ func TestFlattenSpec(t *testing.T) {
 		{
 			description: "normal scenario with cluster group",
 			input: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
+				ClusterGroupName: clusterGroupDefaultValue,
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					clusterGroupKey:      "default",
+					clusterGroupKey:      clusterGroupDefaultValue,
 					proxyNameKey:         "",
 					imageRegistryNameKey: "",
 				},
@@ -41,13 +41,13 @@ func TestFlattenSpec(t *testing.T) {
 		{
 			description: "normal scenario with cluster group and proxy",
 			input: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
-				ProxyName:        "proxy",
+				ClusterGroupName: clusterGroupDefaultValue,
+				ProxyName:        proxyNameKey,
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					clusterGroupKey:      "default",
-					proxyNameKey:         "proxy",
+					clusterGroupKey:      clusterGroupDefaultValue,
+					proxyNameKey:         proxyNameKey,
 					imageRegistryNameKey: "",
 				},
 			},
@@ -55,14 +55,14 @@ func TestFlattenSpec(t *testing.T) {
 		{
 			description: "normal scenario with cluster group, proxy and image registry",
 			input: &clustermodel.VmwareTanzuManageV1alpha1ClusterSpec{
-				ClusterGroupName: "default",
-				ProxyName:        "proxy",
+				ClusterGroupName: clusterGroupDefaultValue,
+				ProxyName:        proxyNameKey,
 				ImageRegistry:    "image-registry",
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					clusterGroupKey:      "default",
-					proxyNameKey:         "proxy",
+					clusterGroupKey:      clusterGroupDefaultValue,
+					proxyNameKey:         proxyNameKey,
 					imageRegistryNameKey: "image-registry",
 				},
 			},

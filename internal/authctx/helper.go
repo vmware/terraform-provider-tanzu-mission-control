@@ -121,6 +121,7 @@ var RefreshUserAuthContext = func(config *TanzuContext, refreshCondition func(er
 			refreshSMUserAuthCtx(config)
 			return
 		}
+
 		refreshSaaSUserAuthCtx(config)
 	}
 }

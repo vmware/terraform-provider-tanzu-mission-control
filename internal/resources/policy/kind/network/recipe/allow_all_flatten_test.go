@@ -13,6 +13,11 @@ import (
 	policyrecipenetworkmodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy/recipe/network"
 )
 
+const (
+	testBar = "bar"
+	testFoo = "foo"
+)
+
 func TestFlattenAllowAll(t *testing.T) {
 	t.Parallel()
 

@@ -25,81 +25,81 @@ func TestFlattenNodepools(t *testing.T) {
 			description: "single nodepool",
 			getInput: func() []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition {
 				return []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{
-					getNodepoolDef("test-np"),
+					getNodepoolDef(testTestNp2),
 				}
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"info": []interface{}{
+					infoKey: []interface{}{
 						map[string]interface{}{
-							"description": "test np",
-							"name":        "test-np",
+							testDescription: testTestNp,
+							NameKey:         testTestNp2,
 						},
 					},
-					"spec": []interface{}{
+					specKey: []interface{}{
 						map[string]interface{}{
-							"ami_type": "CUSTOM",
-							"ami_info": []interface{}{
+							amiTypeKey: testCustom,
+							amiInfoKey: []interface{}{
 								map[string]interface{}{
-									"ami_id":                 "ami-2qu8409oisdfj0qw",
-									"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+									amiIDKey:                testAmi2qu8409oisdfj0qw,
+									overrideBootstrapCmdKey: testBootstrapCmd,
 								},
 							},
-							"capacity_type": "ON_DEMAND",
-							"instance_types": []string{
-								"t3.medium",
-								"m3.large",
+							capacityTypeKey: testOnDemand,
+							instanceTypesKey: []string{
+								testT3medium,
+								testM3large,
 							},
-							"launch_template": []interface{}{
+							launchTemplateKey: []interface{}{
 								map[string]interface{}{
-									"id":      "",
-									"name":    "templ",
-									"version": "7",
+									"id":       "",
+									NameKey:    testTempl,
+									versionKey: "7",
 								},
 							},
-							"node_labels": map[string]string{
-								"key1": "val1",
+							nodeLabelsKey: map[string]string{
+								testKey1: testVal1,
 							},
-							"remote_access": []interface{}{
+							remoteAccessKey: []interface{}{
 								map[string]interface{}{
-									"security_groups": []string{
-										"sg-0a6768722e9716768",
+									securityGroupsKey: []string{
+										testSg0a6768722e9716768,
 									},
-									"ssh_key": "test-key",
+									sshKeyKey: testTestKey,
 								},
 							},
-							"role_arn":       "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-							"root_disk_size": int32(20),
-							"scaling_config": []interface{}{
+							roleArnKey:      testArnAwsIam000000000000,
+							rootDiskSizeKey: int32(20),
+							scalingConfigKey: []interface{}{
 								map[string]interface{}{
-									"desired_size": int32(8),
-									"max_size":     int32(16),
-									"min_size":     int32(3),
+									desiredSizeKey: int32(8),
+									maxSizeKey:     int32(16),
+									minSizeKey:     int32(3),
 								},
 							},
-							"subnet_ids": []string{
-								"subnet-0a184f9301ae39a86",
-								"subnet-0b495d7c212fc92a1",
-								"subnet-0c86ec9ecde7b9bf7",
-								"subnet-06497e6063c209f4d",
+							subnetIdsKey: []string{
+								testSubnet0a184f9301ae39a86,
+								testSubnet0b495d7c212fc92a1,
+								testSubnet0c86ec9ecde7b9bf7,
+								testSubnet06497e6063c209f4d,
 							},
-							"tags": map[string]string{
-								"tg1": "tv1",
+							tagsKey: map[string]string{
+								testTg1: testTv1,
 							},
-							"taints": []interface{}{
+							taintsKey: []interface{}{
 								map[string]interface{}{
-									"effect": eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-									"key":    "tkey",
-									"value":  "tvalue",
+									effectKey: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
+									keyKey:    testTkey,
+									valueKey:  testTvalue,
 								},
 							},
-							"update_config": []interface{}{
+							updateConfigKey: []interface{}{
 								map[string]interface{}{
-									"max_unavailable_nodes":      "10",
-									"max_unavailable_percentage": "12",
+									maxUnavailableNodesKey:      "10",
+									maxUnavailablePercentageKey: "12",
 								},
 							},
-							"release_version": "1.26.4-20230703",
+							releaseVersionKey: test126420230703,
 						},
 					},
 				},
@@ -109,156 +109,156 @@ func TestFlattenNodepools(t *testing.T) {
 			description: "multiple nodepool",
 			getInput: func() []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition {
 				return []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{
-					getNodepoolDef("test-np"),
+					getNodepoolDef(testTestNp2),
 					getNodepoolDef("test-np-2"),
 				}
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"info": []interface{}{
+					infoKey: []interface{}{
 						map[string]interface{}{
-							"description": "test np",
-							"name":        "test-np",
+							testDescription: testTestNp,
+							NameKey:         testTestNp2,
 						},
 					},
-					"spec": []interface{}{
+					specKey: []interface{}{
 						map[string]interface{}{
-							"ami_type": "CUSTOM",
-							"ami_info": []interface{}{
+							amiTypeKey: testCustom,
+							amiInfoKey: []interface{}{
 								map[string]interface{}{
-									"ami_id":                 "ami-2qu8409oisdfj0qw",
-									"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+									amiIDKey:                testAmi2qu8409oisdfj0qw,
+									overrideBootstrapCmdKey: testBootstrapCmd,
 								},
 							},
-							"capacity_type": "ON_DEMAND",
-							"instance_types": []string{
-								"t3.medium",
-								"m3.large",
+							capacityTypeKey: testOnDemand,
+							instanceTypesKey: []string{
+								testT3medium,
+								testM3large,
 							},
-							"launch_template": []interface{}{
+							launchTemplateKey: []interface{}{
 								map[string]interface{}{
-									"id":      "",
-									"name":    "templ",
-									"version": "7",
+									"id":       "",
+									NameKey:    testTempl,
+									versionKey: "7",
 								},
 							},
-							"node_labels": map[string]string{
-								"key1": "val1",
+							nodeLabelsKey: map[string]string{
+								testKey1: testVal1,
 							},
-							"remote_access": []interface{}{
+							remoteAccessKey: []interface{}{
 								map[string]interface{}{
-									"security_groups": []string{
-										"sg-0a6768722e9716768",
+									securityGroupsKey: []string{
+										testSg0a6768722e9716768,
 									},
-									"ssh_key": "test-key",
+									sshKeyKey: testTestKey,
 								},
 							},
-							"role_arn":       "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-							"root_disk_size": int32(20),
-							"scaling_config": []interface{}{
+							roleArnKey:      testArnAwsIam000000000000,
+							rootDiskSizeKey: int32(20),
+							scalingConfigKey: []interface{}{
 								map[string]interface{}{
-									"desired_size": int32(8),
-									"max_size":     int32(16),
-									"min_size":     int32(3),
+									desiredSizeKey: int32(8),
+									maxSizeKey:     int32(16),
+									minSizeKey:     int32(3),
 								},
 							},
-							"subnet_ids": []string{
-								"subnet-0a184f9301ae39a86",
-								"subnet-0b495d7c212fc92a1",
-								"subnet-0c86ec9ecde7b9bf7",
-								"subnet-06497e6063c209f4d",
+							subnetIdsKey: []string{
+								testSubnet0a184f9301ae39a86,
+								testSubnet0b495d7c212fc92a1,
+								testSubnet0c86ec9ecde7b9bf7,
+								testSubnet06497e6063c209f4d,
 							},
-							"tags": map[string]string{
-								"tg1": "tv1",
+							tagsKey: map[string]string{
+								testTg1: testTv1,
 							},
-							"taints": []interface{}{
+							taintsKey: []interface{}{
 								map[string]interface{}{
-									"effect": eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-									"key":    "tkey",
-									"value":  "tvalue",
+									effectKey: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
+									keyKey:    testTkey,
+									valueKey:  testTvalue,
 								},
 							},
-							"update_config": []interface{}{
+							updateConfigKey: []interface{}{
 								map[string]interface{}{
-									"max_unavailable_nodes":      "10",
-									"max_unavailable_percentage": "12",
+									maxUnavailableNodesKey:      "10",
+									maxUnavailablePercentageKey: "12",
 								},
 							},
-							"release_version": "1.26.4-20230703",
+							releaseVersionKey: test126420230703,
 						},
 					},
 				},
 				map[string]interface{}{
-					"info": []interface{}{
+					infoKey: []interface{}{
 						map[string]interface{}{
-							"description": "test np",
-							"name":        "test-np-2",
+							testDescription: testTestNp,
+							NameKey:         "test-np-2",
 						},
 					},
-					"spec": []interface{}{
+					specKey: []interface{}{
 						map[string]interface{}{
-							"ami_type": "CUSTOM",
-							"ami_info": []interface{}{
+							amiTypeKey: testCustom,
+							amiInfoKey: []interface{}{
 								map[string]interface{}{
-									"ami_id":                 "ami-2qu8409oisdfj0qw",
-									"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+									amiIDKey:                testAmi2qu8409oisdfj0qw,
+									overrideBootstrapCmdKey: testBootstrapCmd,
 								},
 							},
-							"capacity_type": "ON_DEMAND",
-							"instance_types": []string{
-								"t3.medium",
-								"m3.large",
+							capacityTypeKey: testOnDemand,
+							instanceTypesKey: []string{
+								testT3medium,
+								testM3large,
 							},
-							"launch_template": []interface{}{
+							launchTemplateKey: []interface{}{
 								map[string]interface{}{
-									"id":      "",
-									"name":    "templ",
-									"version": "7",
+									"id":       "",
+									NameKey:    testTempl,
+									versionKey: "7",
 								},
 							},
-							"node_labels": map[string]string{
-								"key1": "val1",
+							nodeLabelsKey: map[string]string{
+								testKey1: testVal1,
 							},
-							"remote_access": []interface{}{
+							remoteAccessKey: []interface{}{
 								map[string]interface{}{
-									"security_groups": []string{
-										"sg-0a6768722e9716768",
+									securityGroupsKey: []string{
+										testSg0a6768722e9716768,
 									},
-									"ssh_key": "test-key",
+									sshKeyKey: testTestKey,
 								},
 							},
-							"role_arn":       "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-							"root_disk_size": int32(20),
-							"scaling_config": []interface{}{
+							roleArnKey:      testArnAwsIam000000000000,
+							rootDiskSizeKey: int32(20),
+							scalingConfigKey: []interface{}{
 								map[string]interface{}{
-									"desired_size": int32(8),
-									"max_size":     int32(16),
-									"min_size":     int32(3),
+									desiredSizeKey: int32(8),
+									maxSizeKey:     int32(16),
+									minSizeKey:     int32(3),
 								},
 							},
-							"subnet_ids": []string{
-								"subnet-0a184f9301ae39a86",
-								"subnet-0b495d7c212fc92a1",
-								"subnet-0c86ec9ecde7b9bf7",
-								"subnet-06497e6063c209f4d",
+							subnetIdsKey: []string{
+								testSubnet0a184f9301ae39a86,
+								testSubnet0b495d7c212fc92a1,
+								testSubnet0c86ec9ecde7b9bf7,
+								testSubnet06497e6063c209f4d,
 							},
-							"tags": map[string]string{
-								"tg1": "tv1",
+							tagsKey: map[string]string{
+								testTg1: testTv1,
 							},
-							"taints": []interface{}{
+							taintsKey: []interface{}{
 								map[string]interface{}{
-									"effect": eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-									"key":    "tkey",
-									"value":  "tvalue",
+									effectKey: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
+									keyKey:    testTkey,
+									valueKey:  testTvalue,
 								},
 							},
-							"update_config": []interface{}{
+							updateConfigKey: []interface{}{
 								map[string]interface{}{
-									"max_unavailable_nodes":      "10",
-									"max_unavailable_percentage": "12",
+									maxUnavailableNodesKey:      "10",
+									maxUnavailablePercentageKey: "12",
 								},
 							},
-							"release_version": "1.26.4-20230703",
+							releaseVersionKey: test126420230703,
 						},
 					},
 				},
@@ -290,79 +290,79 @@ func TestFlattenNodepool(t *testing.T) {
 		{
 			description: "full nodepool",
 			getInput: func() *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition {
-				return getNodepoolDef("test-np")
+				return getNodepoolDef(testTestNp2)
 			},
 			expected: map[string]interface{}{
-				"info": []interface{}{
+				infoKey: []interface{}{
 					map[string]interface{}{
-						"description": "test np",
-						"name":        "test-np",
+						testDescription: testTestNp,
+						NameKey:         testTestNp2,
 					},
 				},
-				"spec": []interface{}{
+				specKey: []interface{}{
 					map[string]interface{}{
-						"ami_type": "CUSTOM",
-						"ami_info": []interface{}{
+						amiTypeKey: testCustom,
+						amiInfoKey: []interface{}{
 							map[string]interface{}{
-								"ami_id":                 "ami-2qu8409oisdfj0qw",
-								"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+								amiIDKey:                testAmi2qu8409oisdfj0qw,
+								overrideBootstrapCmdKey: testBootstrapCmd,
 							},
 						},
-						"capacity_type": "ON_DEMAND",
-						"instance_types": []string{
-							"t3.medium",
-							"m3.large",
+						capacityTypeKey: testOnDemand,
+						instanceTypesKey: []string{
+							testT3medium,
+							testM3large,
 						},
-						"launch_template": []interface{}{
+						launchTemplateKey: []interface{}{
 							map[string]interface{}{
-								"id":      "",
-								"name":    "templ",
-								"version": "7",
+								"id":       "",
+								NameKey:    testTempl,
+								versionKey: "7",
 							},
 						},
-						"node_labels": map[string]string{
-							"key1": "val1",
+						nodeLabelsKey: map[string]string{
+							testKey1: testVal1,
 						},
-						"remote_access": []interface{}{
+						remoteAccessKey: []interface{}{
 							map[string]interface{}{
-								"security_groups": []string{
-									"sg-0a6768722e9716768",
+								securityGroupsKey: []string{
+									testSg0a6768722e9716768,
 								},
-								"ssh_key": "test-key",
+								sshKeyKey: testTestKey,
 							},
 						},
-						"role_arn":       "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-						"root_disk_size": int32(20),
-						"scaling_config": []interface{}{
+						roleArnKey:      testArnAwsIam000000000000,
+						rootDiskSizeKey: int32(20),
+						scalingConfigKey: []interface{}{
 							map[string]interface{}{
-								"desired_size": int32(8),
-								"max_size":     int32(16),
-								"min_size":     int32(3),
+								desiredSizeKey: int32(8),
+								maxSizeKey:     int32(16),
+								minSizeKey:     int32(3),
 							},
 						},
-						"subnet_ids": []string{
-							"subnet-0a184f9301ae39a86",
-							"subnet-0b495d7c212fc92a1",
-							"subnet-0c86ec9ecde7b9bf7",
-							"subnet-06497e6063c209f4d",
+						subnetIdsKey: []string{
+							testSubnet0a184f9301ae39a86,
+							testSubnet0b495d7c212fc92a1,
+							testSubnet0c86ec9ecde7b9bf7,
+							testSubnet06497e6063c209f4d,
 						},
-						"tags": map[string]string{
-							"tg1": "tv1",
+						tagsKey: map[string]string{
+							testTg1: testTv1,
 						},
-						"taints": []interface{}{
+						taintsKey: []interface{}{
 							map[string]interface{}{
-								"effect": eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-								"key":    "tkey",
-								"value":  "tvalue",
+								effectKey: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
+								keyKey:    testTkey,
+								valueKey:  testTvalue,
 							},
 						},
-						"update_config": []interface{}{
+						updateConfigKey: []interface{}{
 							map[string]interface{}{
-								"max_unavailable_nodes":      "10",
-								"max_unavailable_percentage": "12",
+								maxUnavailableNodesKey:      "10",
+								maxUnavailablePercentageKey: "12",
 							},
 						},
-						"release_version": "1.26.4-20230703",
+						releaseVersionKey: test126420230703,
 					},
 				},
 			},
@@ -395,68 +395,68 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			getInput:    getNodepoolSpec,
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type": "CUSTOM",
-					"ami_info": []interface{}{
+					amiTypeKey: testCustom,
+					amiInfoKey: []interface{}{
 						map[string]interface{}{
-							"ami_id":                 "ami-2qu8409oisdfj0qw",
-							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+							amiIDKey:                testAmi2qu8409oisdfj0qw,
+							overrideBootstrapCmdKey: testBootstrapCmd,
 						},
 					},
-					"capacity_type": "ON_DEMAND",
-					"instance_types": []string{
-						"t3.medium",
-						"m3.large",
+					capacityTypeKey: testOnDemand,
+					instanceTypesKey: []string{
+						testT3medium,
+						testM3large,
 					},
-					"launch_template": []interface{}{
+					launchTemplateKey: []interface{}{
 						map[string]interface{}{
-							"id":      "",
-							"name":    "templ",
-							"version": "7",
+							"id":       "",
+							NameKey:    testTempl,
+							versionKey: "7",
 						},
 					},
-					"node_labels": map[string]string{
-						"key1": "val1",
+					nodeLabelsKey: map[string]string{
+						testKey1: testVal1,
 					},
-					"remote_access": []interface{}{
+					remoteAccessKey: []interface{}{
 						map[string]interface{}{
-							"security_groups": []string{
-								"sg-0a6768722e9716768",
+							securityGroupsKey: []string{
+								testSg0a6768722e9716768,
 							},
-							"ssh_key": "test-key",
+							sshKeyKey: testTestKey,
 						},
 					},
-					"role_arn":       "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-					"root_disk_size": int32(20),
-					"scaling_config": []interface{}{
+					roleArnKey:      testArnAwsIam000000000000,
+					rootDiskSizeKey: int32(20),
+					scalingConfigKey: []interface{}{
 						map[string]interface{}{
-							"desired_size": int32(8),
-							"max_size":     int32(16),
-							"min_size":     int32(3),
+							desiredSizeKey: int32(8),
+							maxSizeKey:     int32(16),
+							minSizeKey:     int32(3),
 						},
 					},
-					"subnet_ids": []string{
-						"subnet-0a184f9301ae39a86",
-						"subnet-0b495d7c212fc92a1",
-						"subnet-0c86ec9ecde7b9bf7",
-						"subnet-06497e6063c209f4d",
+					subnetIdsKey: []string{
+						testSubnet0a184f9301ae39a86,
+						testSubnet0b495d7c212fc92a1,
+						testSubnet0c86ec9ecde7b9bf7,
+						testSubnet06497e6063c209f4d,
 					},
-					"tags": map[string]string{
-						"tg1": "tv1",
+					tagsKey: map[string]string{
+						testTg1: testTv1,
 					},
-					"taints": []interface{}{
+					taintsKey: []interface{}{
 						map[string]interface{}{
-							"effect": eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-							"key":    "tkey",
-							"value":  "tvalue",
+							effectKey: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
+							keyKey:    testTkey,
+							valueKey:  testTvalue,
 						},
 					},
-					"update_config": []interface{}{
+					updateConfigKey: []interface{}{
 						map[string]interface{}{
-							"max_unavailable_nodes":      "10",
-							"max_unavailable_percentage": "12",
+							maxUnavailableNodesKey:      "10",
+							maxUnavailablePercentageKey: "12",
 						},
 					},
-					"release_version": "1.26.4-20230703",
+					releaseVersionKey: test126420230703,
 				},
 			},
 		},
@@ -474,68 +474,68 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type": "CUSTOM",
-					"ami_info": []interface{}{
+					amiTypeKey: testCustom,
+					amiInfoKey: []interface{}{
 						map[string]interface{}{
-							"ami_id":                 "ami-2qu8409oisdfj0qw",
-							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+							amiIDKey:                testAmi2qu8409oisdfj0qw,
+							overrideBootstrapCmdKey: testBootstrapCmd,
 						},
 					},
-					"capacity_type": "ON_DEMAND",
-					"instance_types": []string{
-						"t3.medium",
-						"m3.large",
+					capacityTypeKey: testOnDemand,
+					instanceTypesKey: []string{
+						testT3medium,
+						testM3large,
 					},
-					"launch_template": []interface{}{
+					launchTemplateKey: []interface{}{
 						map[string]interface{}{
-							"id":      "lt-id",
-							"name":    "",
-							"version": "7",
+							"id":       "lt-id",
+							NameKey:    "",
+							versionKey: "7",
 						},
 					},
-					"node_labels": map[string]string{
-						"key1": "val1",
+					nodeLabelsKey: map[string]string{
+						testKey1: testVal1,
 					},
-					"remote_access": []interface{}{
+					remoteAccessKey: []interface{}{
 						map[string]interface{}{
-							"security_groups": []string{
-								"sg-0a6768722e9716768",
+							securityGroupsKey: []string{
+								testSg0a6768722e9716768,
 							},
-							"ssh_key": "test-key",
+							sshKeyKey: testTestKey,
 						},
 					},
-					"role_arn":       "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-					"root_disk_size": int32(20),
-					"scaling_config": []interface{}{
+					roleArnKey:      testArnAwsIam000000000000,
+					rootDiskSizeKey: int32(20),
+					scalingConfigKey: []interface{}{
 						map[string]interface{}{
-							"desired_size": int32(8),
-							"max_size":     int32(16),
-							"min_size":     int32(3),
+							desiredSizeKey: int32(8),
+							maxSizeKey:     int32(16),
+							minSizeKey:     int32(3),
 						},
 					},
-					"subnet_ids": []string{
-						"subnet-0a184f9301ae39a86",
-						"subnet-0b495d7c212fc92a1",
-						"subnet-0c86ec9ecde7b9bf7",
-						"subnet-06497e6063c209f4d",
+					subnetIdsKey: []string{
+						testSubnet0a184f9301ae39a86,
+						testSubnet0b495d7c212fc92a1,
+						testSubnet0c86ec9ecde7b9bf7,
+						testSubnet06497e6063c209f4d,
 					},
-					"tags": map[string]string{
-						"tg1": "tv1",
+					tagsKey: map[string]string{
+						testTg1: testTv1,
 					},
-					"taints": []interface{}{
+					taintsKey: []interface{}{
 						map[string]interface{}{
-							"effect": eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-							"key":    "tkey",
-							"value":  "tvalue",
+							effectKey: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
+							keyKey:    testTkey,
+							valueKey:  testTvalue,
 						},
 					},
-					"update_config": []interface{}{
+					updateConfigKey: []interface{}{
 						map[string]interface{}{
-							"max_unavailable_nodes":      "10",
-							"max_unavailable_percentage": "12",
+							maxUnavailableNodesKey:      "10",
+							maxUnavailablePercentageKey: "12",
 						},
 					},
-					"release_version": "1.26.4-20230703",
+					releaseVersionKey: test126420230703,
 				},
 			},
 		},
@@ -549,60 +549,60 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type": "CUSTOM",
-					"ami_info": []interface{}{
+					amiTypeKey: testCustom,
+					amiInfoKey: []interface{}{
 						map[string]interface{}{
-							"ami_id":                 "ami-2qu8409oisdfj0qw",
-							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+							amiIDKey:                testAmi2qu8409oisdfj0qw,
+							overrideBootstrapCmdKey: testBootstrapCmd,
 						},
 					},
-					"capacity_type": "ON_DEMAND",
-					"instance_types": []string{
-						"t3.medium",
-						"m3.large",
+					capacityTypeKey: testOnDemand,
+					instanceTypesKey: []string{
+						testT3medium,
+						testM3large,
 					},
-					"launch_template": []interface{}{
+					launchTemplateKey: []interface{}{
 						map[string]interface{}{
-							"id":      "",
-							"name":    "templ",
-							"version": "7",
+							"id":       "",
+							NameKey:    testTempl,
+							versionKey: "7",
 						},
 					},
-					"node_labels": map[string]string{
-						"key1": "val1",
+					nodeLabelsKey: map[string]string{
+						testKey1: testVal1,
 					},
-					"role_arn":       "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-					"root_disk_size": int32(20),
-					"scaling_config": []interface{}{
+					roleArnKey:      testArnAwsIam000000000000,
+					rootDiskSizeKey: int32(20),
+					scalingConfigKey: []interface{}{
 						map[string]interface{}{
-							"desired_size": int32(8),
-							"max_size":     int32(16),
-							"min_size":     int32(3),
+							desiredSizeKey: int32(8),
+							maxSizeKey:     int32(16),
+							minSizeKey:     int32(3),
 						},
 					},
-					"subnet_ids": []string{
-						"subnet-0a184f9301ae39a86",
-						"subnet-0b495d7c212fc92a1",
-						"subnet-0c86ec9ecde7b9bf7",
-						"subnet-06497e6063c209f4d",
+					subnetIdsKey: []string{
+						testSubnet0a184f9301ae39a86,
+						testSubnet0b495d7c212fc92a1,
+						testSubnet0c86ec9ecde7b9bf7,
+						testSubnet06497e6063c209f4d,
 					},
-					"tags": map[string]string{
-						"tg1": "tv1",
+					tagsKey: map[string]string{
+						testTg1: testTv1,
 					},
-					"taints": []interface{}{
+					taintsKey: []interface{}{
 						map[string]interface{}{
-							"effect": eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-							"key":    "tkey",
-							"value":  "tvalue",
+							effectKey: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
+							keyKey:    testTkey,
+							valueKey:  testTvalue,
 						},
 					},
-					"update_config": []interface{}{
+					updateConfigKey: []interface{}{
 						map[string]interface{}{
-							"max_unavailable_nodes":      "10",
-							"max_unavailable_percentage": "12",
+							maxUnavailableNodesKey:      "10",
+							maxUnavailablePercentageKey: "12",
 						},
 					},
-					"release_version": "1.26.4-20230703",
+					releaseVersionKey: test126420230703,
 				},
 			},
 		},
@@ -616,67 +616,67 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type": "CUSTOM",
-					"ami_info": []interface{}{
+					amiTypeKey: testCustom,
+					amiInfoKey: []interface{}{
 						map[string]interface{}{
-							"ami_id":                 "ami-2qu8409oisdfj0qw",
-							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+							amiIDKey:                testAmi2qu8409oisdfj0qw,
+							overrideBootstrapCmdKey: testBootstrapCmd,
 						},
 					},
-					"capacity_type": "ON_DEMAND",
-					"instance_types": []string{
-						"t3.medium",
-						"m3.large",
+					capacityTypeKey: testOnDemand,
+					instanceTypesKey: []string{
+						testT3medium,
+						testM3large,
 					},
-					"launch_template": []interface{}{
+					launchTemplateKey: []interface{}{
 						map[string]interface{}{
-							"id":      "",
-							"name":    "templ",
-							"version": "7",
+							"id":       "",
+							NameKey:    testTempl,
+							versionKey: "7",
 						},
 					},
-					"node_labels": map[string]string{
-						"key1": "val1",
+					nodeLabelsKey: map[string]string{
+						testKey1: testVal1,
 					},
-					"remote_access": []interface{}{
+					remoteAccessKey: []interface{}{
 						map[string]interface{}{
-							"security_groups": []string{
-								"sg-0a6768722e9716768",
+							securityGroupsKey: []string{
+								testSg0a6768722e9716768,
 							},
-							"ssh_key": "test-key",
+							sshKeyKey: testTestKey,
 						},
 					},
-					"role_arn": "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-					"scaling_config": []interface{}{
+					roleArnKey: testArnAwsIam000000000000,
+					scalingConfigKey: []interface{}{
 						map[string]interface{}{
-							"desired_size": int32(8),
-							"max_size":     int32(16),
-							"min_size":     int32(3),
+							desiredSizeKey: int32(8),
+							maxSizeKey:     int32(16),
+							minSizeKey:     int32(3),
 						},
 					},
-					"subnet_ids": []string{
-						"subnet-0a184f9301ae39a86",
-						"subnet-0b495d7c212fc92a1",
-						"subnet-0c86ec9ecde7b9bf7",
-						"subnet-06497e6063c209f4d",
+					subnetIdsKey: []string{
+						testSubnet0a184f9301ae39a86,
+						testSubnet0b495d7c212fc92a1,
+						testSubnet0c86ec9ecde7b9bf7,
+						testSubnet06497e6063c209f4d,
 					},
-					"tags": map[string]string{
-						"tg1": "tv1",
+					tagsKey: map[string]string{
+						testTg1: testTv1,
 					},
-					"taints": []interface{}{
+					taintsKey: []interface{}{
 						map[string]interface{}{
-							"effect": eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-							"key":    "tkey",
-							"value":  "tvalue",
+							effectKey: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
+							keyKey:    testTkey,
+							valueKey:  testTvalue,
 						},
 					},
-					"update_config": []interface{}{
+					updateConfigKey: []interface{}{
 						map[string]interface{}{
-							"max_unavailable_nodes":      "10",
-							"max_unavailable_percentage": "12",
+							maxUnavailableNodesKey:      "10",
+							maxUnavailablePercentageKey: "12",
 						},
 					},
-					"release_version": "1.26.4-20230703",
+					releaseVersionKey: test126420230703,
 				},
 			},
 		},
@@ -690,61 +690,61 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type": "CUSTOM",
-					"ami_info": []interface{}{
+					amiTypeKey: testCustom,
+					amiInfoKey: []interface{}{
 						map[string]interface{}{
-							"ami_id":                 "ami-2qu8409oisdfj0qw",
-							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+							amiIDKey:                testAmi2qu8409oisdfj0qw,
+							overrideBootstrapCmdKey: testBootstrapCmd,
 						},
 					},
-					"capacity_type":  "ON_DEMAND",
-					"root_disk_size": int32(20),
-					"instance_types": []string{
-						"t3.medium",
-						"m3.large",
+					capacityTypeKey: testOnDemand,
+					rootDiskSizeKey: int32(20),
+					instanceTypesKey: []string{
+						testT3medium,
+						testM3large,
 					},
-					"launch_template": []interface{}{
+					launchTemplateKey: []interface{}{
 						map[string]interface{}{
-							"id":      "",
-							"name":    "templ",
-							"version": "7",
+							"id":       "",
+							NameKey:    testTempl,
+							versionKey: "7",
 						},
 					},
-					"node_labels": map[string]string{
-						"key1": "val1",
+					nodeLabelsKey: map[string]string{
+						testKey1: testVal1,
 					},
-					"remote_access": []interface{}{
+					remoteAccessKey: []interface{}{
 						map[string]interface{}{
-							"security_groups": []string{
-								"sg-0a6768722e9716768",
+							securityGroupsKey: []string{
+								testSg0a6768722e9716768,
 							},
-							"ssh_key": "test-key",
+							sshKeyKey: testTestKey,
 						},
 					},
-					"role_arn": "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-					"subnet_ids": []string{
-						"subnet-0a184f9301ae39a86",
-						"subnet-0b495d7c212fc92a1",
-						"subnet-0c86ec9ecde7b9bf7",
-						"subnet-06497e6063c209f4d",
+					roleArnKey: testArnAwsIam000000000000,
+					subnetIdsKey: []string{
+						testSubnet0a184f9301ae39a86,
+						testSubnet0b495d7c212fc92a1,
+						testSubnet0c86ec9ecde7b9bf7,
+						testSubnet06497e6063c209f4d,
 					},
-					"tags": map[string]string{
-						"tg1": "tv1",
+					tagsKey: map[string]string{
+						testTg1: testTv1,
 					},
-					"taints": []interface{}{
+					taintsKey: []interface{}{
 						map[string]interface{}{
-							"effect": eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-							"key":    "tkey",
-							"value":  "tvalue",
+							effectKey: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
+							keyKey:    testTkey,
+							valueKey:  testTvalue,
 						},
 					},
-					"update_config": []interface{}{
+					updateConfigKey: []interface{}{
 						map[string]interface{}{
-							"max_unavailable_nodes":      "10",
-							"max_unavailable_percentage": "12",
+							maxUnavailableNodesKey:      "10",
+							maxUnavailablePercentageKey: "12",
 						},
 					},
-					"release_version": "1.26.4-20230703",
+					releaseVersionKey: test126420230703,
 				},
 			},
 		},
@@ -758,62 +758,62 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type": "CUSTOM",
-					"ami_info": []interface{}{
+					amiTypeKey: testCustom,
+					amiInfoKey: []interface{}{
 						map[string]interface{}{
-							"ami_id":                 "ami-2qu8409oisdfj0qw",
-							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+							amiIDKey:                testAmi2qu8409oisdfj0qw,
+							overrideBootstrapCmdKey: testBootstrapCmd,
 						},
 					},
-					"capacity_type": "ON_DEMAND",
-					"instance_types": []string{
-						"t3.medium",
-						"m3.large",
+					capacityTypeKey: testOnDemand,
+					instanceTypesKey: []string{
+						testT3medium,
+						testM3large,
 					},
-					"launch_template": []interface{}{
+					launchTemplateKey: []interface{}{
 						map[string]interface{}{
-							"id":      "",
-							"name":    "templ",
-							"version": "7",
+							"id":       "",
+							NameKey:    testTempl,
+							versionKey: "7",
 						},
 					},
-					"node_labels": map[string]string{
-						"key1": "val1",
+					nodeLabelsKey: map[string]string{
+						testKey1: testVal1,
 					},
-					"remote_access": []interface{}{
+					remoteAccessKey: []interface{}{
 						map[string]interface{}{
-							"security_groups": []string{
-								"sg-0a6768722e9716768",
+							securityGroupsKey: []string{
+								testSg0a6768722e9716768,
 							},
-							"ssh_key": "test-key",
+							sshKeyKey: testTestKey,
 						},
 					},
-					"role_arn":       "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-					"root_disk_size": int32(20),
-					"scaling_config": []interface{}{
+					roleArnKey:      testArnAwsIam000000000000,
+					rootDiskSizeKey: int32(20),
+					scalingConfigKey: []interface{}{
 						map[string]interface{}{
-							"desired_size": int32(8),
-							"max_size":     int32(16),
-							"min_size":     int32(3),
+							desiredSizeKey: int32(8),
+							maxSizeKey:     int32(16),
+							minSizeKey:     int32(3),
 						},
 					},
-					"tags": map[string]string{
-						"tg1": "tv1",
+					tagsKey: map[string]string{
+						testTg1: testTv1,
 					},
-					"taints": []interface{}{
+					taintsKey: []interface{}{
 						map[string]interface{}{
-							"effect": eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-							"key":    "tkey",
-							"value":  "tvalue",
+							effectKey: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
+							keyKey:    testTkey,
+							valueKey:  testTvalue,
 						},
 					},
-					"update_config": []interface{}{
+					updateConfigKey: []interface{}{
 						map[string]interface{}{
-							"max_unavailable_nodes":      "10",
-							"max_unavailable_percentage": "12",
+							maxUnavailableNodesKey:      "10",
+							maxUnavailablePercentageKey: "12",
 						},
 					},
-					"release_version": "1.26.4-20230703",
+					releaseVersionKey: test126420230703,
 				},
 			},
 		},
@@ -827,61 +827,61 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type": "CUSTOM",
-					"ami_info": []interface{}{
+					amiTypeKey: testCustom,
+					amiInfoKey: []interface{}{
 						map[string]interface{}{
-							"ami_id":                 "ami-2qu8409oisdfj0qw",
-							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+							amiIDKey:                testAmi2qu8409oisdfj0qw,
+							overrideBootstrapCmdKey: testBootstrapCmd,
 						},
 					},
-					"capacity_type": "ON_DEMAND",
-					"instance_types": []string{
-						"t3.medium",
-						"m3.large",
+					capacityTypeKey: testOnDemand,
+					instanceTypesKey: []string{
+						testT3medium,
+						testM3large,
 					},
-					"launch_template": []interface{}{
+					launchTemplateKey: []interface{}{
 						map[string]interface{}{
-							"id":      "",
-							"name":    "templ",
-							"version": "7",
+							"id":       "",
+							NameKey:    testTempl,
+							versionKey: "7",
 						},
 					},
-					"node_labels": map[string]string{
-						"key1": "val1",
+					nodeLabelsKey: map[string]string{
+						testKey1: testVal1,
 					},
-					"remote_access": []interface{}{
+					remoteAccessKey: []interface{}{
 						map[string]interface{}{
-							"security_groups": []string{
-								"sg-0a6768722e9716768",
+							securityGroupsKey: []string{
+								testSg0a6768722e9716768,
 							},
-							"ssh_key": "test-key",
+							sshKeyKey: testTestKey,
 						},
 					},
-					"role_arn":       "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-					"root_disk_size": int32(20),
-					"scaling_config": []interface{}{
+					roleArnKey:      testArnAwsIam000000000000,
+					rootDiskSizeKey: int32(20),
+					scalingConfigKey: []interface{}{
 						map[string]interface{}{
-							"desired_size": int32(8),
-							"max_size":     int32(16),
-							"min_size":     int32(3),
+							desiredSizeKey: int32(8),
+							maxSizeKey:     int32(16),
+							minSizeKey:     int32(3),
 						},
 					},
-					"subnet_ids": []string{
-						"subnet-0a184f9301ae39a86",
-						"subnet-0b495d7c212fc92a1",
-						"subnet-0c86ec9ecde7b9bf7",
-						"subnet-06497e6063c209f4d",
+					subnetIdsKey: []string{
+						testSubnet0a184f9301ae39a86,
+						testSubnet0b495d7c212fc92a1,
+						testSubnet0c86ec9ecde7b9bf7,
+						testSubnet06497e6063c209f4d,
 					},
-					"tags": map[string]string{
-						"tg1": "tv1",
+					tagsKey: map[string]string{
+						testTg1: testTv1,
 					},
-					"update_config": []interface{}{
+					updateConfigKey: []interface{}{
 						map[string]interface{}{
-							"max_unavailable_nodes":      "10",
-							"max_unavailable_percentage": "12",
+							maxUnavailableNodesKey:      "10",
+							maxUnavailablePercentageKey: "12",
 						},
 					},
-					"release_version": "1.26.4-20230703",
+					releaseVersionKey: test126420230703,
 				},
 			},
 		},
@@ -895,62 +895,62 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type": "CUSTOM",
-					"ami_info": []interface{}{
+					amiTypeKey: testCustom,
+					amiInfoKey: []interface{}{
 						map[string]interface{}{
-							"ami_id":                 "ami-2qu8409oisdfj0qw",
-							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+							amiIDKey:                testAmi2qu8409oisdfj0qw,
+							overrideBootstrapCmdKey: testBootstrapCmd,
 						},
 					},
-					"capacity_type": "ON_DEMAND",
-					"instance_types": []string{
-						"t3.medium",
-						"m3.large",
+					capacityTypeKey: testOnDemand,
+					instanceTypesKey: []string{
+						testT3medium,
+						testM3large,
 					},
-					"launch_template": []interface{}{
+					launchTemplateKey: []interface{}{
 						map[string]interface{}{
-							"id":      "",
-							"name":    "templ",
-							"version": "7",
+							"id":       "",
+							NameKey:    testTempl,
+							versionKey: "7",
 						},
 					},
-					"node_labels": map[string]string{
-						"key1": "val1",
+					nodeLabelsKey: map[string]string{
+						testKey1: testVal1,
 					},
-					"remote_access": []interface{}{
+					remoteAccessKey: []interface{}{
 						map[string]interface{}{
-							"security_groups": []string{
-								"sg-0a6768722e9716768",
+							securityGroupsKey: []string{
+								testSg0a6768722e9716768,
 							},
-							"ssh_key": "test-key",
+							sshKeyKey: testTestKey,
 						},
 					},
-					"role_arn":       "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-					"root_disk_size": int32(20),
-					"scaling_config": []interface{}{
+					roleArnKey:      testArnAwsIam000000000000,
+					rootDiskSizeKey: int32(20),
+					scalingConfigKey: []interface{}{
 						map[string]interface{}{
-							"desired_size": int32(8),
-							"max_size":     int32(16),
-							"min_size":     int32(3),
+							desiredSizeKey: int32(8),
+							maxSizeKey:     int32(16),
+							minSizeKey:     int32(3),
 						},
 					},
-					"subnet_ids": []string{
-						"subnet-0a184f9301ae39a86",
-						"subnet-0b495d7c212fc92a1",
-						"subnet-0c86ec9ecde7b9bf7",
-						"subnet-06497e6063c209f4d",
+					subnetIdsKey: []string{
+						testSubnet0a184f9301ae39a86,
+						testSubnet0b495d7c212fc92a1,
+						testSubnet0c86ec9ecde7b9bf7,
+						testSubnet06497e6063c209f4d,
 					},
-					"tags": map[string]string{
-						"tg1": "tv1",
+					tagsKey: map[string]string{
+						testTg1: testTv1,
 					},
-					"taints": []interface{}{
+					taintsKey: []interface{}{
 						map[string]interface{}{
-							"effect": eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-							"key":    "tkey",
-							"value":  "tvalue",
+							effectKey: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
+							keyKey:    testTkey,
+							valueKey:  testTvalue,
 						},
 					},
-					"release_version": "1.26.4-20230703",
+					releaseVersionKey: test126420230703,
 				},
 			},
 		},
@@ -964,65 +964,65 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 			},
 			expected: []interface{}{
 				map[string]interface{}{
-					"ami_type": "CUSTOM",
-					"ami_info": []interface{}{
+					amiTypeKey: testCustom,
+					amiInfoKey: []interface{}{
 						map[string]interface{}{
-							"ami_id":                 "ami-2qu8409oisdfj0qw",
-							"override_bootstrap_cmd": "#!/bin/bash\n/etc/eks/bootstrap.sh tf-test-ami",
+							amiIDKey:                testAmi2qu8409oisdfj0qw,
+							overrideBootstrapCmdKey: testBootstrapCmd,
 						},
 					},
-					"capacity_type": "ON_DEMAND",
-					"instance_types": []string{
-						"t3.medium",
-						"m3.large",
+					capacityTypeKey: testOnDemand,
+					instanceTypesKey: []string{
+						testT3medium,
+						testM3large,
 					},
-					"launch_template": []interface{}{
+					launchTemplateKey: []interface{}{
 						map[string]interface{}{
-							"id":      "",
-							"name":    "templ",
-							"version": "7",
+							"id":       "",
+							NameKey:    testTempl,
+							versionKey: "7",
 						},
 					},
-					"node_labels": map[string]string{
-						"key1": "val1",
+					nodeLabelsKey: map[string]string{
+						testKey1: testVal1,
 					},
-					"remote_access": []interface{}{
+					remoteAccessKey: []interface{}{
 						map[string]interface{}{
-							"ssh_key": "test-key",
+							sshKeyKey: testTestKey,
 						},
 					},
-					"role_arn":       "arn:aws:iam::000000000000:role/control-plane.1234567890123467890.eks.tmc.cloud.vmware.com",
-					"root_disk_size": int32(20),
-					"scaling_config": []interface{}{
+					roleArnKey:      testArnAwsIam000000000000,
+					rootDiskSizeKey: int32(20),
+					scalingConfigKey: []interface{}{
 						map[string]interface{}{
-							"desired_size": int32(8),
-							"max_size":     int32(16),
-							"min_size":     int32(3),
+							desiredSizeKey: int32(8),
+							maxSizeKey:     int32(16),
+							minSizeKey:     int32(3),
 						},
 					},
-					"subnet_ids": []string{
-						"subnet-0a184f9301ae39a86",
-						"subnet-0b495d7c212fc92a1",
-						"subnet-0c86ec9ecde7b9bf7",
-						"subnet-06497e6063c209f4d",
+					subnetIdsKey: []string{
+						testSubnet0a184f9301ae39a86,
+						testSubnet0b495d7c212fc92a1,
+						testSubnet0c86ec9ecde7b9bf7,
+						testSubnet06497e6063c209f4d,
 					},
-					"tags": map[string]string{
-						"tg1": "tv1",
+					tagsKey: map[string]string{
+						testTg1: testTv1,
 					},
-					"taints": []interface{}{
+					taintsKey: []interface{}{
 						map[string]interface{}{
-							"effect": eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
-							"key":    "tkey",
-							"value":  "tvalue",
+							effectKey: eksmodel.NewVmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffect(eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaintEffectPREFERNOSCHEDULE),
+							keyKey:    testTkey,
+							valueKey:  testTvalue,
 						},
 					},
-					"update_config": []interface{}{
+					updateConfigKey: []interface{}{
 						map[string]interface{}{
-							"max_unavailable_nodes":      "10",
-							"max_unavailable_percentage": "12",
+							maxUnavailableNodesKey:      "10",
+							maxUnavailablePercentageKey: "12",
 						},
 					},
-					"release_version": "1.26.4-20230703",
+					releaseVersionKey: test126420230703,
 				},
 			},
 		},
@@ -1039,7 +1039,7 @@ func TestFlattenNodepoolSpec(t *testing.T) {
 func getNodepoolDef(name string) *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition {
 	return &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{
 		Info: &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolInfo{
-			Description: "test np",
+			Description: testTestNp,
 			Name:        name,
 		},
 		Spec: getNodepoolSpec(),

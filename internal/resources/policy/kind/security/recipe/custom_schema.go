@@ -22,13 +22,13 @@ var Custom = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			AuditKey: {
 				Type:        schema.TypeBool,
-				Description: "Audit (dry-run)",
+				Description: auditDryRunDescription,
 				Optional:    true,
 				Default:     false,
 			},
 			DisableNativePspKey: {
 				Type:        schema.TypeBool,
-				Description: "Disable native pod security policy",
+				Description: disableNativePspDescription,
 				Optional:    true,
 				Default:     false,
 			},
@@ -365,10 +365,10 @@ var runAsUser = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			ruleKey: {
 				Type:         schema.TypeString,
-				Description:  "Rule",
+				Description:  runAsRuleDescription,
 				Optional:     true,
-				Default:      "RunAsAny",
-				ValidateFunc: validation.StringInSlice([]string{"RunAsAny", "MustRunAsNonRoot", "MustRunAs"}, false),
+				Default:      runAsAnyValue,
+				ValidateFunc: validation.StringInSlice([]string{runAsAnyValue, "MustRunAsNonRoot", mustRunAsValue}, false),
 			},
 			rangesKey: userIDRanges,
 		},
@@ -486,10 +486,10 @@ var runAsGroup = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			ruleKey: {
 				Type:         schema.TypeString,
-				Description:  "Rule",
+				Description:  runAsRuleDescription,
 				Optional:     true,
-				Default:      "RunAsAny",
-				ValidateFunc: validation.StringInSlice([]string{"RunAsAny", "MayRunAs", "MustRunAs"}, false),
+				Default:      runAsAnyValue,
+				ValidateFunc: validation.StringInSlice([]string{runAsAnyValue, mayRunAsValue, mustRunAsValue}, false),
 			},
 			rangesKey: groupIDRanges,
 		},
@@ -607,10 +607,10 @@ var supplementalGroups = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			ruleKey: {
 				Type:         schema.TypeString,
-				Description:  "Rule",
+				Description:  runAsRuleDescription,
 				Optional:     true,
-				Default:      "RunAsAny",
-				ValidateFunc: validation.StringInSlice([]string{"RunAsAny", "MayRunAs", "MustRunAs"}, false),
+				Default:      runAsAnyValue,
+				ValidateFunc: validation.StringInSlice([]string{runAsAnyValue, mayRunAsValue, mustRunAsValue}, false),
 			},
 			rangesKey: groupIDRanges,
 		},
@@ -671,10 +671,10 @@ var fsGroup = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			ruleKey: {
 				Type:         schema.TypeString,
-				Description:  "Rule",
+				Description:  runAsRuleDescription,
 				Optional:     true,
-				Default:      "RunAsAny",
-				ValidateFunc: validation.StringInSlice([]string{"RunAsAny", "MayRunAs", "MustRunAs"}, false),
+				Default:      runAsAnyValue,
+				ValidateFunc: validation.StringInSlice([]string{runAsAnyValue, mayRunAsValue, mustRunAsValue}, false),
 			},
 			rangesKey: groupIDRanges,
 		},

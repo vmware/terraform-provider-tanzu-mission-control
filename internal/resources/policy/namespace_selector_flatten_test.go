@@ -12,6 +12,10 @@ import (
 	policymodel "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/policy"
 )
 
+const (
+	testExists = "Exists"
+)
+
 func TestFlattenNamespaceSelector(t *testing.T) {
 	t.Parallel()
 
@@ -39,7 +43,7 @@ func TestFlattenNamespaceSelector(t *testing.T) {
 					},
 					{
 						Key:      "k2",
-						Operator: "Exists",
+						Operator: testExists,
 						Values:   []string{},
 					},
 				},
@@ -57,7 +61,7 @@ func TestFlattenNamespaceSelector(t *testing.T) {
 						},
 						map[string]interface{}{
 							KeyKey:      "k2",
-							OperatorKey: "Exists",
+							OperatorKey: testExists,
 							ValuesKey:   []string{},
 						},
 					},

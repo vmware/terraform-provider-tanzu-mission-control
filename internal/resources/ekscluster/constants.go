@@ -15,6 +15,7 @@ const (
 	waitKey                    = "ready_wait_timeout"
 	clusterGroupKey            = "cluster_group"
 	clusterGroupDefaultValue   = "default"
+	eksProvisionerName         = "eks"
 	proxyNameKey               = "proxy"
 	configKey                  = "config"
 	nodepoolKey                = "nodepool"

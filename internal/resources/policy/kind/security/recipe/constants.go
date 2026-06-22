@@ -41,4 +41,10 @@ const (
 	forbiddenSysctlsKey          = "forbidden_sysctls"
 	allowedProfilesKey           = "allowed_profiles"
 	allowedLocalhostFilesKey     = "allowed_localhost_files"
+	auditDryRunDescription       = "Audit (dry-run)"
+	disableNativePspDescription  = "Disable native pod security policy"
+	runAsRuleDescription         = "Rule"
+	runAsAnyValue                = "RunAsAny"
+	mustRunAsValue               = "MustRunAs"
+	mayRunAsValue                = "MayRunAs"
 )

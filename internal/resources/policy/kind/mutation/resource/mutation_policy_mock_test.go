@@ -33,6 +33,9 @@ const (
 	clustergroups = "clustergroups"
 	org           = "organization"
 	apiKind       = "policies"
+
+	testKey1 = "key1"
+	testKey2 = "key2"
 )
 
 func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
@@ -59,8 +62,8 @@ func (testConfig *testAcceptanceConfig) setUpClusterGroupPolicyEndpointMocks(t *
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			Description: "description",
 			Labels: map[string]string{
-				"key1": "value11",
-				"key2": "value22",
+				testKey1: "value11",
+				testKey2: "value22",
 			},
 			UID:             fmt.Sprintf("%s-org-nw-policy", recipe),
 			ResourceVersion: "v1",
@@ -96,8 +99,8 @@ func (testConfig *testAcceptanceConfig) setUpClusterGroupEndPointMocks(t *testin
 				UID:         "12345",
 				Description: "resource with description",
 				Labels: map[string]string{
-					"key1": "value1",
-					"key2": "value2",
+					testKey1: "value1",
+					testKey2: "value2",
 				},
 			},
 		},
@@ -160,8 +163,8 @@ func (testConfig *testAcceptanceConfig) generateOrgPolicy(recipe string) *policy
 		Meta: &objectmetamodel.VmwareTanzuCoreV1alpha1ObjectMeta{
 			Description: "description",
 			Labels: map[string]string{
-				"key1": "value11",
-				"key2": "value22",
+				testKey1: "value11",
+				testKey2: "value22",
 			},
 			UID:             fmt.Sprintf("%s-org-nw-policy", recipe),
 			ResourceVersion: "v1",

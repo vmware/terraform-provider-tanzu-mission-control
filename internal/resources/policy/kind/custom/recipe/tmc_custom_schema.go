@@ -37,7 +37,7 @@ var TMCCustomSchema = &schema.Schema{
 			},
 			AuditKey: {
 				Type:        schema.TypeBool,
-				Description: "Audit (dry-run).",
+				Description: auditDryRunDotDescription,
 				Optional:    true,
 				Default:     false,
 			},

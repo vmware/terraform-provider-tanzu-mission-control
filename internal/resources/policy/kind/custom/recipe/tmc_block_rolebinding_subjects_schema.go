@@ -26,13 +26,13 @@ var TMCBlockRolebindingSubjects = &schema.Schema{
 		Schema: map[string]*schema.Schema{
 			AuditKey: {
 				Type:        schema.TypeBool,
-				Description: "Audit (dry-run).",
+				Description: auditDryRunDotDescription,
 				Optional:    true,
 				Default:     false,
 			},
 			ParametersKey: {
 				Type:        schema.TypeList,
-				Description: "Parameters.",
+				Description: parametersDotDescription,
 				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
