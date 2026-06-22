@@ -89,13 +89,14 @@ func (testConfig *testAcceptanceConfig) getTestGitRepositoryDataSourceBasicConfi
 
 // checkGitRepositoryDataSourceAttributes checks to get git repository creation.
 func (testConfig *testAcceptanceConfig) checkGitRepositoryDataSourceAttributes() resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
+	metaChecks := MetaDataSourceAttributeCheck(testConfig.GitRepositoryDataSourceName, testConfig.GitRepositoryResourceName)
+	check := make([]resource.TestCheckFunc, 0, 3+len(metaChecks))
+	check = append(check,
 		testConfig.verifyGitRepositoryDataSourceCreation(testConfig.GitRepositoryDataSourceName),
 		resource.TestCheckResourceAttrPair(testConfig.GitRepositoryDataSourceName, "name", testConfig.GitRepositoryResourceName, "name"),
 		resource.TestCheckResourceAttrSet(testConfig.GitRepositoryDataSourceName, "id"),
-	}
-
-	check = append(check, MetaDataSourceAttributeCheck(testConfig.GitRepositoryDataSourceName, testConfig.GitRepositoryResourceName)...)
+	)
+	check = append(check, metaChecks...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }

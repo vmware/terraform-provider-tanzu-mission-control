@@ -471,7 +471,7 @@ func flattenUpdateConfig(item *eksmodel.VmwareTanzuManageV1alpha1EksclusterNodep
 }
 
 func constructNodepools(nodepoolsDefData []interface{}) []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition {
-	nodepools := []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition{}
+	nodepools := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolDefinition, 0, len(nodepoolsDefData))
 
 	for _, npDefData := range nodepoolsDefData {
 		data, _ := npDefData.(map[string]interface{})
@@ -713,7 +713,7 @@ func constructUpdateConfig(data []interface{}) *eksmodel.VmwareTanzuManageV1alph
 }
 
 func constructTaints(taintsData []interface{}) []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaint {
-	taints := []*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaint{}
+	taints := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaint, 0, len(taintsData))
 
 	for _, data := range taintsData {
 		taint := &eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolTaint{}

@@ -77,7 +77,7 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 		Rid: "test_rid",
 		UID: "test_uid",
 	}
-	referenceArray := make([]*objectmetamodel.VmwareTanzuCoreV1alpha1ObjectReference, 0)
+	referenceArray := make([]*objectmetamodel.VmwareTanzuCoreV1alpha1ObjectReference, 0, 1)
 	referenceArray = append(referenceArray, &reference)
 
 	postResponseModel := &eksmodel.VmwareTanzuManageV1alpha1EksclusterEksCluster{
@@ -149,9 +149,9 @@ func setupHTTPMocks(t *testing.T, clusterName string) {
 	}
 
 	// GET Nodepools mock setup
-	nodepools := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, 0)
-	nodepoolRequests := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest, 0)
-	nodepoolResponses := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIResponse, 0)
+	nodepools := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolNodepool, 0, len(nps))
+	nodepoolRequests := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIRequest, 0, len(nps))
+	nodepoolResponses := make([]*eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolAPIResponse, 0, len(nps))
 	nodepoolReadyPhase := eksmodel.VmwareTanzuManageV1alpha1EksclusterNodepoolStatusPhaseREADY
 
 	for count, nodepool := range nps {

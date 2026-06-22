@@ -241,7 +241,7 @@ func formatAggregationRuleData(tfAggregationRule []interface{}, modelAggregation
 		}
 	}
 
-	aggregationRule = make([]interface{}, 0)
+	aggregationRule = make([]interface{}, 0, 1)
 	aggregationRuleMap := make(map[string]interface{})
 	aggregationRuleMap[ClusterRoleSelectorKey] = clusterRoleSelector
 	aggregationRule = append(aggregationRule, aggregationRuleMap)

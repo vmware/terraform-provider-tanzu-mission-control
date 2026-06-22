@@ -54,12 +54,13 @@ func TestAcceptanceForWorkspaceResource(t *testing.T) {
 }
 
 func checkResourceAttributes(provider *schema.Provider, resourceName, workspaceName string) resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
+	metaChecks := testhelper.MetaResourceAttributeCheck(resourceName)
+	check := make([]resource.TestCheckFunc, 0, 2+len(metaChecks))
+	check = append(check,
 		verifyWorkspaceResourceCreation(provider, resourceName, workspaceName),
 		resource.TestCheckResourceAttr(resourceName, "name", workspaceName),
-	}
-
-	check = append(check, testhelper.MetaResourceAttributeCheck(resourceName)...)
+	)
+	check = append(check, metaChecks...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }

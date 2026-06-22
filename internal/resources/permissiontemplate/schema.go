@@ -96,7 +96,7 @@ var undefinedTemplateValuesSchema = &schema.Schema{
 func buildCapabilityProviderDescription(schemaKey string) (description string) {
 	if schemaKey == CapabilityKey {
 		description = "The Tanzu capability of the credentials."
-		validValues := make([]string, 0)
+		validValues := make([]string, 0, len(capabilityProviderMap))
 
 		for k, v := range capabilityProviderMap {
 			valueDescription := fmt.Sprintf("When %s is set to '%s' %s must be set to '%s'.", CapabilityKey, k, ProviderKey, v)
@@ -108,7 +108,7 @@ func buildCapabilityProviderDescription(schemaKey string) (description string) {
 		description = fmt.Sprintf("%s\nValid values are: %v", description, validValues)
 	} else if schemaKey == ProviderKey {
 		description = "The Tanzu provider of the credentials."
-		validValues := make([]string, 0)
+		validValues := make([]string, 0, len(capabilityProviderMap))
 
 		for k, v := range capabilityProviderMap {
 			valueDescription := fmt.Sprintf("When %s is set to '%s' %s must be set to '%s'.", ProviderKey, v, CapabilityKey, k)

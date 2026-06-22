@@ -563,12 +563,7 @@ func (testConfig *testAcceptanceConfig) checkNetworkPolicyResourceAttributes(sco
 
 	switch scopeType {
 	case scope.WorkspaceScope:
-		workspaceName := testConfig.ScopeHelperResources.Workspace.Name
-
-		if _, found := os.LookupEnv("ENABLE_POLICY_ENV_TEST"); !found {
-		}
-
-		check = append(check, resource.TestCheckResourceAttr(testConfig.NetworkPolicyResourceName, "scope.0.workspace.0.workspace", workspaceName))
+		check = append(check, resource.TestCheckResourceAttr(testConfig.NetworkPolicyResourceName, "scope.0.workspace.0.workspace", testConfig.ScopeHelperResources.Workspace.Name))
 	case scope.OrganizationScope:
 		check = append(check, resource.TestCheckResourceAttr(testConfig.NetworkPolicyResourceName, "scope.0.organization.0.organization", testConfig.ScopeHelperResources.OrgID))
 	case scope.UnknownScope:
@@ -609,13 +604,8 @@ func (testConfig *testAcceptanceConfig) verifyNetworkPolicyResourceCreation(scop
 
 		switch scopeType {
 		case scope.WorkspaceScope:
-			workspaceName := testConfig.ScopeHelperResources.Workspace.Name
-
-			if _, found := os.LookupEnv("ENABLE_POLICY_ENV_TEST"); !found {
-			}
-
 			fn := &policyworkspacemodel.VmwareTanzuManageV1alpha1WorkspacePolicyFullName{
-				WorkspaceName: workspaceName,
+				WorkspaceName: testConfig.ScopeHelperResources.Workspace.Name,
 				Name:          testConfig.NetworkPolicyName + strings.ReplaceAll(string(recipe), "_", "-"),
 			}
 

@@ -131,7 +131,7 @@ func FlattenLabel(mutationLabel *policyrecipemutationmodel.VmwareTanzuManageV1al
 }
 
 func flattenKeyValuesFromLabel(keyValue *policyrecipemutationcommonmodel.KeyValue) []interface{} {
-	var labelKeyValue []interface{}
+	labelKeyValue := make([]interface{}, 0, 1)
 
 	flattenLabelValue := make(map[string]interface{})
 	flattenLabelValue[keyKey] = keyValue.Key

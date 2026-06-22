@@ -51,7 +51,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 		Rid: "test_rid",
 		UID: "test_uid",
 	}
-	referenceArray := make([]*objectmetamodel.VmwareTanzuCoreV1alpha1ObjectReference, 0)
+	referenceArray := make([]*objectmetamodel.VmwareTanzuCoreV1alpha1ObjectReference, 0, 1)
 	referenceArray = append(referenceArray, &reference)
 
 	for _, recipe := range []string{"allow-all", "allow-all-to-pods", "allow-all-egress", "deny-all", "deny-all-to-pods", "deny-all-egress", "custom-egress", "custom-ingress"} {

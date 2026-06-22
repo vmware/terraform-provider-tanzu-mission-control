@@ -547,7 +547,7 @@ func flattenTkgServiceVsphere(tkgServiceVsphere *nodepoolmodel.VmwareTanzuManage
 	flattenTkgServiceVsphereData[storageClassKey] = tkgServiceVsphere.StorageClass
 	flattenTkgServiceVsphereData[failureDomainKey] = tkgServiceVsphere.FailureDomain
 
-	vls := make([]interface{}, 0)
+	vls := make([]interface{}, 0, len(tkgServiceVsphere.Volumes))
 	for _, vl := range tkgServiceVsphere.Volumes {
 		vls = append(vls, flattenTKGSVolumes(vl))
 	}

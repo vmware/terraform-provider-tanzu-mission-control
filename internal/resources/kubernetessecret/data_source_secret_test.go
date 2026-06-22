@@ -74,13 +74,14 @@ func (testConfig *testAcceptanceConfig) getTestDataSourceBasicConfigValue(scope 
 }
 
 func (testConfig *testAcceptanceConfig) checkDataSourceAttributes() resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
+	metaChecks := MetaDataSourceAttributeCheck(testConfig.DataSourceName, testConfig.SecretResourceName)
+	check := make([]resource.TestCheckFunc, 0, 3+len(metaChecks))
+	check = append(check,
 		testConfig.verifyDataSourceCreation(testConfig.DataSourceName),
 		resource.TestCheckResourceAttrPair(testConfig.DataSourceName, "name", testConfig.SecretResourceName, "name"),
 		resource.TestCheckResourceAttrSet(testConfig.DataSourceName, "id"),
-	}
-
-	check = append(check, MetaDataSourceAttributeCheck(testConfig.DataSourceName, testConfig.SecretResourceName)...)
+	)
+	check = append(check, metaChecks...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }

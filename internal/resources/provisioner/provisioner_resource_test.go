@@ -85,21 +85,19 @@ func TestAcceptanceForProvisionerResource(t *testing.T) {
 }
 
 func checkResourceAttributes(provider *schema.Provider, resourceName, prvName string) resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
-		verifyProvisionerResourceCreation(provider, resourceName, prvName),
-	}
-
-	check = append(check, metaResourceAttributeCheck(resourceName)...)
+	metaChecks := metaResourceAttributeCheck(resourceName)
+	check := make([]resource.TestCheckFunc, 0, 1+len(metaChecks))
+	check = append(check, verifyProvisionerResourceCreation(provider, resourceName, prvName))
+	check = append(check, metaChecks...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }
 
 func checkUpdateResourceAttributes(provider *schema.Provider, resourceName, prvName string) resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
-		verifyProvisionerResourceCreation(provider, resourceName, prvName),
-	}
-
-	check = append(check, metaUpdateResourceAttributeCheck(resourceName)...)
+	metaChecks := metaUpdateResourceAttributeCheck(resourceName)
+	check := make([]resource.TestCheckFunc, 0, 1+len(metaChecks))
+	check = append(check, verifyProvisionerResourceCreation(provider, resourceName, prvName))
+	check = append(check, metaChecks...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }

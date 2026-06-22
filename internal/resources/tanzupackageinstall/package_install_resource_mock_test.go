@@ -119,7 +119,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocksUpdate(t *testing.T) {
 		Rid: "test_rid",
 		UID: "test_uid",
 	}
-	referenceArray := make([]*objectmetamodel.VmwareTanzuCoreV1alpha1ObjectReference, 0)
+	referenceArray := make([]*objectmetamodel.VmwareTanzuCoreV1alpha1ObjectReference, 0, 1)
 	referenceArray = append(referenceArray, &reference)
 
 	getModel := &packageinstallmodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageInstallInstall{
@@ -196,7 +196,7 @@ func (testConfig *testAcceptanceConfig) setupHTTPMocks(t *testing.T) {
 		Rid: "test_rid",
 		UID: "test_uid",
 	}
-	referenceArray := make([]*objectmetamodel.VmwareTanzuCoreV1alpha1ObjectReference, 0)
+	referenceArray := make([]*objectmetamodel.VmwareTanzuCoreV1alpha1ObjectReference, 0, 1)
 	referenceArray = append(referenceArray, &reference)
 
 	getTanzuPkgMetadataResponse := func(pkgName string) *pakageclustermodel.VmwareTanzuManageV1alpha1ClusterNamespaceTanzupackageMetadataGetPackageResponse {

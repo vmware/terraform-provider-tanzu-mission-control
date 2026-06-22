@@ -167,13 +167,14 @@ func (testConfig *testAcceptanceConfig) getTestPackageRepositoryDataSourceBasicC
 
 // checkPkgRepositoryDataSourceAttributes checks to get git repository creation.
 func (testConfig *testAcceptanceConfig) checkPkgRepositoryDataSourceAttributes() resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
+	metaChecks := MetaDataSourceAttributeCheck(testConfig.PkgRepositoryDataSourceName, testConfig.PkgRepoResourceName)
+	check := make([]resource.TestCheckFunc, 0, 3+len(metaChecks))
+	check = append(check,
 		testConfig.verifyPkgRepositoryDataSourceCreation(testConfig.PkgRepositoryDataSourceName),
 		resource.TestCheckResourceAttrPair(testConfig.PkgRepositoryDataSourceName, "name", testConfig.PkgRepoResourceName, "name"),
 		resource.TestCheckResourceAttrSet(testConfig.PkgRepositoryDataSourceName, "id"),
-	}
-
-	check = append(check, MetaDataSourceAttributeCheck(testConfig.PkgRepositoryDataSourceName, testConfig.PkgRepoResourceName)...)
+	)
+	check = append(check, metaChecks...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }

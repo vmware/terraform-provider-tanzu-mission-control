@@ -36,13 +36,14 @@ func TestAcceptanceForAttachClusterDataSource(t *testing.T) {
 }
 
 func checkDataSourceAttributes() resource.TestCheckFunc {
-	var check = []resource.TestCheckFunc{
+	metaChecks := testhelper.MetaDataSourceAttributeCheck(testhelper.ClusterDataSourceName, testhelper.ClusterResourceName)
+	check := make([]resource.TestCheckFunc, 0, 3+len(metaChecks))
+	check = append(check,
 		verifyClusterDataSource(testhelper.ClusterDataSourceName),
 		resource.TestCheckResourceAttrPair(testhelper.ClusterDataSourceName, "name", testhelper.ClusterResourceName, "name"),
 		resource.TestCheckResourceAttrSet(testhelper.ClusterDataSourceName, "id"),
-	}
-
-	check = append(check, testhelper.MetaDataSourceAttributeCheck(testhelper.ClusterDataSourceName, testhelper.ClusterResourceName)...)
+	)
+	check = append(check, metaChecks...)
 
 	return resource.ComposeTestCheckFunc(check...)
 }
