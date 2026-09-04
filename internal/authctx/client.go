@@ -5,6 +5,9 @@
 package authctx
 
 import (
+	"sync"
+	"time"
+
 	"github.com/pkg/errors"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client"
@@ -43,6 +46,51 @@ type TanzuContext struct {
 	VMWCloudEndPoint string // selfmanaged odic issuer is stored here
 	TMCConnection    *client.TanzuMissionControl
 	TLSConfig        *proxy.TLSConfig
+
+	// Cache for self-managed OIDC tokens
+	smTokenCache *TokenCache
+}
+
+// TokenCache manages the lifecycle of the self-managed OIDC tokens.
+type TokenCache struct {
+	mu            sync.Mutex
+	cachedHeaders map[string]string
+	expiry        time.Time
+}
+
+// NewTokenCache creates a new TokenCache instance.
+func NewTokenCache() *TokenCache {
+	return &TokenCache{}
+}
+
+// GetToken returns the cached headers if they are still valid (with a 1-minute buffer),
+// or fetches new headers using the provided fetch function.
+func (tc *TokenCache) GetToken(fetch func() (map[string]string, time.Time, error)) (map[string]string, error) {
+	tc.mu.Lock()
+	defer tc.mu.Unlock()
+
+	if tc.cachedHeaders != nil && time.Now().Add(1*time.Minute).Before(tc.expiry) {
+		return tc.cachedHeaders, nil
+	}
+
+	headers, expiry, err := fetch()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to refresh token")
+	}
+
+	tc.cachedHeaders = headers
+	tc.expiry = expiry
+
+	return headers, nil
+}
+
+// Update explicitly updates the cached headers and expiry.
+func (tc *TokenCache) Update(headers map[string]string, expiry time.Time) {
+	tc.mu.Lock()
+	defer tc.mu.Unlock()
+
+	tc.cachedHeaders = headers
+	tc.expiry = expiry
 }
 
 func (cfg *TanzuContext) Setup() (err error) {
@@ -66,6 +114,10 @@ func (cfg *TanzuContext) SetupWithDefaultTransportForTesting() (err error) {
 }
 
 func setup(cfg *TanzuContext) (err error) {
+	if cfg.IsSelfManaged() {
+		cfg.smTokenCache = NewTokenCache()
+	}
+
 	fetchAuthHeaders := getUserAuthCtxHeaders(cfg)
 
 	md, err := fetchAuthHeaders()
@@ -93,17 +145,27 @@ func setup(cfg *TanzuContext) (err error) {
 }
 
 func getUserAuthCtxHeaders(config *TanzuContext) func() (map[string]string, error) {
+	if config.IsSelfManaged() {
+		return func() (map[string]string, error) {
+			// For compatibility considerations.
+			if config.smTokenCache == nil {
+				headers, _, err := getSMUserAuthCtx(config.VMWCloudEndPoint, config.SMUsername, config.Token, config.TLSConfig)
+				if err != nil {
+					return nil, errors.Wrap(err, "failed to get self-managed user auth context headers")
+				}
+
+				return headers, nil
+			}
+
+			return config.smTokenCache.GetToken(func() (map[string]string, time.Time, error) {
+				return getSMUserAuthCtx(config.VMWCloudEndPoint, config.SMUsername, config.Token, config.TLSConfig)
+			})
+		}
+	}
+
 	issuerURL := config.VMWCloudEndPoint
 	token := config.Token
 	proxyConfig := config.TLSConfig
-
-	if config.IsSelfManaged() {
-		username := config.SMUsername
-
-		return func() (map[string]string, error) {
-			return getSMUserAuthCtx(issuerURL, username, token, proxyConfig)
-		}
-	}
 
 	return func() (map[string]string, error) {
 		return getSaaSUserAuthCtx(issuerURL, token, proxyConfig)

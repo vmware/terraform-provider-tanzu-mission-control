@@ -45,41 +45,41 @@ type smSession struct {
 }
 
 // todo: proxy support is not added for the self-managed flow. Add it when there is a requirement.
-func getSMUserAuthCtx(pinnipedURL, uName, password string, config *proxy.TLSConfig) (metadata map[string]string, err error) {
+func getSMUserAuthCtx(pinnipedURL, uName, password string, config *proxy.TLSConfig) (metadata map[string]string, expiry time.Time, err error) {
 	if pinnipedURL == "" || uName == "" || password == "" {
-		return nil, errors.New("Invalid auth configuration for self_managed")
+		return nil, time.Time{}, errors.New("Invalid auth configuration for self_managed")
 	}
 
 	tlsConfig, err := proxy.GetConnectorTLSConfig(config)
 	if err != nil {
-		return nil, err
+		return nil, time.Time{}, err
 	}
 
 	session, err := initSession(pinnipedURL, uName, password, tlsConfig)
 	if err != nil {
-		return nil, err
+		return nil, time.Time{}, err
 	}
 
 	expectedRedirectURL, err := url.Parse(session.sharedOauthConfig.RedirectURL)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to parse expected redirect URL %s", session.sharedOauthConfig.RedirectURL)
+		return nil, time.Time{}, errors.Wrapf(err, "failed to parse expected redirect URL %s", session.sharedOauthConfig.RedirectURL)
 	}
 
 	actualRedirectURL, err := session.initiateAuthorizeRequestUnamePwd()
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to initiate authorize request with issuer %s", session.issuerURL)
+		return nil, time.Time{}, errors.Wrapf(err, "failed to initiate authorize request with issuer %s", session.issuerURL)
 	}
 
 	// Check that the redirect was to the expected location.
 	if actualRedirectURL.Scheme != expectedRedirectURL.Scheme ||
 		actualRedirectURL.Host != expectedRedirectURL.Host || actualRedirectURL.Path != expectedRedirectURL.Path {
-		return nil, fmt.Errorf("error getting authorization: redirected to the wrong location: %s",
+		return nil, time.Time{}, fmt.Errorf("error getting authorization: redirected to the wrong location: %s",
 			actualRedirectURL.String())
 	}
 
 	// validate the state param to detect and prevent CSRF attacks.
 	if err := session.stateVal.Validate(actualRedirectURL.Query().Get("state")); err != nil {
-		return nil, errors.Wrap(err, "failed to validate state")
+		return nil, time.Time{}, errors.Wrap(err, "failed to validate state")
 	}
 
 	// Get the auth code or return the error from the server.
@@ -90,10 +90,10 @@ func getSMUserAuthCtx(pinnipedURL, uName, password string, config *proxy.TLSConf
 
 		optionalErrorDescription := actualRedirectURL.Query().Get("error_description")
 		if optionalErrorDescription == "" {
-			return nil, fmt.Errorf("login failed with code %q", requiredErrorCode)
+			return nil, time.Time{}, fmt.Errorf("login failed with code %q", requiredErrorCode)
 		}
 
-		return nil, fmt.Errorf("login failed with code %q: %s", requiredErrorCode, optionalErrorDescription)
+		return nil, time.Time{}, fmt.Errorf("login failed with code %q: %s", requiredErrorCode, optionalErrorDescription)
 	}
 
 	customClient := &http.Client{
@@ -111,7 +111,7 @@ func getSMUserAuthCtx(pinnipedURL, uName, password string, config *proxy.TLSConf
 
 	token, err := session.sharedOauthConfig.Exchange(tokenCtx, authCode, session.pkceCodePair.Verifier())
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to exchange auth code for oauth tokens")
+		return nil, time.Time{}, errors.Wrapf(err, "failed to exchange auth code for oauth tokens")
 	}
 
 	extraFields := map[string]interface{}{extraIDToken: token.Extra(extraIDToken).(string)}
@@ -123,7 +123,7 @@ func getSMUserAuthCtx(pinnipedURL, uName, password string, config *proxy.TLSConf
 
 	token = token.WithExtra(extraFields)
 
-	return getSMHeaders(token), nil
+	return getSMHeaders(token), token.Expiry, nil
 }
 
 // todo: if slowness is experienced, then we can avoid re-initialising same values again.
@@ -251,7 +251,15 @@ func (s *smSession) getAuthCodeURL() string {
 }
 
 func refreshSMUserAuthCtx(config *TanzuContext) {
-	md, _ := getSMUserAuthCtx(config.VMWCloudEndPoint, config.SMUsername, config.Token, config.TLSConfig)
+	md, expiry, err := getSMUserAuthCtx(config.VMWCloudEndPoint, config.SMUsername, config.Token, config.TLSConfig)
+	if err != nil {
+		return
+	}
+
+	if config.smTokenCache != nil {
+		config.smTokenCache.Update(md, expiry)
+	}
+
 	for key, value := range md {
 		config.TMCConnection.Headers.Set(key, value)
 	}
