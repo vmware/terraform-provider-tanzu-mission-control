@@ -1,6 +1,6 @@
 module github.com/vmware/terraform-provider-tanzu-mission-control
 
-go 1.25.8
+go 1.26.7
 
 require (
 	github.com/go-openapi/strfmt v0.25.0
