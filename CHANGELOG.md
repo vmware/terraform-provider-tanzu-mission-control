@@ -2,7 +2,7 @@
 
 ## [v1.4.11](https://github.com/vmware/terraform-provider-tanzu-mission-control/releases/tag/v1.4.11)
 
-> Release Date: Not Released
+> Release Date: 2026-09-15
 
 SECURITY:
 
