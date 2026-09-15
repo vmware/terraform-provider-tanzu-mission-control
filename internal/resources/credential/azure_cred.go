@@ -50,6 +50,7 @@ var azureServicePrincipalSpec = &schema.Schema{
 				Description: "Client Secret of the Service Principal",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Sensitive:   true,
 			},
 			azureCloudNameKey: {
 				Description: "Azure Cloud name",
@@ -86,6 +87,7 @@ var azureServicePrincipalWithCertSpec = &schema.Schema{
 				Description: "Client certificate of the Service Principal",
 				Type:        schema.TypeString,
 				Required:    true,
+				Sensitive:   true,
 			},
 			azureCloudNameKey: {
 				Description: "Azure Cloud name",

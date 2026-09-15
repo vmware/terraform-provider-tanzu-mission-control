@@ -166,6 +166,7 @@ func UpdateDataSourceSchema(d *schema.Schema) *schema.Schema {
 		Type:        d.Type,
 		Description: d.Description,
 		Computed:    true,
+		Sensitive:   d.Sensitive,
 		Elem:        d.Elem,
 	}
 
@@ -245,6 +246,7 @@ func DatasourceSchemaFromResourceSchema(rs map[string]*schema.Schema) map[string
 			Required:    false,
 			Description: v.Description,
 			Type:        v.Type,
+			Sensitive:   v.Sensitive,
 		}
 
 		switch v.Type {

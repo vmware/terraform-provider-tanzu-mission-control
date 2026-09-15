@@ -86,6 +86,7 @@ var dataSpec = &schema.Schema{
 				Type:        schema.TypeString,
 				Description: "Generic credential data type used to hold a blob of data represented as string",
 				Optional:    true,
+				Sensitive:   true,
 			},
 			awsCredentialKey:   awsCredSpec,
 			keyValueKey:        keyValueSpec,

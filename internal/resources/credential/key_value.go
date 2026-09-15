@@ -23,6 +23,7 @@ var keyValueSpec = &schema.Schema{
 				Type:        schema.TypeMap,
 				Description: "Data secret data in the format of key-value pair",
 				Optional:    true,
+				Sensitive:   true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 		},

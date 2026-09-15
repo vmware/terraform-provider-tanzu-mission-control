@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## [v1.4.11](https://github.com/vmware/terraform-provider-tanzu-mission-control/releases/tag/v1.4.11)
+
+> Release Date: Not Released
+
+SECURITY:
+
+* `r/d/credential` / `r/d/akscluster` / `r/d/ekscluster` / `r/d/tanzu_kubernetes_cluster`: Mark credential data and kubeconfigs as sensitive so they are redacted in `terraform plan` and `terraform show`.
+
+BUG FIXES:
+
+* Implement thread-safe token caching for self-managed OIDC. [#677](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/677)
+
+CHORES:
+
+* Bump Go to 1.26.7. [#679](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/679)
+* Bump `github.com/hashicorp/terraform-plugin-sdk/v2` to 2.40.0.
+* Bump `github.com/hashicorp/terraform-plugin-testing` to 1.16.0. [#641](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/641)
+* Bump `github.com/cloudflare/circl` to 1.6.3. [#630](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/630)
+* Bump `golang.org/x/crypto` to 0.55.0. [#669](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/669)
+* Bump `golang.org/x/net` to 0.58.0. [#666](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/666)
+* Bump `google.golang.org/grpc` to 1.83.2. [#624](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/624), [#640](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/640), [#673](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/673), [#678](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/678)
+* Optimize slice allocations and meta checks. [#655](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/655)
+* Use shared constants. [#654](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/654)
+
 ## [v1.4.10](https://github.com/vmware/terraform-provider-tanzu-mission-control/releases/tag/v1.4.10)
 
 > Release Date: 2025-12-04

@@ -22,6 +22,7 @@ var awsCredSpec = &schema.Schema{
 				Description: "Generic credential",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Sensitive:   true,
 			},
 			awsIAMRoleKey: iamRoleSpec,
 		},

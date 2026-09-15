@@ -126,6 +126,7 @@ var specSchema = &schema.Schema{
 				Type:        schema.TypeString,
 				Description: "Cluster's kubeconfig.",
 				Computed:    true,
+				Sensitive:   true,
 			},
 			ProxyNameKey: {
 				Type:        schema.TypeString,
