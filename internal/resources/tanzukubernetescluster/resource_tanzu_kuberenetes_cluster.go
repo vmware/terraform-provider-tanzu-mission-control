@@ -66,23 +66,40 @@ func resourceTanzuKubernetesClusterCreate(ctx context.Context, data *schema.Reso
 		return diag.FromErr(errors.Wrapf(err, "Couldn't create TKG Cluster."))
 	}
 
+	// Detach node pools from the initial cluster spec because node pools must be created
+	// separately via the dedicated node pool API once the cluster definition is accepted.
 	modelNodePools := model.Spec.Topology.NodePools
 	model.Spec.Topology.NodePools = nil
+
+	// Retrieve the user-defined timeout policy or fallback to default timeout for bounded retry operations.
+	timeoutPolicy := getTimeoutPolicy(data)
+	timeoutMinutes := timeoutPolicy[TimeoutKey].(int)
+	var clusterTimeout time.Duration
+	if timeoutMinutes > 0 {
+		clusterTimeout = time.Duration(timeoutMinutes) * time.Minute
+	} else {
+		clusterTimeout = time.Duration(TimeoutDefaultValue) * time.Minute
+	}
 
 	clusterRequest := &tanzukubernetesclustermodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterData{
 		TanzuKubernetesCluster: model,
 	}
 
-	_, err = config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterResourceServiceCreate(clusterRequest)
+	// Create cluster with adaptive retry to handle transient network/gateway drops, 429 rate limits,
+	// or 409 conflict when a previously deleted cluster with the same name is still terminating in the background.
+	err = createClusterWithRetry(ctx, &config, clusterRequest, clusterTimeout)
 	if err != nil {
 		return diag.FromErr(errors.Wrapf(err, "Couldn't create TKG Cluster.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s",
 			model.FullName.ManagementClusterName, model.FullName.ProvisionerName, model.FullName.Name))
 	}
 
-	// Sleep here is to avoid race condition when cluster is being initialized and node pools are being created
-	// concurrently where it ends up duplicating the nodePoolLabels cluster variable.
-	time.Sleep(30 * time.Second)
+	// Set ID early so if node pool creation fails, times out, or is cancelled, the cluster is recorded in state and not orphaned.
+	fullNameList := []string{model.FullName.ManagementClusterName, model.FullName.ProvisionerName, model.FullName.Name}
+	data.SetId(strings.Join(fullNameList, "/"))
 
+	// Create node pools sequentially with adaptive retry.
+	// We use polling with exponential backoff and jitter instead of a static sleep to gracefully handle
+	// admission webhook timing (e.g., SystemChecksSucceeded condition) and cluster initialization race conditions.
 	for _, np := range modelNodePools {
 		np.FullName.ManagementClusterName = model.FullName.ManagementClusterName
 		np.FullName.ProvisionerName = model.FullName.ProvisionerName
@@ -91,7 +108,7 @@ func resourceTanzuKubernetesClusterCreate(ctx context.Context, data *schema.Reso
 			Nodepool: np,
 		}
 
-		_, err = config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterNodePoolResourceServiceCreate(nodePoolRequest)
+		err = createNodePoolWithRetry(ctx, &config, nodePoolRequest, clusterTimeout)
 		if err != nil {
 			return diag.FromErr(errors.Wrapf(err, "Couldn't create TKG Cluster Nodepool.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s, Node Pool Name: %s",
 				np.FullName.ManagementClusterName, np.FullName.ProvisionerName, np.FullName.TanzuKubernetesClusterName, np.FullName.Name))
@@ -214,7 +231,11 @@ func resourceTanzuKubernetesClusterUpdate(ctx context.Context, data *schema.Reso
 		}
 
 		if data.HasChange(nodePoolResourceKey) {
-			resourceTanzuKubernetesClusterNodePoolsUpdate(config, data, modelNodePools, model.FullName)
+			// Update node pools and propagate any diagnostics/errors to prevent silent failures.
+			diags = resourceTanzuKubernetesClusterNodePoolsUpdate(ctx, config, data, modelNodePools, model.FullName)
+			if diags.HasError() {
+				return diags
+			}
 		}
 
 		return resourceTanzuKubernetesClusterRead(helper.GetContextWithCaller(ctx, helper.UpdateState), data, m)
@@ -223,9 +244,19 @@ func resourceTanzuKubernetesClusterUpdate(ctx context.Context, data *schema.Reso
 	return diags
 }
 
-func resourceTanzuKubernetesClusterNodePoolsUpdate(config authctx.TanzuContext, data *schema.ResourceData, modelNodePools []*tkcnodepoolmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepool, clusterFn *tanzukubernetesclustermodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterFullName) (diags diag.Diagnostics) {
+func resourceTanzuKubernetesClusterNodePoolsUpdate(ctx context.Context, config authctx.TanzuContext, data *schema.ResourceData, modelNodePools []*tkcnodepoolmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepool, clusterFn *tanzukubernetesclustermodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterFullName) (diags diag.Diagnostics) {
 	oldTFValue, newTFValue := data.GetChange(nodePoolResourceKey)
 	existingNodePools := make(map[string]interface{})
+
+	// Retrieve timeout for node pool lifecycle operations.
+	timeoutPolicy := getTimeoutPolicy(data)
+	timeoutMinutes := timeoutPolicy[TimeoutKey].(int)
+	var nodepoolTimeout time.Duration
+	if timeoutMinutes > 0 {
+		nodepoolTimeout = time.Duration(timeoutMinutes) * time.Minute
+	} else {
+		nodepoolTimeout = time.Duration(TimeoutDefaultValue) * time.Minute
+	}
 
 	// Create New Node Pools & Update Existing Node Pools.
 	for _, newNodePool := range newTFValue.([]interface{}) {
@@ -258,7 +289,7 @@ func resourceTanzuKubernetesClusterNodePoolsUpdate(config authctx.TanzuContext, 
 				}
 
 				if isNodePoolNew {
-					_, err := config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterNodePoolResourceServiceCreate(nodePoolRequest)
+					err := createNodePoolWithRetry(ctx, &config, nodePoolRequest, nodepoolTimeout)
 					if err != nil {
 						return diag.FromErr(errors.Wrapf(err, "Couldn't create TKG Cluster Nodepool.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s, Node Pool Name: %s",
 							np.FullName.ManagementClusterName, np.FullName.ProvisionerName, np.FullName.TanzuKubernetesClusterName, np.FullName.Name))
@@ -269,7 +300,7 @@ func resourceTanzuKubernetesClusterNodePoolsUpdate(config authctx.TanzuContext, 
 					newNodePoolMap := existingNodePoolMap["NewNodePoolMap"]
 
 					if nodePoolHasChanged(oldNodePoolMap, newNodePoolMap) {
-						_, err := config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterNodePoolResourceServiceUpdate(nodePoolRequest)
+						err := updateNodePoolWithRetry(ctx, &config, nodePoolRequest, nodepoolTimeout)
 						if err != nil {
 							return diag.FromErr(errors.Wrapf(err, "Couldn't update TKG Cluster Nodepool.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s, Node Pool Name: %s",
 								np.FullName.ManagementClusterName, np.FullName.ProvisionerName, np.FullName.TanzuKubernetesClusterName, np.FullName.Name))
@@ -296,7 +327,7 @@ func resourceTanzuKubernetesClusterNodePoolsUpdate(config authctx.TanzuContext, 
 				Name:                       oldNodePoolName,
 			}
 
-			err := config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterNodePoolResourceServiceDelete(nodePoolFn)
+			err := deleteNodePoolWithRetry(ctx, &config, nodePoolFn, nodepoolTimeout)
 			if err != nil {
 				return diag.FromErr(errors.Wrapf(err, "Couldn't delete TKG Cluster Nodepool.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s, Node Pool Name: %s",
 					nodePoolFn.ManagementClusterName, nodePoolFn.ProvisionerName, nodePoolFn.TanzuKubernetesClusterName, nodePoolFn.Name))
