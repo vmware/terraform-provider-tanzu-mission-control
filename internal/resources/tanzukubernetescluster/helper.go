@@ -159,7 +159,7 @@ var nodePoolPollInterval = 5 * time.Second
 
 func findNodePoolByName(nodepools []*tkcnodepoolmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepool, name string) *tkcnodepoolmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepool {
 	for _, np := range nodepools {
-		if np.FullName != nil && np.FullName.Name == name {
+		if np != nil && np.FullName != nil && np.FullName.Name == name {
 			return np
 		}
 	}
@@ -208,8 +208,9 @@ func evaluateExpectedNodePools(
 	remotePools []*tkcnodepoolmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepool,
 	npStatusMap map[string]string,
 ) ([]*tkcnodepoolmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepool, bool, error) {
-	allReady := true
 	var matchedPools []*tkcnodepoolmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepool
+
+	allReady := true
 
 	for _, expectedNp := range expectedNodePools {
 		expectedName := ""
@@ -465,23 +466,58 @@ func removeUnspecifiedClusterVariables(tfClusterVariables string, kubernetesClus
 
 // removeUnspecifiedNodePoolsOverrides removed node pools overrides returning in the API which do not exist in the Cluster Class schema.
 func removeUnspecifiedNodePoolsOverrides(nodePools []interface{}, kubernetesClusterModel *tanzukubernetesclustermodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterTanzuKubernetesCluster) {
-	for i, np := range nodePools {
-		tfNodePoolSpec := np.(map[string]interface{})[SpecKey].([]interface{})[0].(map[string]interface{})
-		tfNodePoolOverrides := tfNodePoolSpec[OverridesKey]
+	if kubernetesClusterModel == nil || kubernetesClusterModel.Spec == nil || kubernetesClusterModel.Spec.Topology == nil {
+		return
+	}
 
-		if tfNodePoolOverrides != nil && tfNodePoolOverrides.(string) != "" {
-			overridesToKeep := excludeUnspecifiedOverrides(tfNodePoolOverrides.(string), kubernetesClusterModel.Spec.Topology.NodePools[i].Spec.Overrides)
-			kubernetesClusterModel.Spec.Topology.NodePools[i].Spec.Overrides = overridesToKeep
+	for _, np := range nodePools {
+		npMap, ok := np.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		name, _ := npMap[NameKey].(string)
+		if name == "" {
+			continue
+		}
+
+		specList, ok := npMap[SpecKey].([]interface{})
+		if !ok || len(specList) == 0 {
+			continue
+		}
+
+		tfNodePoolSpec, ok := specList[0].(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		tfNodePoolOverrides, ok := tfNodePoolSpec[OverridesKey].(string)
+		if !ok || tfNodePoolOverrides == "" {
+			continue
+		}
+
+		targetNodePool := findNodePoolByName(kubernetesClusterModel.Spec.Topology.NodePools, name)
+		if targetNodePool != nil && targetNodePool.Spec != nil {
+			overridesToKeep := excludeUnspecifiedOverrides(tfNodePoolOverrides, targetNodePool.Spec.Overrides)
+			targetNodePool.Spec.Overrides = overridesToKeep
 		}
 	}
 }
 
 // removeUnspecifiedControlPlaneOverrides removed node pools overrides returning in the API which do not exist in the Cluster Class schema.
 func removeUnspecifiedControlPlaneOverrides(controlPlane interface{}, kubernetesClusterModel *tanzukubernetesclustermodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterTanzuKubernetesCluster) {
-	tfControlPlaneOverrides := controlPlane.(map[string]interface{})[OverridesKey]
+	if kubernetesClusterModel == nil || kubernetesClusterModel.Spec == nil || kubernetesClusterModel.Spec.Topology == nil || kubernetesClusterModel.Spec.Topology.ControlPlane == nil {
+		return
+	}
 
-	if tfControlPlaneOverrides != nil && tfControlPlaneOverrides.(string) != "" {
-		overridesToKeep := excludeUnspecifiedOverrides(tfControlPlaneOverrides.(string), kubernetesClusterModel.Spec.Topology.ControlPlane.Overrides)
+	controlPlaneMap, ok := controlPlane.(map[string]interface{})
+	if !ok {
+		return
+	}
+
+	tfControlPlaneOverrides, ok := controlPlaneMap[OverridesKey].(string)
+	if ok && tfControlPlaneOverrides != "" {
+		overridesToKeep := excludeUnspecifiedOverrides(tfControlPlaneOverrides, kubernetesClusterModel.Spec.Topology.ControlPlane.Overrides)
 		kubernetesClusterModel.Spec.Topology.ControlPlane.Overrides = overridesToKeep
 	}
 }
@@ -594,19 +630,71 @@ func modifyClusterClassVariables(clusterVariablesMap map[string]interface{}, kub
 }
 
 // suppressNodePoolsOrderChanges helps suppress node pools order difference when receiving the node pools from the API.
+// It preserves the ordering of existing node pools matching oldNodePoolsArray, while appending any new
+// node pools returned from the API that were not present in oldNodePoolsArray (preventing silent drops).
 func suppressNodePoolsOrderChanges(oldNodePoolsArray []interface{}, data *schema.ResourceData) {
-	specData := data.Get(SpecKey).([]interface{})[0].(map[string]interface{})
-	topologyData := specData[TopologyKey].([]interface{})[0].(map[string]interface{})
-	newNodePoolsArray := topologyData[NodePoolKey].([]interface{})
-	orderedNodePoolsArray := make([]interface{}, 0, len(newNodePoolsArray))
+	specList, ok := data.Get(SpecKey).([]interface{})
+	if !ok || len(specList) == 0 {
+		return
+	}
 
-	for _, oldNp := range oldNodePoolsArray {
-		for _, newNp := range newNodePoolsArray {
-			if oldNp.(map[string]interface{})[NameKey] == newNp.(map[string]interface{})[NameKey] {
-				orderedNodePoolsArray = append(orderedNodePoolsArray, newNp)
+	specData, ok := specList[0].(map[string]interface{})
+	if !ok {
+		return
+	}
 
-				break
+	topologyList, ok := specData[TopologyKey].([]interface{})
+	if !ok || len(topologyList) == 0 {
+		return
+	}
+
+	topologyData, ok := topologyList[0].(map[string]interface{})
+	if !ok {
+		return
+	}
+
+	newNodePoolsArray, ok := topologyData[NodePoolKey].([]interface{})
+	if !ok {
+		return
+	}
+
+	newPoolsByName := make(map[string]interface{}, len(newNodePoolsArray))
+	for _, np := range newNodePoolsArray {
+		if npMap, ok := np.(map[string]interface{}); ok {
+			if name, ok := npMap[NameKey].(string); ok && name != "" {
+				newPoolsByName[name] = np
 			}
+		}
+	}
+
+	orderedNodePoolsArray := make([]interface{}, 0, len(newNodePoolsArray))
+	matched := make(map[string]bool)
+
+	// 1. Maintain old ordering for existing pools
+	for _, oldNp := range oldNodePoolsArray {
+		oldMap, ok := oldNp.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		oldName, _ := oldMap[NameKey].(string)
+		if newNp, exists := newPoolsByName[oldName]; exists {
+			orderedNodePoolsArray = append(orderedNodePoolsArray, newNp)
+			matched[oldName] = true
+		}
+	}
+
+	// 2. Append newly added pools that did not exist in oldNodePoolsArray
+	for _, newNp := range newNodePoolsArray {
+		newMap, ok := newNp.(map[string]interface{})
+		if !ok {
+			orderedNodePoolsArray = append(orderedNodePoolsArray, newNp)
+			continue
+		}
+
+		newName, _ := newMap[NameKey].(string)
+		if !matched[newName] {
+			orderedNodePoolsArray = append(orderedNodePoolsArray, newNp)
 		}
 	}
 
@@ -630,6 +718,7 @@ func isRetryableNodePoolError(err error) bool {
 	if err == nil {
 		return false
 	}
+
 	errMsg := strings.ToLower(err.Error())
 
 	// 1. Webhook admission rejection due to pending SystemChecks or transient validation
@@ -769,6 +858,7 @@ func createNodePoolWithRetry(
 
 	for {
 		attempt++
+
 		_, err := config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterNodePoolResourceServiceCreate(nodePoolRequest)
 		if err == nil {
 			return nil
@@ -820,6 +910,7 @@ func updateNodePoolWithRetry(
 
 	for {
 		attempt++
+
 		_, err := config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterNodePoolResourceServiceUpdate(nodePoolRequest)
 		if err == nil {
 			return nil
@@ -863,6 +954,7 @@ func deleteNodePoolWithRetry(
 
 	for {
 		attempt++
+
 		err := config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterNodePoolResourceServiceDelete(nodePoolFn)
 		if err == nil || clienterrors.IsNotFoundError(err) {
 			return nil
@@ -899,6 +991,7 @@ func isRetryableClusterError(err error) bool {
 	if err == nil {
 		return false
 	}
+
 	errMsg := strings.ToLower(err.Error())
 
 	// 1. Rate limiting (HTTP 429 / gRPC Code 8 ResourceExhausted)
@@ -967,6 +1060,7 @@ func createClusterWithRetry(
 
 	for {
 		attempt++
+
 		_, err := config.TMCConnection.TanzuKubernetesClusterResourceService.TanzuKubernetesClusterResourceServiceCreate(clusterRequest)
 		if err == nil {
 			return nil

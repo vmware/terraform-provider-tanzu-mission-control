@@ -134,8 +134,18 @@ func TestIsRetryableClusterError(t *testing.T) {
 			expected: true,
 		},
 		{
+			name:     "HTTP 502 Bad Gateway",
+			err:      errors.New("POST request failed with status : 502 Bad Gateway"),
+			expected: true,
+		},
+		{
 			name:     "HTTP 503 Service Unavailable",
 			err:      errors.New("POST request failed with status : 503 Service Unavailable"),
+			expected: true,
+		},
+		{
+			name:     "HTTP 504 Gateway Timeout",
+			err:      errors.New("POST request failed with status : 504 Gateway Timeout"),
 			expected: true,
 		},
 		{

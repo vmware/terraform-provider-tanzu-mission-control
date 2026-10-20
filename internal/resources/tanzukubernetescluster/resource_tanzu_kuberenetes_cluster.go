@@ -74,11 +74,10 @@ func resourceTanzuKubernetesClusterCreate(ctx context.Context, data *schema.Reso
 	// Retrieve the user-defined timeout policy or fallback to default timeout for bounded retry operations.
 	timeoutPolicy := getTimeoutPolicy(data)
 	timeoutMinutes := timeoutPolicy[TimeoutKey].(int)
-	var clusterTimeout time.Duration
+	clusterTimeout := time.Duration(TimeoutDefaultValue) * time.Minute
+
 	if timeoutMinutes > 0 {
 		clusterTimeout = time.Duration(timeoutMinutes) * time.Minute
-	} else {
-		clusterTimeout = time.Duration(TimeoutDefaultValue) * time.Minute
 	}
 
 	clusterRequest := &tanzukubernetesclustermodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterData{
@@ -142,14 +141,9 @@ func resourceTanzuKubernetesClusterRead(ctx context.Context, data *schema.Resour
 
 	if err != nil {
 		if clienterrors.IsNotFoundError(err) {
-			if !helper.IsContextCallerSet(ctx) {
-				*data = schema.ResourceData{}
-
-				return diag.FromErr(errors.Wrapf(err, "Couldn't read TKG cluster.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Name: %s",
-					clusterFn.ManagementClusterName, clusterFn.ProvisionerName, clusterFn.Name))
-			} else if helper.IsDeleteState(ctx) {
-				// d.SetId("") is automatically called assuming delete returns no errors, but
-				// it is added here for explicitness.
+			if !helper.IsContextCallerSet(ctx) || helper.IsDeleteState(ctx) {
+				// d.SetId("") is called to signal Terraform that the resource no longer exists
+				// (e.g. drift or completed deletion) so it can be cleanly removed from state.
 				_ = schema.RemoveFromState(data, m)
 
 				return diags
@@ -251,11 +245,10 @@ func resourceTanzuKubernetesClusterNodePoolsUpdate(ctx context.Context, config a
 	// Retrieve timeout for node pool lifecycle operations.
 	timeoutPolicy := getTimeoutPolicy(data)
 	timeoutMinutes := timeoutPolicy[TimeoutKey].(int)
-	var nodepoolTimeout time.Duration
+	nodepoolTimeout := time.Duration(TimeoutDefaultValue) * time.Minute
+
 	if timeoutMinutes > 0 {
 		nodepoolTimeout = time.Duration(timeoutMinutes) * time.Minute
-	} else {
-		nodepoolTimeout = time.Duration(TimeoutDefaultValue) * time.Minute
 	}
 
 	// Create New Node Pools & Update Existing Node Pools.
@@ -396,18 +389,52 @@ func resourceTanzuKubernetesClusterImporter(ctx context.Context, data *schema.Re
 }
 
 func validateSchema(_ context.Context, data *schema.ResourceDiff, value interface{}) error {
-	config := value.(authctx.TanzuContext)
-	topologyData := data.Get(SpecKey).([]interface{})[0].(map[string]interface{})[TopologyKey].([]interface{})[0].(map[string]interface{})
+	config, ok := value.(authctx.TanzuContext)
+	if !ok || config.TMCConnection == nil || config.TMCConnection.ClusterClassResourceService == nil {
+		return nil
+	}
+
+	specRaw := data.Get(SpecKey)
+	if specRaw == nil {
+		return nil
+	}
+
+	specList, ok := specRaw.([]interface{})
+	if !ok || len(specList) == 0 || specList[0] == nil {
+		return nil
+	}
+
+	specData, ok := specList[0].(map[string]interface{})
+	if !ok {
+		return nil
+	}
+
+	topologyRaw, ok := specData[TopologyKey]
+	if !ok || topologyRaw == nil {
+		return nil
+	}
+
+	topologyList, ok := topologyRaw.([]interface{})
+	if !ok || len(topologyList) == 0 || topologyList[0] == nil {
+		return nil
+	}
+
+	topologyData, ok := topologyList[0].(map[string]interface{})
+	if !ok {
+		return nil
+	}
 
 	clusterClass, clusterClassExist := topologyData[ClusterClassKey].(string)
-
-	if !clusterClassExist {
+	if !clusterClassExist || clusterClass == "" {
 		return errors.New("Cluster Class must be set during creation.")
 	}
 
+	mgmtClusterName, _ := data.Get(ManagementClusterNameKey).(string)
+	provisionerName, _ := data.Get(ProvisionerNameKey).(string)
+
 	clusterClassFn := &clusterclassmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerClusterClassFullName{
-		ManagementClusterName: data.Get(ManagementClusterNameKey).(string),
-		ProvisionerName:       data.Get(ProvisionerNameKey).(string),
+		ManagementClusterName: mgmtClusterName,
+		ProvisionerName:       provisionerName,
 		Name:                  clusterClass,
 	}
 
@@ -415,38 +442,41 @@ func validateSchema(_ context.Context, data *schema.ResourceDiff, value interfac
 	if err != nil {
 		return errors.Wrapf(err, "Couldn't find cluster class.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Class Name: %s.",
 			clusterClassFn.ManagementClusterName, clusterClassFn.ProvisionerName, clusterClassFn.Name)
-	} else if len(resp.ClusterClasses) == 0 {
+	} else if len(resp.ClusterClasses) == 0 || resp.ClusterClasses[0] == nil {
 		return errors.Errorf("Couldn't find cluster class.\nManagement Cluster Name: %s, Provisioner: %s, Cluster Class Name: %s.",
 			clusterClassFn.ManagementClusterName, clusterClassFn.ProvisionerName, clusterClassFn.Name)
 	}
 
 	clusterClassValidator := NewClusterClassValidator(resp.ClusterClasses[0].Spec)
-	clusterVariablesErrs := clusterClassValidator.ValidateClusterVariables(topologyData[ClusterVariablesKey].(string), true)
 
-	if len(clusterVariablesErrs) > 0 {
-		errStr := "Cluster Variables validation failed:\n"
+	if clusterVarsStr, ok := topologyData[ClusterVariablesKey].(string); ok && clusterVarsStr != "" {
+		clusterVariablesErrs := clusterClassValidator.ValidateClusterVariables(clusterVarsStr, true)
+		if len(clusterVariablesErrs) > 0 {
+			errStr := "Cluster Variables validation failed:\n"
 
-		for _, e := range clusterVariablesErrs {
-			errStr = fmt.Sprintf("%s%s\n", errStr, e.Error())
+			for _, e := range clusterVariablesErrs {
+				errStr = fmt.Sprintf("%s%s\n", errStr, e.Error())
+			}
+
+			err = errors.New(errStr)
 		}
-
-		err = errors.New(errStr)
 	}
 
-	nodePoolsErrs := clusterClassValidator.ValidateNodePools(topologyData[NodePoolKey].([]interface{}))
+	if nodePoolsList, ok := topologyData[NodePoolKey].([]interface{}); ok && len(nodePoolsList) > 0 {
+		nodePoolsErrs := clusterClassValidator.ValidateNodePools(nodePoolsList)
+		if len(nodePoolsErrs) > 0 {
+			errStr := "Node pools validation failed:\n"
 
-	if len(nodePoolsErrs) > 0 {
-		errStr := "Node pools validation failed:\n"
+			if err != nil {
+				errStr = fmt.Sprintf("%s%s", err.Error(), errStr)
+			}
 
-		if err != nil {
-			errStr = fmt.Sprintf("%s%s", err.Error(), errStr)
+			for _, e := range nodePoolsErrs {
+				errStr = fmt.Sprintf("%s%s\n", errStr, e.Error())
+			}
+
+			err = errors.New(errStr)
 		}
-
-		for _, e := range nodePoolsErrs {
-			errStr = fmt.Sprintf("%s%s\n", errStr, e.Error())
-		}
-
-		err = errors.New(errStr)
 	}
 
 	return err
