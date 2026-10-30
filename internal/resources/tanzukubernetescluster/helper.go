@@ -263,10 +263,10 @@ func buildNodePoolTimeoutError(
 			status = "not found in cluster"
 		}
 
-		errMsg = fmt.Sprintf("%s\nNode pool '%s' is in status: %s", errMsg, expectedName, status)
+		errMsg = fmt.Sprintf("%s\nNode pool %q is in status: %s", errMsg, expectedName, status)
 	}
 
-	return errors.Wrapf(ctxErr, "%s", errMsg)
+	return errors.Wrap(ctxErr, errMsg)
 }
 
 // waitNodePoolsReady actively polls the TMC node pool API until all expected node pools exist in the cluster
@@ -292,7 +292,7 @@ func waitNodePoolsReady(
 		case clienterrors.IsUnauthorizedError(err):
 			authctx.RefreshUserAuthContext(config, clienterrors.IsUnauthorizedError, err)
 		case err != nil:
-			log.Printf("[DEBUG] Failed to list node pools for cluster '%s': %v", clusterFn.Name, err)
+			log.Printf("[DEBUG] Failed to list node pools for cluster %q: %v", clusterFn.Name, err)
 		default:
 			var remotePools []*tkcnodepoolmodels.VmwareTanzuManageV1alpha1ManagementClusterProvisionerTanzukubernetesClusterNodepool
 			if nodePoolsResp != nil {
@@ -879,12 +879,12 @@ func createNodePoolWithRetry(
 		sleepDuration, next := calculateBackoffWithJitter(currentBackoff, nodePoolMaxBackoff, nodePoolBackoffFactor, nodePoolJitterFactor)
 		currentBackoff = next
 
-		log.Printf("[DEBUG] Retrying creation for node pool '%s' (attempt %d) in %v due to transient error: %s",
+		log.Printf("[DEBUG] Retrying creation for node pool %q (attempt %d) in %v due to transient error: %s",
 			nodePoolRequest.Nodepool.FullName.Name, attempt, sleepDuration, err.Error())
 
 		select {
 		case <-ctx.Done():
-			return errors.Wrapf(ctx.Err(), "timed out waiting for nodepool '%s' creation to be accepted after %d attempts. Last error: %s",
+			return errors.Wrapf(ctx.Err(), "timed out waiting for nodepool %q creation to be accepted after %d attempts. Last error: %s",
 				nodePoolRequest.Nodepool.FullName.Name, attempt, err.Error())
 		case <-time.After(sleepDuration):
 		}
@@ -923,12 +923,12 @@ func updateNodePoolWithRetry(
 		sleepDuration, next := calculateBackoffWithJitter(currentBackoff, nodePoolMaxBackoff, nodePoolBackoffFactor, nodePoolJitterFactor)
 		currentBackoff = next
 
-		log.Printf("[DEBUG] Retrying update for node pool '%s' (attempt %d) in %v due to transient error: %s",
+		log.Printf("[DEBUG] Retrying update for node pool %q (attempt %d) in %v due to transient error: %s",
 			nodePoolRequest.Nodepool.FullName.Name, attempt, sleepDuration, err.Error())
 
 		select {
 		case <-ctx.Done():
-			return errors.Wrapf(ctx.Err(), "timed out waiting for nodepool '%s' update to be accepted after %d attempts. Last error: %s",
+			return errors.Wrapf(ctx.Err(), "timed out waiting for nodepool %q update to be accepted after %d attempts. Last error: %s",
 				nodePoolRequest.Nodepool.FullName.Name, attempt, err.Error())
 		case <-time.After(sleepDuration):
 		}
@@ -967,12 +967,12 @@ func deleteNodePoolWithRetry(
 		sleepDuration, next := calculateBackoffWithJitter(currentBackoff, nodePoolMaxBackoff, nodePoolBackoffFactor, nodePoolJitterFactor)
 		currentBackoff = next
 
-		log.Printf("[DEBUG] Retrying deletion for node pool '%s' (attempt %d) in %v due to transient error: %s",
+		log.Printf("[DEBUG] Retrying deletion for node pool %q (attempt %d) in %v due to transient error: %s",
 			nodePoolFn.Name, attempt, sleepDuration, err.Error())
 
 		select {
 		case <-ctx.Done():
-			return errors.Wrapf(ctx.Err(), "timed out waiting for nodepool '%s' deletion to be accepted after %d attempts. Last error: %s",
+			return errors.Wrapf(ctx.Err(), "timed out waiting for nodepool %q deletion to be accepted after %d attempts. Last error: %s",
 				nodePoolFn.Name, attempt, err.Error())
 		case <-time.After(sleepDuration):
 		}
@@ -1075,10 +1075,10 @@ func createClusterWithRetry(
 					phase := *tkc.Status.Phase
 					// If the existing cluster is actively DELETING, wait for it to be fully removed
 					if phase == tanzukubernetesclustermodels.VmwareTanzuManageV1alpha1CommonClusterStatusPhaseDELETING {
-						log.Printf("[DEBUG] Cluster '%s' currently in DELETING phase, waiting for removal before recreation...", clusterFn.Name)
+						log.Printf("[DEBUG] Cluster %q currently in DELETING phase, waiting for removal before recreation...", clusterFn.Name)
 					} else {
 						// Existing cluster is present and not deleting, idempotent success
-						log.Printf("[INFO] Cluster '%s' already exists in phase '%s', proceeding idempotently", clusterFn.Name, phase)
+						log.Printf("[INFO] Cluster %q already exists in phase %q, proceeding idempotently", clusterFn.Name, phase)
 						return nil
 					}
 				} else {
@@ -1094,12 +1094,12 @@ func createClusterWithRetry(
 		sleepDuration, next := calculateBackoffWithJitter(currentBackoff, nodePoolMaxBackoff, nodePoolBackoffFactor, nodePoolJitterFactor)
 		currentBackoff = next
 
-		log.Printf("[DEBUG] Retrying creation for cluster '%s' (attempt %d) in %v due to transient/conflict error: %s",
+		log.Printf("[DEBUG] Retrying creation for cluster %q (attempt %d) in %v due to transient/conflict error: %s",
 			clusterFn.Name, attempt, sleepDuration, err.Error())
 
 		select {
 		case <-ctx.Done():
-			return errors.Wrapf(ctx.Err(), "timed out waiting for cluster '%s' creation to be accepted after %d attempts. Last error: %s",
+			return errors.Wrapf(ctx.Err(), "timed out waiting for cluster %q creation to be accepted after %d attempts. Last error: %s",
 				clusterFn.Name, attempt, err.Error())
 		case <-time.After(sleepDuration):
 		}

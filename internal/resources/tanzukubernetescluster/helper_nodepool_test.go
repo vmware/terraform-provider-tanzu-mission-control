@@ -277,7 +277,7 @@ func TestWaitNodePoolsReady_MissingNodePool_Timeout(t *testing.T) {
 	assert.Nil(t, matched)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "Timeout exceeded while waiting for the cluster node pools to be ready")
-	assert.Contains(t, err.Error(), "Node pool 'worker-pool-lost' is in status: not found in cluster")
+	assert.Contains(t, err.Error(), `Node pool "worker-pool-lost" is in status: not found in cluster`)
 }
 
 // TestWaitNodePoolsReady_TerminalFailures tests fast-fail behavior when a node pool enters ERROR or UPGRADEFAILED phase.
@@ -594,7 +594,7 @@ func TestWaitNodePoolsReady_ListErrorTimeout(t *testing.T) {
 	assert.Nil(t, matched)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "Timeout exceeded while waiting for the cluster node pools to be ready")
-	assert.Contains(t, err.Error(), "Node pool 'worker-pool-timeout-notfound' is in status: not found in cluster")
+	assert.Contains(t, err.Error(), `Node pool "worker-pool-timeout-notfound" is in status: not found in cluster`)
 }
 
 // TestCalculateBackoffWithJitter verifies exponential scaling, caps, fallback defaults, and random distribution.
@@ -783,7 +783,7 @@ func TestCreateNodePoolWithRetry_Timeout(t *testing.T) {
 
 	err := createNodePoolWithRetry(context.Background(), config, req, 35*time.Millisecond)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "timed out waiting for nodepool 'worker-pool-timeout' creation to be accepted after")
+	assert.Contains(t, err.Error(), `timed out waiting for nodepool "worker-pool-timeout" creation to be accepted after`)
 }
 
 // TestCreateNodePoolWithRetry_AlreadyExistsIdempotent tests idempotent success when the node pool already exists.
@@ -939,7 +939,7 @@ func TestUpdateNodePoolWithRetry_Timeout(t *testing.T) {
 
 	err := updateNodePoolWithRetry(context.Background(), config, req, 20*time.Millisecond)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "timed out waiting for nodepool 'worker-pool-1' update to be accepted after")
+	assert.Contains(t, err.Error(), `timed out waiting for nodepool "worker-pool-1" update to be accepted after`)
 }
 
 func TestDeleteNodePoolWithRetry_NotFoundSuccess(t *testing.T) {
@@ -1016,7 +1016,7 @@ func TestDeleteNodePoolWithRetry_Timeout(t *testing.T) {
 
 	err := deleteNodePoolWithRetry(context.Background(), config, fn, 20*time.Millisecond)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "timed out waiting for nodepool 'worker-pool-1' deletion to be accepted after")
+	assert.Contains(t, err.Error(), `timed out waiting for nodepool "worker-pool-1" deletion to be accepted after`)
 }
 
 func TestCreateClusterWithRetry_SuccessFirstAttempt(t *testing.T) {
@@ -1273,7 +1273,7 @@ func TestCreateClusterWithRetry_Timeout(t *testing.T) {
 
 	err := createClusterWithRetry(context.Background(), config, req, 20*time.Millisecond)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "timed out waiting for cluster 'test-cluster' creation to be accepted after")
+	assert.Contains(t, err.Error(), `timed out waiting for cluster "test-cluster" creation to be accepted after`)
 }
 
 func TestSuppressNodePoolsOrderChanges_PreservesOrderAndAppendsNewPool(t *testing.T) {
