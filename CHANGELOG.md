@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [v1.4.12](https://github.com/vmware/terraform-provider-tanzu-mission-control/releases/tag/v1.4.12)
+
+> Release Date: 2026-11-03
+
+BUG FIXES:
+
+* `r/tanzu_kubernetes_cluster`: Retry transient cluster and node pool errors with backoff, record the cluster in state as soon as creation succeeds, and quote diagnostic strings safely. [#692](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/692), [#695](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/695)
+
+CHORES:
+
+* Bump Go to 1.26.10. [#693](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/693)
+* Bump `codecov/codecov-action` to 7.1.1. [#689](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/689)
+* Bump `goreleaser/goreleaser-action` to 7.3.0. [#690](https://github.com/vmware/terraform-provider-tanzu-mission-control/pull/690)
+
 ## [v1.4.11](https://github.com/vmware/terraform-provider-tanzu-mission-control/releases/tag/v1.4.11)
 
 > Release Date: 2026-09-15
