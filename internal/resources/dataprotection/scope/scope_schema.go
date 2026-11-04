@@ -7,10 +7,10 @@ package scope
 import (
 	"context"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"golang.org/x/exp/slices"
 
 	dataprotectionmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/cluster/dataprotection"
 	dataprotectioncgmodels "github.com/vmware/terraform-provider-tanzu-mission-control/internal/models/clustergroup/dataprotection"

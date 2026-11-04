@@ -14,6 +14,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"slices"
 	"sort"
 	"strings"
 	"testing"
@@ -26,7 +27,6 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
-	"golang.org/x/exp/slices"
 
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/authctx"
 	"github.com/vmware/terraform-provider-tanzu-mission-control/internal/client/proxy"
