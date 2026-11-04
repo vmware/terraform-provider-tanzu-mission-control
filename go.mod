@@ -5,7 +5,7 @@ go 1.26.10
 require (
 	github.com/go-openapi/strfmt v0.25.0
 	github.com/go-openapi/swag v0.29.2
-	github.com/go-test/deep v1.1.1
+	github.com/go-test/deep v1.1.2
 	github.com/hashicorp/go-cty v1.5.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.40.0
 	github.com/hashicorp/terraform-plugin-testing v1.16.0
